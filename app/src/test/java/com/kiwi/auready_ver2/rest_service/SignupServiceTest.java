@@ -52,20 +52,6 @@ public class SignupServiceTest {
         Assert.assertTrue(signupResponse.isSuccessful());
         Assert.assertEquals(email, signupResponse.body().getEmail());
     }
-    @Test
-    public void whenSignupFail_showFailMessage() throws Exception {
-
-        String email = "dd@gmail.com";
-        String password = "123";
-        //mLoginPresenter.onRequestSignup(email, password);
-
-        int statusCode = 400;
-        // if received response 400 code,
-        server.enqueue(new MockResponse()
-        .setResponseCode(statusCode));
-
-        verify(mLoginPresenter).onSignupFail();
-    }
 
     @After
     public void tearDown() throws Exception {

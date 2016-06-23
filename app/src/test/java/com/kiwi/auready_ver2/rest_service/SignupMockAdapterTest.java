@@ -6,7 +6,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.lang.annotation.Annotation;
+
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import retrofit2.Response;
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -14,6 +17,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
+import retrofit2.Converter;
 
 /**
  * Created by kiwi on 6/17/16.
@@ -57,5 +61,27 @@ public class SignupMockAdapterTest {
         // Asserting response
         Assert.assertTrue(signupResponse.isSuccessful());
         Assert.assertEquals(email, signupResponse.body().getEmail());
+    }
+
+    @Test
+    public void signupFailure() throws Exception {
+        BehaviorDelegate<ISignupService> delegate = mockRetrofit.create(ISignupService.class);
+        MockFailedSignupService mockSignupService = new MockFailedSignupService(delegate);
+
+        // Create the signupInfo stub
+        String email = "bbb@bbb.bbb";
+        String password = "123";
+        SignupInfo signupInfo = new SignupInfo(email, password);
+
+        Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
+        Response<SignupResponse> signupResponse = signupCall.execute();
+        Assert.assertFalse(signupResponse.isSuccessful());
+
+        Converter<ResponseBody, ErrorResponse> errorConverter = retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errorConverter.convert(signupResponse.errorBody());
+
+        // Asserting response
+        Assert.assertEquals(404, signupResponse.code());
+        Assert.assertEquals(email + " is already registered", error.getMessage());
     }
 }

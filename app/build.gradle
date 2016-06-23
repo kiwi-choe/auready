@@ -19,8 +19,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
+    testOptions {
+        unitTests {
+            returnDefaultValues = true
+        }
 
+    }
+}
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     // App's dependencies, including test
@@ -50,15 +55,12 @@ dependencies {
 
     // Dependencies for Android unit tests
     androidTestCompile "junit:junit:$rootProject.ext.junitVersion"
-    androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
 
     // Espresso UI Testing dependencies.
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
-    androidTestCompile ("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion")
+    androidTestCompile("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion")
+    compile 'com.android.support:support-v4:23.4.0'
 }
-
 
 /*
 Resolves dependency versions across test and production APKs, specifically, transitive

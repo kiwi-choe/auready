@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -22,15 +23,14 @@ public class LoginActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.login);
 
-        if(null == savedInstanceState)
-            initFragment(LoginFragment.newInstance());
+        LoginFragment loginFragment = (LoginFragment)getSupportFragmentManager()
+                .findFragmentById(R.id.contentFrame);
+        if(loginFragment == null) {
+            loginFragment = LoginFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
+                    loginFragment, R.id.contentFrame);
+        }
     }
 
-    private void initFragment(LoginFragment loginFragment) {
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction ft = fm.beginTransaction();
-        ft.add(R.id.contentFrame, loginFragment);
-        ft.commit();
-    }
 
 }

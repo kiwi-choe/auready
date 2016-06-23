@@ -9,6 +9,6 @@ import retrofit2.http.POST;
  */
 public interface ILoginService {
 
-    @POST("/signup/local")
-    Call<Void> requestSignupLocal(@Body SignupInfo signupInfo);
+    @POST("/login/local")
+    Call<Void> requestLogin(@Body SignupInfo signupInfo);
 }

@@ -4,6 +4,8 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.Gravity;
 
+import com.kiwi.auready_ver2.tasks.TasksActivity;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,11 +24,11 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
  * Created by kiwi on 6/15/16.
  */
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTest {
+public class TasksActivityTest {
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityTestRule =
-            new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<TasksActivity> mActivityTestRule =
+            new ActivityTestRule<>(TasksActivity.class);
 
     @Test
     public void clickOnAndroidHomeIcon_OpensNavigation() {
@@ -36,6 +38,7 @@ public class MainActivityTest {
 
         // Open Drawer
         onView(withContentDescription("Navigate up")).perform(click());
+
 
         // Check if drawer is open
         onView(withId(R.id.drawer_layout))
@@ -49,7 +52,8 @@ public class MainActivityTest {
                 .perform(open());
 
         // Start Login screen
-        onView(withId(R.id.layout_nav_header)).perform(click());
+        onView(withId(R.id.nav_header_email))
+                .perform(click());
 
         // Check that Login Activity was opened
         onView(withId(R.id.ed_email)).check(matches(isDisplayed()));

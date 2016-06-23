@@ -1,9 +1,16 @@
 package com.kiwi.auready_ver2.login;
 
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.rest_service.ISignupService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.SignupInfo;
-import com.kiwi.auready_ver2.rest_service.ISignupService;
 import com.kiwi.auready_ver2.rest_service.SignupResponse;
+import com.kiwi.auready_ver2.util.LoginUtil;
+
+import java.util.regex.Matcher;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -14,38 +21,25 @@ import retrofit2.Response;
  */
 public class LoginPresenter implements LoginContract.UserActionsListener {
 
+    private static final String TAG = "TAG_LoginPresenter";
+
     private final LoginContract.View mLoginView;
 
     public LoginPresenter(LoginContract.View loginView) {
         mLoginView = loginView;
     }
 
-
-    @Override
-    public void requestLogin() {
-
-    }
-
-    @Override
-    public void requestSignup() {
-
-    }
-
-    @Override
-    public void onLoginSuccess() {
-
-    }
-
-    @Override
-    public void onLoginFail() {
-
-    }
-
     @Override
     public boolean validateEmail(String email) {
 
-        if(email == null || email.isEmpty()) {
-            mLoginView.showEmailError();
+        if(email == null || TextUtils.isEmpty(email)) {
+            onEmailError(R.string.email_empty_err);
+            return false;
+        }
+        // Check email format
+        Matcher matcher = LoginUtil.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        if(!matcher.find()) {
+            onEmailError(R.string.email_format_err);
             return false;
         }
 
@@ -54,15 +48,16 @@ public class LoginPresenter implements LoginContract.UserActionsListener {
 
     @Override
     public boolean validatePassword(String password) {
+
         if(password == null || password.isEmpty()) {
-            mLoginView.showPasswordError();
+            onPasswordError(R.string.password_empty_err);
             return false;
         }
         return true;
     }
 
     @Override
-    public void onRequestSignup(String email, String password) {
+    public void requestSignup(final String email, String password) {
 
         SignupInfo signupInfo = new SignupInfo(email, password);
 
@@ -73,14 +68,18 @@ public class LoginPresenter implements LoginContract.UserActionsListener {
         call.enqueue(new Callback<SignupResponse>() {
             @Override
             public void onResponse(Call<SignupResponse> call, Response<SignupResponse> response) {
-                if(response.isSuccessful()) {
 
+                if(response.isSuccessful()) {
+                    onSignupSuccess(response.body().getEmail());
+                } else if(response.code() == R.integer.signup_fail_code_404) {
+                    onSignupFail(R.string.signup_fail_message_404);
                 }
             }
 
             @Override
             public void onFailure(Call<SignupResponse> call, Throwable t) {
-
+                Log.d(TAG, "Signup is failed: " + t.getMessage());
+                onSignupFail(R.string.signup_fail_message);
             }
         });
     }
@@ -91,14 +90,49 @@ public class LoginPresenter implements LoginContract.UserActionsListener {
     }
 
     @Override
-    public void onSignupFail() {
-        mLoginView.showSignupFailMessage();
+    public void onSignupFail(int stringResourceName) {
+        mLoginView.showSignupFailMessage(stringResourceName);
     }
 
     @Override
-    public boolean validateAccountCredentials(String email, String password) {
+    public void attemptSignup(String email, String password) {
 
-        //onRequestSignup(email, password);
-        return false;
+        if(validateEmail(email) && validatePassword(password))
+            requestSignup(email, password);
+    }
+
+    @Override
+    public void onEmailError(int stringResourceName) {
+        mLoginView.showEmailError(stringResourceName);
+    }
+
+    @Override
+    public void onPasswordError(int stringResourceName) {
+        mLoginView.showPasswordError(stringResourceName);
+    }
+
+    @Override
+    public void attemptLogin(String email, String password) {
+        if(validateEmail(email) && validatePassword(password))
+            requestLogin(email, password);
+    }
+
+    @Override
+    public void requestLogin(String email, String password) {
+
+        ClientCredentials newCredentials = new ClientCredentials(
+                ClientCredentials.CLIENT_ID,
+                ClientCredentials.GRANT_TYPE,
+                email,
+                password);
+
+        // request auth
+
+
+    }
+
+    @Override
+    public void onLoginSuccess(TokenInfo tokenInfo) {
+
     }
 }

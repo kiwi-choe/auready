@@ -16,4 +16,8 @@ public class SignupInfo {
         this.email = email;
         this.password = password;
     }
+
+    public String getEmail() {
+        return email;
+    }
 }

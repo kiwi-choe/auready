@@ -9,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
+
+import org.w3c.dom.Text;
 
 public class LoginFragment extends Fragment implements
         LoginContract.View,
@@ -38,6 +41,8 @@ public class LoginFragment extends Fragment implements
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);
 
+//        TextView testTxt = (TextView)root.findViewById(R.id.test_fragment_login);
+
         mEmail = (EditText) root.findViewById(R.id.ed_email);
         mPassword = (EditText) root.findViewById(R.id.ed_password);
 
@@ -64,8 +69,9 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void showSignupFailMessage() {
-        Snackbar.make(getView(), getString(R.string.signup_fail_message), Snackbar.LENGTH_SHORT).show();
+    public void showSignupFailMessage(int stringResourceName) {
+
+        Snackbar.make(getView(), getString(stringResourceName), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -76,12 +82,19 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void showEmailError() {
-
+    public void showEmailError(int stringResourceName) {
+        String errMsg = getString(stringResourceName);
+        mEmail.setError(errMsg);
     }
 
     @Override
-    public void showPasswordError() {
+    public void showPasswordError(int stringResourceName) {
+        String errMsg = getString(stringResourceName);
+        mPassword.setError(errMsg);
+    }
+
+    @Override
+    public void setLoginSuccessUI(TokenInfo tokenInfo) {
 
     }
 
@@ -91,15 +104,13 @@ public class LoginFragment extends Fragment implements
         int id = v.getId();
         switch (id) {
             case R.id.bt_signup_complete:
-                mLoginPresenter.validateAccountCredentials(
+                mLoginPresenter.attemptSignup(
                         mEmail.getText().toString(),
                         mPassword.getText().toString());
                 break;
 
             case R.id.bt_login_complete:
-                mLoginPresenter.validateAccountCredentials(
-                        mEmail.getText().toString(),
-                        mPassword.getText().toString());
+                break;
 
             default:
                 break;

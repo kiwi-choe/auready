@@ -4,21 +4,17 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.kiwi.auready_ver2.login.LoginActivity;
-import com.kiwi.auready_ver2.login.LoginContract;
-import com.kiwi.auready_ver2.login.LoginPresenter;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isClickable;
+import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static org.mockito.Mockito.verify;
 
 /**
  * Created by kiwi on 6/15/16.
@@ -30,38 +26,14 @@ public class LoginViewTest {
     public ActivityTestRule<LoginActivity> mLoginActivityTestRule =
             new ActivityTestRule<>(LoginActivity.class);
 
-    private LoginContract.UserActionsListener mLoginPresenter;
-
-    @Before
-    public void setUp() {
-    }
-
     @Test
-    public void clickSignupButton_validateSignupCredentials() {
+    public void TestShowEmailError() {
 
-        String email = "aa@gmail.com";
-        String password = "123";
-
-        // Click on the signup button
-        onView(withId(R.id.bt_signup_complete)).perform(click());
-
-        mLoginPresenter = Mockito.mock(LoginPresenter.class);
-        // Call onRequestSignup in LoginPresenter
-        verify(mLoginPresenter).validateAccountCredentials(email, password);
-    }
-
-    @Test
-    public void clickLoginButton_validateAccountCredentials() {
-
-        String email = "aa@gmail.com";
-        String password = "123";
-
-        onView(withId(R.id.bt_login_complete)).check(matches(isClickable()));
-
-        onView(withId(R.id.bt_login_complete)).perform(click());
-
-        mLoginPresenter = Mockito.mock(LoginPresenter.class);
-        // Call onRequestSignup in LoginPresenter
-        verify(mLoginPresenter).validateAccountCredentials(email, password);
+        // Edit wrong email
+        String editWrongEmail = "wrongEmail";
+        onView(withId(R.id.ed_email))
+                .perform(replaceText(editWrongEmail), closeSoftKeyboard());
+        // Verify show email error of stringResourceName
+        onView(withId(R.id.ed_email)).check(matches(hasErrorText("dd")));
     }
 }

@@ -7,39 +7,34 @@ public interface LoginContract {
 
     interface View {
 
-        void showSignupFailMessage();
+        void showSignupFailMessage(int stringResourceName);
         void setSignupSuccessUI(String email);
 
-        void showEmailError();
-        void showPasswordError();
+        void showEmailError(int resourceId);
+        void showPasswordError(int resourceId);
 
-//        void showLoginFailMessage(String errmsg);
-//        void showSignupFailMessage(String errmsg);
-//
-//        void setLoginSuccess();
+        void setLoginSuccessUI(TokenInfo tokenInfo);
     }
 
     interface UserActionsListener {
-//
-//        void validateCredentialsLogin(String email, String password);
-//        void validateCredentialsSignup(String email, String password);
-
-        void requestLogin();
-        void requestSignup();
-//
-        // After request Login to Server
-        void onLoginSuccess();
-        void onLoginFail();
 
         boolean validateEmail(String email);
         boolean validatePassword(String password);
 
-        void onRequestSignup(String email, String password);
+        void requestSignup(String email, String password);
 
         // After request Signup to Server
         void onSignupSuccess(String email);
-        void onSignupFail();
+        void onSignupFail(int stringResourceName);
 
-        boolean validateAccountCredentials(String email, String password);
+        void attemptSignup(String email, String password);
+        void attemptLogin(String email, String password);
+
+        void onEmailError(int stringResourceName);
+        void onPasswordError(int stringResourceName);
+
+        void requestLogin(String email, String password);
+
+        void onLoginSuccess(TokenInfo tokenInfo);
     }
 }
