@@ -1,7 +1,5 @@
 package com.kiwi.auready_ver2.login;
 
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +9,9 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class LoginActivity extends AppCompatActivity {
+
+    public static final int REQ_LOGIN = 1;
+    public static final String LOGGED_IN_EMAIL = "logged in email";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +25,11 @@ public class LoginActivity extends AppCompatActivity {
         actionBar.setTitle(R.string.login);
 
         LoginFragment loginFragment = (LoginFragment)getSupportFragmentManager()
-                .findFragmentById(R.id.contentFrame);
+                .findFragmentById(R.id.content_frame);
         if(loginFragment == null) {
             loginFragment = LoginFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    loginFragment, R.id.contentFrame);
+                    loginFragment, R.id.content_frame);
         }
     }
 

@@ -24,12 +24,12 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/nav_header_email"
+        android:id="@+id/nav_header_account_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true">
         <TextView
-            android:id="@+id/txt_email"
+            android:id="@+id/nav_header_email"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"

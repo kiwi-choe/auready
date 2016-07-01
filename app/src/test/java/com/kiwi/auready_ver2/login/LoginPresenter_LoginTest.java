@@ -1,11 +1,8 @@
 package com.kiwi.auready_ver2.login;
 
+import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.rest_service.ErrorResponse;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
-import com.kiwi.auready_ver2.rest_service.ISignupService;
-import com.kiwi.auready_ver2.rest_service.MockFailedSignupService;
-import com.kiwi.auready_ver2.rest_service.MockSignupService;
-import com.kiwi.auready_ver2.rest_service.SignupInfo;
-import com.kiwi.auready_ver2.rest_service.SignupResponse;
 
 import junit.framework.Assert;
 
@@ -15,8 +12,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 
 import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -24,8 +23,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
+import retrofit2.Converter;
 
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -67,87 +66,97 @@ public class LoginPresenter_LoginTest {
         // Create the loginInfo stub
         String email = "dd@gmail.com";
         String password = "123";
-        ClientCredentials newCredentials = new ClientCredentials(
-                ClientCredentials.CLIENT_ID,
-                ClientCredentials.GRANT_TYPE,
-                email,
-                password);
 
         // Request login to Server
         mLoginPresenter.requestLogin(email, password);
 
         Response<TokenInfo> loginResponse = null;
-//        loginResponse = executeMockLoginService();
+        try {
+            loginResponse = executeMockLoginService(email, password);
+        } catch (IOException e) {
+            e.printStackTrace();
 
-//        // Succeed to request signup
-//        if (loginResponse != null && loginResponse.isSuccessful()) {
-//
-//            mLoginPresenter.onLoginSuccess(loginResponse.body());
-//            verify(mLoginView).setLoginSuccessUI(loginResponse.body());
-//        }
+        }
+
+        // Succeed to request login
+        if (loginResponse != null && loginResponse.isSuccessful()) {
+
+            mLoginPresenter.onLoginSuccess(loginResponse.body(), email);
+
+            Assert.assertEquals("access token1", loginResponse.body().getAccessToken());
+            Assert.assertEquals("token type1", loginResponse.body().getTokenType());
+
+            verify(mLoginView).setLoginSuccessUI(email);
+        }
+    }
+
+    private Response<TokenInfo> executeMockLoginService(String email, String password) throws IOException {
+
+        BehaviorDelegate<ILoginService> delegate = mockRetrofit.create(ILoginService.class);
+        ILoginService mockLoginService = new MockLoginService(delegate);
+
+        // Create the loginInfo stub
+        ClientCredentials newCredentials = new ClientCredentials(
+                ClientCredentials.CLIENT_ID,
+                ClientCredentials.GRANT_TYPE,
+                email,
+                password);
+        Call<TokenInfo> loginCall = mockLoginService.login(newCredentials);
+        Response<TokenInfo> loginResponse = loginCall.execute();
+
+        return loginResponse;
     }
 
 
-    private Response<SignupResponse> executeMockSignupService() throws IOException {
+    @Test
+    public void showLoginFailMessage_whenLoginFailed() throws IOException {
 
-        // Create the signupInfo stub
+        // Create the loginInfo stub
         String email = "dd@gmail.com";
         String password = "123";
 
-        /*------------------------------------------------------------------------------------*/
-        // q This is the mock webserver. how to separate it from here?
-        // Execute mock webserver
-        BehaviorDelegate<ISignupService> delegate = mockRetrofit.create(ISignupService.class);
-        ISignupService mockSignupService = new MockSignupService(delegate);
+        mLoginPresenter.requestLogin(email, password);
 
-        SignupInfo signupInfo = new SignupInfo(email, password);
-        Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
-        Response<SignupResponse> signupResponse = signupCall.execute();
-        /*------------------------------------------------------------------------------------*/
+        Response<TokenInfo> loginResponse = null;
+        try {
+            loginResponse = executeMockFailedSignupService(email, password);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-        return signupResponse;
+        Converter<ResponseBody, ErrorResponse> errConverter =
+                retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        ErrorResponse error = errConverter.convert(loginResponse.errorBody());
+
+        if (loginResponse.code() != 404) {
+
+            // Failed to request login
+            // error code is 404, reason: login failed
+            Assert.assertEquals(404, loginResponse.code());
+            Assert.assertEquals("login failed", error.getMessage());
+
+            mLoginPresenter.onLoginFail(R.string.login_fail_message_404);
+            // Q 있으나마나한 테스트. this test will be success even though onLoginFail didn't call showLoginFailMessage.
+//            verify(mLoginView).showLoginFailMessage(R.string.login_fail_message_404);
+        }
     }
 
-    private Response<SignupResponse> executeMockFailedSignupService() throws IOException {
-        // Create the signupInfo stub
-        String email = "bbb@bbb.bbb";
-        String password = "123";
+    private Response<TokenInfo> executeMockFailedSignupService(String email, String password) throws IOException {
 
-        BehaviorDelegate<ISignupService> delegate = mockRetrofit.create(ISignupService.class);
-        MockFailedSignupService mockSignupService = new MockFailedSignupService(delegate);
+        BehaviorDelegate<ILoginService> delegate = mockRetrofit.create(ILoginService.class);
+        MockFailedLoginService mockFailedLoginService = new MockFailedLoginService(delegate);
 
-        SignupInfo signupInfo = new SignupInfo(email, password);
+        // Create the loginInfo stub
+        ClientCredentials newCredentials = new ClientCredentials(
+                ClientCredentials.CLIENT_ID,
+                ClientCredentials.GRANT_TYPE,
+                email,
+                password);
+        Call<TokenInfo> loginCall = mockFailedLoginService.login(newCredentials);
+        Response<TokenInfo> loginResponse = loginCall.execute();
 
-        Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
-        Response<SignupResponse> signupResponse = signupCall.execute();
-
-        return signupResponse;
+        return loginResponse;
     }
-//
-//    @Test
-//    public void showSignupFailMessage_whenEmailAndPasswordIsInvalid() throws IOException {
-//
-//        // Request signup to server with invalid credentials
-//        String email = "bbb@bbb.bbb";
-//        String password = "123";
-//
-//        mLoginPresenter.requestSignup(email, password);
-//
-//        Response<SignupResponse> signupResponse = null;
-//        try {
-//            signupResponse = executeMockFailedSignupService();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        if (signupResponse != null && signupResponse.code() != 404) {
-//
-//            // Failed to request signup
-//            // error code is 404, reason: email is already registered.
-//            mLoginPresenter.onSignupFail(R.string.signup_fail_message_404);
-//            verify(mLoginView).showSignupFailMessage(R.string.signup_fail_message_404);
-//        }
-//    }
 
 
 }

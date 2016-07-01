@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.login;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -9,11 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-
-import org.w3c.dom.Text;
 
 public class LoginFragment extends Fragment implements
         LoginContract.View,
@@ -41,14 +40,12 @@ public class LoginFragment extends Fragment implements
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);
 
-//        TextView testTxt = (TextView)root.findViewById(R.id.test_fragment_login);
-
         mEmail = (EditText) root.findViewById(R.id.ed_email);
         mPassword = (EditText) root.findViewById(R.id.ed_password);
 
         mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
         mBtSignupComplete = (Button) root.findViewById(R.id.bt_signup_complete);
-        mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
+//        mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
 
         return root;
     }
@@ -83,19 +80,34 @@ public class LoginFragment extends Fragment implements
 
     @Override
     public void showEmailError(int stringResourceName) {
-        String errMsg = getString(stringResourceName);
-        mEmail.setError(errMsg);
+        mEmail.requestFocus();
+        mEmail.setError(getString(stringResourceName));
     }
 
     @Override
     public void showPasswordError(int stringResourceName) {
         String errMsg = getString(stringResourceName);
+        mPassword.requestFocus();
         mPassword.setError(errMsg);
     }
 
     @Override
-    public void setLoginSuccessUI(TokenInfo tokenInfo) {
+    public void setLoginSuccessUI(String loggedInEmail) {
 
+        Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
+
+        // Send result OK and the logged in email to TasksView
+        Intent intent = new Intent();
+        intent.putExtra(LoginActivity.LOGGED_IN_EMAIL, loggedInEmail);
+
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
+    }
+
+    @Override
+    public void showLoginFailMessage(int stringResource) {
+        if(isAdded())
+            Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -110,6 +122,9 @@ public class LoginFragment extends Fragment implements
                 break;
 
             case R.id.bt_login_complete:
+                mLoginPresenter.attemptLogin(
+                        mEmail.getText().toString(),
+                        mPassword.getText().toString());
                 break;
 
             default:

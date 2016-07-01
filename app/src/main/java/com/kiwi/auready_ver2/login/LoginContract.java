@@ -13,7 +13,9 @@ public interface LoginContract {
         void showEmailError(int resourceId);
         void showPasswordError(int resourceId);
 
-        void setLoginSuccessUI(TokenInfo tokenInfo);
+        void setLoginSuccessUI(String loggedInEmail);
+
+        void showLoginFailMessage(int stringResource);
     }
 
     interface UserActionsListener {
@@ -25,16 +27,18 @@ public interface LoginContract {
 
         // After request Signup to Server
         void onSignupSuccess(String email);
-        void onSignupFail(int stringResourceName);
+        void onSignupFail(int stringResource);
 
         void attemptSignup(String email, String password);
         void attemptLogin(String email, String password);
 
-        void onEmailError(int stringResourceName);
-        void onPasswordError(int stringResourceName);
+        void onEmailError(int stringResource);
+        void onPasswordError(int stringResource);
 
         void requestLogin(String email, String password);
 
-        void onLoginSuccess(TokenInfo tokenInfo);
+        void onLoginSuccess(TokenInfo tokenInfo, String loggedInEmail);
+
+        void onLoginFail(int stringResource);
     }
 }

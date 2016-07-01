@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.rest_service.ILoginService;
 import com.kiwi.auready_ver2.rest_service.ISignupService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.SignupInfo;
@@ -118,7 +119,10 @@ public class LoginPresenter implements LoginContract.UserActionsListener {
     }
 
     @Override
-    public void requestLogin(String email, String password) {
+    public void requestLogin(final String email, String password) {
+
+        ILoginService loginService =
+                ServiceGenerator.createService(ILoginService.class);
 
         ClientCredentials newCredentials = new ClientCredentials(
                 ClientCredentials.CLIENT_ID,
@@ -126,13 +130,39 @@ public class LoginPresenter implements LoginContract.UserActionsListener {
                 email,
                 password);
 
-        // request auth
+        Call<TokenInfo> call = loginService.login(newCredentials);
+        call.enqueue(new Callback<TokenInfo>() {
 
+            @Override
+            public void onResponse(Call<TokenInfo> call, Response<TokenInfo> response) {
+                if (response.isSuccessful()) {
+                    // Save tokenInfo to sharedPreferences
+                    onLoginSuccess(response.body(), email);
+                } else if (response.code() == 404) {
+                    onLoginFail(R.string.login_fail_message_404);
+                }
+            }
 
+            @Override
+            public void onFailure(Call<TokenInfo> call, Throwable t) {
+
+                Log.d("Exception in Signup: ", "Called OnFailure()", t);
+                onLoginFail(R.string.login_fail_message_onfailure);
+            }
+        });
     }
 
     @Override
-    public void onLoginSuccess(TokenInfo tokenInfo) {
+    public void onLoginSuccess(TokenInfo tokenInfo, String loggedInEmail) {
 
+        // Save tokenInfo to SharedPreferences
+
+        // and send logged in email to MainView
+        mLoginView.setLoginSuccessUI(loggedInEmail);
+    }
+
+    @Override
+    public void onLoginFail(int stringResource) {
+        mLoginView.showLoginFailMessage(stringResource);
     }
 }

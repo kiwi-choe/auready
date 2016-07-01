@@ -4,10 +4,8 @@
     android:layout_height="match_parent"
     tools:context="com.kiwi.auready_ver2.tasks.TasksFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <Button
+        android:id="@+id/test_fragment_tasks"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+        android:layout_height="wrap_content" />
 </FrameLayout>

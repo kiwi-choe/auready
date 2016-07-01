@@ -10,8 +10,13 @@
     <string name="login_hint_password">비밀번호</string>
     <string name="signup_fail_message">Signup is failed</string>
     <string name="logged_in_user_email">loggedIn user email</string>
-    <string name="email_empty_err">email is empty !</string>
+    <string name="email_empty_err">email is empty</string>
     <string name="email_format_err">email format is invalid</string>
     <string name="password_empty_err">password is empty</string>
     <string name="signup_fail_message_404">You are already registered</string>
+    <string name="login_fail_message_404">Login failed</string>
+    <string name="login_fail_message_onfailure">Called onFailure()</string>
+    <string name="login_success_msg">Login succeed</string>
+    <string name="no_searched_email_msg">Nobody who you are searching</string>
+    <string name="friend_title">FRIEND</string>
 </resources>

@@ -1,7 +1,6 @@
 package com.kiwi.auready_ver2.login;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.rest_service.ErrorResponse;
 import com.kiwi.auready_ver2.rest_service.ISignupService;
 import com.kiwi.auready_ver2.rest_service.MockFailedSignupService;
 import com.kiwi.auready_ver2.rest_service.MockSignupService;
@@ -16,13 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
-import okhttp3.mockwebserver.MockWebServer;
 import retrofit2.Call;
-import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -101,7 +96,7 @@ public class LoginPresenter_SignupTest {
     }
 
     @Test
-    public void showSetSignupSuccessUi_whenEmailAndPasswordIsValid() {
+    public void setSignupSuccessUi_whenEmailAndPasswordIsValid() {
 
         // Create the signupInfo stub
         String email = "dd@gmail.com";
