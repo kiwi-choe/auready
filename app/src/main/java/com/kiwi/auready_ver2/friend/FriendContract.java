@@ -27,5 +27,7 @@ public interface FriendContract {
         void loadFriends();
 
         void start();
+
+        void deleteAFriend(Friend clickedFriend);
     }
 }

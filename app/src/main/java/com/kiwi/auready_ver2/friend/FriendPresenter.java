@@ -45,6 +45,11 @@ public class FriendPresenter implements FriendContract.Presenter {
         loadFriends();
     }
 
+    @Override
+    public void deleteAFriend(Friend clickedFriend) {
+
+    }
+
     private void processFriends(List<Friend> friends) {
 
         mFriendView.showFriends(friends);

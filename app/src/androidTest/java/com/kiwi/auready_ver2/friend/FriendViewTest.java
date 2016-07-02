@@ -79,10 +79,10 @@ public class FriendViewTest {
     @Test
     public void onLongClickListItem_deleteAFriend() {
 
-        onView(withText(EMAIL1)).perform(click());
+        onView(withItemText(EMAIL1)).perform(click());
 
         // Verify it was deleted
-        onView(withText(EMAIL1)).check(matches(not(isDisplayed())));
+        onView(withItemText(EMAIL1)).check(matches(not(isDisplayed())));
     }
 
 }

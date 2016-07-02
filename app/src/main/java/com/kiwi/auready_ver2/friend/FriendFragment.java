@@ -39,7 +39,7 @@ public class FriendFragment extends Fragment implements FriendContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0));
+        mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0), mItemListener);
     }
 
     @Override
@@ -90,9 +90,11 @@ public class FriendFragment extends Fragment implements FriendContract.View {
     private class FriendsAdapter extends BaseAdapter {
 
         private List<Friend> mFriends;
+        private FriendItemListener mItemListener;
 
-        public FriendsAdapter(List<Friend> friends) {
+        public FriendsAdapter(List<Friend> friends, FriendItemListener itemListener) {
             setList(friends);
+            mItemListener = itemListener;
         }
 
         private void setList(List<Friend> friends) {
@@ -122,10 +124,18 @@ public class FriendFragment extends Fragment implements FriendContract.View {
                 rowView = inflater.inflate(R.layout.friend_item, parent, false);
             }
 
-            String email = getItem(position).getEmail();
+            final Friend friend = getItem(position);
+            String email = friend.getEmail();
             TextView txtEmail = (TextView) rowView.findViewById(R.id.txt_email);
             txtEmail.setText(email);
 
+            rowView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    mItemListener.onLongClick(friend);
+                    return true;    // true if the callback consumed the long click.
+                }
+            });
             return rowView;
         }
 
@@ -134,4 +144,20 @@ public class FriendFragment extends Fragment implements FriendContract.View {
             notifyDataSetChanged();
         }
     }
+
+    public interface FriendItemListener {
+
+        void onLongClick(Friend clickedFriend);
+    }
+
+    /*
+    * Listener for clicks on friends in the ListView
+    * */
+    FriendItemListener mItemListener = new FriendItemListener() {
+        @Override
+        public void onLongClick(Friend clickedFriend) {
+            mPresenter.deleteAFriend(clickedFriend);
+        }
+    };
+
 }
