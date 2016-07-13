@@ -4,4 +4,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="list_item_padding">8dp</dimen>
+    <dimen name="fragment_login_ed_margin">5dp</dimen>
+    <dimen name="fragment_login_signup_margin">10dp</dimen>
 </resources>

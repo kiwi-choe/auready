@@ -1,0 +1,37 @@
+[The functions]
+
+Login, Signup
+- localLogin
+- localSignup
+- socialLogin
+
+Managing Friend
+- addFriend
+	- findFriend
+- deleteFriend
+
+Todo(personal)
+- addNewTodo
+- deleteTodo
+- changeTitleOfTodo
+
+- addTodoItem
+- deleteTodoItem
+- completeTodoItem, activateTodoItem
+- changeOrderTodoItem
+
+
+[Entites]
+
+- Login, Signup
+ClientCredentials, TokenInfo
+
+- Managing Friend
+Friend
+
+- Todo(personal)
+Todo
+TodoItem
+
+[
+

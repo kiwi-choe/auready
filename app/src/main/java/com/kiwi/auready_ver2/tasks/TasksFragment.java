@@ -68,7 +68,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             @Override
             public void onClick(View v) {
                 String stubLoggedInEmail = "aaa@aaa.aaa";
-                mListener.onLoginSuccess(stubLoggedInEmail);
+                if(mListener != null) {
+                    mListener.onLoginSuccess(stubLoggedInEmail);
+                }
+
             }
         });
 

@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/ed_email"
+            android:id="@+id/ed_signup_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -24,6 +24,15 @@
             android:inputType="textEmailAddress"
             android:maxLines="1"
             android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/ed_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/fragment_login_ed_margin"
+            android:gravity="center"
+            android:hint="@string/login_hint_name" />
 
         <EditText
             android:id="@+id/ed_password"
@@ -37,31 +46,12 @@
             android:singleLine="true" />
 
         <Button
-            android:id="@+id/bt_login_complete"
+            android:id="@+id/bt_signup_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:text="@string/login_button"
+            android:text="@string/signup_complete_button"
             android:layout_gravity="center"/>
 
-        <TextView
-            android:id="@+id/bt_signup_open"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fragment_login_bt_signup"
-            android:background="@android:color/transparent"
-            android:layout_marginTop="@dimen/fragment_login_signup_margin"
-            android:layout_gravity="center"/>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/bt_logout_complete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/logout_button"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-
 </LinearLayout>

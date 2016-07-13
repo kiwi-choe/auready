@@ -5,10 +5,7 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
-import com.kiwi.auready_ver2.rest_service.ISignupService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
-import com.kiwi.auready_ver2.rest_service.SignupInfo;
-import com.kiwi.auready_ver2.rest_service.SignupResponse;
 import com.kiwi.auready_ver2.util.LoginUtil;
 
 import java.util.regex.Matcher;
@@ -20,7 +17,7 @@ import retrofit2.Response;
 /**
  * Created by kiwi on 6/11/16.
  */
-public class LoginPresenter implements LoginContract.UserActionsListener {
+public class LoginPresenter implements LoginContract.Presenter {
 
     private static final String TAG = "TAG_LoginPresenter";
 
@@ -55,51 +52,6 @@ public class LoginPresenter implements LoginContract.UserActionsListener {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void requestSignup(final String email, String password) {
-
-        SignupInfo signupInfo = new SignupInfo(email, password);
-
-        ISignupService signupService =
-                ServiceGenerator.createService(ISignupService.class);
-
-        Call<SignupResponse> call = signupService.signupLocal(signupInfo);
-        call.enqueue(new Callback<SignupResponse>() {
-            @Override
-            public void onResponse(Call<SignupResponse> call, Response<SignupResponse> response) {
-
-                if(response.isSuccessful()) {
-                    onSignupSuccess(response.body().getEmail());
-                } else if(response.code() == R.integer.signup_fail_code_404) {
-                    onSignupFail(R.string.signup_fail_message_404);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SignupResponse> call, Throwable t) {
-                Log.d(TAG, "Signup is failed: " + t.getMessage());
-                onSignupFail(R.string.signup_fail_message);
-            }
-        });
-    }
-
-    @Override
-    public void onSignupSuccess(String email) {
-        mLoginView.setSignupSuccessUI(email);
-    }
-
-    @Override
-    public void onSignupFail(int stringResourceName) {
-        mLoginView.showSignupFailMessage(stringResourceName);
-    }
-
-    @Override
-    public void attemptSignup(String email, String password) {
-
-        if(validateEmail(email) && validatePassword(password))
-            requestSignup(email, password);
     }
 
     @Override

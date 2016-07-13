@@ -1,8 +1,10 @@
 package com.kiwi.auready_ver2.friend;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,6 +89,37 @@ public class FriendFragment extends Fragment implements FriendContract.View {
         mPresenter = checkNotNull(presenter);
     }
 
+    @Override
+    public void showFriendDeleted() {
+
+    }
+
+    private void showDeleteFriendAlert(@NonNull final Friend clickedFriend) {
+        checkNotNull(clickedFriend, "clickedFriend cannot be null!");
+
+        // show popup view to confirm if delete the requested friend or cancel.
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        dialog.setTitle(R.string.alert_title_confirm_delete_friend);
+        dialog.setMessage(clickedFriend.getEmail() + R.string.alert_msg_confirm_delete_friend);
+
+        // OK
+        dialog.setPositiveButton(R.string.alert_positive_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mPresenter.deleteFriend(clickedFriend.getId());
+            }
+        });
+        // Cancel
+        dialog.setNegativeButton(R.string.alert_negative_button, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
+
     private class FriendsAdapter extends BaseAdapter {
 
         private List<Friend> mFriends;
@@ -156,7 +189,7 @@ public class FriendFragment extends Fragment implements FriendContract.View {
     FriendItemListener mItemListener = new FriendItemListener() {
         @Override
         public void onLongClick(Friend clickedFriend) {
-            mPresenter.deleteAFriend(clickedFriend);
+            showDeleteFriendAlert(clickedFriend);
         }
     };
 

@@ -4,10 +4,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="login">Login</string>
+
+    <!-- Login Fragment -->
     <string name="login_button">LOGIN</string>
-    <string name="signup_button">SIGNUP</string>
+    <string name="logout_button">로그아웃</string>
+    <string name="fragment_login_bt_signup">아직 계정이 없으신가요?</string>
     <string name="login_hint_email">이메일</string>
     <string name="login_hint_password">비밀번호</string>
+
+    <!-- Signup Fragment -->
+    <string name="signup_complete_button">SIGNUP</string>
+    <string name="login_hint_name">이름</string>
+
     <string name="signup_fail_message">Signup is failed</string>
     <string name="logged_in_user_email">loggedIn user email</string>
     <string name="email_empty_err">email is empty</string>
@@ -17,6 +25,15 @@
     <string name="login_fail_message_404">Login failed</string>
     <string name="login_fail_message_onfailure">Called onFailure()</string>
     <string name="login_success_msg">Login succeed</string>
+
+    <!-- Friend Fragment -->
     <string name="no_searched_email_msg">Nobody who you are searching</string>
     <string name="friend_title">FRIEND</string>
+    <string name="alert_title_confirm_delete_friend">Confirm Delete Friend</string>
+    <string name="alert_msg_confirm_delete_friend">Do you want to delete </string>
+    <string name="alert_positive_button">OK</string>
+    <string name="alert_negative_button">CANCEL</string>
+    <string name="signup_success_msg"> 님 가입하셨습니다.</string>
+
+
 </resources>

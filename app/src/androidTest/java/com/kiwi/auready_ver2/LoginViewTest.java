@@ -59,18 +59,17 @@ public class LoginViewTest {
     }
 
     /*
-    * Signup and Login Button
+    * Login Button
     * */
     @Test
-    public void showEmailFormatError_whenClickSignupOrLoginButton() {
+    public void showEmailFormatError_whenClickLoginButton() {
 
-        // Try to signup with wrong email
+        // Try to login with wrong email
         String editWrongEmail = "wrong email";
         onView(withId(R.id.ed_email))
                 .perform(replaceText(editWrongEmail), closeSoftKeyboard());
         onView(withId(R.id.ed_password))
                 .perform(replaceText("123"), closeSoftKeyboard());
-        //onView(withId(R.id.bt_signup_complete)).perform(click());
         onView(withId(R.id.bt_login_complete)).perform(click());
 
         // Verify show email error of stringResourceName
@@ -80,14 +79,13 @@ public class LoginViewTest {
     }
 
     @Test
-    public void showEmailEmptyError_whenClickSignupOrLoginButton() {
+    public void showEmailEmptyError_whenClickLoginButton() {
 
         String editWrongEmail = "";
         onView(withId(R.id.ed_email))
                 .perform(replaceText(editWrongEmail), closeSoftKeyboard());
         onView(withId(R.id.ed_password))
                 .perform(replaceText("123"), closeSoftKeyboard());
-//        onView(withId(R.id.bt_signup_complete)).perform(click());
         onView(withId(R.id.bt_login_complete)).perform(click());
 
         // Verify show email error of stringResourceName
@@ -96,17 +94,16 @@ public class LoginViewTest {
     }
 
     @Test
-    public void showPasswordError_whenClickSignupOrLoginButton() {
+    public void showPasswordError_whenClickLoginButton() {
 
-        // Try to signup with empty password
+        // Try to login with empty password
         String editEmail = "aaa@aaa.aaa";
         String editEmptyPassword = "";
         onView(withId(R.id.ed_email))
                 .perform(replaceText(editEmail), closeSoftKeyboard());
         onView(withId(R.id.ed_password))
                 .perform(replaceText(editEmptyPassword), closeSoftKeyboard());
-        onView(withId(R.id.bt_signup_complete)).perform(click());
-//        onView(withId(R.id.bt_login_complete)).perform(click());
+        onView(withId(R.id.bt_login_complete)).perform(click());
 
 //        Assert.assertEquals(mLoginActivityTestRule.getActivity().getString(R.string.password_empty_err), "password is empty");
         // Verify show email error of stringResourceName
@@ -116,18 +113,15 @@ public class LoginViewTest {
 
 
     @Test
-    public void sendResultToTasks_whenLoginSucceed() {
+    public void clickSignupButton_openSignupFragment() {
 
-
-        //q 메인(TasksActivity)의 텍스트뷰에 대한 테스트는 어떻게 하지?
-        // q How to check that LoginActivity is finished?
-        // Finish LoginActivity
-
-        // Check that TasksActivity was opened and NavigationDrawer was opened.
-        onView(withId(R.id.test_fragment_tasks)).check(matches(isDisplayed()));
-
-//        // set the logged in email to nav_header_email
-//        onView(withId(R.id.nav_header_email))
-//                .check(matches(withText("aaa@aaa.aaa")));
+        // Click signupButton
+        onView(withId(R.id.bt_signup_open)).perform(click());
+        // Check that Signup Fragment is opened
+        onView(withId(R.id.ed_name)).check(matches(isDisplayed()));
     }
+
+    //q 메인(TasksActivity)의 텍스트뷰에 대한 테스트는 어떻게 하지?
+    // q How to check that LoginActivity is finished?
+//    public void sendResultToTasks_whenLoginSucceed() {
 }

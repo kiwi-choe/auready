@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.Friend;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -76,13 +77,15 @@ public class FriendViewTest {
         onView(withItemText("bb")).check(matches(isDisplayed()));
     }
 
+
     @Test
-    public void onLongClickListItem_deleteAFriend() {
+    public void longClickOnFriendItem_deleteFriend() {
 
         onView(withItemText(EMAIL1)).perform(click());
 
         // Verify it was deleted
         onView(withItemText(EMAIL1)).check(matches(not(isDisplayed())));
     }
+
 
 }

@@ -20,6 +20,8 @@ public interface FriendContract {
         void showNoResultByEmail();
 
         void setPresenter(@NonNull FriendContract.Presenter presenter);
+
+        void showFriendDeleted();
     }
 
     interface Presenter {
@@ -28,6 +30,6 @@ public interface FriendContract {
 
         void start();
 
-        void deleteAFriend(Friend clickedFriend);
+        void deleteFriend(String friendId);
     }
 }

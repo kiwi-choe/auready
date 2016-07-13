@@ -7,9 +7,6 @@ public interface LoginContract {
 
     interface View {
 
-        void showSignupFailMessage(int stringResourceName);
-        void setSignupSuccessUI(String email);
-
         void showEmailError(int resourceId);
         void showPasswordError(int resourceId);
 
@@ -18,18 +15,10 @@ public interface LoginContract {
         void showLoginFailMessage(int stringResource);
     }
 
-    interface UserActionsListener {
+    interface Presenter {
 
         boolean validateEmail(String email);
         boolean validatePassword(String password);
-
-        void requestSignup(String email, String password);
-
-        // After request Signup to Server
-        void onSignupSuccess(String email);
-        void onSignupFail(int stringResource);
-
-        void attemptSignup(String email, String password);
         void attemptLogin(String email, String password);
 
         void onEmailError(int stringResource);

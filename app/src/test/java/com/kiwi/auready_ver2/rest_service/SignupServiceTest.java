@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -23,7 +22,7 @@ public class SignupServiceTest {
 
     private MockWebServer server;
     @Mock
-    private LoginContract.UserActionsListener mLoginPresenter;
+    private LoginContract.Presenter mLoginPresenter;
 
     @Before
     public void setUp() throws Exception {

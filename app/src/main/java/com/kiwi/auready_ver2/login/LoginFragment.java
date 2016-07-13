@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class LoginFragment extends Fragment implements
         LoginContract.View,
@@ -21,10 +25,10 @@ public class LoginFragment extends Fragment implements
     private EditText mEmail;
     private EditText mPassword;
     private Button mBtLoginComplete;
-    private Button mBtSignupComplete;
+    private TextView mBtSignupOpen;
     private Button mBtLogoutComplete;
 
-    private LoginContract.UserActionsListener mLoginPresenter;
+    private LoginContract.Presenter mLoginPresenter;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -44,7 +48,7 @@ public class LoginFragment extends Fragment implements
         mPassword = (EditText) root.findViewById(R.id.ed_password);
 
         mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
-        mBtSignupComplete = (Button) root.findViewById(R.id.bt_signup_complete);
+        mBtSignupOpen = (TextView) root.findViewById(R.id.bt_signup_open);
 //        mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
 
         return root;
@@ -54,8 +58,8 @@ public class LoginFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mBtSignupComplete.setOnClickListener(this);
         mBtLoginComplete.setOnClickListener(this);
+        mBtSignupOpen.setOnClickListener(this);
     }
 
     @Override
@@ -63,19 +67,6 @@ public class LoginFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
         mLoginPresenter = new LoginPresenter(this);
-    }
-
-    @Override
-    public void showSignupFailMessage(int stringResourceName) {
-
-        Snackbar.make(getView(), getString(stringResourceName), Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void setSignupSuccessUI(String email) {
-
-        // 1. Set email value to ed_email
-        mEmail.setText(email);
     }
 
     @Override
@@ -106,7 +97,7 @@ public class LoginFragment extends Fragment implements
 
     @Override
     public void showLoginFailMessage(int stringResource) {
-        if(isAdded())
+        if (isAdded())
             Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
     }
 
@@ -115,10 +106,8 @@ public class LoginFragment extends Fragment implements
 
         int id = v.getId();
         switch (id) {
-            case R.id.bt_signup_complete:
-                mLoginPresenter.attemptSignup(
-                        mEmail.getText().toString(),
-                        mPassword.getText().toString());
+            case R.id.bt_signup_open:
+                startSignupFragment();
                 break;
 
             case R.id.bt_login_complete:
@@ -131,4 +120,13 @@ public class LoginFragment extends Fragment implements
                 break;
         }
     }
+
+
+    private void startSignupFragment() {
+
+        // Create new fragment and transaction
+        SignupFragment signupFragment = SignupFragment.newInstance();
+        ActivityUtils.replaceFragment(getFragmentManager(), signupFragment, R.id.content_frame);
+    }
+
 }

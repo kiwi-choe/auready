@@ -4,9 +4,13 @@ import android.support.annotation.NonNull;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.FriendDataSource;
+import com.kiwi.auready_ver2.data.FriendRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by kiwi on 6/28/16.
@@ -18,9 +22,13 @@ public class FriendPresenter implements FriendContract.Presenter {
 
     private final FriendContract.View mFriendView;
 
-    public FriendPresenter(@NonNull FriendContract.View friendView) {
+    private FriendRepository mFriendRepository;
 
-        mFriendView = friendView;
+    public FriendPresenter(@NonNull FriendContract.View friendView, @NonNull FriendRepository friendRepository) {
+
+        mFriendView = checkNotNull(friendView, "friendView cannot be null");
+
+        mFriendRepository = checkNotNull(friendRepository, "friendRepository cannot be null");
 
         mFriendView.setPresenter(this);
     }
@@ -28,16 +36,18 @@ public class FriendPresenter implements FriendContract.Presenter {
     @Override
     public void loadFriends() {
 
-        // Stub friends
-//        List<Friend> friendList = new ArrayList<>();
-//        Friend friend1 = new Friend("aa");
-//        Friend friend2 = new Friend("bb");
-//        friendList.add(friend1);
-//        friendList.add(friend2);
+        mFriendRepository.getFriends(new FriendDataSource.LoadFriendsCallback() {
+            @Override
+            public void onFriendsLoaded(List<Friend> friends) {
 
+                processFriends(friends);
+            }
 
-        processFriends(FRIENDS);
-//        mFriendView.showFriends();
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
     }
 
     @Override
@@ -46,8 +56,8 @@ public class FriendPresenter implements FriendContract.Presenter {
     }
 
     @Override
-    public void deleteAFriend(Friend clickedFriend) {
-
+    public void deleteFriend(String requestedFriendId) {
+        mFriendRepository.deleteFriend(requestedFriendId);
     }
 
     private void processFriends(List<Friend> friends) {

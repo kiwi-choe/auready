@@ -10,6 +10,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.FriendDataSource;
+import com.kiwi.auready_ver2.data.FriendRepository;
+import com.kiwi.auready_ver2.data.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class FriendActivity extends AppCompatActivity {
@@ -32,14 +35,18 @@ public class FriendActivity extends AppCompatActivity {
 
         FriendFragment friendFragment =
                 (FriendFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if(friendFragment == null) {
+        if (friendFragment == null) {
             friendFragment = FriendFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), friendFragment, R.id.content_frame);
         }
 
         // Create Presenter
-        mPresenter = new FriendPresenter(friendFragment);
+        mPresenter = new FriendPresenter(
+                friendFragment,
+                FriendRepository.getInstance(FriendLocalDataSource.getInstance(getApplicationContext()))
+        );
+
     }
 
 
