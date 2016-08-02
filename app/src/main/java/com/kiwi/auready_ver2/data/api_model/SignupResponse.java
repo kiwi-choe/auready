@@ -7,6 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class SignupResponse {
 
+    // User info
     @SerializedName("email")
     private String email;
     @SerializedName("name")

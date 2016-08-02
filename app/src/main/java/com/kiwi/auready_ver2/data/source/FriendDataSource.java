@@ -4,12 +4,12 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
 
+import java.util.List;
+
 /**
  * Created by kiwi on 7/1/16.
  */
 public interface FriendDataSource {
-
-    void saveFriend(@NonNull Friend friend);
 
     interface GetFriendCallback {
 
@@ -18,6 +18,14 @@ public interface FriendDataSource {
     }
 
     void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback);
+
+    interface SaveFriendsCallback {
+
+        void onFriendsSaved(List<Friend> friends);
+        void onDataNotAvailable();
+    }
+
+    void saveFriends(@NonNull SaveFriendsCallback callback);
 
 //    void getFriends(@NonNull LoadFriendsCallback callback);
 //

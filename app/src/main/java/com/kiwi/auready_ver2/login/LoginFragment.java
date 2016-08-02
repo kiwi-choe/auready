@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
@@ -68,7 +67,7 @@ public class LoginFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mLoginPresenter = new LoginPresenter(this);
+        mLoginPresenter = new LoginPresenter(useCaseHandler, this, saveFriends);
     }
 
     @Override

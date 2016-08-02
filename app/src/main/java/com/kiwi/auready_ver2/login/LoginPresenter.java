@@ -4,12 +4,17 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.UseCaseHandler;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
+import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.util.LoginUtil;
 
+import java.util.List;
 import java.util.regex.Matcher;
 
 import retrofit2.Call;
@@ -25,7 +30,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     private final LoginContract.View mLoginView;
 
-    public LoginPresenter(LoginContract.View loginView) {
+    public LoginPresenter(UseCaseHandler useCaseHandler, LoginContract.View loginView, SaveFriends saveFriends) {
         mLoginView = loginView;
     }
 
@@ -84,11 +89,11 @@ public class LoginPresenter implements LoginContract.Presenter {
                 email,
                 password);
 
-        Call<TokenInfo> call = loginService.login(newCredentials);
-        call.enqueue(new Callback<TokenInfo>() {
+        Call<LoginResponse> call = loginService.login(newCredentials);
+        call.enqueue(new Callback<LoginResponse>() {
 
             @Override
-            public void onResponse(Call<TokenInfo> call, Response<TokenInfo> response) {
+            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     // Save tokenInfo to sharedPreferences
                     onLoginSuccess(response.body(), email);
@@ -98,7 +103,7 @@ public class LoginPresenter implements LoginContract.Presenter {
             }
 
             @Override
-            public void onFailure(Call<TokenInfo> call, Throwable t) {
+            public void onFailure(Call<LoginResponse> call, Throwable t) {
 
                 Log.d("Exception in Signup: ", "Called OnFailure()", t);
                 onLoginFail(R.string.login_fail_message_onfailure);
@@ -107,8 +112,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void onLoginSuccess(TokenInfo tokenInfo, String loggedInEmail) {
-
+    public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail) {
         // Save tokenInfo to SharedPreferences
 
         // and send logged in email to MainView
@@ -118,5 +122,10 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void onLoginFail(int stringResource) {
         mLoginView.showLoginFailMessage(stringResource);
+    }
+
+    @Override
+    public void saveFriends(List<Friend> friends) {
+
     }
 }

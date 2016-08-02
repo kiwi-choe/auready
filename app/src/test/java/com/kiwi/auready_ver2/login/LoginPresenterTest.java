@@ -1,9 +1,15 @@
 package com.kiwi.auready_ver2.login;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.TestUseCaseScheduler;
+import com.kiwi.auready_ver2.UseCaseHandler;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
-import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
+import com.kiwi.auready_ver2.data.api_model.LoginResponse;
+import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 
 import junit.framework.Assert;
@@ -15,17 +21,18 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
-import retrofit2.Converter;
 
 import static org.mockito.Mockito.verify;
 
@@ -43,12 +50,15 @@ public class LoginPresenterTest {
     private MockRetrofit mockRetrofit;
     private Retrofit retrofit;
 
+    @Mock
+    private FriendRepository mFriendRepository;
+
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
 
-        mLoginPresenter = new LoginPresenter(mLoginView);
+        mLoginPresenter = new LoginPresenter(useCaseHandler, mLoginView, saveFriends);
 
         retrofit = new Retrofit.Builder().baseUrl(IBaseUrl.BASE_URL)
                 .client(new OkHttpClient())
@@ -72,7 +82,7 @@ public class LoginPresenterTest {
         // Request login to Server
         mLoginPresenter.requestLogin(email, password);
 
-        Response<TokenInfo> loginResponse = null;
+        Response<LoginResponse> loginResponse = null;
         try {
             loginResponse = executeMockLoginService(email, password);
         } catch (IOException e) {
@@ -85,14 +95,14 @@ public class LoginPresenterTest {
 
             mLoginPresenter.onLoginSuccess(loginResponse.body(), email);
 
-            Assert.assertEquals("access token1", loginResponse.body().getAccessToken());
-            Assert.assertEquals("token type1", loginResponse.body().getTokenType());
+            Assert.assertEquals("access token1", loginResponse.body().getTokenInfo().getAccessToken());
+            Assert.assertEquals("token type1", loginResponse.body().getTokenInfo().getTokenType());
 
             verify(mLoginView).setLoginSuccessUI(email);
         }
     }
 
-    private Response<TokenInfo> executeMockLoginService(String email, String password) throws IOException {
+    private Response<LoginResponse> executeMockLoginService(String email, String password) throws IOException {
 
         BehaviorDelegate<ILoginService> delegate = mockRetrofit.create(ILoginService.class);
         ILoginService mockLoginService = new MockLoginService(delegate);
@@ -103,8 +113,8 @@ public class LoginPresenterTest {
                 ClientCredential.GRANT_TYPE,
                 email,
                 password);
-        Call<TokenInfo> loginCall = mockLoginService.login(newCredentials);
-        Response<TokenInfo> loginResponse = loginCall.execute();
+        Call<LoginResponse> loginCall = mockLoginService.login(newCredentials);
+        Response<LoginResponse> loginResponse = loginCall.execute();
 
         return loginResponse;
     }
@@ -119,7 +129,7 @@ public class LoginPresenterTest {
 
         mLoginPresenter.requestLogin(email, password);
 
-        Response<TokenInfo> loginResponse = null;
+        Response<LoginResponse> loginResponse = null;
         try {
             loginResponse = executeMockFailedSignupService(email, password);
         } catch (IOException e) {
@@ -143,7 +153,7 @@ public class LoginPresenterTest {
         }
     }
 
-    private Response<TokenInfo> executeMockFailedSignupService(String email, String password) throws IOException {
+    private Response<LoginResponse> executeMockFailedSignupService(String email, String password) throws IOException {
 
         BehaviorDelegate<ILoginService> delegate = mockRetrofit.create(ILoginService.class);
         MockFailedLoginService mockFailedLoginService = new MockFailedLoginService(delegate);
@@ -154,10 +164,44 @@ public class LoginPresenterTest {
                 ClientCredential.GRANT_TYPE,
                 email,
                 password);
-        Call<TokenInfo> loginCall = mockFailedLoginService.login(newCredentials);
-        Response<TokenInfo> loginResponse = loginCall.execute();
+        Call<LoginResponse> loginCall = mockFailedLoginService.login(newCredentials);
+        Response<LoginResponse> loginResponse = loginCall.execute();
 
         return loginResponse;
     }
 
+    @Test
+    public void saveFriends_whenLoginIsSucceeded() {
+/*
+******** can be tested in LoginView
+
+        // Create the email of loginInfo stub
+        String email = "dd@gmail.com";
+
+        // Create the TokenInfo and Friends stubs for LoginResponse
+        TokenInfo tokenInfo = new TokenInfo("access token1", "token type1");
+        List<Friend> friends = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
+        LoginResponse loginSuccessResponse = new LoginResponse(tokenInfo, friends);
+
+        // When Login is succeeded
+        mLoginPresenter.onLoginSuccess(loginSuccessResponse, email);
+*/
+        // Get a reference to the class under test
+        mLoginPresenter = givenLoginPresenter();
+
+        // Create the Friends stub
+        List<Friend> friends = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
+        // Save Friends of the logged in user
+        mLoginPresenter.saveFriends(friends);
+
+
+    }
+
+    private LoginPresenter givenLoginPresenter() {
+
+        UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
+        SaveFriends saveFriends = new SaveFriends(mFriendRepository);
+
+        return new LoginPresenter(useCaseHandler, mLoginView, saveFriends);
+    }
 }

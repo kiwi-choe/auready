@@ -16,7 +16,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -51,7 +50,7 @@ public class FriendPresenterTest {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetFriend getFriend = new GetFriend(mFriendRepository);
-        // SaveFriend
+        // SaveFriends
 
         return new FriendPresenter(useCaseHandler, mFriendView, getFriend);
     }

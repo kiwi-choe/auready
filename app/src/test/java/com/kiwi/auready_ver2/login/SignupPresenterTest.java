@@ -185,22 +185,4 @@ public class SignupPresenterTest {
         }
     }
 
-    @Test
-    public void saveFriend_whenSignupIsSucceeded() {
-
-        // Create the signupInfo stub
-        String email = "dd@gmail.com";
-        String name = "nameOfdd";
-
-        mSignupPresenter.onSignupSuccess(name);
-
-        // Create new Friend object from SignupResponse
-        Friend newFriend = new Friend(email, name);
-
-        // Save a new Friend
-        mSignupPresenter.saveFriend(newFriend);
-        // save newFriend to repository
-//        verify(mR)
-    }
-
 }

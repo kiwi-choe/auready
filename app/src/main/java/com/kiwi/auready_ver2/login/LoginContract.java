@@ -1,6 +1,10 @@
 package com.kiwi.auready_ver2.login;
 
+import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+
+import java.util.List;
 
 /**
  * Created by kiwi on 6/11/16.
@@ -28,8 +32,10 @@ public interface LoginContract {
 
         void requestLogin(String email, String password);
 
-        void onLoginSuccess(TokenInfo tokenInfo, String loggedInEmail);
+        void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail);
 
         void onLoginFail(int stringResource);
+
+        void saveFriends(List<Friend> friends);
     }
 }
