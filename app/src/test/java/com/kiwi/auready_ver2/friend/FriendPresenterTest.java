@@ -1,28 +1,23 @@
 package com.kiwi.auready_ver2.friend;
 
 import com.google.common.collect.Lists;
+import com.kiwi.auready_ver2.TestUseCaseScheduler;
+import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.FriendDataSource.LoadFriendsCallback;
-import com.kiwi.auready_ver2.data.FriendRepository;
-
-import junit.framework.Assert;
+import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.login.domain.usecase.GetFriend;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNotSame;
 import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -40,19 +35,25 @@ public class FriendPresenterTest {
     @Mock
     private FriendRepository mFriendRepository;
 
-    @Captor
-    private ArgumentCaptor<LoadFriendsCallback> mLoadFriendCallbackCaptor;
 
     @Before
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
 
-
-        mFriendPresenter = new FriendPresenter(mFriendView, mFriendRepository);
+        mFriendPresenter = givenFriendPresenter();
 
         // We start the friends to 3.
-        FRIENDS = Lists.newArrayList(new Friend("aa"), new Friend("bb"), new Friend("cc"));
+        FRIENDS = Lists.newArrayList(new Friend("aa", "name1"), new Friend("bb", "name2"), new Friend("cc", "name3"));
+    }
+
+    private FriendPresenter givenFriendPresenter() {
+
+        UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
+        GetFriend getFriend = new GetFriend(mFriendRepository);
+        // SaveFriend
+
+        return new FriendPresenter(useCaseHandler, mFriendView, getFriend);
     }
 
     @Test
@@ -63,26 +64,12 @@ public class FriendPresenterTest {
         mFriendPresenter.loadFriends();
 
         // Callback is captured and invoked with stubbed friends
-        verify(mFriendRepository).getFriends(mLoadFriendCallbackCaptor.capture());
-        mLoadFriendCallbackCaptor.getValue().onFriendsLoaded(FRIENDS);
+//        verify(mFriendRepository).getFriends(mLoadFriendCallbackCaptor.capture());
+//        mLoadFriendCallbackCaptor.getValue().onFriendsLoaded(FRIENDS);
 
         ArgumentCaptor<List> showFriendsArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mFriendView).showFriends(showFriendsArgumentCaptor.capture());
         assertTrue(showFriendsArgumentCaptor.getValue().size() == 3);
-    }
-
-    @Test
-    public void deleteFriendFromRepository() {
-
-        // Given a friend in the repository
-        Friend friend = new Friend("email1");
-        mFriendRepository.saveFriend(friend);
-        assertNotSame("", friend.getId());
-
-        mFriendPresenter.deleteFriend(friend.getId());
-
-        verify(mFriendRepository).deleteFriend(friend.getId());
-        verify(mFriendView).showFriendDeleted();
     }
 
 }

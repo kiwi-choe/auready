@@ -6,21 +6,23 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class LoginFragment extends Fragment implements
         LoginContract.View,
-        View.OnClickListener {
+        View.OnClickListener,
+        LoginActivity.LoginActivityListener {
+
+    public static final String TAG_LOGINFRAGMENT = "Tag_LoginFragment";
 
     private EditText mEmail;
     private EditText mPassword;
@@ -38,12 +40,12 @@ public class LoginFragment extends Fragment implements
         return new LoginFragment();
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_login, container, false);
-
         mEmail = (EditText) root.findViewById(R.id.ed_email);
         mPassword = (EditText) root.findViewById(R.id.ed_password);
 
@@ -89,7 +91,7 @@ public class LoginFragment extends Fragment implements
 
         // Send result OK and the logged in email to TasksView
         Intent intent = new Intent();
-        intent.putExtra(LoginActivity.LOGGED_IN_EMAIL, loggedInEmail);
+        intent.putExtra(LoginActivity.REGISTERED_EMAIL, loggedInEmail);
 
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
@@ -126,7 +128,22 @@ public class LoginFragment extends Fragment implements
 
         // Create new fragment and transaction
         SignupFragment signupFragment = SignupFragment.newInstance();
-        ActivityUtils.replaceFragment(getFragmentManager(), signupFragment, R.id.content_frame);
+        ActivityUtils.replaceFragment(getFragmentManager(),
+                signupFragment, R.id.content_frame, SignupFragment.TAG_SIGNUPFRAGMENT);
     }
 
+
+    @Override
+    public void onSendData(final String registeredEmail) {
+        /*
+        * popBackStack of {@link FragmentManager}
+        * don't process rightly, put into enqueueAction once.
+        */
+        mEmail.post(new Runnable() {
+            @Override
+            public void run() {
+                mEmail.setText(registeredEmail);
+            }
+        });
+    }
 }

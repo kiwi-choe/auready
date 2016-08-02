@@ -1,7 +1,9 @@
 package com.kiwi.auready_ver2.login;
 
 import com.google.gson.Gson;
-import com.kiwi.auready_ver2.rest_service.ErrorResponse;
+import com.kiwi.auready_ver2.data.api_model.ClientCredential;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 
 import okhttp3.MediaType;
@@ -21,13 +23,13 @@ public class MockFailedLoginService {
         this.delegate = delegate;
     }
 
-    public Call<TokenInfo> login(ClientCredentials clientCredentials) {
+    public Call<TokenInfo> login(ClientCredential clientCredential) {
 
         ErrorResponse error = new ErrorResponse(404, "login failed");
         Gson gson = new Gson();
         String json = gson.toJson(error);
         Response response = Response.error(404, ResponseBody.create(MediaType.parse("application/json"), json));
 
-        return delegate.returning(Calls.response(response)).login(clientCredentials);
+        return delegate.returning(Calls.response(response)).login(clientCredential);
     }
 }

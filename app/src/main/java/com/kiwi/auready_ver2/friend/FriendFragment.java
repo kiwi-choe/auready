@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FriendFragment extends Fragment implements FriendContract.View {
 
+    public static final String TAG_FRIENDFRAGMENT = "TAG_FriendFragment";
+
     private FriendContract.Presenter mPresenter;
 
     private FriendsAdapter mListAdapter;

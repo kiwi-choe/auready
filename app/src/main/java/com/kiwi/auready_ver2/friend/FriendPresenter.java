@@ -3,9 +3,10 @@ package com.kiwi.auready_ver2.friend;
 import android.support.annotation.NonNull;
 
 import com.google.common.collect.Lists;
+import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.FriendDataSource;
-import com.kiwi.auready_ver2.data.FriendRepository;
+import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.login.domain.usecase.GetFriend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,36 +19,24 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class FriendPresenter implements FriendContract.Presenter {
 
     // We start the friends to 3.
-    private static ArrayList<Friend> FRIENDS = Lists.newArrayList(new Friend("aa"), new Friend("bb"), new Friend("cc"));
+    private static ArrayList<Friend> FRIENDS = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
 
     private final FriendContract.View mFriendView;
+    private final UseCaseHandler mUseCaseHandler;
 
     private FriendRepository mFriendRepository;
 
-    public FriendPresenter(@NonNull FriendContract.View friendView, @NonNull FriendRepository friendRepository) {
-
+    public FriendPresenter(@NonNull UseCaseHandler useCaseHandler,
+                           @NonNull FriendContract.View friendView,
+                           @NonNull GetFriend getFriend) {
+        mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mFriendView = checkNotNull(friendView, "friendView cannot be null");
-
-        mFriendRepository = checkNotNull(friendRepository, "friendRepository cannot be null");
 
         mFriendView.setPresenter(this);
     }
 
     @Override
     public void loadFriends() {
-
-        mFriendRepository.getFriends(new FriendDataSource.LoadFriendsCallback() {
-            @Override
-            public void onFriendsLoaded(List<Friend> friends) {
-
-                processFriends(friends);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-
-            }
-        });
     }
 
     @Override
@@ -57,8 +46,7 @@ public class FriendPresenter implements FriendContract.Presenter {
 
     @Override
     public void deleteFriend(String requestedFriendId) {
-        mFriendRepository.deleteFriend(requestedFriendId);
-    }
+     }
 
     private void processFriends(List<Friend> friends) {
 

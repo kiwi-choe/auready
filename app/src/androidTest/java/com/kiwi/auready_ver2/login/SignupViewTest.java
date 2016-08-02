@@ -37,6 +37,10 @@ public class SignupViewTest {
     * */
     @Test
     public void clickSignupWithInvalidFormatEmail_showEmailFormatError() {
+
+        // Replace SignupView
+        onView(withId(R.id.bt_signup_open)).perform(click());
+
         // Try to signup with wrong email
         String editWrongEmail = "wrong email";
         onView(withId(R.id.ed_signup_email))

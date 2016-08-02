@@ -1,20 +1,12 @@
 package com.kiwi.auready_ver2.login;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.rest_service.ISignupService;
-import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
-import com.kiwi.auready_ver2.rest_service.SignupInfo;
-import com.kiwi.auready_ver2.rest_service.SignupResponse;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.util.LoginUtil;
 
 import java.util.regex.Matcher;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by kiwi on 7/12/16.
@@ -22,6 +14,8 @@ import retrofit2.Response;
 public class SignupPresenter implements SignupContract.Presenter {
 
     private static final String TAG = "TAG_SignupPresenter";
+    private static final String EMAIL_TOKEN = "@";
+
     private final SignupContract.View mSignupView;
 
     public SignupPresenter(SignupContract.View signupView) {
@@ -56,37 +50,50 @@ public class SignupPresenter implements SignupContract.Presenter {
     }
 
     @Override
-    public void attemptSignup(String email, String password) {
+    public void attemptSignup(String email, String password, String name) {
 
-        if(validateEmail(email) && validatePassword(password))
-            requestSignup(email, password);
+        if(validateEmail(email) && validatePassword(password)) {
+
+            // Check that edName has string name
+            if(name.isEmpty()) {
+                String[] result = email.split(EMAIL_TOKEN);
+                name = result[0];
+            }
+            requestSignup(email, password, name);
+        }
     }
 
     @Override
-    public void requestSignup(String email, String password) {
-        SignupInfo signupInfo = new SignupInfo(email, password);
+    public void requestSignup(String email, String password, String name) {
+        // FIXME: 7/13/16 for test, this is the stub to success signup process.
+        onSignupSuccess(email);
 
-        ISignupService signupService =
-                ServiceGenerator.createService(ISignupService.class);
+        // this stub is for signupFail process.
+//        onSignupFail(R.string.signup_fail_message_404);
 
-        Call<SignupResponse> call = signupService.signupLocal(signupInfo);
-        call.enqueue(new Callback<SignupResponse>() {
-            @Override
-            public void onResponse(Call<SignupResponse> call, Response<SignupResponse> response) {
-
-                if(response.isSuccessful()) {
-                    onSignupSuccess(response.body().getEmail());
-                } else if(response.code() == R.integer.signup_fail_code_404) {
-                    onSignupFail(R.string.signup_fail_message_404);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SignupResponse> call, Throwable t) {
-                Log.d(TAG, "Signup is failed: " + t.getMessage());
-                onSignupFail(R.string.signup_fail_message);
-            }
-        });
+//        SignupInfo signupInfo = new SignupInfo(email, password);
+//
+//        ISignupService signupService =
+//                ServiceGenerator.createService(ISignupService.class);
+//
+//        Call<SignupResponse> call = signupService.signupLocal(signupInfo);
+//        call.enqueue(new Callback<SignupResponse>() {
+//            @Override
+//            public void onResponse(Call<SignupResponse> call, Response<SignupResponse> response) {
+//
+//                if(response.isSuccessful()) {
+//                    onSignupSuccess(response.body().getEmail());
+//                } else if(response.code() == R.integer.signup_fail_code_404) {
+//                    onSignupFail(R.string.signup_fail_message_404);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<SignupResponse> call, Throwable t) {
+//                Log.d(TAG, "Signup is failed: " + t.getMessage());
+//                onSignupFail(R.string.signup_fail_message);
+//            }
+//        });
     }
 
     @Override
@@ -96,7 +103,7 @@ public class SignupPresenter implements SignupContract.Presenter {
 
     @Override
     public void onSignupFail(int resourceId) {
-        mSignupView.setSignupFailMessage(resourceId);
+        mSignupView.showSignupFailMessage(resourceId);
     }
 
     @Override
@@ -107,5 +114,10 @@ public class SignupPresenter implements SignupContract.Presenter {
     @Override
     public void onPasswordError(int resourceId) {
         mSignupView.showPasswordError(resourceId);
+    }
+
+    @Override
+    public void saveFriend(Friend newFriend) {
+
     }
 }

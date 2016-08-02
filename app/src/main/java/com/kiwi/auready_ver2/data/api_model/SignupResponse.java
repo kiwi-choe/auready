@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.rest_service;
+package com.kiwi.auready_ver2.data.api_model;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -9,13 +9,19 @@ public class SignupResponse {
 
     @SerializedName("email")
     private String email;
+    @SerializedName("name")
+    private String name;
 
-
-    public SignupResponse(String email) {
+    public  SignupResponse(String email, String name) {
         this.email = email;
+        this.name = name;
     }
 
     public String getEmail() {
         return email;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

@@ -1,7 +1,9 @@
 package com.kiwi.auready_ver2.login;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.rest_service.ErrorResponse;
+import com.kiwi.auready_ver2.data.api_model.ClientCredential;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 
 import junit.framework.Assert;
@@ -30,7 +32,7 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by kiwi on 6/12/16.
  */
-public class LoginPresenter_LoginTest {
+public class LoginPresenterTest {
 
 
     private LoginPresenter mLoginPresenter;
@@ -96,9 +98,9 @@ public class LoginPresenter_LoginTest {
         ILoginService mockLoginService = new MockLoginService(delegate);
 
         // Create the loginInfo stub
-        ClientCredentials newCredentials = new ClientCredentials(
-                ClientCredentials.CLIENT_ID,
-                ClientCredentials.GRANT_TYPE,
+        ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_ID,
+                ClientCredential.GRANT_TYPE,
                 email,
                 password);
         Call<TokenInfo> loginCall = mockLoginService.login(newCredentials);
@@ -147,9 +149,9 @@ public class LoginPresenter_LoginTest {
         MockFailedLoginService mockFailedLoginService = new MockFailedLoginService(delegate);
 
         // Create the loginInfo stub
-        ClientCredentials newCredentials = new ClientCredentials(
-                ClientCredentials.CLIENT_ID,
-                ClientCredentials.GRANT_TYPE,
+        ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_ID,
+                ClientCredential.GRANT_TYPE,
                 email,
                 password);
         Call<TokenInfo> loginCall = mockFailedLoginService.login(newCredentials);
@@ -157,6 +159,5 @@ public class LoginPresenter_LoginTest {
 
         return loginResponse;
     }
-
 
 }

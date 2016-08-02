@@ -17,21 +17,21 @@ public class ActivityUtils {
     * The operation is performed by the fragmentManager.
     * */
     public static void addFragmentToActivity(@NonNull FragmentManager fragmentManager,
-                                             @NonNull Fragment fragment, int frameId) {
+                                             @NonNull Fragment fragment, int frameId, String tag) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(frameId, fragment);
+        transaction.add(frameId, fragment, tag);
         transaction.commit();
     }
 
     public static void replaceFragment(@NonNull FragmentManager fragmentManager,
-                                       @NonNull Fragment fragment, int frameId) {
+                                       @NonNull Fragment fragment, int frameId, String tag) {
         checkNotNull(fragmentManager);
         checkNotNull(fragment);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(frameId, fragment);
+        transaction.replace(frameId, fragment, tag);
         transaction.addToBackStack(null);
 
         transaction.commit();

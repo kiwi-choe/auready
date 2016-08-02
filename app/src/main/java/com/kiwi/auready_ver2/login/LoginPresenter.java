@@ -4,6 +4,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.api_model.ClientCredential;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.util.LoginUtil;
@@ -76,9 +78,9 @@ public class LoginPresenter implements LoginContract.Presenter {
         ILoginService loginService =
                 ServiceGenerator.createService(ILoginService.class);
 
-        ClientCredentials newCredentials = new ClientCredentials(
-                ClientCredentials.CLIENT_ID,
-                ClientCredentials.GRANT_TYPE,
+        ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_ID,
+                ClientCredential.GRANT_TYPE,
                 email,
                 password);
 

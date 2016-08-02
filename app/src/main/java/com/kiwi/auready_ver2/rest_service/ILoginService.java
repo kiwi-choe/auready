@@ -1,7 +1,7 @@
 package com.kiwi.auready_ver2.rest_service;
 
-import com.kiwi.auready_ver2.login.ClientCredentials;
-import com.kiwi.auready_ver2.login.TokenInfo;
+import com.kiwi.auready_ver2.data.api_model.ClientCredential;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -13,5 +13,5 @@ import retrofit2.http.POST;
 public interface ILoginService {
 
     @POST("/oauth2/token")
-    Call<TokenInfo> login(@Body ClientCredentials clientCredentials);
+    Call<TokenInfo> login(@Body ClientCredential clientCredential);
 }

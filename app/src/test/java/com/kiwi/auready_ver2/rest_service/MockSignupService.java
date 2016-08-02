@@ -1,5 +1,8 @@
 package com.kiwi.auready_ver2.rest_service;
 
+import com.kiwi.auready_ver2.data.api_model.SignupInfo;
+import com.kiwi.auready_ver2.data.api_model.SignupResponse;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.mock.BehaviorDelegate;
@@ -17,7 +20,7 @@ public class MockSignupService implements ISignupService {
 
     @Override
     public Call<SignupResponse> signupLocal(@Body SignupInfo signupInfo) {
-        SignupResponse response = new SignupResponse(SignupMockAdapterTest.STUB_EMAIL);
+        SignupResponse response = new SignupResponse(SignupMockAdapterTest.STUB_EMAIL, SignupMockAdapterTest.STUB_NAME);
         return delegate.returningResponse(response).signupLocal(signupInfo);
     }
 }

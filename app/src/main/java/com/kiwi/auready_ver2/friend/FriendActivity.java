@@ -1,18 +1,12 @@
 package com.kiwi.auready_ver2.friend;
 
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
+import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.FriendDataSource;
-import com.kiwi.auready_ver2.data.FriendRepository;
-import com.kiwi.auready_ver2.data.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class FriendActivity extends AppCompatActivity {
@@ -38,13 +32,14 @@ public class FriendActivity extends AppCompatActivity {
         if (friendFragment == null) {
             friendFragment = FriendFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), friendFragment, R.id.content_frame);
+                    getSupportFragmentManager(), friendFragment, R.id.content_frame, FriendFragment.TAG_FRIENDFRAGMENT);
         }
 
         // Create Presenter
         mPresenter = new FriendPresenter(
+                Injection.provideUseCaseHandler(),
                 friendFragment,
-                FriendRepository.getInstance(FriendLocalDataSource.getInstance(getApplicationContext()))
+                Injection.provideGetFriend(getApplicationContext())
         );
 
     }

@@ -66,7 +66,7 @@ public class TasksActivity extends AppCompatActivity
         if (tasksFragment == null) {
             tasksFragment = TasksFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.content_frame);
+                    getSupportFragmentManager(), tasksFragment, R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
         }
 
         // Create the presenter

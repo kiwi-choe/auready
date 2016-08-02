@@ -28,7 +28,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         if(LoginActivity.REQ_LOGIN == requestCode
                 && Activity.RESULT_OK == resultCode) {
 
-            mTasksView.setLoginSuccessUI(data.getStringExtra(LoginActivity.LOGGED_IN_EMAIL));
+            mTasksView.setLoginSuccessUI(data.getStringExtra(LoginActivity.REGISTERED_EMAIL));
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.data.local;
+package com.kiwi.auready_ver2.data.source.local;
 
 /**
  * The contract used for the db to save tables locally.
@@ -14,5 +14,6 @@ public final class PersistenceContract {
         public static final String TABLE_NAME = "friend";
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_EMAIL = "email";
+        public static final String COLUMN_NAME = "name";
     }
 }

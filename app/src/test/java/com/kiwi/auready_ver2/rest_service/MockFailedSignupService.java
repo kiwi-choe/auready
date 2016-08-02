@@ -1,6 +1,9 @@
 package com.kiwi.auready_ver2.rest_service;
 
 import com.google.gson.Gson;
+import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
+import com.kiwi.auready_ver2.data.api_model.SignupInfo;
+import com.kiwi.auready_ver2.data.api_model.SignupResponse;
 
 import okhttp3.MediaType;
 import okhttp3.ResponseBody;

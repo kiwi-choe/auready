@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.data.local;
+package com.kiwi.auready_ver2.data.source.local;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,7 +21,8 @@ public class SQLiteDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_FRIEND_TABLE =
             "CREATE TABLE IF NOT EXISTS " + PersistenceContract.FriendEntry.TABLE_NAME + " (" +
                     PersistenceContract.FriendEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
-                    PersistenceContract.FriendEntry.COLUMN_EMAIL + TEXT_TYPE +
+                    PersistenceContract.FriendEntry.COLUMN_EMAIL + TEXT_TYPE + COMMA_SEP +
+                    PersistenceContract.FriendEntry.COLUMN_NAME + TEXT_TYPE +
                     " )";
 
     public SQLiteDbHelper(Context context) {

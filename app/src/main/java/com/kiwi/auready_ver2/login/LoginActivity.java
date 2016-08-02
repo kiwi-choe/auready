@@ -1,10 +1,12 @@
 package com.kiwi.auready_ver2.login;
 
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.widget.EditText;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
@@ -13,7 +15,11 @@ public class LoginActivity extends AppCompatActivity implements
         SignupFragment.SignupFragmentListener {
 
     public static final int REQ_LOGIN = 1;
-    public static final String LOGGED_IN_EMAIL = "logged in email";
+    public static final String REGISTERED_EMAIL = "registeredEmail";
+
+
+    // interface
+    private LoginActivityListener mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +37,15 @@ public class LoginActivity extends AppCompatActivity implements
         if (loginFragment == null) {
             loginFragment = LoginFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    loginFragment, R.id.content_frame);
+                    loginFragment, R.id.content_frame, LoginFragment.TAG_LOGINFRAGMENT);
+        }
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if (fragment instanceof LoginFragment) {
+            mListener = (LoginActivityListener) fragment;
         }
     }
 
@@ -49,9 +63,24 @@ public class LoginActivity extends AppCompatActivity implements
     * */
     @Override
     public void onSignupSuccess(String email) {
-        // todo. Send email data to LoginFragment
 
+        // pop LoginFragment in backStack
+        getSupportFragmentManager().popBackStack();
+
+        // todo. Send email data to LoginFragment
+        LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(LoginFragment.TAG_LOGINFRAGMENT);
+        if (loginFragment == null) {
+            loginFragment = LoginFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
+                    loginFragment, R.id.content_frame, LoginFragment.TAG_LOGINFRAGMENT);
+        }
+
+        mListener = loginFragment;
+        mListener.onSendData(email);
     }
 
-
+    // Interface with LoginFragment
+    public interface LoginActivityListener {
+        void onSendData(String registeredEmail);
+    }
 }

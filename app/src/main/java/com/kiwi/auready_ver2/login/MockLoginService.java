@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.login;
 
+import com.kiwi.auready_ver2.data.api_model.ClientCredential;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 
 import retrofit2.Call;
@@ -18,8 +20,8 @@ public class MockLoginService implements ILoginService {
     }
 
     @Override
-    public Call<TokenInfo> login(@Body ClientCredentials clientCredentials) {
+    public Call<TokenInfo> login(@Body ClientCredential clientCredential) {
         TokenInfo tokenInfo = new TokenInfo("access token1", "token type1");
-        return delegate.returningResponse(tokenInfo).login(clientCredentials);
+        return delegate.returningResponse(tokenInfo).login(clientCredential);
     }
 }

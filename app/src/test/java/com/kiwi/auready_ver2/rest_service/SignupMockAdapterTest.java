@@ -1,5 +1,8 @@
 package com.kiwi.auready_ver2.rest_service;
 
+import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
+import com.kiwi.auready_ver2.data.api_model.SignupInfo;
+import com.kiwi.auready_ver2.data.api_model.SignupResponse;
 import com.kiwi.auready_ver2.login.IBaseUrl;
 
 import org.junit.Assert;
@@ -25,6 +28,7 @@ import retrofit2.Converter;
 public class SignupMockAdapterTest {
 
     public static final String STUB_EMAIL = "dd@gmail.com";
+    public static final String STUB_NAME = "nameOfdd";
 
     private MockRetrofit mockRetrofit;
     private Retrofit retrofit;

@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.login;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,14 +9,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 
 
 public class SignupFragment extends Fragment implements
         SignupContract.View {
+
+    public static final String TAG_SIGNUPFRAGMENT = "Tag_SignupFragment";
 
     private EditText mEmail;
     private EditText mPassword;
@@ -62,9 +67,17 @@ public class SignupFragment extends Fragment implements
         mBtSignupComplete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // Close SoftKeyboard to show Snackbar
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                if(getView() != null) {
+                    imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                }
+
                 mSignupPresenter.attemptSignup(
                         mEmail.getText().toString(),
-                        mPassword.getText().toString()
+                        mPassword.getText().toString(),
+                        mName.getText().toString()
                 );
             }
         });
@@ -85,12 +98,11 @@ public class SignupFragment extends Fragment implements
             mListener.onSignupSuccess(email);
         }
 
-        // pop LoginFragment in backStack
-        getFragmentManager().popBackStack();
     }
 
     @Override
-    public void setSignupFailMessage(int resourceId) {
+    public void showSignupFailMessage(int resourceId) {
+
         Snackbar.make(getView(), getString(resourceId), Snackbar.LENGTH_SHORT).show();
     }
 

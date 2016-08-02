@@ -22,6 +22,14 @@ android {
             debuggable true
         }
     }
+
+    // If you need to add more flavors, consider using flavor dimensions.
+    productFlavors {
+        mock {
+            applicationIdSuffix = ".mock"
+        }
+    }
+
     testOptions {
         unitTests {
             returnDefaultValues = true

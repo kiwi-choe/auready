@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.login;
 
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+
 /**
  * Created by kiwi on 6/11/16.
  */
