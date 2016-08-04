@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 
+import java.util.List;
+
 /**
  * Created by kiwi on 7/19/16.
  */
@@ -24,13 +26,23 @@ public class FriendRemoteDataSource implements FriendDataSource {
     /*
     * Not save, update Friend to remote database
     * */
+//    @Override
+//    public void saveFriend(@NonNull Friend friend) {
+//
+//    }
+
     @Override
-    public void saveFriend(@NonNull Friend friend) {
+    public void getFriends(@NonNull LoadFriendsCallback callback) {
 
     }
 
     @Override
     public void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback) {
+
+    }
+
+    @Override
+    public void saveFriends(List<Friend> friends) {
 
     }
 }

@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.data.source;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Friend;
 
 import org.junit.After;
@@ -8,6 +9,9 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -52,16 +56,15 @@ public class FriendRepositoryTest {
     }
 
     @Test
-    public void saveFriend_savesFriendToServiceAPI() {
-        // Given a stub friend with email and name
-        String stubEmail = "aa@aa.com";
-        String stubName = "nameOfaa";
-        Friend newFriend = new Friend(stubEmail, stubName);
+    public void saveFriends() {
+        // Given a stub friend list
+        List<Friend> friends = Lists.newArrayList(
+                new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
 
-        mFriendRepository.saveFriend(newFriend);
+        // When friends are saved to the friend repository
+        mFriendRepository.saveFriends(friends);
 
-        // Then the service API and persistent repository are called
-        verify(mFriendRemoteDataSource).saveFriend(newFriend);
-        verify(mFriendLocalDataSource).saveFriend(newFriend);
+        // Then thes persistent repository are called
+        verify(mFriendLocalDataSource).saveFriends(friends);
     }
 }

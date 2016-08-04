@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
 
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -37,11 +39,16 @@ public class FriendRepository implements FriendDataSource {
     }
 
 
+    @Override
+    public void getFriends(@NonNull LoadFriendsCallback callback) {
+
+    }
+
     /*
-    * Gets friend from local data source(sqlite) unless the table is new or empty.
-    * In that case it uses the network data source. This is done to simplify the sample.
-    * Note: {@link LoadFriendsCallback()#onDataNotAvailable()} is fired if both data sources fail to get the data.
-    * */
+        * Gets friend from local data source(sqlite) unless the table is new or empty.
+        * In that case it uses the network data source. This is done to simplify the sample.
+        * Note: {@link LoadFriendsCallback()#onDataNotAvailable()} is fired if both data sources fail to get the data.
+        * */
     @Override
     public void getFriend(@NonNull String friendColumnId, @NonNull final GetFriendCallback callback) {
         checkNotNull(friendColumnId);
@@ -64,9 +71,10 @@ public class FriendRepository implements FriendDataSource {
     }
 
     @Override
-    public void saveFriend(@NonNull Friend friend) {
-        checkNotNull(friend);
-        mFriendRemoteDataSource.saveFriend(friend);
-        mFriendsLocalDataSource.saveFriend(friend);
+    public void saveFriends(List<Friend> friends) {
+
+        if(friends.size() != 0) {
+            mFriendsLocalDataSource.saveFriends(friends);
+        }
     }
 }

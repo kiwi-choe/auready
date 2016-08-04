@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.login;
 import android.text.TextUtils;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.util.LoginUtil;
 
 import java.util.regex.Matcher;
@@ -14,7 +13,6 @@ import java.util.regex.Matcher;
 public class SignupPresenter implements SignupContract.Presenter {
 
     private static final String TAG = "TAG_SignupPresenter";
-    private static final String EMAIL_TOKEN = "@";
 
     private final SignupContract.View mSignupView;
 
@@ -56,7 +54,7 @@ public class SignupPresenter implements SignupContract.Presenter {
 
             // Check that edName has string name
             if(name.isEmpty()) {
-                String[] result = email.split(EMAIL_TOKEN);
+                String[] result = email.split(LoginUtil.EMAIL_TOKEN);
                 name = result[0];
             }
             requestSignup(email, password, name);
@@ -66,7 +64,7 @@ public class SignupPresenter implements SignupContract.Presenter {
     @Override
     public void requestSignup(String email, String password, String name) {
         // FIXME: 7/13/16 for test, this is the stub to success signup process.
-        onSignupSuccess(email);
+        onSignupSuccess(email, name);
 
         // this stub is for signupFail process.
 //        onSignupFail(R.string.signup_fail_message_404);
@@ -97,8 +95,8 @@ public class SignupPresenter implements SignupContract.Presenter {
     }
 
     @Override
-    public void onSignupSuccess(String email) {
-        mSignupView.setSignupSuccessUI(email);
+    public void onSignupSuccess(String email, String name) {
+        mSignupView.setSignupSuccessUI(email, name);
     }
 
     @Override
@@ -116,8 +114,4 @@ public class SignupPresenter implements SignupContract.Presenter {
         mSignupView.showPasswordError(resourceId);
     }
 
-    @Override
-    public void saveFriend(Friend newFriend) {
-
-    }
 }

@@ -118,8 +118,10 @@ public class SignupPresenterTest {
         // Succeed to request signup
         if (signupResponse != null && signupResponse.isSuccessful()) {
 
-            mSignupPresenter.onSignupSuccess(signupResponse.body().getName());
-            verify(mSignupView, times(2)).setSignupSuccessUI(signupResponse.body().getName());
+            mSignupPresenter.onSignupSuccess(
+                    signupResponse.body().getEmail(), signupResponse.body().getName());
+            verify(mSignupView, times(2)).setSignupSuccessUI(
+                    signupResponse.body().getEmail(), signupResponse.body().getName());
         }
     }
 

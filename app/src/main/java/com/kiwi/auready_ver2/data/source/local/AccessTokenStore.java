@@ -30,7 +30,8 @@ public class AccessTokenStore {
     // Access Token info key
     private static final String ACCESS_TOKEN = "access_token";
     private static final String TOKEN_TYPE = "token_type";
-    private static final String  USER_NAME = "userName";
+    private static final String USER_NAME = "userName";
+    private static final String USER_EMAIL = "userEmail";
 
     public AccessTokenStore(Context context) {
         mPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -61,13 +62,14 @@ public class AccessTokenStore {
     }
 
     // Save Access token
-    public void save(TokenInfo tokenInfo, String userName) {
+    public void save(TokenInfo tokenInfo, String userName, String userEmail) {
         // Set login status, accessToken
         mEditor = mPref.edit();
         mEditor.putBoolean(IS_LOGIN, true);
         mEditor.putString(ACCESS_TOKEN, tokenInfo.getAccessToken());
         mEditor.putString(TOKEN_TYPE, tokenInfo.getTokenType());
         mEditor.putString(USER_NAME, userName);
+        mEditor.putString(USER_EMAIL, userEmail);
         // commit changes
         mEditor.apply();
         mEditor = null;

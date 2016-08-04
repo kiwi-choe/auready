@@ -111,7 +111,6 @@ public class LoginViewTest {
                 mLoginActivityTestRule.getActivity().getString(R.string.password_empty_err))));
     }
 
-
     @Test
     public void clickSignupButton_openSignupFragment() {
 

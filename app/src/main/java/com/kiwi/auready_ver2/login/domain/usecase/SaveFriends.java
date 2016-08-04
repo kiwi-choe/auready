@@ -25,9 +25,12 @@ public class SaveFriends extends UseCase<SaveFriends.RequestValues, SaveFriends.
     protected void executeUseCase(final RequestValues requestValues) {
 
         // Save friends
-        // * save friendList(save several friends on background, and when completed to save callback)
+        // * save friendList(save several friends on background,
+        // and when completed to save callback(overhead? don't need to check if saving is success??)
+        List<Friend> friendList = requestValues.getFriends();
+        mFriendRepository.saveFriends(friendList);
 
-        // Succeeded, return ResponseValue
+        getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {

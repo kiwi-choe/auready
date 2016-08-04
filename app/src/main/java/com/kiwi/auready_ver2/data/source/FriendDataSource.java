@@ -11,13 +11,17 @@ import java.util.List;
  */
 public interface FriendDataSource {
 
+    interface LoadFriendsCallback {
+
+        void onFriendsLoaded(List<Friend> friends);
+        void onDataNotAvailable();
+    }
+
     interface GetFriendCallback {
 
         void onFriendLoaded(Friend friend);
         void onDataNotAvailable();
     }
-
-    void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback);
 
     interface SaveFriendsCallback {
 
@@ -25,25 +29,9 @@ public interface FriendDataSource {
         void onDataNotAvailable();
     }
 
-    void saveFriends(@NonNull SaveFriendsCallback callback);
+    void getFriends(@NonNull LoadFriendsCallback callback);
 
-//    void getFriends(@NonNull LoadFriendsCallback callback);
-//
-//    void saveFriend(Friend friend);
-//
-//    void getFriend(String _id, GetFriendCallback getFriendCallback);
-//
-//    void deleteFriend(@NonNull String email);
-//
-//    interface LoadFriendsCallback {
-//
-//        void onFriendsLoaded(List<Friend> friends);
-//        void onDataNotAvailable();
-//    }
-//
-//    interface GetFriendCallback {
-//
-//        void onFriendLoaded(Friend friend);
-//        void onDataNotAvailable();
-//    }
+    void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback);
+
+    void saveFriends(@NonNull List<Friend> friends);
 }

@@ -77,8 +77,7 @@ public class SignupFragment extends Fragment implements
                 mSignupPresenter.attemptSignup(
                         mEmail.getText().toString(),
                         mPassword.getText().toString(),
-                        mName.getText().toString()
-                );
+                        mName.getText().toString());
             }
         });
     }
@@ -90,12 +89,12 @@ public class SignupFragment extends Fragment implements
     }
 
     @Override
-    public void setSignupSuccessUI(String email) {
+    public void setSignupSuccessUI(String email, String name) {
 
-        Snackbar.make(getView(), email + getString(R.string.signup_success_msg), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(getView(), name + getString(R.string.signup_success_msg), Snackbar.LENGTH_SHORT).show();
         // send email to LoginFragment
         if(mListener != null) {
-            mListener.onSignupSuccess(email);
+            mListener.onSignupSuccess(email, name);
         }
 
     }
@@ -133,6 +132,6 @@ public class SignupFragment extends Fragment implements
 
     // Interface with LoginActivity
     public interface SignupFragmentListener {
-        void onSignupSuccess(String email);
+        void onSignupSuccess(String email, String name);
     }
 }

@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
  */
 public class LoginUtil {
 
+    public static final String EMAIL_TOKEN = "@";
+
     // 이메일정규식
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);

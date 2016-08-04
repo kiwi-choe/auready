@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,8 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class LoginFragment extends Fragment implements
         LoginContract.View,
         View.OnClickListener,
@@ -25,11 +28,12 @@ public class LoginFragment extends Fragment implements
 
     private EditText mEmail;
     private EditText mPassword;
+    private EditText mName;
     private Button mBtLoginComplete;
     private TextView mBtSignupOpen;
     private Button mBtLogoutComplete;
 
-    private LoginContract.Presenter mLoginPresenter;
+    private LoginContract.Presenter mPresenter;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -47,6 +51,7 @@ public class LoginFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_login, container, false);
         mEmail = (EditText) root.findViewById(R.id.ed_email);
         mPassword = (EditText) root.findViewById(R.id.ed_password);
+        mName = (EditText) root.findViewById(R.id.ed_name);
 
         mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
         mBtSignupOpen = (TextView) root.findViewById(R.id.bt_signup_open);
@@ -67,7 +72,7 @@ public class LoginFragment extends Fragment implements
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mLoginPresenter = new LoginPresenter(useCaseHandler, this, saveFriends);
+
     }
 
     @Override
@@ -84,14 +89,12 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLoginSuccessUI(String loggedInEmail) {
+    public void setLoginSuccessUI() {
 
         Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
 
         // Send result OK and the logged in email to TasksView
         Intent intent = new Intent();
-        intent.putExtra(LoginActivity.REGISTERED_EMAIL, loggedInEmail);
-
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
@@ -100,6 +103,11 @@ public class LoginFragment extends Fragment implements
     public void showLoginFailMessage(int stringResource) {
         if (isAdded())
             Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setPresenter(@NonNull LoginContract.Presenter presenter) {
+        mPresenter = checkNotNull(presenter);
     }
 
     @Override
@@ -112,9 +120,10 @@ public class LoginFragment extends Fragment implements
                 break;
 
             case R.id.bt_login_complete:
-                mLoginPresenter.attemptLogin(
+                mPresenter.attemptLogin(
                         mEmail.getText().toString(),
-                        mPassword.getText().toString());
+                        mPassword.getText().toString(),
+                        mName.getText().toString());
                 break;
 
             default:
@@ -133,7 +142,7 @@ public class LoginFragment extends Fragment implements
 
 
     @Override
-    public void onSendData(final String registeredEmail) {
+    public void onSendData(final String registeredEmail, final String registeredName) {
         /*
         * popBackStack of {@link FragmentManager}
         * don't process rightly, put into enqueueAction once.
@@ -142,6 +151,12 @@ public class LoginFragment extends Fragment implements
             @Override
             public void run() {
                 mEmail.setText(registeredEmail);
+            }
+        });
+        mName.post(new Runnable() {
+            @Override
+            public void run() {
+                mName.setText(registeredName);
             }
         });
     }

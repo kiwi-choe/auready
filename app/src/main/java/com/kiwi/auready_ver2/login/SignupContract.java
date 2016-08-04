@@ -11,7 +11,7 @@ public interface SignupContract {
 
         void showEmailError(int resourceId);
 
-        void setSignupSuccessUI(String email);
+        void setSignupSuccessUI(String email, String name);
         void showSignupFailMessage(int resourceId);
 
         void showPasswordError(int resourceId);
@@ -25,14 +25,12 @@ public interface SignupContract {
         void requestSignup(String email, String password, String name);
 
         // After request Signup to Server
-        void onSignupSuccess(String email);
+        void onSignupSuccess(String email, String name);
         void onSignupFail(int stringResource);
 
         void attemptSignup(String email, String password, String name);
 
         void onEmailError(int stringResource);
         void onPasswordError(int stringResource);
-
-        void saveFriend(Friend newFriend);
     }
 }

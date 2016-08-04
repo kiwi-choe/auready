@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements
     * SignupFragment listener
     * */
     @Override
-    public void onSignupSuccess(String email) {
+    public void onSignupSuccess(String email, String name) {
 
         // pop LoginFragment in backStack
         getSupportFragmentManager().popBackStack();
@@ -76,11 +76,11 @@ public class LoginActivity extends AppCompatActivity implements
         }
 
         mListener = loginFragment;
-        mListener.onSendData(email);
+        mListener.onSendData(email, name);
     }
 
     // Interface with LoginFragment
     public interface LoginActivityListener {
-        void onSendData(String registeredEmail);
+        void onSendData(String registeredEmail, String registeredName);
     }
 }

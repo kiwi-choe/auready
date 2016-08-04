@@ -9,6 +9,7 @@ import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.friend.FriendContract;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 
@@ -53,12 +54,15 @@ public class LoginPresenterTest {
     @Mock
     private FriendRepository mFriendRepository;
 
+    @Mock
+    private FriendContract.View mFriendView;
+
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
 
-        mLoginPresenter = new LoginPresenter(useCaseHandler, mLoginView, saveFriends);
+        mLoginPresenter = givenLoginPresenter();
 
         retrofit = new Retrofit.Builder().baseUrl(IBaseUrl.BASE_URL)
                 .client(new OkHttpClient())
@@ -73,14 +77,15 @@ public class LoginPresenterTest {
     }
 
     @Test
-    public void showSetLoginSuccessUi_whenLoginSucceed() {
+    public void setLoginSuccessUi_whenLoginSucceed() {
 
         // Create the loginInfo stub
         String email = "dd@gmail.com";
         String password = "123";
+        String name = "nameOfdd";
 
         // Request login to Server
-        mLoginPresenter.requestLogin(email, password);
+        mLoginPresenter.requestLogin(email, password, name);
 
         Response<LoginResponse> loginResponse = null;
         try {
@@ -93,12 +98,12 @@ public class LoginPresenterTest {
         // Succeed to request login
         if (loginResponse != null && loginResponse.isSuccessful()) {
 
-            mLoginPresenter.onLoginSuccess(loginResponse.body(), email);
+            mLoginPresenter.onLoginSuccess(loginResponse.body(), email, name);
 
             Assert.assertEquals("access token1", loginResponse.body().getTokenInfo().getAccessToken());
             Assert.assertEquals("token type1", loginResponse.body().getTokenInfo().getTokenType());
 
-            verify(mLoginView).setLoginSuccessUI(email);
+            verify(mLoginView).setLoginSuccessUI();
         }
     }
 
@@ -126,8 +131,9 @@ public class LoginPresenterTest {
         // Create the loginInfo stub
         String email = "dd@gmail.com";
         String password = "123";
+        String name = "nameOfdd";
 
-        mLoginPresenter.requestLogin(email, password);
+        mLoginPresenter.requestLogin(email, password, name);
 
         Response<LoginResponse> loginResponse = null;
         try {
@@ -171,21 +177,8 @@ public class LoginPresenterTest {
     }
 
     @Test
-    public void saveFriends_whenLoginIsSucceeded() {
-/*
-******** can be tested in LoginView
+    public void saveFriendsToRepository() {
 
-        // Create the email of loginInfo stub
-        String email = "dd@gmail.com";
-
-        // Create the TokenInfo and Friends stubs for LoginResponse
-        TokenInfo tokenInfo = new TokenInfo("access token1", "token type1");
-        List<Friend> friends = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
-        LoginResponse loginSuccessResponse = new LoginResponse(tokenInfo, friends);
-
-        // When Login is succeeded
-        mLoginPresenter.onLoginSuccess(loginSuccessResponse, email);
-*/
         // Get a reference to the class under test
         mLoginPresenter = givenLoginPresenter();
 
@@ -194,7 +187,8 @@ public class LoginPresenterTest {
         // Save Friends of the logged in user
         mLoginPresenter.saveFriends(friends);
 
-
+        // then friends is saved in the repository
+        verify(mFriendRepository).saveFriends(friends);
     }
 
     private LoginPresenter givenLoginPresenter() {
