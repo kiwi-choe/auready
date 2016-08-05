@@ -15,7 +15,7 @@ public abstract class UseCase<Q extends  UseCase.RequestValues, P extends UseCas
     public void setRequestValues(Q requestValues) {
         mRequestValues = requestValues;
     }
-    public Q getRequsetValues() {
+    public Q getRequestValues() {
         return mRequestValues;
     }
 

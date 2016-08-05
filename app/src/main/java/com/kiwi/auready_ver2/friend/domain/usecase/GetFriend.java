@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.login.domain.usecase;
+package com.kiwi.auready_ver2.friend.domain.usecase;
 
 import android.support.annotation.NonNull;
 

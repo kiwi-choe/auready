@@ -5,7 +5,7 @@ import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
-import com.kiwi.auready_ver2.login.domain.usecase.GetFriend;
+import com.kiwi.auready_ver2.friend.domain.usecase.GetFriend;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
-import com.kiwi.auready_ver2.login.domain.usecase.GetFriend;
+import com.kiwi.auready_ver2.friend.domain.usecase.GetFriend;
 
 import java.util.ArrayList;
 import java.util.List;

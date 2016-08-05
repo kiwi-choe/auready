@@ -7,7 +7,7 @@ import com.kiwi.auready_ver2.data.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
-import com.kiwi.auready_ver2.login.domain.usecase.GetFriend;
+import com.kiwi.auready_ver2.friend.domain.usecase.GetFriend;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

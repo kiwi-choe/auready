@@ -151,7 +151,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     public void saveFriends(List<Friend> friends) {
         // Save into FriendRepository
         if(friends.size() == 0) {
-            // show empty friend error
+            // just skip to save
         } else {
             mUseCaseHandler.execute(mSaveFriends, new SaveFriends.RequestValues(friends),
                     new UseCase.UseCaseCallback<SaveFriends.ResponseValue>() {
@@ -164,9 +164,15 @@ public class LoginPresenter implements LoginContract.Presenter {
                         @Override
                         public void onError() {
                             // show save error
+                            showSaveError();
                         }
                     });
         }
+    }
+
+    private void showSaveError() {
+        // Show error, log, etc when save is failed.
+        Log.d("ErrorInLoginPresenter", "Failed to save the friends");
     }
 
     @Override
