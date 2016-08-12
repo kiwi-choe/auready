@@ -8,6 +8,8 @@ import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriend;
+import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
+import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,7 +29,11 @@ public class Injection {
         return UseCaseHandler.getInstance();
     }
 
-    public static GetFriend provideGetFriend(@NonNull Context context) {
-        return new GetFriend(Injection.provideFriendRepository(context));
+    public static GetFriends provideGetFriends(@NonNull Context context) {
+        return new GetFriends(Injection.provideFriendRepository(context));
+    }
+
+    public static SaveFriend provideSaveFriend(@NonNull Context context) {
+        return new SaveFriend(Injection.provideFriendRepository(context));
     }
 }

@@ -27,6 +27,12 @@
             android:background="@android:color/transparent" />
     </LinearLayout>
 
+    <!-- Loading indicator -->
+    <TextView
+        android:id="@+id/loading_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <!-- Show Friend List -->
     <LinearLayout
         android:id="@+id/friend_list_layout"
@@ -40,7 +46,20 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <!-- Show no result message -->
+    <!-- Show no friends message -->
+    <LinearLayout
+        android:id="@+id/no_friends_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/txt_no_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_friends_msg"
+            android:layout_gravity="center" />
+    </LinearLayout>
+
+    <!-- Show no user that is searched by email  message -->
     <LinearLayout
         android:id="@+id/no_searched_email_layout"
         android:layout_width="match_parent"

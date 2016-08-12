@@ -40,8 +40,25 @@ public class FriendRepository implements FriendDataSource {
 
 
     @Override
-    public void getFriends(@NonNull LoadFriendsCallback callback) {
+    public void deleteAllFriends() {
 
+    }
+
+    @Override
+    public void getFriends(@NonNull final LoadFriendsCallback callback) {
+        checkNotNull(callback);
+
+        // Get from Local
+        mFriendsLocalDataSource.getFriends(new LoadFriendsCallback() {
+            @Override
+            public void onFriendsLoaded(List<Friend> friends) {
+                callback.onFriendsLoaded(friends);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+            }
+        });
     }
 
     /*
@@ -76,5 +93,11 @@ public class FriendRepository implements FriendDataSource {
         if(friends.size() != 0) {
             mFriendsLocalDataSource.saveFriends(friends);
         }
+    }
+
+    @Override
+    public void saveFriend(@NonNull Friend friend) {
+        checkNotNull(friend);
+        mFriendsLocalDataSource.saveFriend(friend);
     }
 }

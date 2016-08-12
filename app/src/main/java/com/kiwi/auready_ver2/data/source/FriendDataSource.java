@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface FriendDataSource {
 
+    void deleteAllFriends();
+
     interface LoadFriendsCallback {
 
         void onFriendsLoaded(List<Friend> friends);
@@ -34,4 +36,6 @@ public interface FriendDataSource {
     void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback);
 
     void saveFriends(@NonNull List<Friend> friends);
+
+    void saveFriend(@NonNull Friend friend);
 }

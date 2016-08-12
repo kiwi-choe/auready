@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/list_item_padding">
 
     <TextView
-        android:id="@+id/txt_email"
+        android:id="@+id/txt_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </LinearLayout>

@@ -34,6 +34,10 @@
     <string name="alert_positive_button">OK</string>
     <string name="alert_negative_button">CANCEL</string>
     <string name="signup_success_msg"> 님 가입하셨습니다.</string>
+    <string name="loading_friends">LOADING...</string>
+    <string name="no_friends_msg">ㅜㅠ... 새 친구를 추가해주세요!</string>
+    <string name="action_open_findview">FIND</string>
+    <string name="add_friend_success_msg">is added to FriendList</string>
 
 
 </resources>

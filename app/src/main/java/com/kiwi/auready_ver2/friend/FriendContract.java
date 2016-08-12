@@ -2,6 +2,8 @@ package com.kiwi.auready_ver2.friend;
 
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.BasePresenter;
+import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.ArrayList;
@@ -12,23 +14,22 @@ import java.util.List;
  */
 public interface FriendContract {
 
-    interface View {
+    interface View extends BaseView<Presenter> {
 
         void showFriends(List<Friend> friendList);
 
         void showSearchedEmailList(ArrayList<String> searchedEmailList);
         void showNoResultByEmail();
-
-        void setPresenter(@NonNull FriendContract.Presenter presenter);
-
         void showFriendDeleted();
+
+        void setLoadingIndicator(boolean active);
+
+        void showNoFriends();
     }
 
-    interface Presenter {
+    interface Presenter extends BasePresenter {
 
         void loadFriends();
-
-        void start();
 
         void deleteFriend(String friendId);
     }

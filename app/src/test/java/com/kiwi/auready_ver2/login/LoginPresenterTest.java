@@ -1,5 +1,8 @@
 package com.kiwi.auready_ver2.login;
 
+import android.content.Context;
+import android.test.mock.MockContext;
+
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
@@ -8,7 +11,9 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendContract;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
@@ -100,10 +105,11 @@ public class LoginPresenterTest {
 
             mLoginPresenter.onLoginSuccess(loginResponse.body(), email, name);
 
-            Assert.assertEquals("access token1", loginResponse.body().getTokenInfo().getAccessToken());
-            Assert.assertEquals("token type1", loginResponse.body().getTokenInfo().getTokenType());
+            TokenInfo tokenInfo = loginResponse.body().getTokenInfo();
+            Assert.assertEquals("access token1", tokenInfo.getAccessToken());
+            Assert.assertEquals("token type1", tokenInfo.getTokenType());
 
-            verify(mLoginView).setLoginSuccessUI();
+            verify(mLoginView).setLoginSuccessUI(tokenInfo, name, email);
         }
     }
 

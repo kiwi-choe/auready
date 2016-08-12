@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface LoginContract {
         void showEmailError(int resourceId);
         void showPasswordError(int resourceId);
 
-        void setLoginSuccessUI();
+        void setLoginSuccessUI(TokenInfo tokenInfo, String userName, String userEmail);
 
         void showLoginFailMessage(int stringResource);
     }

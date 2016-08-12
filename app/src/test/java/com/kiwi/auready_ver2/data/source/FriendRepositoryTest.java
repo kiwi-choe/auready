@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Friend;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -11,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -31,6 +33,8 @@ public class FriendRepositoryTest {
 
     @Mock
     private FriendDataSource.GetFriendCallback mGetFriendCallback;
+    @Mock
+    private FriendDataSource.LoadFriendsCallback mGetFriendsCallback;
 
     @Before
     public void setupFriendRepository() {
@@ -56,6 +60,14 @@ public class FriendRepositoryTest {
     }
 
     @Test
+    public void getFriends_requestsFriendsFromLocalDataSource() {
+
+        mFriendRepository.getFriends(mGetFriendsCallback);
+        verify(mFriendLocalDataSource).getFriends(any(
+                FriendDataSource.LoadFriendsCallback.class));
+    }
+
+    @Test
     public void saveFriends() {
         // Given a stub friend list
         List<Friend> friends = Lists.newArrayList(
@@ -64,7 +76,19 @@ public class FriendRepositoryTest {
         // When friends are saved to the friend repository
         mFriendRepository.saveFriends(friends);
 
-        // Then thes persistent repository are called
+        // Then the persistent repository are called
         verify(mFriendLocalDataSource).saveFriends(friends);
+    }
+
+    @Test
+    public void saveFriend() {
+        // Given a stub friend with title and description
+        Friend newFriend = new Friend("aa@aa.com", "nameOfaa");
+
+        // When a friend is saved to the friend repository
+        mFriendRepository.saveFriend(newFriend);
+
+        // Then the persistent repository are called
+        verify(mFriendLocalDataSource).saveFriend(newFriend);
     }
 }

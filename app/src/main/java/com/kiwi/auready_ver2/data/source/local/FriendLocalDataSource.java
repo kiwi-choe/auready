@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.util.Log;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,13 @@ public class FriendLocalDataSource implements FriendDataSource {
             INSTANCE = new FriendLocalDataSource(context);
         }
         return INSTANCE;
+    }
+
+    @Override
+    public void deleteAllFriends() {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.delete(FriendEntry.TABLE_NAME, null, null);
+        db.close();
     }
 
     @Override
@@ -135,11 +144,34 @@ public class FriendLocalDataSource implements FriendDataSource {
             }
             db.setTransactionSuccessful();
         } catch (SQLiteException e) {
-            Log.e("SQLiteDBHelper: ", "Error insert new one to (" + FriendEntry.TABLE_NAME + " ). ", e);
+            Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new list to (" + FriendEntry.TABLE_NAME + " ). ", e);
         } finally {
             db.endTransaction();
         }
         db.close();
     }
+
+    @Override
+    public void saveFriend(@NonNull Friend friend) {
+        checkNotNull(friend);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(FriendEntry.COLUMN_ID, friend.getId());
+            values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
+            values.put(FriendEntry.COLUMN_NAME, friend.getName());
+
+            db.insert(FriendEntry.TABLE_NAME, null, values);
+            db.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new one to (" + FriendEntry.TABLE_NAME + "). ", e);
+        } finally {
+            db.endTransaction();
+        }
+        db.close();
+    }
+
 
 }

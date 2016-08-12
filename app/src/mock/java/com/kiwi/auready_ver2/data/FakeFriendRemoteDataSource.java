@@ -24,6 +24,11 @@ public class FakeFriendRemoteDataSource implements FriendDataSource {
     }
 
     @Override
+    public void deleteAllFriends() {
+
+    }
+
+    @Override
     public void getFriends(@NonNull LoadFriendsCallback callback) {
 
     }
@@ -35,6 +40,11 @@ public class FakeFriendRemoteDataSource implements FriendDataSource {
 
     @Override
     public void saveFriends(List<Friend> friends) {
+
+    }
+
+    @Override
+    public void saveFriend(@NonNull Friend friend) {
 
     }
 }

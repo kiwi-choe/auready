@@ -14,6 +14,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Integration test for the {@link FriendDataSource}, which uses the {@link SQLiteDbHelper}.
@@ -34,6 +38,7 @@ public class FriendLocalDataSourceTest {
     @After
     public void cleanUp() {
         // deleteAllFriends
+        mLocalDataSource.deleteAllFriends();
     }
 
     @Test
@@ -76,24 +81,61 @@ public class FriendLocalDataSourceTest {
         });
 
     }
+
+    @Test
+    public void getFriends_retrieveSavedFriends() {
+        // Given 2 new friends in the local repository
+        final Friend newFriend1 = new Friend("aa@aa.com", "aa");
+        mLocalDataSource.saveFriend(newFriend1);
+        final Friend newFriend2 = new Friend("bb@bb.com", "bb");
+        mLocalDataSource.saveFriend(newFriend2);
+
+        mLocalDataSource.getFriends(new FriendDataSource.LoadFriendsCallback() {
+
+            @Override
+            public void onFriendsLoaded(List<Friend> friends) {
+                assertNotNull(friends);
+                assertTrue(friends.size() >= 2);
+
+                boolean newFriend1IdFound = false;
+                boolean newFriend2IdFound = false;
+                for(Friend friend:friends) {
+                    if(friend.getId().equals(newFriend1.getId())) {
+                        newFriend1IdFound = true;
+                    }
+                    if(friend.getId().equals(newFriend2.getId())) {
+                        newFriend2IdFound = true;
+                    }
+                }
+                assertTrue(newFriend1IdFound);
+                assertTrue(newFriend2IdFound);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+
+    }
+
+    @Test
+    public void deleteAllFriends_emptyListOfRetrievedFriend() {
+        // Given a new friend in the persistent repository and a mocked callback
+        Friend newFriend = new Friend(EMAIL, NAME);
+        mLocalDataSource.saveFriend(newFriend);
+        FriendDataSource.LoadFriendsCallback callback = mock(FriendDataSource.LoadFriendsCallback.class);
+
+        // When all tasks are deleted
+        mLocalDataSource.deleteAllFriends();
+
+        // Then the retrieved friends is an empty list
+        mLocalDataSource.getFriends(callback);
+
+        verify(callback).onDataNotAvailable();
+        verify(callback, never()).onFriendsLoaded(anyList());
+    }
+
 //
-//    @Test
-//    public void saveFriend_retrieveFriend() {
-//        // Given a new Friend
-//        final Friend newFriend = new Friend(EMAIL, NAME);
-//        mLocalDataSource.saveFriend(newFriend);
-//
-//        // Then the Friend can be retrieved from the persistent repository
-//        mLocalDataSource.getFriend(newFriend.getId(), new FriendDataSource.GetFriendCallback() {
-//            @Override
-//            public void onFriendLoaded(Friend friend) {
-//                assertThat(friend, is(newFriend));
-//            }
-//
-//            @Override
-//            public void onDataNotAvailable() {
-//                fail("Callback error");
-//            }
-//        });
-//    }
+
 }

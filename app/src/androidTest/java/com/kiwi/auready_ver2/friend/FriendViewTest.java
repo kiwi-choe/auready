@@ -33,7 +33,7 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 public class FriendViewTest {
 
-    private static final String EMAIL1 = "aa";
+    private static final String NAME1 = "nameOfaa";
 
     @Rule
     public ActivityTestRule<FriendActivity> mActivityTestRule =
@@ -65,26 +65,36 @@ public class FriendViewTest {
     }
 
     @Test
-    public void showFriendList() {
+    public void showFriends() {
 
         // Check that set visible to friend_list_layout
         onView(withId(R.id.friend_list_layout))
                 .check(matches(isDisplayed()));
+        // and set gone to no_friend_layout
+        onView(withId(R.id.no_friends_layout))
+                .check(matches(not(isDisplayed())));
 
         // Verify that all friends are shown
-        onView(withItemText("aa")).check(matches(isDisplayed()));
-        onView(withItemText("bb")).check(matches(isDisplayed()));
+        onView(withItemText(NAME1)).check(matches(isDisplayed()));
     }
 
 
     @Test
     public void longClickOnFriendItem_deleteFriend() {
 
-        onView(withItemText(EMAIL1)).perform(click());
+        onView(withItemText(NAME1)).perform(click());
 
         // Verify it was deleted
-        onView(withItemText(EMAIL1)).check(matches(not(isDisplayed())));
+        onView(withItemText(NAME1)).check(matches(not(isDisplayed())));
     }
 
+    @Test
+    public void clickFindBtOnToolbar_openFindView() {
+        onView(withId(R.id.action_open_findview))
+                .perform(click());
+
+        onView(withId(R.id.bt_test_save_friend))
+                .check(matches(isDisplayed()));
+    }
 
 }

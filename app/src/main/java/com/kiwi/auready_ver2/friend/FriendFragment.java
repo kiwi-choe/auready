@@ -4,7 +4,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +25,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class FriendFragment extends Fragment implements FriendContract.View {
 
-    public static final String TAG_FRIENDFRAGMENT = "TAG_FriendFragment";
+    public static final String TAG_FRIENDFRAG = "TAG_FriendFragment";
 
     private FriendContract.Presenter mPresenter;
 
     private FriendsAdapter mListAdapter;
 
     private LinearLayout mFriendsView;
+    private LinearLayout mNoFriendsView;
     private LinearLayout mNoSearchedEmailView;
+    private TextView mLoadingIndicator;
 
     public FriendFragment() {
         // Required empty public constructor
@@ -62,9 +66,13 @@ public class FriendFragment extends Fragment implements FriendContract.View {
         ListView listView = (ListView) root.findViewById(R.id.friend_list);
         listView.setAdapter(mListAdapter);
         mFriendsView = (LinearLayout) root.findViewById(R.id.friend_list_layout);
-        mNoSearchedEmailView = (LinearLayout) root.findViewById(R.id.no_searched_email_layout);
 
-         return root;
+        // Set up no friends and searching user view
+        mNoFriendsView = (LinearLayout) root.findViewById(R.id.no_friends_layout);
+        mNoSearchedEmailView = (LinearLayout) root.findViewById(R.id.no_searched_email_layout);
+        mLoadingIndicator = (TextView) root.findViewById(R.id.loading_indicator);
+
+        return root;
     }
 
     @Override
@@ -73,7 +81,7 @@ public class FriendFragment extends Fragment implements FriendContract.View {
         mListAdapter.replaceData(friendList);
 
         mFriendsView.setVisibility(View.VISIBLE);
-        mNoSearchedEmailView.setVisibility(View.GONE);
+        mNoFriendsView.setVisibility(View.GONE);
     }
 
     @Override
@@ -94,6 +102,21 @@ public class FriendFragment extends Fragment implements FriendContract.View {
     @Override
     public void showFriendDeleted() {
 
+    }
+
+    @Override
+    public void setLoadingIndicator(final boolean active) {
+        if(active) {
+            mLoadingIndicator.setText(R.string.loading_friends);
+        } else {
+            mLoadingIndicator.setText("");
+        }
+    }
+
+    @Override
+    public void showNoFriends() {
+        mFriendsView.setVisibility(View.GONE);
+        mNoFriendsView.setVisibility(View.VISIBLE);
     }
 
     private void showDeleteFriendAlert(@NonNull final Friend clickedFriend) {
@@ -160,9 +183,9 @@ public class FriendFragment extends Fragment implements FriendContract.View {
             }
 
             final Friend friend = getItem(position);
-            String email = friend.getEmail();
-            TextView txtEmail = (TextView) rowView.findViewById(R.id.txt_email);
-            txtEmail.setText(email);
+            String name = friend.getName();
+            TextView txtName = (TextView) rowView.findViewById(R.id.txt_name);
+            txtName.setText(name);
 
             rowView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override

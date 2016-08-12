@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -71,8 +73,6 @@ public class LoginFragment extends Fragment implements
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -89,11 +89,15 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLoginSuccessUI() {
+    public void setLoginSuccessUI(TokenInfo tokenInfo, String name, String email) {
 
+        // 1. Save tokenInfo to SharedPreferences
+        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance();
+        accessTokenStore.save(tokenInfo, name, email);
+
+        // 2. popup message
         Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
-
-        // Send result OK and the logged in email to TasksView
+        // 3. Send result OK and the logged in email to TasksView
         Intent intent = new Intent();
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();

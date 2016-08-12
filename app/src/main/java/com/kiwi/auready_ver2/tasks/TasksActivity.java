@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendActivity;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.util.ActivityUtils;
@@ -74,6 +75,10 @@ public class TasksActivity extends AppCompatActivity
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
         }
+
+
+        // Create Singleton AccessTokenStore
+        AccessTokenStore.getInstance(getApplicationContext());
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

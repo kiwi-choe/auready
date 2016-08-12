@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.rest_service;
 import com.kiwi.auready_ver2.data.api_model.SignupInfo;
 import com.kiwi.auready_ver2.data.api_model.SignupResponse;
 import com.kiwi.auready_ver2.login.LoginContract;
+import com.kiwi.auready_ver2.login.SignupContract;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -24,7 +25,7 @@ public class SignupServiceTest {
 
     private MockWebServer server;
     @Mock
-    private LoginContract.Presenter mLoginPresenter;
+    private SignupContract.Presenter mSignupPresenter;
 
     @Before
     public void setUp() throws Exception {

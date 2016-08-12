@@ -40,8 +40,7 @@ public class GetFriends extends UseCase<GetFriends.RequestValues, GetFriends.Res
     }
 
 
-    public class RequestValues implements UseCase.RequestValues {
-    }
+    public static class RequestValues implements UseCase.RequestValues { }
 
     public class ResponseValue implements UseCase.ResponseValue {
 

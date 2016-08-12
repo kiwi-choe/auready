@@ -133,13 +133,11 @@ public class LoginPresenter implements LoginContract.Presenter {
     public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail, String loggedInName) {
 
         List<Friend> friends = loginResponse.getFriends();
-        // 1. Save tokenInfo to SharedPreferences
-        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance();
-        accessTokenStore.save(loginResponse.getTokenInfo(), loggedInName, loggedInEmail);
-        // 2. Save friends of this logged in user
+
+        // Save friends of this logged in user
         saveFriends(friends);
-        // and send logged in email to MainView
-        mLoginView.setLoginSuccessUI();
+        // send logged in email to MainView
+        mLoginView.setLoginSuccessUI(loginResponse.getTokenInfo(), loggedInName, loggedInEmail);
     }
 
     @Override
