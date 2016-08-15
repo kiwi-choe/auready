@@ -28,10 +28,10 @@ public class AccessTokenStore {
     private static final String IS_LOGIN = "isLogin";
 
     // Access Token info key
-    private static final String ACCESS_TOKEN = "access_token";
+    public static final String ACCESS_TOKEN = "access_token";
     private static final String TOKEN_TYPE = "token_type";
-    private static final String USER_NAME = "userName";
-    private static final String USER_EMAIL = "userEmail";
+    public static final String USER_NAME = "userName";
+    public static final String USER_EMAIL = "userEmail";
 
     public AccessTokenStore(Context context) {
         mPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -80,7 +80,7 @@ public class AccessTokenStore {
         return mPref.getBoolean(IS_LOGIN, false);
     }
 
-    // Clear session details when logout
+    // Clear session details when requestLogout
     public void logoutUser() {
         mEditor = mPref.edit();
         // Clear all data from SharedPreferences

@@ -25,6 +25,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by kiwi on 6/15/16.
@@ -120,6 +121,13 @@ public class LoginViewTest {
         onView(withId(R.id.ed_name)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void clickLogoutButton() {
+
+        onView(withId(R.id.bt_logout_complete)).perform(click());
+        // Check that requestLogout button is not displayed
+        onView(withId(R.id.bt_logout_complete)).check(matches(not(isDisplayed())));
+    }
     //q 메인(TasksActivity)의 텍스트뷰에 대한 테스트는 어떻게 하지?
     // q How to check that LoginActivity is finished?
 //    public void sendResultToTasks_whenLoginSucceed() {

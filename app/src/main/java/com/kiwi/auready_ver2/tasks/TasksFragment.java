@@ -69,9 +69,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String stubLoggedInEmail = "aaa@aaa.aaa";
                 if(mListener != null) {
-                    mListener.onLoginSuccess(stubLoggedInEmail);
+                    mListener.onLoginSuccess();
                 }
 
             }
@@ -86,15 +85,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void setLoginSuccessUI(String loggedInEmail) {
+    public void setLoginSuccessUI() {
 
         if(mListener != null) {
-            mListener.onLoginSuccess(loggedInEmail);
+            mListener.onLoginSuccess();
         }
     }
 
     // Interface with TasksActivity
     public interface TasksFragmentListener {
-        void onLoginSuccess(String loggedInEmail);
+        void onLoginSuccess();
     }
 }

@@ -23,6 +23,10 @@ public interface LoginContract {
         void setLoginSuccessUI(TokenInfo tokenInfo, String userName, String userEmail);
 
         void showLoginFailMessage(int stringResource);
+
+        // Logout
+        void setLogoutSuccessResult();
+        void setLogoutFailResult();
     }
 
     interface Presenter extends BasePresenter {
@@ -42,5 +46,10 @@ public interface LoginContract {
 
         void saveFriends(List<Friend> friends);
 
+        // Logout
+        void requestLogout(String accessToken);
+
+        void onLogoutSuccess();
+        void onLogoutFail();
     }
 }

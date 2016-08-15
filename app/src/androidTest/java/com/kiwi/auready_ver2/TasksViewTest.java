@@ -11,10 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.replaceText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.DrawerActions.open;
 import static android.support.test.espresso.contrib.DrawerMatchers.isClosed;
@@ -83,15 +80,19 @@ public class TasksViewTest {
 
     @Test
     public void setSuccessUi_whenLoginSuccess() {
-        // Stub of logged in email
+
+        // Stub of logged in name and email
+        String loggedInName = "nameOfaa";
         String loggedInEmail = "aaa@aaa.aaa";
 
         // temp event for test
         onView(withId(R.id.test_fragment_tasks))
                 .perform(click());
 
-        // 1. Set loggedInEmail to nav_header_email
-        onView(withId(R.id.nav_header_email))
+        // 1. Set loggedInEmail to nav_name and nav_email
+        onView(withId(R.id.nav_name))
+                .check(matches(withText(loggedInName)));
+        onView(withId(R.id.nav_email))
                 .check(matches(withText(loggedInEmail)));
         // 2. Open NavigationDrawer
         onView(withId(R.id.drawer_layout))

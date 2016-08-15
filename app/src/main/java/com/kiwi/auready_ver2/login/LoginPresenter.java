@@ -10,11 +10,10 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
-import com.kiwi.auready_ver2.util.LoginUtil;
+import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -55,7 +54,7 @@ public class LoginPresenter implements LoginContract.Presenter {
             return false;
         }
         // Check email format
-        Matcher matcher = LoginUtil.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        Matcher matcher = LoginUtils.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
         if(!matcher.find()) {
             onEmailError(R.string.email_format_err);
             return false;
@@ -89,7 +88,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
         if(validateEmail(email) && validatePassword(password)) {
             // Check that edName has string name
-            String[] result = email.split(LoginUtil.EMAIL_TOKEN);
+            String[] result = email.split(LoginUtils.EMAIL_TOKEN);
             name = result[0];
         }
         requestLogin(email, password, name);
@@ -166,6 +165,42 @@ public class LoginPresenter implements LoginContract.Presenter {
                         }
                     });
         }
+    }
+
+    @Override
+    public void requestLogout(String accessToken) {
+
+        ILoginService loginService =
+                ServiceGenerator.createService(ILoginService.class, accessToken);
+
+        Call<Void> call = loginService.logout();
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    onLogoutSuccess();
+                }
+                else {
+                    onLogoutFail();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Exception in Logout: ", "onFailure()", t);
+                onLogoutFail();
+            }
+        });
+    }
+
+    @Override
+    public void onLogoutSuccess() {
+        mLoginView.setLogoutSuccessResult();
+    }
+
+    @Override
+    public void onLogoutFail() {
+        mLoginView.setLogoutFailResult();
     }
 
     private void showSaveError() {

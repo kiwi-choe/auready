@@ -34,4 +34,9 @@ public class MockLoginService implements ILoginService {
         LoginResponse loginResponse = new LoginResponse(tokenInfo, STUB_FRIENDS);
         return delegate.returningResponse(loginResponse).login(clientCredential);
     }
+
+    @Override
+    public Call<Void> logout() {
+        return null;
+    }
 }

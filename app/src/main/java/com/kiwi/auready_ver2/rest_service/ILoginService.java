@@ -5,6 +5,7 @@ import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.POST;
 
 /**
@@ -14,4 +15,7 @@ public interface ILoginService {
 
     @POST("/oauth2/token")
     Call<LoginResponse> login(@Body ClientCredential clientCredential);
+
+    @DELETE("/oauth2/token")
+    Call<Void> logout();
 }

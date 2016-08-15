@@ -1,8 +1,5 @@
 package com.kiwi.auready_ver2.login;
 
-import android.content.Context;
-import android.test.mock.MockContext;
-
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
@@ -113,6 +110,7 @@ public class LoginPresenterTest {
         }
     }
 
+
     private Response<LoginResponse> executeMockLoginService(String email, String password) throws IOException {
 
         BehaviorDelegate<ILoginService> delegate = mockRetrofit.create(ILoginService.class);
@@ -195,6 +193,15 @@ public class LoginPresenterTest {
 
         // then friends is saved in the repository
         verify(mFriendRepository).saveFriends(friends);
+    }
+
+    @Test
+    public void setLogoutUi_whenLogoutSuccess() {
+        String accessToken = "accesstoken stub";
+        mLoginPresenter.requestLogout(accessToken);
+        // succeed to request requestLogout
+        mLoginPresenter.onLogoutSuccess();
+        verify(mLoginView).setLogoutSuccessResult();
     }
 
     private LoginPresenter givenLoginPresenter() {

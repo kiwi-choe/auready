@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="192dp"
+    android:layout_height="180dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="?attr/colorPrimaryDark"
     android:gravity="fill_horizontal"
@@ -12,30 +12,47 @@
     tools:context=".tasks.TasksActivity">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher"
-            android:adjustViewBounds="true"
-            android:layout_alignParentEnd="true" />
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/nav_header_account_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true">
+        android:layout_height="0dp"
+        android:layout_weight="0.5">
         <TextView
-            android:id="@+id/nav_header_email"
+            android:id="@+id/nav_name"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:text="@string/logged_in_user_name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:gravity="center_vertical" />
+        <TextView
+            android:id="@+id/nav_email"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:text="@string/logged_in_user_email"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:gravity="center_vertical" />
+            android:gravity="bottom" />
+        <Button
+            android:id="@+id/bt_account_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/nav_account_settings" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5"
+        android:clickable="true">
+        <Button
+            android:id="@+id/bt_manage_friend"
+            android:text="FRIEND"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentBottom="true" />
 
     </RelativeLayout>
 

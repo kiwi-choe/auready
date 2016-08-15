@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.login;
 import android.text.TextUtils;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.util.LoginUtil;
+import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.regex.Matcher;
 
@@ -28,7 +28,7 @@ public class SignupPresenter implements SignupContract.Presenter {
             return false;
         }
         // Check email format
-        Matcher matcher = LoginUtil.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+        Matcher matcher = LoginUtils.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
         if(!matcher.find()) {
             onEmailError(R.string.email_format_err);
             return false;
@@ -54,7 +54,7 @@ public class SignupPresenter implements SignupContract.Presenter {
 
             // Check that edName has string name
             if(name.isEmpty()) {
-                String[] result = email.split(LoginUtil.EMAIL_TOKEN);
+                String[] result = email.split(LoginUtils.EMAIL_TOKEN);
                 name = result[0];
             }
             requestSignup(email, password, name);

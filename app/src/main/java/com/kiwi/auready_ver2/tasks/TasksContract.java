@@ -16,6 +16,6 @@ public interface TasksContract {
 
         void setPresenter(TasksContract.Presenter tasksPresenter);
 
-        void setLoginSuccessUI(String loggedInEmail);
+        void setLoginSuccessUI();
     }
 }

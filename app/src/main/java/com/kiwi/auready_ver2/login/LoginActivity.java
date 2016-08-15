@@ -14,7 +14,7 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 public class LoginActivity extends AppCompatActivity implements
         SignupFragment.SignupFragmentListener {
 
-    public static final int REQ_LOGIN = 1;
+    public static final int REQ_LOGINOUT = 1;
     public static final String REGISTERED_EMAIL = "registeredEmail";
 
 

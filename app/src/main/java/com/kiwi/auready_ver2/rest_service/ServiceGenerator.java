@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.rest_service;
 import com.kiwi.auready_ver2.login.IBaseUrl;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -49,4 +50,28 @@ public class ServiceGenerator {
     }
 
 
+    public static <S> S createService(Class<S> serviceClass, final String accessToken) {
+        if (accessToken != null) {
+            httpClient.interceptors().clear();
+            httpClient.interceptors().add(new Interceptor() {
+                @Override
+                public Response intercept(Chain chain) throws IOException, SocketTimeoutException {
+
+                    Request original = chain.request();
+                    Request request = original.newBuilder()
+                            .header("Content-Type", "application/json")
+                            .header("Accept", "application/json")
+                            .header("Authorization", "Bearer" + " " + accessToken)
+                            .method(original.method(), original.body())
+                            .build();
+
+                    Response response = chain.proceed(request);
+                    return response;
+                }
+            });
+        }
+        OkHttpClient client = httpClient.build();
+        Retrofit retrofit = baseBuilder.client(client).build();
+        return retrofit.create(serviceClass);
+    }
 }

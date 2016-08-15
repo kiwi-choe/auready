@@ -18,13 +18,15 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.util.ActivityUtils;
+import com.kiwi.auready_ver2.util.LoginUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoginFragment extends Fragment implements
         LoginContract.View,
         View.OnClickListener,
-        LoginActivity.LoginActivityListener {
+        LoginActivity.LoginActivityListener,
+        LoginUtils {
 
     public static final String TAG_LOGINFRAGMENT = "Tag_LoginFragment";
 
@@ -37,6 +39,7 @@ public class LoginFragment extends Fragment implements
 
     private LoginContract.Presenter mPresenter;
 
+    private AccessTokenStore mAccessTokenStore;
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -57,7 +60,7 @@ public class LoginFragment extends Fragment implements
 
         mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
         mBtSignupOpen = (TextView) root.findViewById(R.id.bt_signup_open);
-//        mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
+        mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
 
         return root;
     }
@@ -66,8 +69,11 @@ public class LoginFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        mAccessTokenStore = AccessTokenStore.getInstance();
+
         mBtLoginComplete.setOnClickListener(this);
         mBtSignupOpen.setOnClickListener(this);
+        mBtLogoutComplete.setOnClickListener(this);
     }
 
     @Override
@@ -92,13 +98,25 @@ public class LoginFragment extends Fragment implements
     public void setLoginSuccessUI(TokenInfo tokenInfo, String name, String email) {
 
         // 1. Save tokenInfo to SharedPreferences
-        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance();
-        accessTokenStore.save(tokenInfo, name, email);
+        mAccessTokenStore.save(tokenInfo, name, email);
 
         // 2. popup message
         Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
         // 3. Send result OK and the logged in email to TasksView
+        sendResult(LoginUtils.LOGIN, true);
+    }
+
+    private void sendResult(int loginOrOut, boolean isSuccess) {
+
         Intent intent = new Intent();
+        if (loginOrOut == LOGIN) {
+            intent.putExtra(LOGIN_LOGOUT, LOGIN);
+        }
+        else {
+            intent.putExtra(LOGIN_LOGOUT, LOGOUT);
+        }
+        intent.putExtra(IS_SUCCESS, isSuccess);
+
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
@@ -107,6 +125,21 @@ public class LoginFragment extends Fragment implements
     public void showLoginFailMessage(int stringResource) {
         if (isAdded())
             Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
+
+        // and send result
+        sendResult(LOGIN, false);
+    }
+
+    @Override
+    public void setLogoutSuccessResult() {
+        // init SharedPreferences
+        mAccessTokenStore.logoutUser();
+        sendResult(LOGOUT, true);
+    }
+
+    @Override
+    public void setLogoutFailResult() {
+        sendResult(LOGOUT, false);
     }
 
     @Override
@@ -130,6 +163,8 @@ public class LoginFragment extends Fragment implements
                         mName.getText().toString());
                 break;
 
+            case R.id.bt_logout_complete:
+                mPresenter.requestLogout(mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, ""));
             default:
                 break;
         }
