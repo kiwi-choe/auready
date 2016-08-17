@@ -14,8 +14,6 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class FriendActivity extends AppCompatActivity {
 
-    private FriendPresenter mPresenter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +37,7 @@ public class FriendActivity extends AppCompatActivity {
         }
 
         // Create Presenter
-        mPresenter = new FriendPresenter(
+        FriendPresenter presenter = new FriendPresenter(
                 Injection.provideUseCaseHandler(),
                 friendFragment,
                 Injection.provideGetFriends(getApplicationContext())

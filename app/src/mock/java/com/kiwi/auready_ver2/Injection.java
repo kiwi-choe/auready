@@ -10,6 +10,7 @@ import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
+import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,5 +36,9 @@ public class Injection {
 
     public static SaveFriend provideSaveFriend(@NonNull Context context) {
         return new SaveFriend(Injection.provideFriendRepository(context));
+    }
+
+    public static SaveFriends provideSaveFriends(@NonNull Context context) {
+        return new SaveFriends(Injection.provideFriendRepository(context));
     }
 }

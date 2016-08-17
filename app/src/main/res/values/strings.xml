@@ -44,6 +44,7 @@
     <string name="nav_account_settings">ACCOUNT</string>
     <string name="personal_menu_item">PERSONAL</string>
     <string name="group_menu_item">GROUP</string>
+    <string name="nav_header_name_guest">GUEST</string>
 
 
 </resources>

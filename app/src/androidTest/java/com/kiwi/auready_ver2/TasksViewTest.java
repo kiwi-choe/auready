@@ -77,7 +77,6 @@ public class TasksViewTest {
     }
 
 
-
     @Test
     public void setSuccessUi_whenLoginSuccess() {
 
@@ -89,6 +88,7 @@ public class TasksViewTest {
         onView(withId(R.id.test_fragment_tasks))
                 .perform(click());
 
+        // Set Member's view
         // 1. Set loggedInEmail to nav_name and nav_email
         onView(withId(R.id.nav_name))
                 .check(matches(withText(loggedInName)));
@@ -97,5 +97,14 @@ public class TasksViewTest {
         // 2. Open NavigationDrawer
         onView(withId(R.id.drawer_layout))
                 .check(matches(isOpen(Gravity.START)));
+    }
+
+    @Test
+    public void openAddTaskView() {
+
+        onView(withId(R.id.fab_add_task)).perform(click());
+
+        // open AddEditTaskView
+
     }
 }

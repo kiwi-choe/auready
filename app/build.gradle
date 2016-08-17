@@ -5,7 +5,8 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "com.example.kiwi.myapplicationwithtdd"
+        multiDexEnabled true
+        applicationId "com.kiwi.auready_ver2"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -75,6 +76,8 @@ dependencies {
     androidTestCompile("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion")
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.squareup.retrofit2:retrofit-mock:2.0.2'
+
+    // Floating button
 }
 
 /*

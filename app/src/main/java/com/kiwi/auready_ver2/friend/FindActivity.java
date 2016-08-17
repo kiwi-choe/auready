@@ -9,8 +9,6 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class FindActivity extends AppCompatActivity {
 
-    private FindPresenter mPresenter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +23,7 @@ public class FindActivity extends AppCompatActivity {
         }
 
         // Create Presenter
-        mPresenter = new FindPresenter(
+        FindPresenter presenter = new FindPresenter(
                 Injection.provideUseCaseHandler(),
                 findFragment,
                 Injection.provideSaveFriend(getApplicationContext()));

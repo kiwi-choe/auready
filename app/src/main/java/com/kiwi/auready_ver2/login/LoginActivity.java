@@ -5,9 +5,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.widget.EditText;
 
+import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
@@ -17,7 +16,6 @@ public class LoginActivity extends AppCompatActivity implements
     public static final int REQ_LOGINOUT = 1;
     public static final String REGISTERED_EMAIL = "registeredEmail";
 
-
     // interface
     private LoginActivityListener mListener;
 
@@ -26,12 +24,6 @@ public class LoginActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Set up the toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.login);
-
         LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.content_frame);
         if (loginFragment == null) {
@@ -39,6 +31,22 @@ public class LoginActivity extends AppCompatActivity implements
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     loginFragment, R.id.content_frame, LoginFragment.TAG_LOGINFRAGMENT);
         }
+        // Create the presenter
+        LoginPresenter presenter = new LoginPresenter(
+                Injection.provideUseCaseHandler(),
+                loginFragment,
+                Injection.provideSaveFriends(getApplicationContext())
+        );
+
+        initView();
+    }
+
+    private void initView() {
+        // Set up the toolbar
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(R.string.login);
     }
 
     @Override

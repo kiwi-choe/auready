@@ -10,6 +10,8 @@ public interface TasksContract {
     interface Presenter {
 
         void result(int requestCode, int resultCode, Intent data);
+
+        void addNewTask();
     }
 
     interface View {

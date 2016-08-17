@@ -27,8 +27,6 @@ public class FriendPresenter implements FriendContract.Presenter {
     private final UseCaseHandler mUseCaseHandler;
     private final GetFriends mGetFriends;
 
-    private FriendRepository mFriendRepository;
-
     public FriendPresenter(@NonNull UseCaseHandler useCaseHandler,
                            @NonNull FriendContract.View friendView,
                            @NonNull GetFriends getFriends) {

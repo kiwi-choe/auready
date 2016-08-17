@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -73,6 +74,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
                     mListener.onLoginSuccess();
                 }
 
+            }
+        });
+
+        // Set Floating button
+        FloatingActionButton fb =
+                (FloatingActionButton) root.findViewById(R.id.fab_add_task);
+        fb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.addNewTask();
             }
         });
 

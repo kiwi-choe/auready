@@ -1,16 +1,18 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -28,10 +30,9 @@ public class TasksActivity extends AppCompatActivity
     private static final String TAG = "Tag_MainActivity";
 
     private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private View mNavHeader;
     private TextView mNavHeaderName;
     private TextView mNavHeaderEmail;
+    private Button mNavFriendButton;
 
     private TasksPresenter mPresenter;
 
@@ -41,6 +42,7 @@ public class TasksActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
+
 
         TasksFragment tasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
@@ -56,13 +58,20 @@ public class TasksActivity extends AppCompatActivity
         if (savedInstanceState != null) {
         }
 
+
         // Create Singleton AccessTokenStore
         mAccessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
 
-        initComponents();
+        initView();
     }
 
-    private void initComponents() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void initView() {
         // Set toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,38 +84,64 @@ public class TasksActivity extends AppCompatActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
 
+        // Set floating button
+        FloatingActionButton fb = (FloatingActionButton) findViewById(R.id.fab_add_task);
+        fb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
         // Set Navigation view
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        checkNotNull(mNavigationView, "navigationView cannot be null");
-        setupDrawerContent(mNavigationView);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        checkNotNull(navigationView, "navigationView cannot be null");
+        setupDrawerContent(navigationView);
+        // Set Navigation header
+        mNavHeaderName = (TextView) navigationView.findViewById(R.id.nav_name);
+        mNavHeaderEmail = (TextView) navigationView.findViewById(R.id.nav_email);
+        mNavFriendButton = (Button) navigationView.findViewById(R.id.bt_manage_friend);
+
         // if member or guest
         if (mAccessTokenStore.isLoggedIn()) {
             setMemberNavView();
         } else {
             setGuestNavView();
         }
-        // Set Account layout on Nav header
-        RelativeLayout accountLayout = (RelativeLayout) mNavHeader.findViewById(R.id.nav_header_account_layout);
-        accountLayout.setOnClickListener(new View.OnClickListener() {
+        View navHeader = navigationView.getHeaderView(0);
+        setupNavHeaderContent(navHeader);
+    }
+
+    private void setupNavHeaderContent(View navHeader) {
+        // clicked account settings button
+        Button btAccountSettings = (Button) navHeader.findViewById(R.id.bt_account_settings);
+        btAccountSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startLoginActivity();
             }
         });
+
+        // clicked friend button
+        mNavFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFriendActivity();
+            }
+        });
     }
 
     private void setGuestNavView() {
+        // Set Nav header
+        mNavHeaderEmail.setVisibility(View.GONE);
+        mNavHeaderName.setText(getString(R.string.nav_header_name_guest));
 
-        // Set Navigation header
-        mNavHeader = mNavigationView.inflateHeaderView(R.layout.nav_header_guest);
+        mNavFriendButton.setVisibility(View.GONE);
     }
 
     private void setMemberNavView() {
+        // Set Nav header
+        mNavHeaderEmail.setVisibility(View.VISIBLE);
 
-        // Set Navigation header
-        mNavHeader = mNavigationView.inflateHeaderView(R.layout.nav_header);
-        mNavHeaderName = (TextView) mNavHeader.findViewById(R.id.nav_name);
-        mNavHeaderEmail = (TextView) mNavHeader.findViewById(R.id.nav_email);
+        mNavFriendButton.setVisibility(View.VISIBLE);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -116,9 +151,11 @@ public class TasksActivity extends AppCompatActivity
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.friend_navigation_menu_item:
-                        Intent intent =
-                                new Intent(TasksActivity.this, FriendActivity.class);
-                        startActivity(intent);
+                        startFriendActivity();
+                        break;
+
+                    case R.id.item_group:
+                        startLoginActivity();
                         break;
 
                     default:
@@ -150,11 +187,16 @@ public class TasksActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    private void startFriendActivity() {
+        Intent intent =
+                new Intent(TasksActivity.this, FriendActivity.class);
+        startActivity(intent);
+    }
+
     private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, LoginActivity.REQ_LOGINOUT);
     }
-
 
     /*
     * TasksFragment listener
