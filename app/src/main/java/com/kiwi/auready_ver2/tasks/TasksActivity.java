@@ -95,10 +95,12 @@ public class TasksActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         checkNotNull(navigationView, "navigationView cannot be null");
         setupDrawerContent(navigationView);
+
         // Set Navigation header
-        mNavHeaderName = (TextView) navigationView.findViewById(R.id.nav_name);
-        mNavHeaderEmail = (TextView) navigationView.findViewById(R.id.nav_email);
-        mNavFriendButton = (Button) navigationView.findViewById(R.id.bt_manage_friend);
+        View view = View.inflate(this, R.layout.nav_header, null);
+        mNavHeaderName = (TextView) view.findViewById(R.id.nav_name);
+        mNavHeaderEmail = (TextView) view.findViewById(R.id.nav_email);
+        mNavFriendButton = (Button) view.findViewById(R.id.bt_manage_friend);
 
         // if member or guest
         if (mAccessTokenStore.isLoggedIn()) {

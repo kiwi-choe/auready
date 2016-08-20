@@ -77,15 +77,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             }
         });
 
-        // Set Floating button
-        FloatingActionButton fb =
-                (FloatingActionButton) root.findViewById(R.id.fab_add_task);
-        fb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.addNewTask();
-            }
-        });
+//        // Set Floating button
+//        FloatingActionButton fb =
+//                (FloatingActionButton) root.findViewById(R.id.fab_add_task);
+//        fb.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPresenter.addNewTask();
+//            }
+//        });
 
         return root;
     }
