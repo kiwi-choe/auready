@@ -4,7 +4,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.Gravity;
 
-import com.kiwi.auready_ver2.tasks.TasksActivity;
+import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,8 +29,8 @@ import static com.kiwi.auready_ver2.custom.action.NavigationViewActions.navigate
 public class TasksViewTest {
 
     @Rule
-    public ActivityTestRule<TasksActivity> mActivityTestRule =
-            new ActivityTestRule<>(TasksActivity.class);
+    public ActivityTestRule<TaskHeadActivity> mActivityTestRule =
+            new ActivityTestRule<>(TaskHeadActivity.class);
 
     @Test
     public void clickOnAndroidHomeIcon_OpensNavigation() {
@@ -105,6 +105,6 @@ public class TasksViewTest {
         onView(withId(R.id.fab_add_task)).perform(click());
 
         // open AddEditTaskView
-
+        onView(withId(R.id.add_task_item_content)).check(matches(isDisplayed()));
     }
 }

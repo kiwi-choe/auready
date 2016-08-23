@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
+import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 
@@ -22,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 7/5/16.
  */
-public class FriendLocalDataSource implements FriendDataSource {
+public class FriendLocalDataSource implements FriendDataSource, TaskHeadDataSource {
 
     private static FriendLocalDataSource INSTANCE;
 
@@ -174,4 +175,8 @@ public class FriendLocalDataSource implements FriendDataSource {
     }
 
 
+    @Override
+    public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
+
+    }
 }

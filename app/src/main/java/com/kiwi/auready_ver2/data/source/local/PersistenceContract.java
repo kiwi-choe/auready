@@ -21,4 +21,10 @@ public final class PersistenceContract {
         public static final String COLUMN_EMAIL = "email";
         public static final String COLUMN_NAME = "name";
     }
+
+    public static abstract class TaskHeadEntry {
+        public static final String TABLE_NAME = "taskhead";
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_TITLE = "title";
+    }
 }

@@ -45,6 +45,8 @@
     <string name="personal_menu_item">PERSONAL</string>
     <string name="group_menu_item">GROUP</string>
     <string name="nav_header_name_guest">GUEST</string>
+    <string name="add_taskview">+ ADD NEW TASK</string>
+    <string name="no_taskheads">You have no TO-DOs!</string>
 
 
 </resources>

@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.tasks;
+package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,9 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendActivity;
@@ -24,8 +24,8 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TasksActivity extends AppCompatActivity
-        implements TasksFragment.TasksFragmentListener {
+public class TaskHeadActivity extends AppCompatActivity
+        implements TaskHeadFragment.TasksFragmentListener {
 
     private static final String TAG = "Tag_MainActivity";
 
@@ -34,7 +34,7 @@ public class TasksActivity extends AppCompatActivity
     private TextView mNavHeaderEmail;
     private Button mNavFriendButton;
 
-    private TasksPresenter mPresenter;
+    private TaskHeadPresenter mPresenter;
 
     private AccessTokenStore mAccessTokenStore;
 
@@ -44,16 +44,20 @@ public class TasksActivity extends AppCompatActivity
         setContentView(R.layout.activity_tasks);
 
 
-        TasksFragment tasksFragment =
-                (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (tasksFragment == null) {
-            tasksFragment = TasksFragment.newInstance();
+        TaskHeadFragment taskHeadFragment =
+                (TaskHeadFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (taskHeadFragment == null) {
+            taskHeadFragment = TaskHeadFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
+                    getSupportFragmentManager(), taskHeadFragment, R.id.content_frame, TaskHeadFragment.TAG_TASKSFRAGMENT);
         }
 
         // Create the presenter
-        mPresenter = new TasksPresenter(tasksFragment);
+        mPresenter = new TaskHeadPresenter(
+                Injection.provideUseCaseHandler(),
+                taskHeadFragment,
+                Injection.provideGetTaskHeads(getApplicationContext()));
+
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
         }
@@ -96,9 +100,11 @@ public class TasksActivity extends AppCompatActivity
         checkNotNull(navigationView, "navigationView cannot be null");
         setupDrawerContent(navigationView);
         // Set Navigation header
-        mNavHeaderName = (TextView) navigationView.findViewById(R.id.nav_name);
-        mNavHeaderEmail = (TextView) navigationView.findViewById(R.id.nav_email);
-        mNavFriendButton = (Button) navigationView.findViewById(R.id.bt_manage_friend);
+
+        View navHeader = navigationView.getHeaderView(0);
+        mNavHeaderName = (TextView) navHeader.findViewById(R.id.nav_name);
+        mNavHeaderEmail = (TextView) navHeader.findViewById(R.id.nav_email);
+        mNavFriendButton = (Button) navHeader.findViewById(R.id.bt_manage_friend);
 
         // if member or guest
         if (mAccessTokenStore.isLoggedIn()) {
@@ -106,7 +112,6 @@ public class TasksActivity extends AppCompatActivity
         } else {
             setGuestNavView();
         }
-        View navHeader = navigationView.getHeaderView(0);
         setupNavHeaderContent(navHeader);
     }
 
@@ -189,7 +194,7 @@ public class TasksActivity extends AppCompatActivity
 
     private void startFriendActivity() {
         Intent intent =
-                new Intent(TasksActivity.this, FriendActivity.class);
+                new Intent(TaskHeadActivity.this, FriendActivity.class);
         startActivity(intent);
     }
 
@@ -199,7 +204,7 @@ public class TasksActivity extends AppCompatActivity
     }
 
     /*
-    * TasksFragment listener
+    * TaskHeadFragment listener
     * */
     @Override
     public void onLoginSuccess() {
