@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 7/5/16.
  */
-public class FriendLocalDataSource implements FriendDataSource, TaskHeadDataSource {
+public class FriendLocalDataSource implements FriendDataSource {
 
     private static FriendLocalDataSource INSTANCE;
 
@@ -172,11 +172,5 @@ public class FriendLocalDataSource implements FriendDataSource, TaskHeadDataSour
             db.endTransaction();
         }
         db.close();
-    }
-
-
-    @Override
-    public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
-
     }
 }

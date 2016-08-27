@@ -1,7 +1,10 @@
 package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.BasePresenter;
+import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.List;
@@ -11,27 +14,35 @@ import java.util.List;
  */
 public interface TaskHeadContract {
 
-    interface Presenter {
-
-        void result(int requestCode, int resultCode, Intent data);
-
-        void addNewTask();
-
-        void openTask(TaskHead clickedTaskHead);
-
-        void loadTaskHeads();
-    }
-
-    interface View {
+    interface View extends BaseView<Presenter> {
 
         void setPresenter(TaskHeadContract.Presenter tasksPresenter);
 
         void setLoginSuccessUI();
 
-        void openAddEditTask();
-
         void showTaskHeads(List<TaskHead> taskHeads);
 
         void showNoTaskHeads();
+
+        void openTasks();
+
+        void openTasks(TaskHead requestedTaskHead);
+
+        void showTaskHeadDeleted();
+    }
+
+    interface Presenter extends BasePresenter {
+
+        void result(int requestCode, int resultCode, Intent data);
+
+        void addNewTaskHead();
+
+        void openTaskHead(TaskHead clickedTaskHead);
+
+        void loadTaskHeads();
+
+        void editTasks(@NonNull TaskHead requestedTaskHead);
+
+        void deleteTaskHead(@NonNull TaskHead taskHead);
     }
 }

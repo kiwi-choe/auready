@@ -64,6 +64,12 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         }
     }
 
+    @Override
+    public void deleteTaskHead(@NonNull String taskHeadId) {
+
+
+    }
+
     private void getTaskHeadsFromRemoteDataSource(@NonNull final LoadTaskHeadsCallback callback) {
         mTaskHeadRemoteDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
             @Override

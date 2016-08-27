@@ -1,10 +1,11 @@
-package com.kiwi.auready_ver2.addedittask;
+package com.kiwi.auready_ver2.tasks;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -17,13 +18,11 @@ import java.util.List;
  */
 public class TasksAdapter extends BaseAdapter {
 
-    private final String mTaskHeadId;
     private List<Task> mTasks;
     private TaskItemListener mItemListener;
 
-    public TasksAdapter(List<Task> tasks, TaskItemListener itemListener, String taskHeadId) {
+    public TasksAdapter(List<Task> tasks, TaskItemListener itemListener) {
         super();
-        mTaskHeadId = taskHeadId;
         setList(tasks);
         mItemListener = itemListener;
     }
@@ -58,9 +57,9 @@ public class TasksAdapter extends BaseAdapter {
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.complete = (CheckBox) rowView.findViewById(R.id.complete);
             viewHolder.description = (TextView) rowView.findViewById(R.id.description);
-            view.setTag(viewHolder);
+            rowView.setTag(viewHolder);
         }
-        bindView(view, i);
+        bindView(rowView, i);
         return rowView;
     }
 
@@ -82,7 +81,7 @@ public class TasksAdapter extends BaseAdapter {
                 }
             }
         });
-
+        
         viewHolder.description.setText(task.getDescription());
     }
 
