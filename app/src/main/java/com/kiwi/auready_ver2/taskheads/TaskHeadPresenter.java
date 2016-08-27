@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -85,7 +84,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 //        // Start the taskHeads to 3.
 //        List<TaskHead> testTaskHeadList = Lists.newArrayList(new TaskHead("title1"),
 //                new TaskHead("title2"), new TaskHead("title3"));
-//        processTasks(testTaskHeadList);
+//        processTaskHeads(testTaskHeadList);
 
         mUseCaseHandler.execute(mGetTaskHeads, new GetTaskHeads.RequestValues(),
                 new UseCase.UseCaseCallback<GetTaskHeads.ResponseValue>() {
@@ -93,7 +92,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
                     @Override
                     public void onSuccess(GetTaskHeads.ResponseValue response) {
                         List<TaskHead> taskHeads = response.getTaskHeads();
-                        processTasks(taskHeads);
+                        processTaskHeads(taskHeads);
                     }
 
                     @Override
@@ -129,7 +128,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
         mTaskHeadView.openTasks(requestedTaskHead);
     }
 
-    private void processTasks(List<TaskHead> taskHeads) {
+    private void processTaskHeads(List<TaskHead> taskHeads) {
         if(taskHeads.isEmpty()) {
             mTaskHeadView.showNoTaskHeads();
         } else {
