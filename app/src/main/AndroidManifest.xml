@@ -20,7 +20,7 @@
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".friend.FriendActivity" />
         <activity android:name=".friend.FindActivity" />
-        <activity android:name=".addedittask.AddEditTaskActivity"></activity>
+        <activity android:name=".tasks.TasksActivity"></activity>
     </application>
 
 </manifest>

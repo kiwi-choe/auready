@@ -69,7 +69,15 @@ public class TaskHeadListAdapter extends BaseAdapter {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onTaskHeadClick(taskHead);
+                mItemListener.onClick(taskHead);
+            }
+        });
+
+        view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mItemListener.onLongClick(taskHead);
+                return true;
             }
         });
     }
@@ -88,6 +96,8 @@ public class TaskHeadListAdapter extends BaseAdapter {
     }
 
     public interface TaskHeadItemListener {
-        void onTaskHeadClick(TaskHead taskHead);
+
+        void onClick(TaskHead taskHead);
+        void onLongClick(TaskHead taskHead);
     }
 }

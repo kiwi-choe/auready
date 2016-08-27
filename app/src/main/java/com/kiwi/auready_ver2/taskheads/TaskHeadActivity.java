@@ -41,7 +41,7 @@ public class TaskHeadActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tasks);
+        setContentView(R.layout.activity_taskheads);
 
 
         TaskHeadFragment taskHeadFragment =
@@ -56,7 +56,9 @@ public class TaskHeadActivity extends AppCompatActivity
         mPresenter = new TaskHeadPresenter(
                 Injection.provideUseCaseHandler(),
                 taskHeadFragment,
-                Injection.provideGetTaskHeads(getApplicationContext()));
+                Injection.provideGetTaskHeads(getApplicationContext()),
+                Injection.provideDeleteTaskHead(getApplicationContext())
+        );
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
@@ -88,13 +90,6 @@ public class TaskHeadActivity extends AppCompatActivity
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
 
-        // Set floating button
-        FloatingActionButton fb = (FloatingActionButton) findViewById(R.id.fab_add_task);
-        fb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
         // Set Navigation view
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         checkNotNull(navigationView, "navigationView cannot be null");

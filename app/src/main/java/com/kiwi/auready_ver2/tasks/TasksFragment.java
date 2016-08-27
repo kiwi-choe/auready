@@ -1,6 +1,7 @@
-package com.kiwi.auready_ver2.addedittask;
+package com.kiwi.auready_ver2.tasks;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,15 +14,19 @@ import com.kiwi.auready_ver2.data.Task;
 
 import java.util.ArrayList;
 
-public class AddEditTaskFragment extends Fragment {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    public static final String TAG_ADDEDITTASKFRAGMENT = "Tag_AddEditTaskFragment";
-    public static final String ARG_TASKHEAD_ID = "arg_taskHeadId";
+public class TasksFragment extends Fragment implements TasksContract.View {
+
+    public static final String TAG_ADDEDITTASKFRAGMENT = "Tag_TaskFragment";
 
     private TasksAdapter mActiveTasksAdapter;
     private TasksAdapter mCompleteTasksAdapter;
 
     private String mTaskHeadId;
+    private String mTaskHeadTitle;
+
+    private TasksContract.Presenter mPresenter;
 
     /*
         * Listener for clicks on tasks in th listview
@@ -38,15 +43,16 @@ public class AddEditTaskFragment extends Fragment {
         }
     };
 
-    public AddEditTaskFragment() {
+    public TasksFragment() {
         // Required empty public constructor
     }
 
-    public static AddEditTaskFragment newInstance(String taskHeadId) {
+    public static TasksFragment newInstance(String taskHeadId, String taskHeadTitle) {
 
-        AddEditTaskFragment fragment = new AddEditTaskFragment();
+        TasksFragment fragment = new TasksFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_TASKHEAD_ID, taskHeadId);
+        args.putString(TasksActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+        args.putString(TasksActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -55,18 +61,31 @@ public class AddEditTaskFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null) {
-            mTaskHeadId = getArguments().getString(ARG_TASKHEAD_ID);
+            mTaskHeadId = getArguments().getString(TasksActivity.EXTRA_TASKHEAD_ID);
+            mTaskHeadTitle = getArguments().getString(TasksActivity.EXTRA_TASKHEAD_TITLE);
         }
 
-        mActiveTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener, mTaskHeadId);
-        mCompleteTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener, mTaskHeadId);
+        mActiveTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
+        mCompleteTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
+    @Override
+    public void setPresenter(@NonNull TasksContract.Presenter presenter) {
+        mPresenter = checkNotNull(presenter);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_add_edit_task, container, false);
+        View root = inflater.inflate(R.layout.fragment_add_edit_tasks, container, false);
 
         // Set ListView
         final ListView activeTaskListView = (ListView) root.findViewById(R.id.active_task_list);
@@ -78,5 +97,10 @@ public class AddEditTaskFragment extends Fragment {
         Button addTaskViewBt = (Button) root.findViewById(R.id.add_taskview_bt);
 
         return root;
+    }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
     }
 }

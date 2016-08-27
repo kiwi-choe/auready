@@ -19,11 +19,19 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     private static FakeTaskHeadRemoteDataSource INSTANCE;
 
     public static FakeTaskHeadRemoteDataSource getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new FakeTaskHeadRemoteDataSource();
+        }
         return INSTANCE;
     }
 
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
         callback.onTaskHeadsLoaded(Lists.newArrayList(TASKHEADS_SERVICE_DATA.values()));
+    }
+
+    @Override
+    public void deleteTaskHead(@NonNull String id) {
+
     }
 }

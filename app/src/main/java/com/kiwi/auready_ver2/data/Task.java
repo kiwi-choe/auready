@@ -64,4 +64,8 @@ public class Task {
     public boolean isCompleted() {
         return mCompleted;
     }
+
+    public String getId() {
+        return mId;
+    }
 }

@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.addedittask.AddEditTaskActivity;
+import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.ArrayList;
@@ -49,14 +49,25 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         mTaskHeadListAdapter = new TaskHeadListAdapter(new ArrayList<TaskHead>(0), mItemListener);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
     /*
-    * Listener for clicks on taskHeads in the ListView
-    * */
+        * Listener for clicks on taskHeads in the ListView
+        * */
     TaskHeadListAdapter.TaskHeadItemListener
             mItemListener = new TaskHeadListAdapter.TaskHeadItemListener() {
         @Override
-        public void onTaskHeadClick(TaskHead clickedTaskHead) {
-            mPresenter.openTask(clickedTaskHead);
+        public void onClick(TaskHead clickedTaskHead) {
+            mPresenter.openTaskHead(clickedTaskHead);
+        }
+
+        @Override
+        public void onLongClick(TaskHead clickedTaskHead) {
+            mPresenter.deleteTaskHead(clickedTaskHead);
         }
     };
 
@@ -87,7 +98,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_tasks, container, false);
+        View root = inflater.inflate(R.layout.fragment_taskheads, container, false);
 
         // Set Floating button
         FloatingActionButton fb =
@@ -95,7 +106,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.addNewTask();
+                mPresenter.addNewTaskHead();
             }
         });
 
@@ -122,9 +133,24 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     }
 
     @Override
-    public void openAddEditTask() {
-        Intent intent = new Intent(getContext(), AddEditTaskActivity.class);
-        startActivityForResult(intent, AddEditTaskActivity.REQ_ADD_TASK);
+    public void openTasks() {
+        // Open New AddTasks
+        Intent intent = new Intent(getContext(), TasksActivity.class);
+        startActivityForResult(intent, TasksActivity.REQ_ADD_TASK);
+    }
+
+    @Override
+    public void openTasks(TaskHead requestedTaskHead) {
+        Intent intent = new Intent(getContext(), TasksActivity.class);
+        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, requestedTaskHead.getId());
+        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_TITLE, requestedTaskHead.getTitle());
+        startActivity(intent);
+    }
+
+    @Override
+    public void showTaskHeadDeleted() {
+        // Reload taskHeads after deleted
+        mPresenter.loadTaskHeads();
     }
 
     @Override

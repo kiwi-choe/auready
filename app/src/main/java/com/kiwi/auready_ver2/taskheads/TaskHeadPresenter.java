@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.login.LoginActivity;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
@@ -20,18 +22,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
-    private final TaskHeadContract.View mTasksView;
+    private final TaskHeadContract.View mTaskHeadView;
 
-    private final GetTaskHeads mGetTaskHeads;
     private UseCaseHandler mUseCaseHandler;
+    private final GetTaskHeads mGetTaskHeads;
+    private final DeleteTaskHead mDeleteTaskHead;
 
-    public TaskHeadPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadContract.View tasksView, GetTaskHeads getTaskHeads) {
-
+    public TaskHeadPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadContract.View tasksView,
+                             @NonNull GetTaskHeads getTaskHeads, @NonNull DeleteTaskHead deleteTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
-        mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
+        mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
+        mDeleteTaskHead = checkNotNull(deleteTaskHead, "deleteTaskHead cannot be null");
 
-        mTasksView.setPresenter(this);
+        mTaskHeadView.setPresenter(this);
+    }
+
+    @Override
+    public void start() {
+        loadTaskHeads();
     }
 
     @Override
@@ -42,7 +51,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
             boolean isSuccess = data.getBooleanExtra(LoginUtils.IS_SUCCESS, false);
             if (loginOrOut == LoginUtils.LOGIN) {
                 if (isSuccess) {
-                    mTasksView.setLoginSuccessUI();
+                    mTaskHeadView.setLoginSuccessUI();
                 }
                 else {
 
@@ -60,18 +69,23 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
     }
 
     @Override
-    public void addNewTask() {
+    public void addNewTaskHead() {
         // open AddEditView
-        mTasksView.openAddEditTask();
+        mTaskHeadView.openTasks();
     }
 
     @Override
-    public void openTask(TaskHead clickedTaskHead) {
+    public void openTaskHead(TaskHead clickedTaskHead) {
 
     }
 
     @Override
     public void loadTaskHeads() {
+//        // // FIXME: 8/25/16 For Test
+//        // Start the taskHeads to 3.
+//        List<TaskHead> testTaskHeadList = Lists.newArrayList(new TaskHead("title1"),
+//                new TaskHead("title2"), new TaskHead("title3"));
+//        processTasks(testTaskHeadList);
 
         mUseCaseHandler.execute(mGetTaskHeads, new GetTaskHeads.RequestValues(),
                 new UseCase.UseCaseCallback<GetTaskHeads.ResponseValue>() {
@@ -89,11 +103,37 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
                 });
     }
 
+    @Override
+    public void deleteTaskHead(@NonNull TaskHead taskHead) {
+        mTaskHeadView.showTaskHeadDeleted();
+//
+//        String taskHeadId = taskHead.getId();
+//        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
+//                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
+//
+//                    @Override
+//                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
+//                        mTaskHeadView.showTaskHeadDeleted();
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
+    }
+
+    @Override
+    public void editTasks(@NonNull TaskHead requestedTaskHead) {
+        checkNotNull(requestedTaskHead, "requestedTaskHead cannot be null");
+        mTaskHeadView.openTasks(requestedTaskHead);
+    }
+
     private void processTasks(List<TaskHead> taskHeads) {
         if(taskHeads.isEmpty()) {
-            mTasksView.showNoTaskHeads();
+            mTaskHeadView.showNoTaskHeads();
         } else {
-            mTasksView.showTaskHeads(taskHeads);
+            mTaskHeadView.showTaskHeads(taskHeads);
         }
     }
 }

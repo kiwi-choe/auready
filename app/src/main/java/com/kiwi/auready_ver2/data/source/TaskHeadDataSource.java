@@ -18,4 +18,6 @@ public interface TaskHeadDataSource {
     }
 
     void getTaskHeads(@NonNull LoadTaskHeadsCallback callback);
+
+    void deleteTaskHead(@NonNull String taskHeadId);
 }
