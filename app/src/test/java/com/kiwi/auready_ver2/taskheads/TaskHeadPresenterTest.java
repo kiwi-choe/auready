@@ -37,20 +37,20 @@ public class TaskHeadPresenterTest {
     private TaskHeadContract.View mTaskHeadView;
 
     @Captor
-    private ArgumentCaptor<LoadTaskHeadsCallback> mLoadTasksCallbackCaptor;
+    private ArgumentCaptor<LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        mTaskHeadPresenter = givenTasksPresenter();
+        mTaskHeadPresenter = givenTaskHeadsPresenter();
 
         // Start the taskHeads to 3.
         TASKHEADS = Lists.newArrayList(new TaskHead("title1"),
                 new TaskHead("title2"), new TaskHead("title3"));
     }
 
-    private TaskHeadPresenter givenTasksPresenter() {
+    private TaskHeadPresenter givenTaskHeadsPresenter() {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
@@ -63,8 +63,8 @@ public class TaskHeadPresenterTest {
     public void loadAllTaskHeadsFromRepository_andLoadIntoView() {
         mTaskHeadPresenter.loadTaskHeads();
 
-        verify(mTaskHeadRepository).getTaskHeads(mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onTaskHeadsLoaded(TASKHEADS);
+        verify(mTaskHeadRepository).getTaskHeads(mLoadTaskHeadsCallbackCaptor.capture());
+        mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(TASKHEADS);
 
         ArgumentCaptor<List> showTaskHeadsArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mTaskHeadView).showTaskHeads(showTaskHeadsArgumentCaptor.capture());

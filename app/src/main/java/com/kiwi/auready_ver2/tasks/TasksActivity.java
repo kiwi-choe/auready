@@ -18,7 +18,7 @@ public class TasksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_edit_tasks);
+        setContentView(R.layout.activity_tasks);
 
         // Set up the toolbar.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -27,21 +27,35 @@ public class TasksActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        String taskHeadId = getIntent().getStringExtra(EXTRA_TASKHEAD_ID);
-        String taskHeadTitle = getIntent().getStringExtra(EXTRA_TASKHEAD_TITLE);
-
-        TasksFragment addEditTaskFragment =
+        TasksFragment tasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if(addEditTaskFragment == null) {
-            addEditTaskFragment = TasksFragment.newInstance(taskHeadId, taskHeadTitle);
+
+        String taskHeadId = null;
+        String taskHeadTitle = null;
+        if(tasksFragment == null) {
+            tasksFragment = TasksFragment.newInstance();
+
+            if(getIntent().hasExtra(EXTRA_TASKHEAD_ID)) {
+                // edit
+                taskHeadId = getIntent().getStringExtra(EXTRA_TASKHEAD_ID);
+                taskHeadTitle = getIntent().getStringExtra(EXTRA_TASKHEAD_TITLE);
+                actionBar.setTitle(R.string.edit_tasks_ab_title);
+                Bundle bundle = new Bundle();
+                bundle.putString(EXTRA_TASKHEAD_ID, taskHeadId);
+                bundle.putString(EXTRA_TASKHEAD_TITLE, taskHeadTitle);
+                tasksFragment.setArguments(bundle);
+            } else {
+                actionBar.setTitle(R.string.add_tasks_ab_title);
+            }
+
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), addEditTaskFragment, R.id.content_frame, TasksFragment.TAG_ADDEDITTASKFRAGMENT);
+                    getSupportFragmentManager(), tasksFragment, R.id.content_frame, TasksFragment.TAG_ADDEDITTASKFRAGMENT);
         }
 
         // Create the presenter
         new TasksPresenter(Injection.provideUseCaseHandler(),
                 taskHeadId,
-                addEditTaskFragment,
+                tasksFragment,
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideSaveTasks(getApplicationContext()));
     }

@@ -13,6 +13,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -47,14 +48,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         // Required empty public constructor
     }
 
-    public static TasksFragment newInstance(String taskHeadId, String taskHeadTitle) {
-
-        TasksFragment fragment = new TasksFragment();
-        Bundle args = new Bundle();
-        args.putString(TasksActivity.EXTRA_TASKHEAD_ID, taskHeadId);
-        args.putString(TasksActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
-        fragment.setArguments(args);
-        return fragment;
+    public static TasksFragment newInstance() {
+        return new TasksFragment();
     }
 
     @Override
@@ -102,5 +97,15 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public boolean isActive() {
         return isAdded();
+    }
+
+    @Override
+    public void showTasks(List<Task> tasks) {
+
+    }
+
+    @Override
+    public void showNoTasks() {
+
     }
 }

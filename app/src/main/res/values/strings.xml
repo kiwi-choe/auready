@@ -47,6 +47,8 @@
     <string name="nav_header_name_guest">GUEST</string>
     <string name="add_taskview">+ ADD NEW TASK</string>
     <string name="no_taskheads">You have no TO-DOs!</string>
+    <string name="edit_tasks_ab_title">EDIT TASKS</string>
+    <string name="add_tasks_ab_title">NEW TASKS</string>
 
 
 </resources>
