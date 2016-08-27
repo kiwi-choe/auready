@@ -10,7 +10,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".tasks.TasksActivity">
+        <activity android:name=".taskheads.TaskHeadActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,7 +19,8 @@
         </activity>
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".friend.FriendActivity" />
-        <activity android:name=".friend.FindActivity"></activity>
+        <activity android:name=".friend.FindActivity" />
+        <activity android:name=".addedittask.AddEditTaskActivity"></activity>
     </application>
 
 </manifest>

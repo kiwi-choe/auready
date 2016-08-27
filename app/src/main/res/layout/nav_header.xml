@@ -9,7 +9,7 @@
     android:padding="16dp"
     android:weightSum="1"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    tools:context=".tasks.TasksActivity">
+    tools:context=".taskheads.TaskHeadActivity">
 
     <RelativeLayout
         android:id="@+id/nav_header_account_layout"
