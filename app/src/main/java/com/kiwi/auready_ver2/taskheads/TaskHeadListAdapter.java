@@ -7,9 +7,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.util.SwipeToDismissTouchListener;
 
 import java.util.List;
 
@@ -51,8 +53,8 @@ public class TaskHeadListAdapter extends BaseAdapter {
 
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.titleTV = (TextView) rowView.findViewById(R.id.title);
-//            viewHolder.deleteBtn = (Button) rowView.findViewById(R.id.delete_btn);
-//            viewHolder.undoBtn = (Button) rowView.findViewById(R.id.undo_btn);
+            viewHolder.deleteBtn = (Button) rowView.findViewById(R.id.delete_btn);
+            viewHolder.undoBtn = (Button) rowView.findViewById(R.id.undo_btn);
 
             rowView.setTag(viewHolder);
         }
@@ -67,24 +69,24 @@ public class TaskHeadListAdapter extends BaseAdapter {
 
         viewHolder.titleTV.setText(taskHead.getTitle());
 
-//
-//        viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mTouchListener.processPendingDismisses(position);
-//                Toast.makeText(v.getContext(), "delete!! : " + mTaskHeads.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-//                mTouchListener.getLog();
-//            }
-//        });
-//
-//        viewHolder.undoBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mTouchListener.undoPendingDismiss(position);
-//                Toast.makeText(v.getContext(), "undo!! : " + mTaskHeads.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-//                mTouchListener.getLog();
-//            }
-//        });
+
+        viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTouchListener.processPendingDismisses(position);
+                Toast.makeText(v.getContext(), "delete!! : " + mTaskHeads.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                mTouchListener.getLog();
+            }
+        });
+
+        viewHolder.undoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTouchListener.undoPendingDismiss(position);
+                Toast.makeText(v.getContext(), "undo!! : " + mTaskHeads.get(position).getTitle(), Toast.LENGTH_SHORT).show();
+                mTouchListener.getLog();
+            }
+        });
     }
 
     public void setList(@NonNull List<TaskHead> list) {
@@ -108,10 +110,10 @@ public class TaskHeadListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-//    private SwipeToDismissTouchListener mTouchListener;
-//    public void setSwipeTouchListener(SwipeToDismissTouchListener touchListener){
-//        mTouchListener = touchListener;
-//    }
+    private SwipeToDismissTouchListener mTouchListener;
+    public void setSwipeTouchListener(SwipeToDismissTouchListener touchListener){
+        mTouchListener = touchListener;
+    }
 
     private class ViewHolder {
         public TextView titleTV;

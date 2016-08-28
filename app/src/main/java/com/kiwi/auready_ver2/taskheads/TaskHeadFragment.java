@@ -9,12 +9,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.tasks.TasksActivity;
+import com.kiwi.auready_ver2.util.ListViewAdapter;
+import com.kiwi.auready_ver2.util.SwipeToDismissTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,10 +117,54 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         // Set TaskHeadsView
         ListView taskHeadListView = (ListView) root.findViewById(R.id.taskhead_list);
         taskHeadListView.setAdapter(mTaskHeadListAdapter);
+        initListView(taskHeadListView);
+
         mTaskHeadsView = (LinearLayout) root.findViewById(R.id.taskheads_view);
         mNoTaskHeadsView = (LinearLayout) root.findViewById(R.id.no_taskhead_view);
 
         return root;
+    }
+
+    private void initListView(ListView listView) {
+        final SwipeToDismissTouchListener<ListViewAdapter> touchListener =
+                new SwipeToDismissTouchListener<>(
+                        new ListViewAdapter(listView),
+                        new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
+                            @Override
+                            public boolean canDismiss(int position) {
+//                                Log.d("MY_LOG", "canDismiss : " + position);
+                                return true;
+                            }
+
+                            @Override
+                            public void onPendingDismiss(ListViewAdapter view, int position) {
+//                                Log.d("MY_LOG", "onPendingDismiss : " + position);
+                            }
+
+                            @Override
+                            public void onDismiss(ListViewAdapter view, int position) {
+//                                Log.d("MY_LOG", "onDismiss : " + position);
+                                mTaskHeadListAdapter.removeData(position);
+                            }
+                        });
+
+        mTaskHeadListAdapter.setSwipeTouchListener(touchListener);
+        listView.setOnTouchListener(touchListener);
+        listView.setOnScrollListener((AbsListView.OnScrollListener) touchListener.makeScrollListener());
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                mItemListener.onClick((TaskHead) mTaskHeadListAdapter.getItem(position));
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                mItemListener.onLongClick((TaskHead) mTaskHeadListAdapter.getItem(position));
+                return true;
+            }
+        });
     }
 
     @Override
@@ -163,7 +211,6 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
     @Override
     public void showNoTaskHeads() {
-
     }
 
     // Interface with TaskHeadActivity
