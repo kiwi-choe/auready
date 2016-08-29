@@ -16,14 +16,15 @@ public class Task {
     private boolean mCompleted;
 
     /*
-    * To create a new active Task with no description
+    * To create a new active Task with description before create the new TaskHead
     * */
-    public Task(String taskHeadId) {
+    public Task(String description) {
         mId = UUID.randomUUID().toString();
-        mTaskHeadId = taskHeadId;
+        mTaskHeadId = "";
         mDescription = "";
         mCompleted = false;
     }
+
     /*
     * To create a new active Task with description
     * */
@@ -53,17 +54,6 @@ public class Task {
         mTaskHeadId = taskHeadId;
         mDescription = description;
         mCompleted = completed;
-    }
-
-    /*
-    * To create an active Task if the Task already has an id
-    * (copy of another Task).
-    * */
-    public Task(String id, String taskHeadId, String description, boolean completed) {
-        mId = id;
-        mTaskHeadId = taskHeadId;
-        mDescription = description;
-        mCompleted = false;
     }
 
     public String getDescription() {

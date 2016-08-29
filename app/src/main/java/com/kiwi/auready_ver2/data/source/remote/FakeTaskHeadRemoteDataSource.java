@@ -34,4 +34,9 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     public void deleteTaskHead(@NonNull String id) {
 
     }
+
+    @Override
+    public void saveTaskHead(@NonNull TaskHead taskHead) {
+
+    }
 }

@@ -11,6 +11,7 @@ import java.util.List;
  */
 public interface TaskHeadDataSource {
 
+
     interface LoadTaskHeadsCallback {
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
 
@@ -20,4 +21,6 @@ public interface TaskHeadDataSource {
     void getTaskHeads(@NonNull LoadTaskHeadsCallback callback);
 
     void deleteTaskHead(@NonNull String taskHeadId);
+
+    void saveTaskHead(@NonNull TaskHead taskHead);
 }

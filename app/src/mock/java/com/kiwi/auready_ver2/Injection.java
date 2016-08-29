@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
 import com.kiwi.auready_ver2.data.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
@@ -71,17 +72,25 @@ public class Injection {
         return new DeleteTaskHead(Injection.provideTaskHeadRepository(context));
     }
 
-    public static GetTasks provideGetTasks(@NonNull Context context) {
-        return new GetTasks(Injection.provideTaskRepository(context));
+    public static SaveTaskHead provideSaveTaskHead(@NonNull Context context) {
+        return new SaveTaskHead(Injection.provideTaskHeadRepository(context));
     }
 
+    /*
+    * Task
+    * */
     private static TaskRepository provideTaskRepository(@NonNull Context context) {
         checkNotNull(context);
         return TaskRepository.getInstance(FakeTaskRemoteDataSource.getInstance(),
                 TaskLocalDataSource.getInstance(context));
     }
 
+    public static GetTasks provideGetTasks(@NonNull Context context) {
+        return new GetTasks(Injection.provideTaskRepository(context));
+    }
+
     public static SaveTasks provideSaveTasks(@NonNull Context context) {
         return new SaveTasks(Injection.provideTaskRepository(context));
     }
+
 }

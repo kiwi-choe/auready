@@ -4,6 +4,7 @@ import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Task;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,10 +19,16 @@ public class TasksContract {
         void showTasks(List<Task> tasks);
 
         void showNoTasks();
+
+        void showEmptyTasksError();
     }
 
     interface Presenter extends BasePresenter {
 
         void loadTasks();
+
+        boolean isEmptyTaskHead(String taskHeadTitle, List<Task> tasks);
+
+        void saveTaskHead(String title, List<Task> tasks);
     }
 }

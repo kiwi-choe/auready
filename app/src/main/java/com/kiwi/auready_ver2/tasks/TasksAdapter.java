@@ -33,7 +33,7 @@ public class TasksAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mTasks.size() + 1;
+        return mTasks.size();
     }
 
     @Override

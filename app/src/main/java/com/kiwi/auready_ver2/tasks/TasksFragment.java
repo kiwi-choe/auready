@@ -80,7 +80,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_add_edit_tasks, container, false);
+        View root = inflater.inflate(R.layout.fragment_tasks, container, false);
 
         // Set ListView
         final ListView activeTaskListView = (ListView) root.findViewById(R.id.active_task_list);
@@ -106,6 +106,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showNoTasks() {
+
+    }
+
+    @Override
+    public void showEmptyTasksError() {
 
     }
 }

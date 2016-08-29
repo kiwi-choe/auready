@@ -80,11 +80,6 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
     @Override
     public void loadTaskHeads() {
-//        // // FIXME: 8/25/16 For Test
-//        // Start the taskHeads to 3.
-//        List<TaskHead> testTaskHeadList = Lists.newArrayList(new TaskHead("title1"),
-//                new TaskHead("title2"), new TaskHead("title3"));
-//        processTaskHeads(testTaskHeadList);
 
         mUseCaseHandler.execute(mGetTaskHeads, new GetTaskHeads.RequestValues(),
                 new UseCase.UseCaseCallback<GetTaskHeads.ResponseValue>() {

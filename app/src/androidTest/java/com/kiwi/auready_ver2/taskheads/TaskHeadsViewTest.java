@@ -1,5 +1,6 @@
-package com.kiwi.auready_ver2;
+package com.kiwi.auready_ver2.taskheads;
 
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.text.TextUtils;
@@ -7,6 +8,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ListView;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
 
 import org.hamcrest.Description;
@@ -65,7 +67,7 @@ public class TaskHeadsViewTest {
     @Test
     public void clickOnAndroidHomeIcon_OpensNavigation() {
         // Check that left drawer is closed at startup
-        onView(withId(R.id.drawer_layout))
+        onView(ViewMatchers.withId(R.id.drawer_layout))
                 .check(matches(isClosed(Gravity.START)));
 
         // Open Drawer

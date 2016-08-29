@@ -1,11 +1,13 @@
-package com.kiwi.auready_ver2;
+package com.kiwi.auready_ver2.login;
 
 import android.support.test.espresso.matcher.BoundedMatcher;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.View;
 import android.widget.EditText;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.login.LoginActivity;
 
 import junit.framework.Assert;
@@ -67,7 +69,7 @@ public class LoginViewTest {
 
         // Try to login with wrong email
         String editWrongEmail = "wrong email";
-        onView(withId(R.id.ed_email))
+        onView(ViewMatchers.withId(R.id.ed_email))
                 .perform(replaceText(editWrongEmail), closeSoftKeyboard());
         onView(withId(R.id.ed_password))
                 .perform(replaceText("123"), closeSoftKeyboard());
