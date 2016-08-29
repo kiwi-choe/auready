@@ -40,8 +40,6 @@ public class TasksPresenterTest {
     @Mock
     private TasksContract.View mTasksView;
     @Mock
-    private TaskHeadRepository mTaskHeadRepository;
-    @Mock
     private TaskRepository mTaskRepository;
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
@@ -64,17 +62,6 @@ public class TasksPresenterTest {
         SaveTasks saveTasks = new SaveTasks(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView, getTasks, saveTasks);
-    }
-
-    @Test
-    public void startTasksPresenter_saveNewTaskHead() {
-        mTasksPresenter = givenTasksPresenter(null);
-
-        // To make taskHead id
-        mTasksPresenter.start();
-
-        // Given a stubbed new taskHead
-        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
     }
 
     @Test

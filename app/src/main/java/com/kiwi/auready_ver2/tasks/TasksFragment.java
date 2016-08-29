@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -111,6 +113,18 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showEmptyTasksError() {
-
+        Intent intent = new Intent();
+        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
+        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        // Save Tasks when onBackPressed
+//        mPresenter.saveTasks(mTaskHeadTitle, );
+    }
+
+
 }

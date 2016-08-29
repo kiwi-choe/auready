@@ -21,6 +21,8 @@ public class TasksContract {
         void showNoTasks();
 
         void showEmptyTasksError();
+
+        void onBackPressed();
     }
 
     interface Presenter extends BasePresenter {

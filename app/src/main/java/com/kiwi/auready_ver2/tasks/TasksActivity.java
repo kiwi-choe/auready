@@ -14,6 +14,10 @@ public class TasksActivity extends AppCompatActivity {
     public static final int REQ_ADD_TASK = 1;
     public static final String EXTRA_TASKHEAD_ID = "TASKHEAD_ID";
     public static final String EXTRA_TASKHEAD_TITLE = "TASKHEAD_TITLE";
+    public static final String EXTRA_ISEMPTY_TASKS = "ISEMPTY_TASKS_AND_NO_TITLE";
+
+    private TasksFragment mTasksFragment;
+    private TasksPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,13 +31,13 @@ public class TasksActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        TasksFragment tasksFragment =
+        mTasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
 
         String taskHeadId = null;
         String taskHeadTitle = null;
-        if (tasksFragment == null) {
-            tasksFragment = TasksFragment.newInstance();
+        if (mTasksFragment == null) {
+            mTasksFragment = TasksFragment.newInstance();
 
             taskHeadId = getIntent().getStringExtra(EXTRA_TASKHEAD_ID);
             taskHeadTitle = getIntent().getStringExtra(EXTRA_TASKHEAD_TITLE);
@@ -41,16 +45,16 @@ public class TasksActivity extends AppCompatActivity {
             Bundle bundle = new Bundle();
             bundle.putString(EXTRA_TASKHEAD_ID, taskHeadId);
             bundle.putString(EXTRA_TASKHEAD_TITLE, taskHeadTitle);
-            tasksFragment.setArguments(bundle);
+            mTasksFragment.setArguments(bundle);
 
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
+                    getSupportFragmentManager(), mTasksFragment, R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
         }
 
         // Create the presenter
-        new TasksPresenter(Injection.provideUseCaseHandler(),
+        mPresenter = new TasksPresenter(Injection.provideUseCaseHandler(),
                 taskHeadId,
-                tasksFragment,
+                mTasksFragment,
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideSaveTasks(getApplicationContext())
         );
@@ -61,4 +65,13 @@ public class TasksActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
+
+    @Override
+    public void onBackPressed() {
+        if(mTasksFragment.isAdded()) {
+            mTasksFragment.onBackPressed();
+        }
+    }
+
 }
+

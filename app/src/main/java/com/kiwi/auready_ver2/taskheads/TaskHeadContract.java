@@ -27,6 +27,8 @@ public interface TaskHeadContract {
         void openTasks(TaskHead requestedTaskHead);
 
         void showTaskHeadDeleted();
+
+        void showEmptyTaskHeadError();
     }
 
     interface Presenter extends BasePresenter {
@@ -41,6 +43,6 @@ public interface TaskHeadContract {
 
         void editTasks(@NonNull TaskHead requestedTaskHead);
 
-        void deleteTaskHead(@NonNull TaskHead taskHead);
+        void deleteTaskHead(@NonNull String taskHeadId);
     }
 }

@@ -10,6 +10,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
@@ -68,6 +69,15 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
                 }
             }
         }
+
+        if(TasksActivity.REQ_ADD_TASK == resultCode && Activity.RESULT_OK == resultCode) {
+            boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, false);
+            String taskHeadId = data.getStringExtra(TasksActivity.EXTRA_TASKHEAD_ID);
+            if(isEmptyTasks) {
+                mTaskHeadView.showEmptyTaskHeadError();
+                deleteTaskHead(taskHeadId);
+            }
+        }
     }
 
     @Override
@@ -115,23 +125,21 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
     }
 
     @Override
-    public void deleteTaskHead(@NonNull TaskHead taskHead) {
-        mTaskHeadView.showTaskHeadDeleted();
-//
-//        String taskHeadId = taskHead.getId();
-//        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
-//                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
-//
-//                    @Override
-//                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
-//                        mTaskHeadView.showTaskHeadDeleted();
-//                    }
-//
-//                    @Override
-//                    public void onError() {
-//
-//                    }
-//                });
+    public void deleteTaskHead(@NonNull String taskHeadId) {
+
+        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
+                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
+                        mTaskHeadView.showTaskHeadDeleted();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     @Override

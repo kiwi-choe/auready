@@ -72,7 +72,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
         @Override
         public void onLongClick(TaskHead clickedTaskHead) {
-            mPresenter.deleteTaskHead(clickedTaskHead);
+            mPresenter.deleteTaskHead(clickedTaskHead.getId());
         }
     };
 
@@ -206,6 +206,11 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
     @Override
     public void showNoTaskHeads() {
+    }
+
+    @Override
+    public void showEmptyTaskHeadError() {
+
     }
 
     // Interface with TaskHeadActivity

@@ -76,6 +76,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         return false;
     }
 
+    // when onBackPressed, onPause(hide this view)
     @Override
     public void saveTasks(String title, List<Task> tasks) {
 

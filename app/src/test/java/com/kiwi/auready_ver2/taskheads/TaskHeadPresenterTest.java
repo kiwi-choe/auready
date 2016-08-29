@@ -100,7 +100,7 @@ public class TaskHeadPresenterTest {
         TaskHead taskHead = new TaskHead("title1");
 
         // When the deletion of a taskHead is requested,
-        mTaskHeadPresenter.deleteTaskHead(taskHead);
+        mTaskHeadPresenter.deleteTaskHead(taskHead.getId());
         // Then the repository and the view are notified.
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
         verify(mTaskHeadView).showTaskHeadDeleted();
