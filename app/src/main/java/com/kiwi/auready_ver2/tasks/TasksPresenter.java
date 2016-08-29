@@ -23,22 +23,19 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final TasksContract.View mTasksView;
     private final GetTasks mGetTasks;
     private final SaveTasks mSaveTasks;
-    private final SaveTaskHead mSaveTaskHead;
 
-    private final String mTaskHeadId;
+    private String mTaskHeadId;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
-                          @NonNull GetTasks getTasks, @NonNull SaveTasks saveTasks,
-                          @NonNull SaveTaskHead saveTaskHead) {
+                          @NonNull GetTasks getTasks, @NonNull SaveTasks saveTasks) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
 
         mGetTasks = checkNotNull(getTasks, "getTasks cannot be null!");
         mSaveTasks = checkNotNull(saveTasks, "saveTasks cannot be null!");
-        mSaveTaskHead = checkNotNull(saveTaskHead, "saveTaskHead cannot be null");
 
         mTasksView.setPresenter(this);
     }
@@ -48,7 +45,6 @@ public class TasksPresenter implements TasksContract.Presenter {
         if (mTaskHeadId != null) {
             loadTasks();
         } else {
-            createTaskHead();
         }
     }
 
@@ -81,30 +77,11 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void saveTaskHead(String title, List<Task> tasks) {
+    public void saveTasks(String title, List<Task> tasks) {
 
         if (isEmptyTaskHead(title, tasks)) {
             mTasksView.showEmptyTasksError();
         }
-    }
-
-
-    private void createTaskHead() {
-
-        TaskHead newTaskHead = new TaskHead();
-        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
-                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
-                    @Override
-                    public void onSuccess(SaveTaskHead.ResponseValue response) {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-
     }
 
     private void processTasks(List<Task> tasks) {

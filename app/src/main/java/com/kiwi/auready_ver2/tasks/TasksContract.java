@@ -29,6 +29,6 @@ public class TasksContract {
 
         boolean isEmptyTaskHead(String taskHeadTitle, List<Task> tasks);
 
-        void saveTaskHead(String title, List<Task> tasks);
+        void saveTasks(String title, List<Task> tasks);
     }
 }

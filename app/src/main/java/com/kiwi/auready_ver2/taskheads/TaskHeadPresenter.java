@@ -10,6 +10,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.List;
@@ -26,13 +27,15 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
     private UseCaseHandler mUseCaseHandler;
     private final GetTaskHeads mGetTaskHeads;
     private final DeleteTaskHead mDeleteTaskHead;
+    private final SaveTaskHead mSaveTaskHead;
 
     public TaskHeadPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadContract.View tasksView,
-                             @NonNull GetTaskHeads getTaskHeads, @NonNull DeleteTaskHead deleteTaskHead) {
+                             @NonNull GetTaskHeads getTaskHeads, @NonNull DeleteTaskHead deleteTaskHead, SaveTaskHead saveTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
         mDeleteTaskHead = checkNotNull(deleteTaskHead, "deleteTaskHead cannot be null");
+        mSaveTaskHead = checkNotNull(saveTaskHead, "saveTaskHead cannot be null");
 
         mTaskHeadView.setPresenter(this);
     }
@@ -69,6 +72,21 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
     @Override
     public void addNewTaskHead() {
+
+        TaskHead newTaskHead = new TaskHead();
+        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
+                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+                    @Override
+                    public void onSuccess(SaveTaskHead.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
         // open AddEditView
         mTaskHeadView.openTasks();
     }

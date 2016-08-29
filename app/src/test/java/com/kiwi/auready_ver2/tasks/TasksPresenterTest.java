@@ -62,8 +62,8 @@ public class TasksPresenterTest {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTasks getTasks = new GetTasks(mTaskRepository);
         SaveTasks saveTasks = new SaveTasks(mTaskRepository);
-        SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);
-        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView, getTasks, saveTasks, saveTaskHead);
+
+        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView, getTasks, saveTasks);
     }
 
     @Test
@@ -78,6 +78,18 @@ public class TasksPresenterTest {
     }
 
     @Test
+    public void onBackPressed_sendExtrasToTaskHeadsView_withoutTitleAndTasks() {
+
+        // When TaskHeadId is null,
+        mTasksPresenter = givenTasksPresenter(null);
+
+        String title = "";
+        List<Task> tasks = new ArrayList<>(0);
+        mTasksPresenter.saveTasks(title, tasks);
+
+        verify(mTasksView).showEmptyTasksError();
+    }
+    @Test
     public void saveTask_emptyTaskAndNoTitleShowsErrorUi() {
 
         // When TaskHeadId is null,
@@ -85,10 +97,11 @@ public class TasksPresenterTest {
 
         String title = "";
         List<Task> tasks = new ArrayList<>(0);
-        mTasksPresenter.saveTaskHead(title, tasks);
+        mTasksPresenter.saveTasks(title, tasks);
 
         boolean isEmpty = mTasksPresenter.isEmptyTaskHead(title, tasks);
         Assert.assertTrue(isEmpty);
+
 
         verify(mTasksView).showEmptyTasksError();
     }
@@ -101,7 +114,7 @@ public class TasksPresenterTest {
 
         String title = "title1";
         List<Task> tasks = Lists.newArrayList(new Task("description1"), new Task("description2"));
-        mTasksPresenter.saveTaskHead(title, tasks);
+        mTasksPresenter.saveTasks(title, tasks);
 
     }
 }

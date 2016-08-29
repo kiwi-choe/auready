@@ -8,6 +8,7 @@ import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallbac
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -55,8 +56,9 @@ public class TaskHeadPresenterTest {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
         DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository);
+        SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);
 
-        return new TaskHeadPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead);
+        return new TaskHeadPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead, saveTaskHead);
     }
 
     @Test
@@ -74,7 +76,14 @@ public class TaskHeadPresenterTest {
     @Test
     public void clickOnFab_showsAddTasksUi() {
         mTaskHeadPresenter.addNewTaskHead();
+
         verify(mTaskHeadView).openTasks();
+    }
+    @Test
+    public void clickOnFab_createNewTaskHead() {
+        mTaskHeadPresenter.addNewTaskHead();
+
+        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
     }
 
     @Test

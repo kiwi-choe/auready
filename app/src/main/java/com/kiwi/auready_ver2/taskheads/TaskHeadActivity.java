@@ -2,7 +2,6 @@ package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -57,8 +56,8 @@ public class TaskHeadActivity extends AppCompatActivity
                 Injection.provideUseCaseHandler(),
                 taskHeadFragment,
                 Injection.provideGetTaskHeads(getApplicationContext()),
-                Injection.provideDeleteTaskHead(getApplicationContext())
-        );
+                Injection.provideDeleteTaskHead(getApplicationContext()),
+                Injection.provideSaveTaskHead(getApplicationContext()));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
