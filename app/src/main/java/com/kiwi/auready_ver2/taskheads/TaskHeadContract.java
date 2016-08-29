@@ -24,8 +24,6 @@ public interface TaskHeadContract {
 
         void showNoTaskHeads();
 
-        void openTasks();
-
         void openTasks(TaskHead requestedTaskHead);
 
         void showTaskHeadDeleted();

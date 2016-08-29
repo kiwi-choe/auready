@@ -77,8 +77,9 @@ public class TaskHeadPresenterTest {
     public void clickOnFab_showsAddTasksUi() {
         mTaskHeadPresenter.addNewTaskHead();
 
-        verify(mTaskHeadView).openTasks();
+        verify(mTaskHeadView).openTasks(any(TaskHead.class));
     }
+
     @Test
     public void clickOnFab_createNewTaskHead() {
         mTaskHeadPresenter.addNewTaskHead();

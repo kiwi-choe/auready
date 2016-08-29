@@ -110,6 +110,7 @@ public class TaskHeadRepositoryTest {
         // Verify that the data fetched from the remote was saved in local.
     }
 
+
     /*
     * Convenience method that issues two calls to the taskHeads repository
     * */

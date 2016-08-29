@@ -32,24 +32,19 @@ public class TasksActivity extends AppCompatActivity {
 
         String taskHeadId = null;
         String taskHeadTitle = null;
-        if(tasksFragment == null) {
+        if (tasksFragment == null) {
             tasksFragment = TasksFragment.newInstance();
 
-            if(getIntent().hasExtra(EXTRA_TASKHEAD_ID)) {
-                // edit
-                taskHeadId = getIntent().getStringExtra(EXTRA_TASKHEAD_ID);
-                taskHeadTitle = getIntent().getStringExtra(EXTRA_TASKHEAD_TITLE);
-                actionBar.setTitle(R.string.edit_tasks_ab_title);
-                Bundle bundle = new Bundle();
-                bundle.putString(EXTRA_TASKHEAD_ID, taskHeadId);
-                bundle.putString(EXTRA_TASKHEAD_TITLE, taskHeadTitle);
-                tasksFragment.setArguments(bundle);
-            } else {
-                actionBar.setTitle(R.string.add_tasks_ab_title);
-            }
+            taskHeadId = getIntent().getStringExtra(EXTRA_TASKHEAD_ID);
+            taskHeadTitle = getIntent().getStringExtra(EXTRA_TASKHEAD_TITLE);
+            actionBar.setTitle(taskHeadTitle);
+            Bundle bundle = new Bundle();
+            bundle.putString(EXTRA_TASKHEAD_ID, taskHeadId);
+            bundle.putString(EXTRA_TASKHEAD_TITLE, taskHeadTitle);
+            tasksFragment.setArguments(bundle);
 
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), tasksFragment, R.id.content_frame, TasksFragment.TAG_ADDEDITTASKFRAGMENT);
+                    getSupportFragmentManager(), tasksFragment, R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
         }
 
         // Create the presenter

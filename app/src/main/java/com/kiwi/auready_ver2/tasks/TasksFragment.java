@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TasksFragment extends Fragment implements TasksContract.View {
 
-    public static final String TAG_ADDEDITTASKFRAGMENT = "Tag_TaskFragment";
+    public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
 
     private TasksAdapter mActiveTasksAdapter;
     private TasksAdapter mCompleteTasksAdapter;

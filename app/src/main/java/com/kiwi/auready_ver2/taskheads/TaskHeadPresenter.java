@@ -73,12 +73,14 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
     @Override
     public void addNewTaskHead() {
 
-        TaskHead newTaskHead = new TaskHead();
+        final TaskHead newTaskHead = new TaskHead();
         mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
                 new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
                     @Override
                     public void onSuccess(SaveTaskHead.ResponseValue response) {
 
+                        // open AddEditView
+                        mTaskHeadView.openTasks(newTaskHead);
                     }
 
                     @Override
@@ -86,9 +88,6 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
                     }
                 });
-
-        // open AddEditView
-        mTaskHeadView.openTasks();
     }
 
     @Override
