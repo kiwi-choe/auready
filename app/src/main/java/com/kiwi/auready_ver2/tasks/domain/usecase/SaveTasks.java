@@ -35,7 +35,7 @@ public class SaveTasks extends UseCase<SaveTasks.RequestValues, SaveTasks.Respon
         private final List<Task> mTasks;
 
         public RequestValues(@NonNull List<Task> tasks) {
-            mTasks = checkNotNull(tasks, "task cannot be null");
+            mTasks = checkNotNull(tasks, "tasks cannot be null");
         }
         public List<Task> getTasks() {
             return mTasks;

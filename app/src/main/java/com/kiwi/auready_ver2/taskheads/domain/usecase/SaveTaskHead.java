@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.tasks.domain.usecase;
+package com.kiwi.auready_ver2.taskheads.domain.usecase;
 
 import android.support.annotation.NonNull;
 

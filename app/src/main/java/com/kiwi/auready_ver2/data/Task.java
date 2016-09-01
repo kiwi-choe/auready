@@ -64,7 +64,12 @@ public class Task {
         return mCompleted;
     }
 
+    public boolean isActive() {
+        return !mCompleted;
+    }
+
     public String getId() {
         return mId;
     }
+
 }

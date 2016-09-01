@@ -6,7 +6,7 @@ package com.kiwi.auready_ver2;
  * @param <Q> the request type
  * @param <P> the response type
  */
-public abstract class UseCase<Q extends  UseCase.RequestValues, P extends UseCase.ResponseValue> {
+public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValue> {
 
     private Q mRequestValues;
 

@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
@@ -23,8 +26,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
 
-    private TasksAdapter mActiveTasksAdapter;
-    private TasksAdapter mCompleteTasksAdapter;
+    private LinearLayout mTasksView;
+    private TextView mNoTasksView;
+
+    private ActiveTasksAdapter mActiveTasksAdapter;
+    private CompletedTasksAdapter mCompletedTasksAdapter;
 
     private String mTaskHeadId;
     private String mTaskHeadTitle;
@@ -32,13 +38,19 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     private TasksContract.Presenter mPresenter;
 
     /*
-        * Listener for clicks on tasks in th listview
+        * Listener for clicks on activeTasks
         * */
-    TasksAdapter.TaskItemListener mTaskItemListener = new TasksAdapter.TaskItemListener() {
+    ActiveTasksAdapter.TaskItemListener mActiveTaskItemListener = new ActiveTasksAdapter.TaskItemListener() {
         @Override
         public void onCompleteTaskClick(Task completedTask) {
 //            mPresenter.completeTask(completedTask);
         }
+    };
+
+    /*
+      * Listener for clicks on completedTasks
+      * */
+    CompletedTasksAdapter.TaskItemListener mCompletedTaskItemListener = new CompletedTasksAdapter.TaskItemListener() {
 
         @Override
         public void onActivateTaskClick(Task activatedTask) {
@@ -62,8 +74,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             mTaskHeadTitle = getArguments().getString(TasksActivity.EXTRA_TASKHEAD_TITLE);
         }
 
-        mActiveTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
-        mCompleteTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
+        mActiveTasksAdapter = new ActiveTasksAdapter(new ArrayList<Task>(0), mActiveTaskItemListener);
+        mCompletedTasksAdapter = new CompletedTasksAdapter(new ArrayList<Task>(0), mCompletedTaskItemListener);
     }
 
 
@@ -84,15 +96,26 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
 
+        // Set TasksView
+        mTasksView = (LinearLayout) root.findViewById(R.id.tasks_view);
+        // Set NoTasksView
+        mNoTasksView = (TextView) root.findViewById(R.id.no_tasks_view);
+
         // Set ListView
         final ListView activeTaskListView = (ListView) root.findViewById(R.id.active_task_list);
         activeTaskListView.setAdapter(mActiveTasksAdapter);
         ListView completeTaskListView = (ListView) root.findViewById(R.id.complete_task_list);
-        completeTaskListView.setAdapter(mCompleteTasksAdapter);
+        completeTaskListView.setAdapter(mCompletedTasksAdapter);
 
         // Set Button
         Button addTaskViewBt = (Button) root.findViewById(R.id.add_taskview_bt);
-
+        addTaskViewBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Task newTask = new Task(mTaskHeadId);
+                mPresenter.saveTask(newTask);
+            }
+        });
         return root;
     }
 
@@ -102,29 +125,47 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showTasks(List<Task> tasks) {
-
-    }
-
-    @Override
     public void showNoTasks() {
 
     }
 
     @Override
     public void showEmptyTasksError() {
-        Intent intent = new Intent();
-        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
-        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
+
+        mTasksView.setVisibility(View.GONE);
+        mNoTasksView.setVisibility(View.VISIBLE);
+
+//        Intent intent = new Intent();
+//        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
+//        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+//        getActivity().setResult(Activity.RESULT_OK, intent);
+//        getActivity().finish();
     }
 
     @Override
-    public void onBackPressed() {
-        // Save Tasks when onBackPressed
-//        mPresenter.saveTasks(mTaskHeadTitle, );
+    public void showLoadingErrorTasksError() {
+        showMessage(getString(R.string.loading_tasks_error));
     }
 
+    @Override
+    public void showActiveTasks(List<Task> tasks) {
+        mActiveTasksAdapter.replaceData(tasks);
+    }
 
+    @Override
+    public void showCompletedTasks(List<Task> tasks) {
+        mCompletedTasksAdapter.replaceData(tasks);
+    }
+
+    private void showMessage(String message) {
+        Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onPause() {
+
+//        mActiveTasksAdapter.notifyDataSetChanged();
+//        mPresenter.saveTasks(mTaskHeadTitle, );
+        super.onPause();
+    }
 }

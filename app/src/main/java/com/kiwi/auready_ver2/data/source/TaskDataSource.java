@@ -8,18 +8,27 @@ import java.util.List;
 
 /**
  * Main entry point for accessing tasks data.
+ * <p>
+ * For simplicity, only getTasks() and getTask() have callbacks. Consider adding callbacks to other
+ * methods to inform the user of network/database errors or successful operations.
+ * For example, when a new task is created, it's synchronously stored in cache but usually every
+ * operation on database or network should be executed in a different thread.
  */
 public interface TaskDataSource {
 
-    interface LoadTasksCallback {
+    interface GetTasksCallback {
         void onTasksLoaded(List<Task> tasks);
 
         void onDataNotAvailable();
     }
 
-    void getTasks(@NonNull LoadTasksCallback callback);
+    void getTasks(String taskHeadId, @NonNull GetTasksCallback callback);   // Get tasks of the taskHead with taskHeadId
+
+    void getAllTasks(@NonNull GetTasksCallback callback);                   // Get all tasks
 
     void deleteTask(@NonNull String taskHeadId);
 
     void saveTasks(List<Task> tasks);
+
+    void saveTask(Task task);
 }

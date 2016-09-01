@@ -8,7 +8,7 @@ import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallbac
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
-import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
 
 import org.junit.Before;
 import org.junit.Test;

@@ -49,6 +49,8 @@
     <string name="no_taskheads">You have no TO-DOs!</string>
     <string name="edit_tasks_ab_title">EDIT TASKS</string>
     <string name="add_tasks_ab_title">NEW TASKS</string>
+    <string name="loading_tasks_error">Error while loading tasks</string>
+    <string name="no_tasks">No Tasks. Add to task +</string>
 
 
 </resources>

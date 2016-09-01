@@ -56,8 +56,8 @@ public class TasksActivity extends AppCompatActivity {
                 taskHeadId,
                 mTasksFragment,
                 Injection.provideGetTasks(getApplicationContext()),
-                Injection.provideSaveTasks(getApplicationContext())
-        );
+                Injection.provideSaveTasks(getApplicationContext()),
+                Injection.provideSaveTask(getApplicationContext()));
     }
 
     @Override
@@ -66,12 +66,12 @@ public class TasksActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public void onBackPressed() {
-        if(mTasksFragment.isAdded()) {
-            mTasksFragment.onBackPressed();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if(mTasksFragment.isAdded()) {
+//            mTasksFragment.onBackPressed();
+//        }
+//    }
 
 }
 

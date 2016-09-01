@@ -3,8 +3,10 @@ package com.kiwi.auready_ver2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
-import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
 import com.kiwi.auready_ver2.data.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
@@ -93,4 +95,7 @@ public class Injection {
         return new SaveTasks(Injection.provideTaskRepository(context));
     }
 
+    public static SaveTask provideSaveTask(@NonNull Context context) {
+        return new SaveTask(Injection.provideTaskRepository(context));
+    }
 }

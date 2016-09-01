@@ -12,7 +12,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Fetches the list of tasks.
+ * Fetches the list of tasks by taskHeadId.
  */
 public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseValue> {
 
@@ -24,9 +24,9 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
     }
 
     @Override
-    protected void executeUseCase(RequestValues values) {
+    protected void executeUseCase(final RequestValues values) {
 
-        mTaskRepository.getTasks(new TaskDataSource.LoadTasksCallback() {
+        mTaskRepository.getTasks(values.getTaskHeadId(), new TaskDataSource.GetTasksCallback() {
 
             @Override
             public void onTasksLoaded(List<Task> tasks) {
@@ -42,15 +42,25 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
 
     }
 
-    public static class RequestValues implements UseCase.RequestValues {    }
+    public static class RequestValues implements UseCase.RequestValues {
+        private final String mTaskHeadId;
+
+        public RequestValues(@NonNull String taskHeadId) {
+            mTaskHeadId = checkNotNull(taskHeadId);
+        }
+
+        public String getTaskHeadId() {
+            return mTaskHeadId;
+        }
+    }
 
     public class ResponseValue implements UseCase.ResponseValue {
 
         private final List<Task> mTasks;
 
 
-        public ResponseValue(@NonNull List<Task> tasks) {
-            mTasks = checkNotNull(tasks, "tasks cannot be null");
+        public ResponseValue(List<Task> tasks) {
+            mTasks = tasks;
         }
 
         public List<Task> getTasks() {

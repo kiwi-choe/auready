@@ -32,7 +32,13 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTasks(@NonNull LoadTasksCallback callback) {
+    public void getTasks(String taskHeadId, @NonNull GetTasksCallback callback) {
+
+        callback.onDataNotAvailable();
+    }
+
+    @Override
+    public void getAllTasks(@NonNull GetTasksCallback callback) {
 
     }
 
@@ -43,6 +49,11 @@ public class TaskLocalDataSource implements TaskDataSource {
 
     @Override
     public void saveTasks(List<Task> tasks) {
+
+    }
+
+    @Override
+    public void saveTask(Task task) {
 
     }
 }

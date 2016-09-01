@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.tasks.domain.filter.TasksFilterType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +17,15 @@ public class TasksContract {
 
         boolean isActive();
 
-        void showTasks(List<Task> tasks);
+        void showActiveTasks(List<Task> tasks);
+
+        void showCompletedTasks(List<Task> tasks);
 
         void showNoTasks();
 
         void showEmptyTasksError();
 
-        void onBackPressed();
+        void showLoadingErrorTasksError();
     }
 
     interface Presenter extends BasePresenter {
@@ -32,5 +35,7 @@ public class TasksContract {
         boolean isEmptyTaskHead(String taskHeadTitle, List<Task> tasks);
 
         void saveTasks(String title, List<Task> tasks);
+
+        void saveTask(Task task);
     }
 }

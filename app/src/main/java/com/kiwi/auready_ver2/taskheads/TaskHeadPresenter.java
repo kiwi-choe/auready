@@ -11,7 +11,7 @@ import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
-import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.List;

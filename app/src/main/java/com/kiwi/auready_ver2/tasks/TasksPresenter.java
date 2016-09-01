@@ -5,9 +5,10 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
+import com.kiwi.auready_ver2.tasks.domain.filter.TasksFilterType;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
-import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
 
 import java.util.List;
@@ -23,45 +24,52 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final TasksContract.View mTasksView;
     private final GetTasks mGetTasks;
     private final SaveTasks mSaveTasks;
+    private final SaveTask mSaveTask;
+    private final FilterFactory mFilterFactory;
 
     private String mTaskHeadId;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
-                          @NonNull GetTasks getTasks, @NonNull SaveTasks saveTasks) {
+                          @NonNull GetTasks getTasks,
+                          @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
 
         mGetTasks = checkNotNull(getTasks, "getTasks cannot be null!");
         mSaveTasks = checkNotNull(saveTasks, "saveTasks cannot be null!");
+        mSaveTask = checkNotNull(saveTask, "saveTask cannot be null!");
+
+        mFilterFactory = new FilterFactory();
 
         mTasksView.setPresenter(this);
     }
 
     @Override
     public void start() {
-        if (mTaskHeadId != null) {
-            loadTasks();
-        } else {
-        }
+        loadTasks();
     }
 
     @Override
     public void loadTasks() {
+        if(mTaskHeadId == null || mTaskHeadId.isEmpty()) {
+            mTasksView.showEmptyTasksError();
+            return;
+        }
 
-        mUseCaseHandler.execute(mGetTasks, new GetTasks.RequestValues(),
+        mUseCaseHandler.execute(mGetTasks, new GetTasks.RequestValues(mTaskHeadId),
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasks.ResponseValue response) {
                         List<Task> tasks = response.getTasks();
-                        processTasks(tasks);
+                        filterTasks(tasks);
                     }
 
                     @Override
                     public void onError() {
-
+                        mTasksView.showEmptyTasksError();
                     }
                 });
     }
@@ -76,7 +84,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         return false;
     }
 
-    // when onBackPressed, onPause(hide this view)
+    // when onPause(hide this view)
     @Override
     public void saveTasks(String title, List<Task> tasks) {
 
@@ -85,11 +93,38 @@ public class TasksPresenter implements TasksContract.Presenter {
         }
     }
 
-    private void processTasks(List<Task> tasks) {
-        if (tasks.isEmpty()) {
-            mTasksView.showNoTasks();
-        } else {
-            mTasksView.showTasks(tasks);
-        }
+    @Override
+    public void saveTask(@NonNull Task task) {
+        checkNotNull(task);
+
+        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
+                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
+                    @Override
+                    public void onSuccess(SaveTask.ResponseValue response) {
+                        loadTasks();
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showLoadingErrorTasksError();
+                    }
+                });
     }
+
+    private void filterTasks(List<Task> tasks) {
+        FilterFactory.TaskFilter taskFilter;
+        List<Task> filteredTask;
+
+        // 1, active tasks
+        taskFilter = mFilterFactory.create(TasksFilterType.ACTIVE_TASKS);
+        filteredTask = taskFilter.filter(tasks);
+        mTasksView.showActiveTasks(filteredTask);
+
+        // 2, completed tasks
+        taskFilter = mFilterFactory.create(TasksFilterType.COMPLETED_TASKS);
+        filteredTask = taskFilter.filter(tasks);
+        mTasksView.showCompletedTasks(filteredTask);
+    }
+
+
 }
