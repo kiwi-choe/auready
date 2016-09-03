@@ -20,9 +20,12 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -45,6 +48,8 @@ public class TasksPresenterTest {
     private TaskRepository mTaskRepository;
     @Captor
     private ArgumentCaptor<TaskDataSource.GetTasksCallback> mLoadTasksCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.SaveTaskCallback> mSaveTaskCallbackCaptor;
 
     @Before
     public void setup() {
@@ -103,13 +108,34 @@ public class TasksPresenterTest {
 
         verify(mTasksView).showEmptyTasksError();
     }
-
     @Test
     public void tasksAreNotShownWhenInvalidTaskHeadId() {
         mTasksPresenter = givenTasksPresenter(INVALID_TASKHEAD_ID);
         mTasksPresenter.loadTasks();
 
         verify(mTasksView).showEmptyTasksError();
+    }
+
+    @Test
+    public void saveNewTask_reloadIntoActiveTasksView() {
+
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID); // Set mTaskHeadId in Presenter
+
+        // Given Stub taskHeadId and Task Object
+        Task newTask = new Task(TASKHEAD_ID);
+        mTasksPresenter.saveTask(newTask);
+
+        verify(mTaskRepository).saveTask(eq(newTask), mSaveTaskCallbackCaptor.capture());
+        mSaveTaskCallbackCaptor.getValue().onTaskSaved();
+
+
+//        mTasksPresenter.loadTasks();
+//        verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+//        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+//        ArgumentCaptor<List> showActiveTasksArgumentCaptor =  ArgumentCaptor.forClass(List.class);
+//        verify(mTasksView).showActiveTasks(showActiveTasksArgumentCaptor.capture());
+//        assertTrue(showActiveTasksArgumentCaptor.getValue().size() == 2);
     }
 
     @Test
@@ -129,28 +155,5 @@ public class TasksPresenterTest {
         fail();
     }
 
-    @Test
-    public void saveTask() {
-        mTasksPresenter = givenTasksPresenter(null);
 
-        // Given Stub taskHeadId and Task Obejct
-        String taskHeadId = "11";
-        Task newTask = new Task(taskHeadId);
-        mTasksPresenter.saveTask(newTask);
-        verify(mTaskRepository).saveTask(newTask);
-        fail();
-    }
-
-    @Test
-    public void saveTask_updateTasksView() {
-        mTasksPresenter = givenTasksPresenter(null);
-
-        // Given Stub taskHeadId and Task Obejct
-        String taskHeadId = "11";
-        Task newTask = new Task(taskHeadId);
-        mTasksPresenter.saveTask(newTask);
-
-        verify(mTaskRepository).saveTask(newTask);
-        fail();
-    }
 }

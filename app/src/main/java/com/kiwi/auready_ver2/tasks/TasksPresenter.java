@@ -1,7 +1,10 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
@@ -54,7 +57,10 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void loadTasks() {
+
+        Log.d("test", "entered in loadTasks()");
         if(mTaskHeadId == null || mTaskHeadId.isEmpty()) {
+            Log.d("test", "entered mTaskHeadId is null? or empty");
             mTasksView.showEmptyTasksError();
             return;
         }
@@ -63,15 +69,19 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasks.ResponseValue response) {
+                        Log.d("test", "entered GetTask onSuccess()");
                         List<Task> tasks = response.getTasks();
                         filterTasks(tasks);
                     }
 
                     @Override
                     public void onError() {
+
+                        Log.d("test", "entered GetTask onError()");
                         mTasksView.showEmptyTasksError();
                     }
                 });
+
     }
 
     @Override
@@ -94,13 +104,14 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
+    public void saveTask(@NonNull final Task task) {
         checkNotNull(task);
 
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
+
                         loadTasks();
                     }
 
@@ -112,18 +123,22 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     private void filterTasks(List<Task> tasks) {
+
+        Log.d("test size of tasks", "size of tasks: " + String.valueOf(tasks.size()));
+
         FilterFactory.TaskFilter taskFilter;
-        List<Task> filteredTask;
+        List<Task> filteredTasks;
 
         // 1, active tasks
         taskFilter = mFilterFactory.create(TasksFilterType.ACTIVE_TASKS);
-        filteredTask = taskFilter.filter(tasks);
-        mTasksView.showActiveTasks(filteredTask);
+        filteredTasks = taskFilter.filter(tasks);
+        mTasksView.showActiveTasks(filteredTasks);
 
         // 2, completed tasks
         taskFilter = mFilterFactory.create(TasksFilterType.COMPLETED_TASKS);
-        filteredTask = taskFilter.filter(tasks);
-        mTasksView.showCompletedTasks(filteredTask);
+        filteredTasks = taskFilter.filter(tasks);
+        Log.d("test size of tasks", "size of filteredTasks: " + String.valueOf(filteredTasks.size()));
+        mTasksView.showCompletedTasks(filteredTasks);
     }
 
 

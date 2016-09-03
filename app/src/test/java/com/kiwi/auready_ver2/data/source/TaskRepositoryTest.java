@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -37,4 +38,8 @@ public class TaskRepositoryTest {
         TaskRepository.destroyInstance();
     }
 
+    @Test
+    public void saveNewTask_loadTasks() {
+
+    }
 }

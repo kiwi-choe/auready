@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.data;
 
+import android.support.annotation.NonNull;
+
 import java.util.UUID;
 
 /**
@@ -16,11 +18,11 @@ public class Task {
     private boolean mCompleted;
 
     /*
-    * To create a new active Task with description before create the new TaskHead
+    * To create a new active Task
     * */
-    public Task(String description) {
+    public Task(@NonNull String taskHeadId) {
         mId = UUID.randomUUID().toString();
-        mTaskHeadId = "";
+        mTaskHeadId = taskHeadId;
         mDescription = "";
         mCompleted = false;
     }
@@ -72,4 +74,7 @@ public class Task {
         return mId;
     }
 
+    public String getTaskHeadId() {
+        return mTaskHeadId;
+    }
 }

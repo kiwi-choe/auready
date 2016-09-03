@@ -60,7 +60,7 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(Task task) {
+    public void saveTask(Task task, @NonNull SaveTaskCallback callback) {
 
     }
 

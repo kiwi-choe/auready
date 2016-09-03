@@ -1,16 +1,17 @@
 package com.kiwi.auready_ver2.tasks;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -26,9 +27,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
 
-    private LinearLayout mTasksView;
     private TextView mNoTasksView;
-
+    private ListView mActiveTaskListView;
+    private ListView mCompleteTaskListView;
     private ActiveTasksAdapter mActiveTasksAdapter;
     private CompletedTasksAdapter mCompletedTasksAdapter;
 
@@ -96,16 +97,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
 
-        // Set TasksView
-        mTasksView = (LinearLayout) root.findViewById(R.id.tasks_view);
-        // Set NoTasksView
+        // Set No task message TextView
         mNoTasksView = (TextView) root.findViewById(R.id.no_tasks_view);
 
         // Set ListView
-        final ListView activeTaskListView = (ListView) root.findViewById(R.id.active_task_list);
-        activeTaskListView.setAdapter(mActiveTasksAdapter);
-        ListView completeTaskListView = (ListView) root.findViewById(R.id.complete_task_list);
-        completeTaskListView.setAdapter(mCompletedTasksAdapter);
+        mActiveTaskListView = (ListView) root.findViewById(R.id.active_task_list);
+        mActiveTaskListView.setAdapter(mActiveTasksAdapter);
+        mCompleteTaskListView = (ListView) root.findViewById(R.id.completed_task_list);
+        mCompleteTaskListView.setAdapter(mCompletedTasksAdapter);
+        // Set dynamic height for ListViews
+        setDynamicHeight(mActiveTaskListView);
+        setDynamicHeight(mCompleteTaskListView);
 
         // Set Button
         Button addTaskViewBt = (Button) root.findViewById(R.id.add_taskview_bt);
@@ -119,20 +121,79 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         return root;
     }
 
+    /**
+     * Sets ListView height dynamically based on the height of the items.
+     *
+     * @param listView to be resized
+     * @return true if the listView is successfully resized, false otherwise
+     */
+    public static boolean setListViewHeightBasedOnItems(ListView listView) {
+
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+            // Get total height of all item dividers.
+            int totalDividersHeight = listView.getDividerHeight() *
+                    (numberOfItems - 1);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight + totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+            return true;
+
+        } else {
+            return false;
+        }
+
+    }
+
+    /*
+    * Set listview height based on listview children
+    * */
+    private void setDynamicHeight(ListView listView) {
+
+        ListAdapter adapter = listView.getAdapter();
+        // Check adapter if null
+        if(adapter == null) {
+            return;
+        }
+
+        int height = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        for(int i =0; i<adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            height += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams layoutParams = listView.getLayoutParams();
+        layoutParams.height = height + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(layoutParams);
+        listView.requestLayout();
+    }
+
     @Override
     public boolean isActive() {
         return isAdded();
     }
 
     @Override
-    public void showNoTasks() {
-
-    }
-
-    @Override
     public void showEmptyTasksError() {
 
-        mTasksView.setVisibility(View.GONE);
+        mActiveTaskListView.setVisibility(View.GONE);
+        mCompleteTaskListView.setVisibility(View.GONE);
         mNoTasksView.setVisibility(View.VISIBLE);
 
 //        Intent intent = new Intent();
@@ -150,6 +211,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void showActiveTasks(List<Task> tasks) {
         mActiveTasksAdapter.replaceData(tasks);
+
+        mActiveTaskListView.setVisibility(View.VISIBLE);
+        mNoTasksView.setVisibility(View.GONE);
     }
 
     @Override

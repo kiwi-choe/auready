@@ -1,12 +1,12 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -50,7 +50,7 @@ public class ActiveTasksAdapter extends BaseAdapter {
         View rowView = view;
         if (rowView == null) {
             LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
-            rowView = layoutInflater.inflate(R.layout.task_item, viewGroup, false);
+            rowView = layoutInflater.inflate(R.layout.active_task_item, viewGroup, false);
 
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.complete = (CheckBox) rowView.findViewById(R.id.complete);
@@ -66,7 +66,7 @@ public class ActiveTasksAdapter extends BaseAdapter {
     private void bindView(View view, int i) {
 
         final ViewHolder viewHolder = (ViewHolder) view.getTag();
-        final Task task = mTasks.get(i);
+        final Task task = getItem(i);
 
         viewHolder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,6 +85,8 @@ public class ActiveTasksAdapter extends BaseAdapter {
 
     public void setList(List<Task> list) {
         mTasks = list;
+
+        Log.d("test", "entered setList(): " + mTasks.size());
     }
 
     public class ViewHolder {

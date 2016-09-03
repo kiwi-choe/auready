@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ public class CompletedTasksAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
+        Log.d("test size of tasks", "size of mTasks: " + String.valueOf(mTasks.size()));
         return mTasks.size();
     }
 

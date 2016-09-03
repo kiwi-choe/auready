@@ -6,24 +6,28 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingBottom="@dimen/list_item_padding"
-    android:paddingTop="@dimen/list_item_padding">
+    android:paddingTop="@dimen/list_item_padding"
+    android:weightSum="1">
 
     <CheckBox
         android:id="@+id/complete"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.1" />
 
     <TextView
         android:id="@+id/description"
-        android:layout_width="250dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_weight="0.8" />
 
     <Button
         android:id="@+id/delete"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_weight="0.1" />
 </LinearLayout>

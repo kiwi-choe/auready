@@ -30,5 +30,11 @@ public interface TaskDataSource {
 
     void saveTasks(List<Task> tasks);
 
-    void saveTask(Task task);
+    interface SaveTaskCallback {
+        void onTaskSaved();
+
+        void onTaskNotSaved();
+    }
+
+    void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback);
 }

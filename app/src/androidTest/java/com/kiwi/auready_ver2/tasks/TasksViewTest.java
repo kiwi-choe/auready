@@ -1,10 +1,12 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.google.common.collect.Lists;
+import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
@@ -17,11 +19,15 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.core.IsNot.not;
 
 /**
@@ -41,7 +47,7 @@ public class TasksViewTest {
             new Task(TASKHEAD_ID, TASK_DESCRIPTION2, false));
 
     private static List<Task> COMPLETED_TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1, true),
-            new Task(TASKHEAD_ID, TASK_DESCRIPTION1, true));
+            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true));
 
 
     @Rule
@@ -49,15 +55,36 @@ public class TasksViewTest {
             new ActivityTestRule<>(TasksActivity.class, true /* Initial touch mode */,
                     false /* Lazily launch activity */);
 
-
     @Test
     public void showActiveTasks() {
         loadActiveTasks();
 
         onView(withId(R.id.active_task_list)).check(matches(isDisplayed()));
         onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION1)));
+        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION2)));
         onView(withId(R.id.complete)).check(matches(not(isChecked())));
+    }
 
+    private void createTask(String description) {
+
+        // Save the new task
+        onView(withId(R.id.add_taskview_bt)).perform(click());
+        // Set description to the new task
+//        onView(withId(R.id.description)).perform(typeText(description), closeSoftKeyboard());
+    }
+
+    @Test
+    public void showCompletedTasks() {
+        loadCompletedTasks();
+
+        onView(withId(R.id.completed_task_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION1)));
+//        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION2)));
+        onView(withId(R.id.complete)).check(matches(isChecked()));
+    }
+
+    private void loadCompletedTasks() {
+        startActivityWithStubbedTasks(COMPLETED_TASKS, TASKHEAD_ID);
     }
 
     private void loadActiveTasks() {

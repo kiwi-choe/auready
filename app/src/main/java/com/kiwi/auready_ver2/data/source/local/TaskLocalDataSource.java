@@ -1,6 +1,8 @@
 package com.kiwi.auready_ver2.data.source.local;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Task;
@@ -53,7 +55,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(Task task) {
+    public void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback) {
 
     }
 }

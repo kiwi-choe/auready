@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Task;
 
@@ -105,8 +106,35 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(Task task) {
+    public void saveTask(@NonNull Task task, @NonNull final SaveTaskCallback callback) {
+        checkNotNull(task);
+//        mTaskRemoteDataSource.saveTask(task);
+//        mTaskLocalDataSource.saveTask(task, new SaveTaskCallback() {
+//            @Override
+//            public void onTaskSaved() {
+//                callback.onTaskSaved();
+//            }
+//
+//            @Override
+//            public void onTaskNotSaved() {
+//                callback.onTaskNotSaved();
+//            }
+//        });
 
+        // Do in memory cache update to keep the app UI up to date
+        if(mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        // Check that exists tasks of taskHeadId
+        List<Task> tasksOfTaskHeadId = mCachedTasks.get(task.getTaskHeadId());
+        if(tasksOfTaskHeadId == null) {
+            tasksOfTaskHeadId = new ArrayList<>();
+        }
+        tasksOfTaskHeadId.add(task);
+        mCachedTasks.put(task.getTaskHeadId(), tasksOfTaskHeadId);
+
+        // when testing, used only cache.
+        callback.onTaskSaved();
     }
 
 

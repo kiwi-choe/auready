@@ -21,8 +21,6 @@ public class TasksContract {
 
         void showCompletedTasks(List<Task> tasks);
 
-        void showNoTasks();
-
         void showEmptyTasksError();
 
         void showLoadingErrorTasksError();
