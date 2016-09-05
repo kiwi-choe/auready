@@ -1,65 +1,41 @@
 package com.kiwi.auready_ver2.tasks;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.customlistview.DragSortListView;
+import com.kiwi.auready_ver2.customlistview.BaseTasksAdapter;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.List;
 
 /**
- * //// FIXME: 9/1/16 will change to CustomAdapter
+ *
  */
-public class TasksAdapter extends BaseAdapter implements
-        DragSortListView.DropListener {
-
-    private static final int SECTION_TASKS = 0;
-    private static final int SECTION_ADD_BUTTON = 1;
-
-    private static final int NUM_OF_VIEW_TYPES = 2;
-    private static final String ADD_BUTTON = "Add button";
+public class TasksAdapter extends BaseTasksAdapter {
 
     private List<Task> mTasks;
     private TaskItemListener mItemListener;
 
-    private int mAddBtnPos;
-
     public TasksAdapter(List<Task> tasks, TaskItemListener itemListener) {
         super();
-        initBtnPosition();
         setList(tasks);
+        setButtonPosition();
         mItemListener = itemListener;
     }
 
-    @Override
-    public int getItemViewType(int i) {
-        if(i == mAddBtnPos)
-            return SECTION_ADD_BUTTON;
-        else
-            return SECTION_TASKS;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return NUM_OF_VIEW_TYPES;
-    }
-
-    @Override
-    public boolean areAllItemsEnabled() {
-        return false;
-    }
-
-    @Override
-    public boolean isEnabled(int i) {
-        return i != mAddBtnPos;
+    private void setButtonPosition() {
+        initBtnPosition();
+        int size = mTasks.size();
+        for(int i = 0; i<size; i++) {
+            if(mTasks.get(i).isActive()) {
+                increaseButtonPosition();
+            }
+        }
     }
 
     @Override
@@ -68,36 +44,12 @@ public class TasksAdapter extends BaseAdapter implements
     }
 
     @Override
-    public Object getItem(int i) {
-        if(i == mAddBtnPos)
+    public Object getItem(int position) {
+        if(position == getBtnPosition()) {
             return ADD_BUTTON;
-        else
-            return mTasks.get(i);
-    }
-
-    public int getDataPosition(int position) {
-        return position > mAddBtnPos ? position - 1 : position;
-    }
-
-    public void initBtnPosition() {
-        mAddBtnPos = 0;
-    }
-
-    public int getBtnPosition() {
-        return mAddBtnPos;
-    }
-
-    public void increaseButtonPosition(){
-        mAddBtnPos++;
-    }
-
-    public void decreaseButtonPosition(){
-        mAddBtnPos--;
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return i;
+        } else {
+            return mTasks.get(position);
+        }
     }
 
     @Override
@@ -168,13 +120,13 @@ public class TasksAdapter extends BaseAdapter implements
 
     public void replaceData(List<Task> tasks) {
         setList(tasks);
+        setButtonPosition();
+
         notifyDataSetChanged();
     }
 
-    public void setList(List<Task> list) {
+    private void setList(List<Task> list) {
         mTasks = list;
-
-        Log.d("test", "entered setList(): " + mTasks.size());
     }
 
     @Override

@@ -80,6 +80,16 @@ public class TasksViewTest {
                 .check(matches(not(isChecked())));
     }
 
+    //q Check the position of AddTaskViewButton?
+    @Test
+    public void showAddTaskButton() {
+        loadTasks();
+
+        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.add_taskview_bt)).check(matches(isDisplayed()));
+    }
+
     private void loadTasks() {
         startActivityWithStubbedTasks(TASKS, TASKHEAD_ID);
     }
