@@ -56,7 +56,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void loadTasks() {
 
-        Log.d("test", "entered in loadTasks()");
         if(mTaskHeadId == null || mTaskHeadId.isEmpty()) {
             Log.d("test", "entered mTaskHeadId is null? or empty");
             mTasksView.showEmptyTasksError();
@@ -109,7 +108,6 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-
                         loadTasks();
                     }
 

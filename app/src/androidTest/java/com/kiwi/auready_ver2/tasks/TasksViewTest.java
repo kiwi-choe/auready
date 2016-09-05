@@ -20,11 +20,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
@@ -34,6 +37,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
@@ -51,8 +55,9 @@ public class TasksViewTest {
     private static final String TASK_DESCRIPTION3 = "OK?";
 
     /*
-    * {@link Task}s stub that is added to the fake service API layer.
-    * */
+        * {@link Task}s stub that is added to the fake service API layer.
+        * */
+    private static final List<Task> EMPTY_TASKS = new ArrayList<>(0);
     // 3 tasks, one active and two completed
     private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1),
             new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true), new Task(TASKHEAD_ID, TASK_DESCRIPTION3, true));
@@ -90,12 +95,26 @@ public class TasksViewTest {
         onView(withId(R.id.add_taskview_bt)).check(matches(isDisplayed()));
     }
 
+    @Test
+    public void saveNewTask() {
+        startActivityWithStubbedTasks(EMPTY_TASKS, TASKHEAD_ID);
+
+        // Create new task
+        onView(withId(R.id.add_taskview_bt)).perform(click());
+        onView(withId(R.id.description)).perform(typeText(TASK_DESCRIPTION1),
+                closeSoftKeyboard());
+
+//        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
+
+    }
+
     private void loadTasks() {
         startActivityWithStubbedTasks(TASKS, TASKHEAD_ID);
     }
 
     private Matcher<View> withItemText(final String itemText) {
-        checkArgument(!TextUtils.isEmpty(itemText), "itemText cannot be null or empty");
+//        checkArgument(!TextUtils.isEmpty(itemText), "itemText cannot be null or empty");
+        checkNotNull(itemText, "itemText cannot be null");
         return new TypeSafeMatcher<View>() {
             @Override
             protected boolean matchesSafely(View item) {

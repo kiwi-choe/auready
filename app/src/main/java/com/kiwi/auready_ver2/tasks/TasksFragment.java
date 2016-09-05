@@ -23,7 +23,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
 
-    private TextView mNoTasksView;
     private DragSortListView mTasksView;
     private TasksAdapter mTasksAdapter;
 
@@ -92,9 +91,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
 
-        // Set No task message TextView
-        mNoTasksView = (TextView) root.findViewById(R.id.no_tasks_view);
-
         // Set ListView
         mTasksView = (DragSortListView) root.findViewById(R.id.task_list);
         mTasksView.setDropListener(mTasksAdapter);
@@ -111,8 +107,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void showEmptyTasksError() {
 
-        mTasksView.setVisibility(View.GONE);
-        mNoTasksView.setVisibility(View.VISIBLE);
+        Snackbar.make(getView(), getString(R.string.no_tasks), Snackbar.LENGTH_LONG).show();
 
 //        Intent intent = new Intent();
 //        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
@@ -129,9 +124,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void showTasks(List<Task> tasks) {
         mTasksAdapter.replaceData(tasks);
-
-        mTasksView.setVisibility(View.VISIBLE);
-        mNoTasksView.setVisibility(View.GONE);
     }
 
     private void showMessage(String message) {
