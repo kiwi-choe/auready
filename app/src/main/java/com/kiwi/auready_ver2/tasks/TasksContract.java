@@ -17,9 +17,7 @@ public class TasksContract {
 
         boolean isActive();
 
-        void showActiveTasks(List<Task> tasks);
-
-        void showCompletedTasks(List<Task> tasks);
+        void showTasks(List<Task> tasks);
 
         void showEmptyTasksError();
 

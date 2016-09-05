@@ -1,33 +1,42 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.ListView;
 
 import com.google.common.collect.Lists;
-import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.remote.FakeTaskRemoteDataSource;
 
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.List;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
+import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
+import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static com.google.common.base.Preconditions.checkArgument;
 import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.IsNot.not;
 
 /**
@@ -39,56 +48,57 @@ public class TasksViewTest {
     private static final String TASKHEAD_ID = "stubTaskHeadId";
     private static final String TASK_DESCRIPTION1 = "someday";
     private static final String TASK_DESCRIPTION2 = "we will know";
+    private static final String TASK_DESCRIPTION3 = "OK?";
 
     /*
     * {@link Task}s stub that is added to the fake service API layer.
     * */
-    private static List<Task> ACTIVE_TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1, false),
-            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, false));
-
-    private static List<Task> COMPLETED_TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1, true),
-            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true));
-
+    // 3 tasks, one active and two completed
+    private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1),
+            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true), new Task(TASKHEAD_ID, TASK_DESCRIPTION3, true));
 
     @Rule
     public ActivityTestRule<TasksActivity> mTasksActivityTestRule =
             new ActivityTestRule<>(TasksActivity.class, true /* Initial touch mode */,
                     false /* Lazily launch activity */);
 
-    @Test
-    public void showActiveTasks() {
-        loadActiveTasks();
-
-        onView(withId(R.id.active_task_list)).check(matches(isDisplayed()));
-        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION1)));
-        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION2)));
-        onView(withId(R.id.complete)).check(matches(not(isChecked())));
-    }
-
-    private void createTask(String description) {
-
-        // Save the new task
-        onView(withId(R.id.add_taskview_bt)).perform(click());
-        // Set description to the new task
-//        onView(withId(R.id.description)).perform(typeText(description), closeSoftKeyboard());
-    }
 
     @Test
-    public void showCompletedTasks() {
-        loadCompletedTasks();
+    public void showTasks() {
+        loadTasks();
 
-        onView(withId(R.id.completed_task_list)).check(matches(isDisplayed()));
-        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION1)));
-//        onView(withId(R.id.description)).check(matches(withText(TASK_DESCRIPTION2)));
-        onView(withId(R.id.complete)).check(matches(isChecked()));
+        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
+        onView(withItemText(TASK_DESCRIPTION1)).check(matches(isDisplayed()));
+        onView(withItemText(TASK_DESCRIPTION2)).check(matches(isDisplayed()));
+        onView(withItemText(TASK_DESCRIPTION3)).check(matches(isDisplayed()));
+
+        onView(allOf(withId(R.id.complete), hasSibling(withText(TASK_DESCRIPTION1))))
+                .check(matches(not(isChecked())));
+        onView(allOf(withId(R.id.complete), hasSibling(withText(TASK_DESCRIPTION2))))
+                .check(matches(not(isChecked())));
+        onView(allOf(withId(R.id.complete), hasSibling(withText(TASK_DESCRIPTION3))))
+                .check(matches(not(isChecked())));
     }
 
-    private void loadCompletedTasks() {
-        startActivityWithStubbedTasks(COMPLETED_TASKS, TASKHEAD_ID);
+    private void loadTasks() {
+        startActivityWithStubbedTasks(TASKS, TASKHEAD_ID);
     }
 
-    private void loadActiveTasks() {
-        startActivityWithStubbedTasks(ACTIVE_TASKS, TASKHEAD_ID);
+    private Matcher<View> withItemText(final String itemText) {
+        checkArgument(!TextUtils.isEmpty(itemText), "itemText cannot be null or empty");
+        return new TypeSafeMatcher<View>() {
+            @Override
+            protected boolean matchesSafely(View item) {
+                return allOf(
+                        isDescendantOfA(isAssignableFrom(ListView.class)),
+                        withText(itemText)).matches(item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("isDescendantOfA ListView with Text " + itemText);
+            }
+        };
     }
 
     /*

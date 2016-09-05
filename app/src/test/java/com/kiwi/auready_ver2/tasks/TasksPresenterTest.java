@@ -25,7 +25,6 @@ import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -34,11 +33,18 @@ import static org.mockito.Mockito.when;
  */
 public class TasksPresenterTest {
 
-    private static String TASKHEAD_ID = "stubTaskHeadId";
     private static final String INVALID_TASKHEAD_ID = "";
+    private static final String TASKHEAD_ID = "stubTaskHeadId";
+    private static final String TASK_DESCRIPTION1 = "someday";
+    private static final String TASK_DESCRIPTION2 = "we will know";
+    private static final String TASK_DESCRIPTION3 = "OK?";
 
-    private static List<Task> TASKS;
-
+    /*
+    * {@link Task}s stub that is added to the fake service API layer.
+    * */
+    // 3 tasks, one active and two completed
+    private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1),
+            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true), new Task(TASKHEAD_ID, TASK_DESCRIPTION3, true));
 
     private TasksPresenter mTasksPresenter;
 
@@ -56,10 +62,6 @@ public class TasksPresenterTest {
 
         MockitoAnnotations.initMocks(this);
 
-        // 3 tasks, one active and two completed
-        TASKS = Lists.newArrayList(new Task("taskheadId1", "description1"),
-                new Task("taskheadId2", "description2", true), new Task("taskheadId3", "description3", true));
-
         // The presenter won't update the view unless it's active
         when(mTasksView.isActive()).thenReturn(true);
     }
@@ -74,6 +76,19 @@ public class TasksPresenterTest {
     }
 
     @Test
+    public void loadTasksAndLoadIntoView() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
+
+        mTasksPresenter.loadTasks();
+        verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
+        assertTrue(showTasksArgumentCaptor.getValue().size() == 3);
+    }
+
+    @Test
     public void filterActiveTasks_showIntoActiveTasksView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
         mTasksPresenter.loadTasks();
@@ -82,20 +97,8 @@ public class TasksPresenterTest {
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
         ArgumentCaptor<List> showActiveTasksArgumentCaptor =  ArgumentCaptor.forClass(List.class);
-        verify(mTasksView).showActiveTasks(showActiveTasksArgumentCaptor.capture());
+        verify(mTasksView).showTasks(showActiveTasksArgumentCaptor.capture());
         assertTrue(showActiveTasksArgumentCaptor.getValue().size() == 1);
-    }
-    @Test
-    public void filterCompletedTasks_showIntoCompletedTasksView() {
-        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
-        mTasksPresenter.loadTasks();
-
-        verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
-
-        ArgumentCaptor<List> showCompletedTasksArgumentCaptor =  ArgumentCaptor.forClass(List.class);
-        verify(mTasksView).showCompletedTasks(showCompletedTasksArgumentCaptor.capture());
-        assertTrue(showCompletedTasksArgumentCaptor.getValue().size() == 2);
     }
 
     @Test
@@ -134,7 +137,7 @@ public class TasksPresenterTest {
 //        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
 //        ArgumentCaptor<List> showActiveTasksArgumentCaptor =  ArgumentCaptor.forClass(List.class);
-//        verify(mTasksView).showActiveTasks(showActiveTasksArgumentCaptor.capture());
+//        verify(mTasksView).showTasks(showActiveTasksArgumentCaptor.capture());
 //        assertTrue(showActiveTasksArgumentCaptor.getValue().size() == 2);
     }
 
