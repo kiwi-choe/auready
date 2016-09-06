@@ -6,30 +6,20 @@
     tools:context=".taskheads.TaskHeadFragment"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/taskheads_view"
+    <com.kiwi.auready_ver2.customlistview.DragSortListView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:dslv="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/taskhead_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:dividerHeight="1px"
+        dslv:drag_enabled="true"
+        dslv:float_alpha="0.6"
+        dslv:use_default_controller="false"/>
 
-        <ListView
-            android:id="@+id/taskhead_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/no_taskhead_view"
+    <TextView
+        android:text="@string/no_taskheads"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:text="@string/no_taskheads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

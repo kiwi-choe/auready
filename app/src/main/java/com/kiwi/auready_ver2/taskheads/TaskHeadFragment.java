@@ -11,16 +11,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.customlistview.DragSortListView;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
-import com.kiwi.auready_ver2.util.ListViewAdapter;
-import com.kiwi.auready_ver2.util.SwipeToDismissTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +30,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
     // interface
     private TasksFragmentListener mListener;
-    private TaskHeadListAdapter mTaskHeadListAdapter;
-
-    private LinearLayout mTaskHeadsView;
-    private LinearLayout mNoTaskHeadsView;
+    private TaskHeadsAdapter mTaskHeadsAdapter;
 
     public TaskHeadFragment() {
         // Required empty public constructor
@@ -52,7 +44,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTaskHeadListAdapter = new TaskHeadListAdapter(new ArrayList<TaskHead>(0), mItemListener);
+        mTaskHeadsAdapter = new TaskHeadsAdapter(new ArrayList<TaskHead>(0), mItemListener);
     }
 
     @Override
@@ -64,17 +56,8 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     /*
         * Listener for clicks on taskHeads in the ListView
         * */
-    TaskHeadListAdapter.TaskHeadItemListener
-            mItemListener = new TaskHeadListAdapter.TaskHeadItemListener() {
-        @Override
-        public void onClick(TaskHead clickedTaskHead) {
-            mPresenter.openTaskHead(clickedTaskHead);
-        }
-
-        @Override
-        public void onLongClick(TaskHead clickedTaskHead) {
-            mPresenter.deleteTaskHead(clickedTaskHead.getId());
-        }
+    TaskHeadsAdapter.TaskHeadItemListener
+            mItemListener = new TaskHeadsAdapter.TaskHeadItemListener() {
     };
 
     @Override
@@ -117,56 +100,11 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         });
 
         // Set TaskHeadsView
-        ListView taskHeadListView = (ListView) root.findViewById(R.id.taskhead_list);
-        taskHeadListView.setAdapter(mTaskHeadListAdapter);
-        initListView(taskHeadListView);
-
-        mTaskHeadsView = (LinearLayout) root.findViewById(R.id.taskheads_view);
-        mNoTaskHeadsView = (LinearLayout) root.findViewById(R.id.no_taskhead_view);
+        DragSortListView taskHeadListView = (DragSortListView) root.findViewById(R.id.taskhead_list);
+        taskHeadListView.setAdapter(mTaskHeadsAdapter);
+        taskHeadListView.setDropListener(mTaskHeadsAdapter);
 
         return root;
-    }
-
-    private void initListView(ListView listView) {
-        final SwipeToDismissTouchListener<ListViewAdapter> touchListener =
-                new SwipeToDismissTouchListener<>(
-                        new ListViewAdapter(listView),
-                        new SwipeToDismissTouchListener.DismissCallbacks<ListViewAdapter>() {
-                            @Override
-                            public boolean canDismiss(int position) {
-//                                Log.d("MY_LOG", "canDismiss : " + position);
-                                return true;
-                            }
-
-                            @Override
-                            public void onPendingDismiss(ListViewAdapter view, int position) {
-//                                Log.d("MY_LOG", "onPendingDismiss : " + position);
-                            }
-
-                            @Override
-                            public void onDismiss(ListViewAdapter view, int position) {
-//                                Log.d("MY_LOG", "onDismiss : " + position);
-                                mTaskHeadListAdapter.removeData(position);
-                            }
-                        });
-
-        mTaskHeadListAdapter.setSwipeTouchListener(touchListener);
-        listView.setOnTouchListener(touchListener);
-        listView.setOnScrollListener((AbsListView.OnScrollListener) touchListener.makeScrollListener());
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
-                mItemListener.onClick((TaskHead) mTaskHeadListAdapter.getItem(position));
-            }
-        });
-
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                mItemListener.onLongClick((TaskHead) mTaskHeadListAdapter.getItem(position));
-                return true;
-            }
-        });
     }
 
     @Override
@@ -199,10 +137,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
     @Override
     public void showTaskHeads(List<TaskHead> taskHeads) {
-        mTaskHeadListAdapter.replaceData(taskHeads);
-
-        mTaskHeadsView.setVisibility(View.VISIBLE);
-        mNoTaskHeadsView.setVisibility(View.GONE);
+        mTaskHeadsAdapter.replaceData(taskHeads);
     }
 
     @Override

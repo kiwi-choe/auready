@@ -64,13 +64,22 @@ public class AccessTokenStore {
     // Save Access token
     public void save(TokenInfo tokenInfo, String userName, String userEmail) {
         // Set login status, accessToken
+        setLoggedInStatus();
+
         mEditor = mPref.edit();
-        mEditor.putBoolean(IS_LOGIN, true);
         mEditor.putString(ACCESS_TOKEN, tokenInfo.getAccessToken());
         mEditor.putString(TOKEN_TYPE, tokenInfo.getTokenType());
         mEditor.putString(USER_NAME, userName);
         mEditor.putString(USER_EMAIL, userEmail);
         // commit changes
+        mEditor.apply();
+        mEditor = null;
+    }
+
+    // testing in TaskHeadsViewTest
+    public void setLoggedInStatus() {
+        mEditor = mPref.edit();
+        mEditor.putBoolean(IS_LOGIN, true);
         mEditor.apply();
         mEditor = null;
     }
