@@ -139,8 +139,10 @@ public class TaskHeadActivity extends AppCompatActivity
     private void setMemberNavView() {
         // Set Nav header
         mNavHeaderEmail.setVisibility(View.VISIBLE);
-
         mNavFriendButton.setVisibility(View.VISIBLE);
+
+        mNavHeaderName.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name"));
+        mNavHeaderEmail.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL,  "Not saved email"));
     }
 
     private void setupDrawerContent(NavigationView navigationView) {

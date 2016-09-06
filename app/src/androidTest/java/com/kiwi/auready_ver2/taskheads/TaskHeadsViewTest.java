@@ -38,6 +38,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.kiwi.auready_ver2.custom.action.NavigationViewActions.navigateTo;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
@@ -49,11 +50,11 @@ import static org.hamcrest.Matchers.not;
 public class TaskHeadsViewTest {
 
     private static final String TITLE1 = "title1";
+    private static final String USER_NAME = "KIWIYA";
+    private static final String USER_EMAIL = "KIWIYA@gmail.com";
+
 
     private TaskHeadActivity mActivity;
-
-    @Mock
-    Context mMockContext;
 
     @Rule
     public ActivityTestRule<TaskHeadActivity> mActivityTestRule =
@@ -97,7 +98,7 @@ public class TaskHeadsViewTest {
     @Test
     public void setMemberNavView_whenLoggedIn() {
         // Set logged in status
-        setLoggedIn();
+        setLoggedIn(USER_NAME, USER_EMAIL);
 
         // Open Drawer to click on navigation
         onView(withId(R.id.drawer_layout))
@@ -112,7 +113,7 @@ public class TaskHeadsViewTest {
     @Test
     public void clickOnBtManageFriend_showsFriendView() {
 
-        setLoggedIn();
+        setLoggedIn(USER_NAME, USER_EMAIL);
 
         // Open Drawer to click on navigation
         onView(withId(R.id.drawer_layout))
@@ -125,27 +126,27 @@ public class TaskHeadsViewTest {
         onView(withId(R.id.friend_list_layout)).check(matches(isDisplayed()));
     }
 
-//    @Test
-//    public void setSuccessUi_whenLoginSuccess() {
-//
-//        // Stub of logged in name and email
-//        String loggedInName = "nameOfaa";
-//        String loggedInEmail = "aaa@aaa.aaa";
-//
-//        // temp event for test
-//        onView(withId(R.id.test_fragment_tasks))
-//                .perform(click());
-//
-//        // Set Member's view
-//        // 1. Set loggedInEmail to nav_name and nav_email
-//        onView(withId(R.id.nav_name))
-//                .check(matches(withText(loggedInName)));
-//        onView(withId(R.id.nav_email))
-//                .check(matches(withText(loggedInEmail)));
-//        // 2. Open NavigationDrawer
-//        onView(withId(R.id.drawer_layout))
-//                .check(matches(isOpen(Gravity.START)));
-//    }
+    @Test
+    public void setSuccessUi_whenLoginSuccess() {
+
+        // Stub of logged in name and email
+        String loggedInName = "nameOfaa";
+        String loggedInEmail = "aaa@aaa.aaa";
+
+        setLoggedIn(loggedInName, loggedInEmail);
+
+        // Open Drawer to click on navigation
+        onView(withId(R.id.drawer_layout))
+                .check(matches(isClosed(Gravity.START)))
+                .perform(open());
+
+        // Set Member's view
+        // 1. Set loggedInEmail to nav_name and nav_email
+        onView(withId(R.id.nav_name))
+                .check(matches(withText(loggedInName)));
+        onView(withId(R.id.nav_email))
+                .check(matches(withText(loggedInEmail)));
+    }
 
     @Test
     public void openTasksView() {
@@ -154,8 +155,6 @@ public class TaskHeadsViewTest {
         // open TaskView
         onView(withId(R.id.add_taskview_bt)).check(matches(isDisplayed()));
     }
-
-//  @Test  openAddTaskViewWithTitleOfTaskHead_OnToolbar
 
     @Test
     public void showTaskHeads() {
@@ -178,9 +177,15 @@ public class TaskHeadsViewTest {
     /*
     * Useful methods for test
     * */
-    private void setLoggedIn() {
+    private void setLoggedIn(String userName, String userEmail) {
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
-        accessTokenStore.setLoggedInStatus();
+        TokenInfo tokenInfo = new TokenInfo("", "");
+        accessTokenStore.save(tokenInfo, userName, userEmail);
+
+        assertEquals(userName, accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, ""));
+        assertEquals(userEmail, accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, ""));
+
+//        accessTokenStore.setLoggedInStatus();
 //        assertTrue(accessTokenStore.isLoggedIn());
     }
 
