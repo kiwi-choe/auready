@@ -131,8 +131,9 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
     @Override
     public void showTaskHeadDeleted() {
+
         // Reload taskHeads after deleted
-        mPresenter.loadTaskHeads();
+//        mPresenter.loadTaskHeads();
     }
 
     @Override

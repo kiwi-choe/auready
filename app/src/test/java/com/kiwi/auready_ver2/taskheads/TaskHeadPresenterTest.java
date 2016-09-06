@@ -103,6 +103,15 @@ public class TaskHeadPresenterTest {
         mTaskHeadPresenter.deleteTaskHead(taskHead.getId());
         // Then the repository and the view are notified.
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
-        verify(mTaskHeadView).showTaskHeadDeleted();
+    }
+
+    @Test
+    public void deleteTaskHeadByIsEmptyTaskHead() {
+        TaskHead taskHead = new TaskHead();
+
+        // When the deletion of a taskHead is requested,
+        mTaskHeadPresenter.deleteTaskHeadByIsEmptyTaskHead(taskHead.getId());
+        // Then the repository and the view are notified.
+        verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
     }
 }

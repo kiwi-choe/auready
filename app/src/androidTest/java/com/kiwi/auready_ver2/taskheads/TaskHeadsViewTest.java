@@ -158,12 +158,17 @@ public class TaskHeadsViewTest {
 
     @Test
     public void showTaskHeads() {
+        createTaskHead();
         // Check that set visible to taskHeadView_layout
         onView(withId(R.id.taskhead_list))
                 .check(matches(isDisplayed()));
 
         // Verify that all taskHeads are shown.
 //        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
+    }
+
+    private void createTaskHead() {
+        onView(withId(R.id.fab_add_task)).perform(click());
     }
 
     @Test

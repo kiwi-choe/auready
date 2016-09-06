@@ -71,11 +71,12 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
         }
 
         if(TasksActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
-            boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, false);
+            boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, false);
             String taskHeadId = data.getStringExtra(TasksActivity.EXTRA_TASKHEAD_ID);
             if(isEmptyTasks) {
                 mTaskHeadView.showEmptyTaskHeadError();
-                deleteTaskHead(taskHeadId);
+//                deleteTaskHead(taskHeadId);
+//                deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
             }
         }
     }
@@ -132,7 +133,25 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTaskHead.ResponseValue response) {
-                        mTaskHeadView.showTaskHeadDeleted();
+//                        mTaskHeadView.showTaskHeadDeleted();
+                        loadTaskHeads();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void deleteTaskHeadByIsEmptyTaskHead(String taskHeadId) {
+
+        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
+                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
                     }
 
                     @Override

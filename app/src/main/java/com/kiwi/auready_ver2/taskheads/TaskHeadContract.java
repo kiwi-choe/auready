@@ -44,5 +44,7 @@ public interface TaskHeadContract {
         void editTasks(@NonNull TaskHead requestedTaskHead);
 
         void deleteTaskHead(@NonNull String taskHeadId);
+
+        void deleteTaskHeadByIsEmptyTaskHead(String taskHeadId);
     }
 }
