@@ -70,7 +70,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
             }
         }
 
-        if(TasksActivity.REQ_ADD_TASK == resultCode && Activity.RESULT_OK == resultCode) {
+        if(TasksActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
             boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, false);
             String taskHeadId = data.getStringExtra(TasksActivity.EXTRA_TASKHEAD_ID);
             if(isEmptyTasks) {

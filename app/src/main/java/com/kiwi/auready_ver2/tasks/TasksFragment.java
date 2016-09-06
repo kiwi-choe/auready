@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -105,15 +107,13 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showEmptyTasksError() {
+    public void showEmptyTaskHeadError() {
 
-        Snackbar.make(getView(), getString(R.string.no_tasks), Snackbar.LENGTH_LONG).show();
-
-//        Intent intent = new Intent();
-//        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
-//        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
-//        getActivity().setResult(Activity.RESULT_OK, intent);
-//        getActivity().finish();
+        Intent intent = new Intent();
+        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
+        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
 
     @Override
@@ -133,8 +133,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void onPause() {
 
-//        mTasksAdapter.notifyDataSetChanged();
-//        mPresenter.saveTasks(mTaskHeadTitle, );
+        mPresenter.validateEmptyTaskHead(mTaskHeadTitle, mTasksAdapter.getCount());
         super.onPause();
     }
 }

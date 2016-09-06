@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -211,6 +212,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     @Override
     public void showEmptyTaskHeadError() {
 
+        Snackbar.make(getView(), getString(R.string.taskhead_empty_err), Snackbar.LENGTH_LONG).show();
     }
 
     // Interface with TaskHeadActivity

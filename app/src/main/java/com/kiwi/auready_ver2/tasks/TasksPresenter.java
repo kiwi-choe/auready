@@ -7,7 +7,6 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
-import com.kiwi.auready_ver2.tasks.domain.filter.TasksFilterType;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
@@ -58,7 +57,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
         if(mTaskHeadId == null || mTaskHeadId.isEmpty()) {
             Log.d("test", "entered mTaskHeadId is null? or empty");
-            mTasksView.showEmptyTasksError();
+            mTasksView.showEmptyTaskHeadError();
             return;
         }
 
@@ -75,29 +74,20 @@ public class TasksPresenter implements TasksContract.Presenter {
                     public void onError() {
 
                         Log.d("test", "entered GetTask onError()");
-                        mTasksView.showEmptyTasksError();
+                        mTasksView.showEmptyTaskHeadError();
                     }
                 });
 
     }
 
     @Override
-    public boolean isEmptyTaskHead(String taskHeadTitle, List<Task> tasks) {
+    public void validateEmptyTaskHead(String taskHeadTitle, int numOfTasks) {
 
         if (taskHeadTitle.isEmpty() &&
-                (tasks.size() == 0)) {
-            return true;
+                (numOfTasks == 0)) {
+            mTasksView.showEmptyTaskHeadError();
         }
-        return false;
-    }
 
-    // when onPause(hide this view)
-    @Override
-    public void saveTasks(String title, List<Task> tasks) {
-
-        if (isEmptyTaskHead(title, tasks)) {
-            mTasksView.showEmptyTasksError();
-        }
     }
 
     @Override

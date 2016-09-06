@@ -19,7 +19,7 @@ public class TasksContract {
 
         void showTasks(List<Task> tasks);
 
-        void showEmptyTasksError();
+        void showEmptyTaskHeadError();
 
         void showLoadingErrorTasksError();
     }
@@ -28,9 +28,7 @@ public class TasksContract {
 
         void loadTasks();
 
-        boolean isEmptyTaskHead(String taskHeadTitle, List<Task> tasks);
-
-        void saveTasks(String title, List<Task> tasks);
+        void validateEmptyTaskHead(String taskHeadTitle, int numOfTasks);
 
         void saveTask(Task task);
     }

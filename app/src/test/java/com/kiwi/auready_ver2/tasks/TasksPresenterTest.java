@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -78,14 +79,34 @@ public class TasksPresenterTest {
     @Test
     public void loadTasksAndLoadIntoView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
-
         mTasksPresenter.loadTasks();
+
         verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
         ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
         assertTrue(showTasksArgumentCaptor.getValue().size() == 3);
+    }
+
+    @Test
+    public void saveNewTask() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID); // Set mTaskHeadId in Presenter
+
+        // Given Stub taskHeadId and Task Object
+        Task newTask = new Task(TASKHEAD_ID);
+        mTasksPresenter.saveTask(newTask);
+
+        verify(mTaskRepository).saveTask(eq(newTask), mSaveTaskCallbackCaptor.capture());
+        mSaveTaskCallbackCaptor.getValue().onTaskSaved();
+    }
+
+    @Test
+    public void saveTaskHead_emptyTaskHeadShowsErrorUi() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
+        // Check that there is no tasks and title
+        mTasksPresenter.validateEmptyTaskHead("", 0);
+        verify(mTasksView).showEmptyTaskHeadError();
     }
 
     @Test
@@ -109,54 +130,16 @@ public class TasksPresenterTest {
         verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
 
-        verify(mTasksView).showEmptyTasksError();
+        verify(mTasksView).showEmptyTaskHeadError();
     }
     @Test
     public void tasksAreNotShownWhenInvalidTaskHeadId() {
         mTasksPresenter = givenTasksPresenter(INVALID_TASKHEAD_ID);
         mTasksPresenter.loadTasks();
 
-        verify(mTasksView).showEmptyTasksError();
+        verify(mTasksView).showEmptyTaskHeadError();
     }
 
-    @Test
-    public void saveNewTask_reloadIntoActiveTasksView() {
-
-        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID); // Set mTaskHeadId in Presenter
-
-        // Given Stub taskHeadId and Task Object
-        Task newTask = new Task(TASKHEAD_ID);
-        mTasksPresenter.saveTask(newTask);
-
-        verify(mTaskRepository).saveTask(eq(newTask), mSaveTaskCallbackCaptor.capture());
-        mSaveTaskCallbackCaptor.getValue().onTaskSaved();
-
-
-//        mTasksPresenter.loadTasks();
-//        verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
-//        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
-
-//        ArgumentCaptor<List> showActiveTasksArgumentCaptor =  ArgumentCaptor.forClass(List.class);
-//        verify(mTasksView).showTasks(showActiveTasksArgumentCaptor.capture());
-//        assertTrue(showActiveTasksArgumentCaptor.getValue().size() == 2);
-    }
-
-    @Test
-    public void onPause_sendExtrasToTaskHeadsView_withoutTitleAndTasks() {
-
-        // When TaskHeadId is null,
-        mTasksPresenter = givenTasksPresenter(null);
-
-        String title = "";
-        List<Task> tasks = new ArrayList<>(0);
-        mTasksPresenter.saveTasks(title, tasks);
-
-        boolean isEmpty = mTasksPresenter.isEmptyTaskHead(title, tasks);
-        assertTrue(isEmpty);
-
-        verify(mTasksView).showEmptyTasksError();
-        fail();
-    }
 
 
 }
