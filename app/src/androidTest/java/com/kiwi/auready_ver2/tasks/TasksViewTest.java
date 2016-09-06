@@ -104,8 +104,8 @@ public class TasksViewTest {
         onView(withId(R.id.description)).perform(typeText(TASK_DESCRIPTION1),
                 closeSoftKeyboard());
 
-//        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
-
+        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
+        onView(withItemText(TASK_DESCRIPTION1)).check(matches(isDisplayed()));
     }
 
     private void loadTasks() {

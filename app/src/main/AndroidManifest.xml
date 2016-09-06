@@ -20,7 +20,8 @@
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".friend.FriendActivity" />
         <activity android:name=".friend.FindActivity" />
-        <activity android:name=".tasks.TasksActivity"></activity>
+        <activity android:name=".tasks.TasksActivity"
+            android:windowSoftInputMode="adjustPan"/>
     </application>
 
 </manifest>
