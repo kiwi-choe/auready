@@ -18,6 +18,7 @@
         dslv:use_default_controller="false"/>
 
     <TextView
+        android:id="@+id/no_taskhead_txt"
         android:text="@string/no_taskheads"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

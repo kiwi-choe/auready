@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.content.Context;
+import android.content.Intent;
+import android.support.test.espresso.core.deps.guava.collect.Lists;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -10,10 +11,11 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
-import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
-import com.kiwi.auready_ver2.tasks.TasksActivity;
+import com.kiwi.auready_ver2.data.source.remote.FakeTaskHeadRemoteDataSource;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -22,7 +24,8 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+
+import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -37,7 +40,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withContentDesc
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.kiwi.auready_ver2.custom.action.NavigationViewActions.navigateTo;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.hamcrest.Matchers.allOf;
@@ -49,16 +52,25 @@ import static org.hamcrest.Matchers.not;
 @RunWith(AndroidJUnit4.class)
 public class TaskHeadsViewTest {
 
-    private static final String TITLE1 = "title1";
+    private static final String TITLE1 = "Don't be hurry";
+    private static final String TITLE2 = "just";
+    private static final String TITLE3 = "keep going";
+
     private static final String USER_NAME = "KIWIYA";
     private static final String USER_EMAIL = "KIWIYA@gmail.com";
+
+    /*
+    * {@link TaskHead} stub that is added to the fake service API layer.
+    * */
+    private static List<TaskHead> TASKHEADS = Lists.newArrayList(new TaskHead(TITLE1),
+            new TaskHead(TITLE2), new TaskHead(TITLE3));
 
 
     private TaskHeadActivity mActivity;
 
     @Rule
     public ActivityTestRule<TaskHeadActivity> mActivityTestRule =
-            new ActivityTestRule<>(TaskHeadActivity.class);
+            new ActivityTestRule<>(TaskHeadActivity.class, true, false);
 
     @Before
     public void setup() {
@@ -157,20 +169,32 @@ public class TaskHeadsViewTest {
     }
 
     @Test
-    public void showTaskHeads() {
-        createTaskHead();
-        // Check that set visible to taskHeadView_layout
-        onView(withId(R.id.taskhead_list))
-                .check(matches(isDisplayed()));
-
-        // Verify that all taskHeads are shown.
-//        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
-    }
-
-    private void createTaskHead() {
+    public void showNoTaskHeadView_whenNoTaskHead() {
+        // Create new taskHead
         onView(withId(R.id.fab_add_task)).perform(click());
+
+        // Show taskHead empty error message to snackbar
+        String msg = mActivity.getString(R.string.taskhead_empty_err);
+        onView(withText(msg)).check(matches(isDisplayed()));
+
+        // Show no taskHeadView
+        onView(withId(R.id.no_taskhead_txt)).check(matches(isDisplayed()));
+
+        onView(withId(R.id.taskhead_list))
+                .check(matches(not(isDisplayed())));
     }
 
+
+    @Test
+    public void showTaskHeads() {
+        loadTaskHeads();
+
+        onView(withId(R.id.taskhead_list)).check(matches(isDisplayed()));
+
+        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
+        onView(withItemText(TITLE2)).check(matches(isDisplayed()));
+        onView(withItemText(TITLE3)).check(matches(isDisplayed()));
+    }
     @Test
     public void deleteOnLongClickedTaskHeadItem() {
 
@@ -194,4 +218,34 @@ public class TaskHeadsViewTest {
 //        assertTrue(accessTokenStore.isLoggedIn());
     }
 
+    private Matcher<View> withItemText(final String itemText) {
+        checkArgument(!TextUtils.isEmpty(itemText), "itemText cannot be null or empty");
+        return new TypeSafeMatcher<View>() {
+            @Override
+            protected boolean matchesSafely(View item) {
+                return allOf(
+                        isDescendantOfA(isAssignableFrom(ListView.class)),
+                        withText(itemText)).matches(item);
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("isDescendantOfA ListView with Text " + itemText);
+            }
+        };
+    }
+
+    private void loadTaskHeads() {
+        startActivityWithStubbedTasks(TASKHEADS);
+    }
+    private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {
+        // Add tasks stub to the fake service api layer.
+        TaskHeadRepository.destroyInstance();
+        FakeTaskHeadRemoteDataSource.getInstance().addTaskHeads(taskHeads);
+
+        // Lazily start Activity from the ActivityTestRule this time to inject the start Intent.
+        Intent startIntent = new Intent();
+        mActivityTestRule.launchActivity(startIntent);
+
+    }
 }

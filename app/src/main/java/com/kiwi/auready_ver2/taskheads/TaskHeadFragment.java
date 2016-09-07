@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.customlistview.DragSortListView;
@@ -31,6 +32,9 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     // interface
     private TasksFragmentListener mListener;
     private TaskHeadsAdapter mTaskHeadsAdapter;
+
+    private TextView mNoTaskHeadTxt;
+    private DragSortListView mTaskHeadListView;
 
     public TaskHeadFragment() {
         // Required empty public constructor
@@ -100,9 +104,12 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         });
 
         // Set TaskHeadsView
-        DragSortListView taskHeadListView = (DragSortListView) root.findViewById(R.id.taskhead_list);
-        taskHeadListView.setAdapter(mTaskHeadsAdapter);
-        taskHeadListView.setDropListener(mTaskHeadsAdapter);
+        mTaskHeadListView = (DragSortListView) root.findViewById(R.id.taskhead_list);
+        mTaskHeadListView.setAdapter(mTaskHeadsAdapter);
+        mTaskHeadListView.setDropListener(mTaskHeadsAdapter);
+
+        // Set no taskHead textview
+        mNoTaskHeadTxt = (TextView) root.findViewById(R.id.no_taskhead_txt);
 
         return root;
     }
@@ -124,8 +131,8 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     public void openTasks(@NonNull TaskHead taskHead) {
         checkNotNull(taskHead);
         Intent intent = new Intent(getContext(), TasksActivity.class);
-        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, taskHead.getId());
-        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_TITLE, taskHead.getTitle());
+        intent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID, taskHead.getId());
+        intent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_TITLE, taskHead.getTitle());
         startActivityForResult(intent, TasksActivity.REQ_ADD_TASK);
     }
 
@@ -138,11 +145,15 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
 
     @Override
     public void showTaskHeads(List<TaskHead> taskHeads) {
+        mNoTaskHeadTxt.setVisibility(View.GONE);
+        mTaskHeadListView.setVisibility(View.VISIBLE);
         mTaskHeadsAdapter.replaceData(taskHeads);
     }
 
     @Override
     public void showNoTaskHeads() {
+        mTaskHeadListView.setVisibility(View.GONE);
+        mNoTaskHeadTxt.setVisibility(View.VISIBLE);
     }
 
     @Override

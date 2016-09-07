@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data.source.remote;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Task;
@@ -29,7 +30,11 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
 
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
-        callback.onTaskHeadsLoaded(Lists.newArrayList(TASKHEADS_SERVICE_DATA.values()));
+        if(TASKHEADS_SERVICE_DATA.size() == 0) {
+            callback.onDataNotAvailable();
+        } else {
+            callback.onTaskHeadsLoaded(Lists.newArrayList(TASKHEADS_SERVICE_DATA.values()));
+        }
     }
 
     @Override
@@ -42,5 +47,10 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
 
     }
 
-
+    @VisibleForTesting
+    public void addTaskHeads(List<TaskHead> taskHeads) {
+        for(TaskHead taskHead:taskHeads) {
+            TASKHEADS_SERVICE_DATA.put(taskHead.getId(), taskHead);
+        }
+    }
 }

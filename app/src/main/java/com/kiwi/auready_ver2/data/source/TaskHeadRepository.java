@@ -24,7 +24,8 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     /*
     * This variable has package local visibility so it can be accessed from tests.
     * */
-    private Map<String, TaskHead> mCachedTaskHeads;
+    Map<String, TaskHead> mCachedTaskHeads;
+
     private boolean mCacheIsDirty;
 
     // Prevent direct instantiation
@@ -37,44 +38,45 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
         checkNotNull(callback);
-
         // Respond immediately with cache if available and not dirty
-        if(mCachedTaskHeads != null && !mCacheIsDirty) {
+        if (mCachedTaskHeads != null && !mCacheIsDirty) {
             callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
             return;
         }
 
-        if(mCacheIsDirty) {
+        if (mCacheIsDirty) {
             // If the cache is dirty we need to fetch new data from the network.
             getTaskHeadsFromRemoteDataSource(callback);
         } else {
             // Query the local storage if available, if not, query the network.
-            mTaskHeadLocalDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
-                @Override
-                public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                    refreshCache(taskHeads);
-                    callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
-                }
+//            mTaskHeadLocalDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
+//                @Override
+//                public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
+//                    refreshCache(taskHeads);
+//                    callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
+//                }
+//
+//                @Override
+//                public void onDataNotAvailable() {
+//                    getTaskHeadsFromRemoteDataSource(callback);
+//                }
+//            });
 
-                @Override
-                public void onDataNotAvailable() {
-                    getTaskHeadsFromRemoteDataSource(callback);
-                }
-            });
+            getTaskHeadsFromRemoteDataSource(callback);
         }
     }
 
     @Override
     public void deleteTaskHead(@NonNull String taskHeadId) {
 
-
+        mCachedTaskHeads.remove(taskHeadId);
     }
 
     @Override
     public void saveTaskHead(@NonNull TaskHead taskHead) {
         checkNotNull(taskHead);
-        mTaskHeadRemoteDataSource.saveTaskHead(taskHead);
-        mTaskHeadLocalDataSource.saveTaskHead(taskHead);
+//        mTaskHeadRemoteDataSource.saveTaskHead(taskHead);
+//        mTaskHeadLocalDataSource.saveTaskHead(taskHead);
 
         // Do in memory cache update to keep the app UI up to date
         if (mCachedTaskHeads == null) {
@@ -103,11 +105,11 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     }
 
     private void refreshCache(List<TaskHead> taskHeads) {
-        if(mCachedTaskHeads == null) {
+        if (mCachedTaskHeads == null) {
             mCachedTaskHeads = new LinkedHashMap<>();
         }
         mCachedTaskHeads.clear();
-        for(TaskHead taskHead: taskHeads) {
+        for (TaskHead taskHead : taskHeads) {
             mCachedTaskHeads.put(taskHead.getId(), taskHead);
         }
         mCacheIsDirty = false;
@@ -115,7 +117,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 
     public static TaskHeadRepository getInstance(TaskHeadDataSource taskHeadRemoteDataSource,
                                                  TaskHeadDataSource taskHeadLocalDataSource) {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new TaskHeadRepository(taskHeadRemoteDataSource, taskHeadLocalDataSource);
         }
         return INSTANCE;
@@ -123,5 +125,9 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 
     public void refreshTaskHeads() {
         mCacheIsDirty = true;
+    }
+
+    public static void destroyInstance() {
+        INSTANCE = null;
     }
 }

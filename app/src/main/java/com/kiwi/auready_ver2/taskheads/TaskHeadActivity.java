@@ -28,6 +28,9 @@ public class TaskHeadActivity extends AppCompatActivity
 
     private static final String TAG = "Tag_MainActivity";
 
+    public static final String EXTRA_TASKHEAD_ID = "TASKHEAD_ID";
+    public static final String EXTRA_TASKHEAD_TITLE = "TASKHEAD_TITLE";
+
     private DrawerLayout mDrawerLayout;
     private TextView mNavHeaderName;
     private TextView mNavHeaderEmail;

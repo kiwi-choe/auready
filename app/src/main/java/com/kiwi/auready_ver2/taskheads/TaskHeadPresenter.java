@@ -72,11 +72,11 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
         if(TasksActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
             boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, false);
-            String taskHeadId = data.getStringExtra(TasksActivity.EXTRA_TASKHEAD_ID);
+            String taskHeadId = data.getStringExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID);
             if(isEmptyTasks) {
                 mTaskHeadView.showEmptyTaskHeadError();
 //                deleteTaskHead(taskHeadId);
-//                deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
+                deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
             }
         }
     }
@@ -152,6 +152,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTaskHead.ResponseValue response) {
+//                        loadTaskHeads();
                     }
 
                     @Override
