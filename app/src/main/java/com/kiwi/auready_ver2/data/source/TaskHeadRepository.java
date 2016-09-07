@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 
@@ -37,9 +38,13 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     }
 
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
+        Log.d("kiwi_test", "----------------------------------getTaskHeads");
+
         checkNotNull(callback);
         // Respond immediately with cache if available and not dirty
         if (mCachedTaskHeads != null && !mCacheIsDirty) {
+
+            Log.d("kiwi_test", "entered into repository getTaskHeads 1, " + String.valueOf(mCachedTaskHeads.size()));
             callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
             return;
         }
@@ -63,11 +68,15 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 //            });
 
             getTaskHeadsFromRemoteDataSource(callback);
+
+            Log.d("kiwi_test", "entered into repository getTaskHeads 2, " + String.valueOf(mCachedTaskHeads.size()));
         }
     }
 
     @Override
     public void deleteTaskHead(@NonNull String taskHeadId) {
+        checkNotNull(taskHeadId);
+        mTaskHeadRemoteDataSource.deleteTaskHead(taskHeadId);
 
         mCachedTaskHeads.remove(taskHeadId);
     }

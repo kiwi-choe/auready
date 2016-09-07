@@ -9,7 +9,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    tools:context=".taskheads.TaskHeadActivity">
+    tools:context=".taskheads.TaskHeadsActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"

@@ -76,15 +76,16 @@ public class TaskHeadRepositoryTest {
     }
 
     @Test
-    public void deleteTaskHead_deleteTaskToServiceApiRemovedFromCache() {
+    public void deleteTaskHead_deleteTaskHeadToServiceApiRemovedFromCache() {
+        // 1. Save taskHeads
         TaskHead newTaskHead = new TaskHead();
         mTaskHeadsRepository.saveTaskHead(newTaskHead);
         assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(newTaskHead.getId()), is(true));
 
-        // When deleted
+        // 2. Delete a taskHead
         mTaskHeadsRepository.deleteTaskHead(newTaskHead.getId());
 
-        // Verify it's removed from repository
+        // 3. Verify it's removed from repository
         assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(newTaskHead.getId()), is(false));
     }
 }

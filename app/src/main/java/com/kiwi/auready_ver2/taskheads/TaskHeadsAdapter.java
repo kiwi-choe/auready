@@ -68,6 +68,14 @@ public class TaskHeadsAdapter extends BaseAdapter implements
         final TaskHead taskHead = getItem(position);
 
         viewHolder.titleTV.setText(taskHead.getTitle());
+
+        viewHolder.titleTV.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mItemListener.onLongClick(taskHead);
+                return true;    // true if the callback consumed the long click.
+            }
+        });
     }
 
     public void setList(@NonNull List<TaskHead> list) {
@@ -89,5 +97,7 @@ public class TaskHeadsAdapter extends BaseAdapter implements
     }
 
     public interface TaskHeadItemListener {
+
+        void onLongClick(TaskHead taskHead);
     }
 }

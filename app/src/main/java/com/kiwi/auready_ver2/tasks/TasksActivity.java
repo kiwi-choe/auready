@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
+import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
@@ -38,12 +38,12 @@ public class TasksActivity extends AppCompatActivity {
         if (mTasksFragment == null) {
             mTasksFragment = TasksFragment.newInstance();
 
-            taskHeadId = getIntent().getStringExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID);
-            taskHeadTitle = getIntent().getStringExtra(TaskHeadActivity.EXTRA_TASKHEAD_TITLE);
+            taskHeadId = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
+            taskHeadTitle = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
             actionBar.setTitle(taskHeadTitle);
             Bundle bundle = new Bundle();
-            bundle.putString(TaskHeadActivity.EXTRA_TASKHEAD_ID, taskHeadId);
-            bundle.putString(TaskHeadActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
+            bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+            bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
             mTasksFragment.setArguments(bundle);
 
             ActivityUtils.addFragmentToActivity(

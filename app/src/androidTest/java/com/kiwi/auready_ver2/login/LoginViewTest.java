@@ -130,7 +130,7 @@ public class LoginViewTest {
         // Check that requestLogout button is not displayed
         onView(withId(R.id.bt_logout_complete)).check(matches(not(isDisplayed())));
     }
-    //q 메인(TaskHeadActivity)의 텍스트뷰에 대한 테스트는 어떻게 하지?
+    //q 메인(TaskHeadsActivity)의 텍스트뷰에 대한 테스트는 어떻게 하지?
     // q How to check that LoginActivity is finished?
 //    public void sendResultToTasks_whenLoginSucceed() {
 }

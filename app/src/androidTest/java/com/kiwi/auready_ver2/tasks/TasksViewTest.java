@@ -11,7 +11,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.remote.FakeTaskRemoteDataSource;
-import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
+import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -141,7 +141,7 @@ public class TasksViewTest {
 
         // Lazily start Activity from the ActivityTestRule this time to inject the start Intent
         Intent startIntent = new Intent();
-        startIntent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+        startIntent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
         mTasksActivityTestRule.launchActivity(startIntent);
     }
 }

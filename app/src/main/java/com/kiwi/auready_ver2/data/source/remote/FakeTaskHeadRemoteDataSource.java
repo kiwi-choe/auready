@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source.remote;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
+import android.util.Log;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Task;
@@ -30,6 +31,8 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
 
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
+
+        Log.d("kiwi_test", "entered into remote getTaskHeads, " + String.valueOf(TASKHEADS_SERVICE_DATA.size()));
         if(TASKHEADS_SERVICE_DATA.size() == 0) {
             callback.onDataNotAvailable();
         } else {
@@ -40,6 +43,9 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     @Override
     public void deleteTaskHead(@NonNull String id) {
 
+        Log.d("kiwi_test", "deleted taskHead is " + TASKHEADS_SERVICE_DATA.get(id).getTitle());
+        TASKHEADS_SERVICE_DATA.remove(id);
+        Log.d("kiwi_test", "entered into remote deleteTaskHead, " + String.valueOf(TASKHEADS_SERVICE_DATA.size()));
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -21,17 +22,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 6/26/16.
  */
-public class TaskHeadPresenter implements TaskHeadContract.Presenter {
+public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
-    private final TaskHeadContract.View mTaskHeadView;
+    private final TaskHeadsContract.View mTaskHeadView;
 
     private UseCaseHandler mUseCaseHandler;
     private final GetTaskHeads mGetTaskHeads;
     private final DeleteTaskHead mDeleteTaskHead;
     private final SaveTaskHead mSaveTaskHead;
 
-    public TaskHeadPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadContract.View tasksView,
-                             @NonNull GetTaskHeads getTaskHeads, @NonNull DeleteTaskHead deleteTaskHead, SaveTaskHead saveTaskHead) {
+    public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
+                              @NonNull GetTaskHeads getTaskHeads, @NonNull DeleteTaskHead deleteTaskHead, SaveTaskHead saveTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
@@ -72,7 +73,7 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
 
         if(TasksActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
             boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, false);
-            String taskHeadId = data.getStringExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID);
+            String taskHeadId = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
             if(isEmptyTasks) {
                 mTaskHeadView.showEmptyTaskHeadError();
 //                deleteTaskHead(taskHeadId);
@@ -115,6 +116,11 @@ public class TaskHeadPresenter implements TaskHeadContract.Presenter {
                     @Override
                     public void onSuccess(GetTaskHeads.ResponseValue response) {
                         List<TaskHead> taskHeads = response.getTaskHeads();
+                        for(TaskHead taskHead : taskHeads) {
+
+                            Log.d("kiwi_test", "entered into loadTaskHeads, title is " + taskHead.getTitle());
+                        }
+
                         processTaskHeads(taskHeads);
                     }
 

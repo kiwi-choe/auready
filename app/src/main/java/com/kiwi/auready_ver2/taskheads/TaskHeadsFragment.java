@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +24,11 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TaskHeadFragment extends Fragment implements TaskHeadContract.View {
+public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View {
 
     public static final String TAG_TASKSFRAGMENT = "TAG_TasksFragment";
 
-    private TaskHeadContract.Presenter mPresenter;
+    private TaskHeadsContract.Presenter mPresenter;
 
     // interface
     private TasksFragmentListener mListener;
@@ -36,13 +37,13 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     private TextView mNoTaskHeadTxt;
     private DragSortListView mTaskHeadListView;
 
-    public TaskHeadFragment() {
+    public TaskHeadsFragment() {
         // Required empty public constructor
     }
 
-    public static TaskHeadFragment newInstance() {
+    public static TaskHeadsFragment newInstance() {
 
-        return new TaskHeadFragment();
+        return new TaskHeadsFragment();
     }
 
     @Override
@@ -62,6 +63,12 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         * */
     TaskHeadsAdapter.TaskHeadItemListener
             mItemListener = new TaskHeadsAdapter.TaskHeadItemListener() {
+
+        @Override
+        public void onLongClick(TaskHead taskHead) {
+            checkNotNull(taskHead);
+            mPresenter.deleteTaskHead(taskHead.getId());
+        }
     };
 
     @Override
@@ -83,7 +90,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     }
 
     @Override
-    public void setPresenter(TaskHeadContract.Presenter tasksPresenter) {
+    public void setPresenter(TaskHeadsContract.Presenter tasksPresenter) {
         mPresenter = checkNotNull(tasksPresenter);
     }
 
@@ -131,8 +138,8 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
     public void openTasks(@NonNull TaskHead taskHead) {
         checkNotNull(taskHead);
         Intent intent = new Intent(getContext(), TasksActivity.class);
-        intent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID, taskHead.getId());
-        intent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_TITLE, taskHead.getTitle());
+        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHead.getId());
+        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE, taskHead.getTitle());
         startActivityForResult(intent, TasksActivity.REQ_ADD_TASK);
     }
 
@@ -148,6 +155,8 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         mNoTaskHeadTxt.setVisibility(View.GONE);
         mTaskHeadListView.setVisibility(View.VISIBLE);
         mTaskHeadsAdapter.replaceData(taskHeads);
+
+        Log.d("kiwi_test", "taskHeads's size is " + String.valueOf(taskHeads.size()));
     }
 
     @Override
@@ -162,7 +171,7 @@ public class TaskHeadFragment extends Fragment implements TaskHeadContract.View 
         Snackbar.make(getView(), getString(R.string.taskhead_empty_err), Snackbar.LENGTH_LONG).show();
     }
 
-    // Interface with TaskHeadActivity
+    // Interface with TaskHeadsActivity
     public interface TasksFragmentListener {
         void onLoginSuccess();
     }

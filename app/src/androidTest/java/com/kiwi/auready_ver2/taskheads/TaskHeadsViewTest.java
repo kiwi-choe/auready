@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.data.source.remote.FakeTaskHeadRemoteDataSource;
@@ -29,6 +30,8 @@ import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.contrib.DrawerActions.open;
 import static android.support.test.espresso.contrib.DrawerMatchers.isClosed;
@@ -66,11 +69,11 @@ public class TaskHeadsViewTest {
             new TaskHead(TITLE2), new TaskHead(TITLE3));
 
 
-    private TaskHeadActivity mActivity;
+    private TaskHeadsActivity mActivity;
 
     @Rule
-    public ActivityTestRule<TaskHeadActivity> mActivityTestRule =
-            new ActivityTestRule<>(TaskHeadActivity.class, true, false);
+    public ActivityTestRule<TaskHeadsActivity> mActivityTestRule =
+            new ActivityTestRule<>(TaskHeadsActivity.class, true, false);
 
     @Before
     public void setup() {
@@ -196,10 +199,16 @@ public class TaskHeadsViewTest {
         onView(withItemText(TITLE3)).check(matches(isDisplayed()));
     }
     @Test
-    public void deleteOnLongClickedTaskHeadItem() {
+    public void onLongClickedTaskHeadItem_deleteTaskHead() {
 
-//        onView(withText(TITLE1)).perform(click());
-//        onView(withItemText(TITLE1)).check(matches(not(isDisplayed())));
+        // Given taskHead stubs
+        loadTaskHeads();
+
+        // On longClick the item with TITLE2
+        onView(withText(TITLE2)).perform(longClick());
+
+        // Verify one taskHead was deleted
+        onView(withItemText(TITLE2)).check(doesNotExist());
     }
 
 

@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.customlistview.DragSortListView;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
+import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,8 +67,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null) {
-            mTaskHeadId = getArguments().getString(TaskHeadActivity.EXTRA_TASKHEAD_ID);
-            mTaskHeadTitle = getArguments().getString(TaskHeadActivity.EXTRA_TASKHEAD_TITLE);
+            mTaskHeadId = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
+            mTaskHeadTitle = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
         }
 
         mTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
@@ -110,7 +110,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         Intent intent = new Intent();
         intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, true);
-        intent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }

@@ -23,8 +23,8 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TaskHeadActivity extends AppCompatActivity
-        implements TaskHeadFragment.TasksFragmentListener {
+public class TaskHeadsActivity extends AppCompatActivity
+        implements TaskHeadsFragment.TasksFragmentListener {
 
     private static final String TAG = "Tag_MainActivity";
 
@@ -36,7 +36,7 @@ public class TaskHeadActivity extends AppCompatActivity
     private TextView mNavHeaderEmail;
     private Button mNavFriendButton;
 
-    private TaskHeadPresenter mPresenter;
+    private TaskHeadsPresenter mPresenter;
 
     private AccessTokenStore mAccessTokenStore;
 
@@ -46,18 +46,18 @@ public class TaskHeadActivity extends AppCompatActivity
         setContentView(R.layout.activity_taskheads);
 
 
-        TaskHeadFragment taskHeadFragment =
-                (TaskHeadFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (taskHeadFragment == null) {
-            taskHeadFragment = TaskHeadFragment.newInstance();
+        TaskHeadsFragment taskHeadsFragment =
+                (TaskHeadsFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (taskHeadsFragment == null) {
+            taskHeadsFragment = TaskHeadsFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), taskHeadFragment, R.id.content_frame, TaskHeadFragment.TAG_TASKSFRAGMENT);
+                    getSupportFragmentManager(), taskHeadsFragment, R.id.content_frame, TaskHeadsFragment.TAG_TASKSFRAGMENT);
         }
 
         // Create the presenter
-        mPresenter = new TaskHeadPresenter(
+        mPresenter = new TaskHeadsPresenter(
                 Injection.provideUseCaseHandler(),
-                taskHeadFragment,
+                taskHeadsFragment,
                 Injection.provideGetTaskHeads(getApplicationContext()),
                 Injection.provideDeleteTaskHead(getApplicationContext()),
                 Injection.provideSaveTaskHead(getApplicationContext()));
@@ -193,7 +193,7 @@ public class TaskHeadActivity extends AppCompatActivity
 
     private void startFriendActivity() {
         Intent intent =
-                new Intent(TaskHeadActivity.this, FriendActivity.class);
+                new Intent(TaskHeadsActivity.this, FriendActivity.class);
         startActivity(intent);
     }
 
@@ -203,7 +203,7 @@ public class TaskHeadActivity extends AppCompatActivity
     }
 
     /*
-    * TaskHeadFragment listener
+    * TaskHeadsFragment listener
     * */
     @Override
     public void onLoginSuccess() {

@@ -12,11 +12,11 @@ import java.util.List;
 /**
  * Created by kiwi on 6/26/16.
  */
-public interface TaskHeadContract {
+public interface TaskHeadsContract {
 
     interface View extends BaseView<Presenter> {
 
-        void setPresenter(TaskHeadContract.Presenter tasksPresenter);
+        void setPresenter(TaskHeadsContract.Presenter tasksPresenter);
 
         void setLoginSuccessUI();
 
