@@ -1,5 +1,8 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -9,6 +12,7 @@ import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.tasks.TasksActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -108,9 +112,9 @@ public class TaskHeadPresenterTest {
     @Test
     public void deleteTaskHeadByIsEmptyTaskHead() {
         TaskHead taskHead = new TaskHead();
-
         // When the deletion of a taskHead is requested,
         mTaskHeadPresenter.deleteTaskHeadByIsEmptyTaskHead(taskHead.getId());
+
         // Then the repository and the view are notified.
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
     }

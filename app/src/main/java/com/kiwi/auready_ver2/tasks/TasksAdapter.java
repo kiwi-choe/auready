@@ -63,7 +63,7 @@ public class TasksAdapter extends BaseTasksAdapter {
                 rowView = layoutInflater.inflate(R.layout.add_taskview, viewGroup, false);
             }
             else {
-                rowView = layoutInflater.inflate(R.layout.active_task_item, viewGroup, false);
+                rowView = layoutInflater.inflate(R.layout.task_item, viewGroup, false);
 
                 ViewHolder viewHolder = new ViewHolder();
                 viewHolder.complete = (CheckBox) rowView.findViewById(R.id.complete);

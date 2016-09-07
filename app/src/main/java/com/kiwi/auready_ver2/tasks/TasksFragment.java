@@ -9,12 +9,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.customlistview.DragSortListView;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,8 +67,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(getArguments() != null) {
-            mTaskHeadId = getArguments().getString(TasksActivity.EXTRA_TASKHEAD_ID);
-            mTaskHeadTitle = getArguments().getString(TasksActivity.EXTRA_TASKHEAD_TITLE);
+            mTaskHeadId = getArguments().getString(TaskHeadActivity.EXTRA_TASKHEAD_ID);
+            mTaskHeadTitle = getArguments().getString(TaskHeadActivity.EXTRA_TASKHEAD_TITLE);
         }
 
         mTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
@@ -110,8 +109,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void showEmptyTaskHeadError() {
 
         Intent intent = new Intent();
-        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKS, true);
-        intent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, true);
+        intent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }

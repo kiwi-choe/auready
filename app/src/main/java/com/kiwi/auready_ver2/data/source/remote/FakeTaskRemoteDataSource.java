@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,7 +62,13 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
 
     @Override
     public void saveTask(Task task, @NonNull SaveTaskCallback callback) {
-
+        String taskHeadId = task.getTaskHeadId();
+        List<Task> tasksOfTaskHeadId = TASKS_OF_TASKHEAD_SERVICE_DATA.get(taskHeadId);
+        if(tasksOfTaskHeadId == null) {
+            tasksOfTaskHeadId = new ArrayList<>(0);
+        }
+        tasksOfTaskHeadId.add(task);
+        TASKS_OF_TASKHEAD_SERVICE_DATA.put(task.getTaskHeadId(), tasksOfTaskHeadId);
     }
 
     @VisibleForTesting

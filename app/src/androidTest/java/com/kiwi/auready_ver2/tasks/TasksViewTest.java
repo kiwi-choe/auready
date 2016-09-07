@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Intent;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.ListView;
 
@@ -12,6 +11,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.remote.FakeTaskRemoteDataSource;
+import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -23,7 +23,6 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
@@ -36,11 +35,8 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static junit.framework.Assert.assertEquals;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.core.IsNot.not;
 
 /**
@@ -145,7 +141,7 @@ public class TasksViewTest {
 
         // Lazily start Activity from the ActivityTestRule this time to inject the start Intent
         Intent startIntent = new Intent();
-        startIntent.putExtra(TasksActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+        startIntent.putExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID, taskHeadId);
         mTasksActivityTestRule.launchActivity(startIntent);
     }
 }

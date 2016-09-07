@@ -32,7 +32,6 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
 
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
-
     }
 
     @Override

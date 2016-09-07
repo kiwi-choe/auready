@@ -7,14 +7,13 @@ import android.support.v7.widget.Toolbar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.taskheads.TaskHeadActivity;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
 
     public static final int REQ_ADD_TASK = 1;
-    public static final String EXTRA_TASKHEAD_ID = "TASKHEAD_ID";
-    public static final String EXTRA_TASKHEAD_TITLE = "TASKHEAD_TITLE";
-    public static final String EXTRA_ISEMPTY_TASKS = "ISEMPTY_TASKS_AND_NO_TITLE";
+    public static final String EXTRA_ISEMPTY_TASKHEAD = "ISEMPTY_TASKS_AND_NO_TITLE";
 
     private TasksFragment mTasksFragment;
     private TasksPresenter mPresenter;
@@ -39,12 +38,12 @@ public class TasksActivity extends AppCompatActivity {
         if (mTasksFragment == null) {
             mTasksFragment = TasksFragment.newInstance();
 
-            taskHeadId = getIntent().getStringExtra(EXTRA_TASKHEAD_ID);
-            taskHeadTitle = getIntent().getStringExtra(EXTRA_TASKHEAD_TITLE);
+            taskHeadId = getIntent().getStringExtra(TaskHeadActivity.EXTRA_TASKHEAD_ID);
+            taskHeadTitle = getIntent().getStringExtra(TaskHeadActivity.EXTRA_TASKHEAD_TITLE);
             actionBar.setTitle(taskHeadTitle);
             Bundle bundle = new Bundle();
-            bundle.putString(EXTRA_TASKHEAD_ID, taskHeadId);
-            bundle.putString(EXTRA_TASKHEAD_TITLE, taskHeadTitle);
+            bundle.putString(TaskHeadActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+            bundle.putString(TaskHeadActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
             mTasksFragment.setArguments(bundle);
 
             ActivityUtils.addFragmentToActivity(
