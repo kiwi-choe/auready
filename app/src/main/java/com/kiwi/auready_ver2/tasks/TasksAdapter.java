@@ -91,6 +91,8 @@ public class TasksAdapter extends BaseTasksAdapter {
 
         final Task task = mTasks.get(viewHolder.ref);//(Task) getItem(viewHolder.ref);
 
+        viewHolder.complete.setChecked(task.isCompleted());
+        
         viewHolder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

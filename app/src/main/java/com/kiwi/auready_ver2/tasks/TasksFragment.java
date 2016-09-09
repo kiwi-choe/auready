@@ -38,7 +38,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     TasksAdapter.TaskItemListener mTaskItemListener = new TasksAdapter.TaskItemListener() {
         @Override
         public void onCompleteTaskClick(Task completedTask) {
-//            mPresenter.completeTask(completedTask);
+            mPresenter.completeTask(completedTask);
         }
 
         @Override
@@ -106,18 +106,23 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void showEmptyTaskHeadError() {
+    public void showInvalidTaskHeadError() {
 
-        Intent intent = new Intent();
-        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, true);
-        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
+
     }
 
     @Override
     public void showLoadingErrorTasksError() {
         showMessage(getString(R.string.loading_tasks_error));
+    }
+
+    @Override
+    public void showTaskHeadList(boolean isEmptyTaskHead) {
+        Intent intent = new Intent();
+        intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, isEmptyTaskHead);
+        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
 
     @Override
@@ -132,7 +137,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void onPause() {
 
-        mPresenter.validateEmptyTaskHead(mTaskHeadTitle, mTasksAdapter.getCount());
+        boolean isEmptyTaskHead = mPresenter.validateEmptyTaskHead(mTaskHeadTitle, mTasksAdapter.getCount());
+        showTaskHeadList(isEmptyTaskHead);
+
         super.onPause();
     }
 }

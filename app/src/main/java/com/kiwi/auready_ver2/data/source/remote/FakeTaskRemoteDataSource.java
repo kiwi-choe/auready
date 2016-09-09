@@ -71,6 +71,11 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
         TASKS_OF_TASKHEAD_SERVICE_DATA.put(task.getTaskHeadId(), tasksOfTaskHeadId);
     }
 
+    @Override
+    public void completeTask(@NonNull Task task) {
+
+    }
+
     @VisibleForTesting
     public void addTasks(String taskHeadId, List<Task> tasks) {
         TASKS_OF_TASKHEAD_SERVICE_DATA.put(taskHeadId, tasks);

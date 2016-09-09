@@ -56,7 +56,8 @@ public class TasksActivity extends AppCompatActivity {
                 mTasksFragment,
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideSaveTasks(getApplicationContext()),
-                Injection.provideSaveTask(getApplicationContext()));
+                Injection.provideSaveTask(getApplicationContext()),
+                Injection.provideCompleteTask(getApplicationContext()));
     }
 
     @Override

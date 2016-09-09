@@ -93,6 +93,7 @@ public class TasksViewTest {
 
     @Test
     public void saveNewTask() {
+        // Launch Activity with empty tasks
         startActivityWithStubbedTasks(EMPTY_TASKS, TASKHEAD_ID);
 
         // Create new task
@@ -102,6 +103,33 @@ public class TasksViewTest {
 
         onView(withId(R.id.task_list)).check(matches(isDisplayed()));
         onView(withItemText(TASK_DESCRIPTION1)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void markAsCompletedTask() {
+        loadTasks();
+
+        // Check that the task is marked as completed
+        onView(allOf(withId(R.id.complete),
+                hasSibling(withText(TASK_DESCRIPTION2)))).check(matches(isChecked()));
+        onView(allOf(withId(R.id.complete),
+                hasSibling(withText(TASK_DESCRIPTION3)))).check(matches(isChecked()));
+    }
+    @Test
+    public void completeTask() {
+        // Given 1 active 2 complete tasks stub
+        loadTasks();
+
+        // Mark the task as complete
+        clickCheckBoxForTask(TASK_DESCRIPTION1);
+
+        // Verify task is shown as complete
+
+    }
+
+    private void clickCheckBoxForTask(String description) {
+        onView(allOf(withId(R.id.complete),
+                hasSibling(withText(description)))).perform(click());
     }
 
     private void loadTasks() {
