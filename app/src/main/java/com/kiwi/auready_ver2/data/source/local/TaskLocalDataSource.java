@@ -58,4 +58,10 @@ public class TaskLocalDataSource implements TaskDataSource {
     public void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback) {
 
     }
+
+    @Override
+    public void completeTask(@NonNull Task task) {
+
+    }
+
 }

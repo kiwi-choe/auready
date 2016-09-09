@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
@@ -17,7 +18,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -72,8 +72,9 @@ public class TasksPresenterTest {
         GetTasks getTasks = new GetTasks(mTaskRepository);
         SaveTasks saveTasks = new SaveTasks(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
+        CompleteTask completeTask = new CompleteTask(mTaskRepository);
 
-        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView, getTasks, saveTasks, saveTask);
+        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView, getTasks, saveTasks, saveTask, completeTask);
     }
 
     @Test
@@ -105,10 +106,20 @@ public class TasksPresenterTest {
     public void saveTaskHead_emptyTaskHeadShowsErrorUi() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
         // Check that there is no tasks and title
-        mTasksPresenter.validateEmptyTaskHead("", 0);
-        verify(mTasksView).showEmptyTaskHeadError();
+        boolean isEmptyTaskHead = mTasksPresenter.validateEmptyTaskHead("", 0);
+        assertTrue(isEmptyTaskHead);
     }
 
+    @Test
+    public void completeTask() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
+
+        Task activeTask = new Task(TASKHEAD_ID, TASK_DESCRIPTION1);
+
+        mTasksPresenter.completeTask(activeTask);
+        // Then a request is sent to the task repository and the UI is updated.
+        verify(mTaskRepository).completeTask(activeTask);
+    }
     @Test
     public void filterActiveTasks_showIntoActiveTasksView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
@@ -130,14 +141,14 @@ public class TasksPresenterTest {
         verify(mTaskRepository).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
 
-        verify(mTasksView).showEmptyTaskHeadError();
+        verify(mTasksView).showInvalidTaskHeadError();
     }
     @Test
     public void tasksAreNotShownWhenInvalidTaskHeadId() {
         mTasksPresenter = givenTasksPresenter(INVALID_TASKHEAD_ID);
         mTasksPresenter.loadTasks();
 
-        verify(mTasksView).showEmptyTaskHeadError();
+        verify(mTasksView).showInvalidTaskHeadError();
     }
 
 

@@ -7,6 +7,7 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
+import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
@@ -25,6 +26,8 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final GetTasks mGetTasks;
     private final SaveTasks mSaveTasks;
     private final SaveTask mSaveTask;
+    private final CompleteTask mCompleteTask;
+
     private final FilterFactory mFilterFactory;
 
     private String mTaskHeadId;
@@ -33,7 +36,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetTasks getTasks,
-                          @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask) {
+                          @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask, CompleteTask completeTask) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -41,6 +44,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         mGetTasks = checkNotNull(getTasks, "getTasks cannot be null!");
         mSaveTasks = checkNotNull(saveTasks, "saveTasks cannot be null!");
         mSaveTask = checkNotNull(saveTask, "saveTask cannot be null!");
+        mCompleteTask = checkNotNull(completeTask, "completeTask cannot be null");
 
         mFilterFactory = new FilterFactory();
 
@@ -57,7 +61,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
         if(mTaskHeadId == null || mTaskHeadId.isEmpty()) {
             Log.d("test", "entered mTaskHeadId is null? or empty");
-            mTasksView.showEmptyTaskHeadError();
+            mTasksView.showInvalidTaskHeadError();
             return;
         }
 
@@ -74,20 +78,17 @@ public class TasksPresenter implements TasksContract.Presenter {
                     public void onError() {
 
                         Log.d("test", "entered GetTask onError()");
-                        mTasksView.showEmptyTaskHeadError();
+                        mTasksView.showInvalidTaskHeadError();
                     }
                 });
 
     }
 
     @Override
-    public void validateEmptyTaskHead(String taskHeadTitle, int numOfTasks) {
+    public boolean validateEmptyTaskHead(String taskHeadTitle, int numOfTasks) {
 
-        if (taskHeadTitle.isEmpty() &&
-                (numOfTasks == 0)) {
-            mTasksView.showEmptyTaskHeadError();
-        }
-
+        return taskHeadTitle == null ||
+                taskHeadTitle.isEmpty() && numOfTasks == 0;
     }
 
     @Override
@@ -104,6 +105,24 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onError() {
                         mTasksView.showLoadingErrorTasksError();
+                    }
+                });
+    }
+
+    @Override
+    public void completeTask(@NonNull Task task) {
+        checkNotNull(task, "activeTaskId cannot be null");
+        mUseCaseHandler.execute(mCompleteTask, new CompleteTask.RequestValues(task),
+                new UseCase.UseCaseCallback<CompleteTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(CompleteTask.ResponseValue response) {
+                        loadTasks();
+                    }
+
+                    @Override
+                    public void onError() {
+
                     }
                 });
     }

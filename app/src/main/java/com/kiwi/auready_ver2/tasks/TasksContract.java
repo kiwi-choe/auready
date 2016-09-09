@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.support.annotation.NonNull;
+
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Task;
@@ -19,17 +21,21 @@ public class TasksContract {
 
         void showTasks(List<Task> tasks);
 
-        void showEmptyTaskHeadError();
+        void showInvalidTaskHeadError();
 
         void showLoadingErrorTasksError();
+
+        void showTaskHeadList(boolean isEmptyTaskHead);
     }
 
     interface Presenter extends BasePresenter {
 
         void loadTasks();
 
-        void validateEmptyTaskHead(String taskHeadTitle, int numOfTasks);
+        boolean validateEmptyTaskHead(String taskHeadTitle, int numOfTasks);
 
         void saveTask(Task task);
+
+        void completeTask(@NonNull Task task);
     }
 }

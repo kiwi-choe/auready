@@ -7,6 +7,7 @@ import android.util.Log;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +26,10 @@ public class TaskRepository implements TaskDataSource {
 
     /*
     * This variable has package local visibility so it can be accessed from tests.
+    * First Map: KEY taskHeadId, VALUE tasks
+    * Second Map: KEY taskId, VALUE task
     * */
-    private Map<String, List<Task>> mCachedTasks;
+    public Map<String, Map<String, Task>> mCachedTasks;
     private boolean mCacheIsDirty;
 
     // Prevent direct instantiation
@@ -45,11 +48,11 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(taskHeadId);
         checkNotNull(callback);
 
-        List<Task> cachedTasks = getTasksWithTaskHeadId(taskHeadId);
-
+        Map<String, Task> cachedTasks = getTasksWithTaskHeadId(taskHeadId);
         // Respond immediately with cache if available
         if (cachedTasks != null) {
-            callback.onTasksLoaded(cachedTasks);
+            List<Task> taskList = new ArrayList<>(cachedTasks.values());
+            callback.onTasksLoaded(taskList);
             return;
         }
 
@@ -85,7 +88,7 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Nullable
-    private List<Task> getTasksWithTaskHeadId(@NonNull String taskHeadId) {
+    private Map<String, Task> getTasksWithTaskHeadId(@NonNull String taskHeadId) {
         checkNotNull(taskHeadId);
         if (mCachedTasks == null || mCachedTasks.isEmpty()) {
             return null;
@@ -108,7 +111,17 @@ public class TaskRepository implements TaskDataSource {
     @Override
     public void saveTask(@NonNull Task task, @NonNull final SaveTaskCallback callback) {
         checkNotNull(task);
-//        mTaskRemoteDataSource.saveTask(task);
+        mTaskRemoteDataSource.saveTask(task, new SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+                callback.onTaskSaved();
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+                callback.onTaskNotSaved();
+            }
+        });
 //        mTaskLocalDataSource.saveTask(task, new SaveTaskCallback() {
 //            @Override
 //            public void onTaskSaved() {
@@ -122,21 +135,34 @@ public class TaskRepository implements TaskDataSource {
 //        });
 
         // Do in memory cache update to keep the app UI up to date
-        if(mCachedTasks == null) {
-            mCachedTasks = new LinkedHashMap<>();
-        }
-        // Check that exists tasks of taskHeadId
-        List<Task> tasksOfTaskHeadId = mCachedTasks.get(task.getTaskHeadId());
-        if(tasksOfTaskHeadId == null) {
-            tasksOfTaskHeadId = new ArrayList<>();
-        }
-        tasksOfTaskHeadId.add(task);
-        mCachedTasks.put(task.getTaskHeadId(), tasksOfTaskHeadId);
+        putToCachedTasks(task);
 
         // when testing, used only cache.
         callback.onTaskSaved();
     }
 
+    @Override
+    public void completeTask(@NonNull Task task) {
+        checkNotNull(task);
+        mTaskRemoteDataSource.completeTask(task);
+
+        Task completedTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), true);
+        // Do in memory cache update to keep the app UI up to date
+        putToCachedTasks(completedTask);
+    }
+
+
+    private void putToCachedTasks(Task task) {
+        if(mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        Map<String, Task> tasks = mCachedTasks.get(task.getTaskHeadId());
+        if(tasks == null) {
+            tasks = new LinkedHashMap<>();
+        }
+        tasks.put(task.getId(), task);
+        mCachedTasks.put(task.getTaskHeadId(), tasks);
+    }
 
     public static TaskRepository getInstance(TaskDataSource taskRemoteDataSource,
                                              TaskDataSource taskLocalDataSource) {

@@ -41,19 +41,32 @@ public class Task {
     * To create an active Task if the Task already has an id
     * (copy of another Task).
     * */
-    public Task(String id, String taskHeadId, String description) {
-        mId = id;
+    public Task(String taskHeadId, String id, String description) {
         mTaskHeadId = taskHeadId;
+        mId = id;
         mDescription = description;
         mCompleted = false;
     }
 
     /*
-    * To create a new completed Task.
+    * To create a completed Task.
+    *
+    * A completed task can be made after creating an active task
+    * */
+    public Task(String taskHeadId, String id, String description, boolean completed) {
+        mTaskHeadId = taskHeadId;
+        mId = id;
+        mDescription = description;
+        mCompleted = completed;
+    }
+
+    /*
+    * To create a completed Task.
+    * Use this only on testing.
     * */
     public Task(String taskHeadId, String description, boolean completed) {
-        mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
+        mId = UUID.randomUUID().toString();;
         mDescription = description;
         mCompleted = completed;
     }

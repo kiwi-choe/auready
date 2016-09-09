@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
+import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
@@ -97,5 +98,9 @@ public class Injection {
 
     public static SaveTask provideSaveTask(@NonNull Context context) {
         return new SaveTask(Injection.provideTaskRepository(context));
+    }
+
+    public static CompleteTask provideCompleteTask(@NonNull Context context) {
+        return new CompleteTask(Injection.provideTaskRepository(context));
     }
 }
