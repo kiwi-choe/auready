@@ -7,6 +7,7 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -27,6 +28,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final SaveTasks mSaveTasks;
     private final SaveTask mSaveTask;
     private final CompleteTask mCompleteTask;
+    private final ActivateTask mActivateTask;
 
     private final FilterFactory mFilterFactory;
 
@@ -36,7 +38,8 @@ public class TasksPresenter implements TasksContract.Presenter {
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetTasks getTasks,
-                          @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask, CompleteTask completeTask) {
+                          @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask,
+                          @NonNull CompleteTask completeTask, @NonNull ActivateTask activateTask) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -45,6 +48,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         mSaveTasks = checkNotNull(saveTasks, "saveTasks cannot be null!");
         mSaveTask = checkNotNull(saveTask, "saveTask cannot be null!");
         mCompleteTask = checkNotNull(completeTask, "completeTask cannot be null");
+        mActivateTask = checkNotNull(activateTask, "activateTask cannot be null");
 
         mFilterFactory = new FilterFactory();
 
@@ -110,12 +114,30 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void completeTask(@NonNull Task task) {
-        checkNotNull(task, "activeTaskId cannot be null");
+        checkNotNull(task, "activeTask cannot be null");
         mUseCaseHandler.execute(mCompleteTask, new CompleteTask.RequestValues(task),
                 new UseCase.UseCaseCallback<CompleteTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(CompleteTask.ResponseValue response) {
+                        loadTasks();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void activateTask(@NonNull Task task) {
+        checkNotNull(task, "completeTask cannot be null");
+        mUseCaseHandler.execute(mActivateTask, new ActivateTask.RequestValues(task),
+                new UseCase.UseCaseCallback<ActivateTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(ActivateTask.ResponseValue response) {
                         loadTasks();
                     }
 

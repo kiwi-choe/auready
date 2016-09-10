@@ -121,6 +121,16 @@ public class TasksViewTest {
                 hasSibling(withText(TASK_DESCRIPTION3)))).check(matches(isChecked()));
     }
 
+    @Test
+    public void markTaskAsActive_taskIsComplete() {
+        loadTasks();
+
+        clickCheckBoxForTask(TASK_DESCRIPTION2);
+
+        // Check that the task is marked as active
+        onView(allOf(withId(R.id.complete),
+                hasSibling(withText(TASK_DESCRIPTION2)))).check(matches(not(isChecked())));
+    }
 
     private void clickCheckBoxForTask(String description) {
         onView(allOf(withId(R.id.complete),

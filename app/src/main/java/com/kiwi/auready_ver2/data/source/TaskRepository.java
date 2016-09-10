@@ -150,6 +150,15 @@ public class TaskRepository implements TaskDataSource {
         putToCachedTasks(completedTask);
     }
 
+    @Override
+    public void activateTask(@NonNull Task task) {
+        checkNotNull(task);
+        mTaskRemoteDataSource.activateTask(task);
+
+        Task activeTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), false);
+        putToCachedTasks(activeTask);
+    }
+
 
     private void putToCachedTasks(Task task) {
         if(mCachedTasks == null) {

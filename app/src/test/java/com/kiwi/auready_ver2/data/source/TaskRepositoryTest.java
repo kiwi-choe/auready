@@ -68,6 +68,19 @@ public class TaskRepositoryTest {
         assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(newTask.getId()).isActive(), is(false));
     }
 
+    @Test
+    public void activateTask() {
+        // Given a stub complete task in the repository
+        Task newTask = new Task(TASKHEAD_ID, "go sleep", true);
+        mTaskRepository.saveTask(newTask, mSaveTaskCallback);
+
+        mTaskRepository.activateTask(newTask);
+
+        verify(mTaskRemoteDataSource).activateTask(newTask);
+        assertThat(mTaskRepository.mCachedTasks.size(), is(1));
+        assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(newTask.getId()).isCompleted(), is(false));
+    }
+
     @After
     public void destroyRepositoryInstance() {
         TaskRepository.destroyInstance();

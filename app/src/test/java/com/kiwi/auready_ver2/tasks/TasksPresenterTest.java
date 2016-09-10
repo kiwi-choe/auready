@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -73,8 +74,10 @@ public class TasksPresenterTest {
         SaveTasks saveTasks = new SaveTasks(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
         CompleteTask completeTask = new CompleteTask(mTaskRepository);
+        ActivateTask activateTask = new ActivateTask(mTaskRepository);
 
-        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView, getTasks, saveTasks, saveTask, completeTask);
+        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
+                getTasks, saveTasks, saveTask, completeTask, activateTask);
     }
 
     @Test
@@ -120,6 +123,18 @@ public class TasksPresenterTest {
         // Then a request is sent to the task repository and the UI is updated.
         verify(mTaskRepository).completeTask(activeTask);
     }
+
+    @Test
+    public void activateTask() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
+
+        Task completeTask = new Task(TASKHEAD_ID, TASK_DESCRIPTION1);
+        mTasksPresenter.activateTask(completeTask);
+
+        verify(mTaskRepository).activateTask(completeTask);
+    }
+
+
     @Test
     public void filterActiveTasks_showIntoActiveTasksView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);

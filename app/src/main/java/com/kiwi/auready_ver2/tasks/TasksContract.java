@@ -37,5 +37,7 @@ public class TasksContract {
         void saveTask(Task task);
 
         void completeTask(@NonNull Task task);
+
+        void activateTask(@NonNull Task task);
     }
 }

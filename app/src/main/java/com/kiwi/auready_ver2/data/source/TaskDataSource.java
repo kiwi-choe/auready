@@ -39,4 +39,6 @@ public interface TaskDataSource {
     void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback);
 
     void completeTask(@NonNull Task task);
+
+    void activateTask(@NonNull Task task);
 }

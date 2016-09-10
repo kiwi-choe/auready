@@ -52,7 +52,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         @Override
         public void onActivateTaskClick(Task task) {
-
+            mPresenter.activateTask(task);
         }
 
         @Override

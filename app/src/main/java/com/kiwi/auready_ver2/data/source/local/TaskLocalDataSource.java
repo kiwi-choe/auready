@@ -64,4 +64,9 @@ public class TaskLocalDataSource implements TaskDataSource {
 
     }
 
+    @Override
+    public void activateTask(@NonNull Task task) {
+
+    }
+
 }
