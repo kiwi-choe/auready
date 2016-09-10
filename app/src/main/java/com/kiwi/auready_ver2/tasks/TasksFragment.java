@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
             Task newTask = new Task(mTaskHeadId);
             mPresenter.saveTask(newTask);
+        }
+
+        @Override
+        public void onDescriptionFocusChanged(String description, String taskId) {
+
+            Log.d("kiwi_test", "Focus changed of task: " + description);
+            Task editedTask = new Task(mTaskHeadId, taskId, description);
+            mPresenter.saveTask(editedTask);
         }
     };
 

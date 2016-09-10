@@ -136,7 +136,6 @@ public class TaskRepository implements TaskDataSource {
 
         // Do in memory cache update to keep the app UI up to date
         putToCachedTasks(task);
-
         // when testing, used only cache.
         callback.onTaskSaved();
     }

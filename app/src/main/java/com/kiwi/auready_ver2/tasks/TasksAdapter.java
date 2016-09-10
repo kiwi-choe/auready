@@ -92,7 +92,7 @@ public class TasksAdapter extends BaseTasksAdapter {
         final Task task = mTasks.get(viewHolder.ref);//(Task) getItem(viewHolder.ref);
 
         viewHolder.complete.setChecked(task.isCompleted());
-        
+
         viewHolder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +108,17 @@ public class TasksAdapter extends BaseTasksAdapter {
         });
 
         viewHolder.description.setText(task.getDescription());
+        viewHolder.description.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    mItemListener.onDescriptionFocusChanged(
+                            viewHolder.description.getText().toString(),
+                            task.getId()
+                    );
+                }
+            }
+        });
     }
 
     private void bindView_addButton(View view) {
@@ -150,5 +161,7 @@ public class TasksAdapter extends BaseTasksAdapter {
         void onActivateTaskClick(Task task);
 
         void onAddTaskButtonClick();
+
+        void onDescriptionFocusChanged(String description, String taskId);
     }
 }
