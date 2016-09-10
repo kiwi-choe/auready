@@ -12,11 +12,12 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
 
-    public static final int REQ_ADD_TASK = 1;
     public static final String EXTRA_ISEMPTY_TASKHEAD = "ISEMPTY_TASKS_AND_NO_TITLE";
 
     private TasksFragment mTasksFragment;
     private TasksPresenter mPresenter;
+
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,9 +27,10 @@ public class TasksActivity extends AppCompatActivity {
         // Set up the toolbar.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setDisplayShowHomeEnabled(true);
+        mActionBar = getSupportActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setDisplayShowHomeEnabled(true);
+
 
         mTasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
@@ -40,7 +42,7 @@ public class TasksActivity extends AppCompatActivity {
 
             taskHeadId = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
             taskHeadTitle = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
-            actionBar.setTitle(taskHeadTitle);
+            mActionBar.setTitle(taskHeadTitle);
             Bundle bundle = new Bundle();
             bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
             bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
@@ -66,12 +68,17 @@ public class TasksActivity extends AppCompatActivity {
         return true;
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if(mTasksFragment.isAdded()) {
-//            mTasksFragment.onBackPressed();
-//        }
-//    }
+    public void setActionBarTitle(String title) {
+        mActionBar.setTitle(title);
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if(mTasksFragment.isAdded()) {
+            mTasksFragment.onBackPressed();
+        }
+    }
 
 }
 

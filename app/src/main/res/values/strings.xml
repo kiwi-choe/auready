@@ -52,6 +52,8 @@
     <string name="loading_tasks_error">Error while loading tasks</string>
     <string name="no_tasks">No Tasks. Add new task!</string>
     <string name="taskhead_empty_err">empty tasks and title</string>
+    <string name="title_hint">TITLE</string>
+    <string name="edit_title">EDIT TITLE</string>
 
 
 </resources>

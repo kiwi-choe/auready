@@ -39,7 +39,7 @@ public class Task {
 
     /*
     * To create an active Task if the Task already has an id
-    * (copy of another Task).
+    * Update the existing task.
     * */
     public Task(String taskHeadId, String id, String description) {
         mTaskHeadId = taskHeadId;

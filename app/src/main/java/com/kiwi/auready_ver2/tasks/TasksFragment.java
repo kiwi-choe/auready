@@ -1,15 +1,23 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.customlistview.DragSortListView;
@@ -63,7 +71,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
     };
 
-
     public TasksFragment() {
         // Required empty public constructor
     }
@@ -106,7 +113,51 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView.setDropListener(mTasksAdapter);
         mTasksView.setAdapter(mTasksAdapter);
 
+        setHasOptionsMenu(true);
+
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.tasks_fragment_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.menu_edit_title:
+                editTitle();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void editTitle() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+        alert.setTitle(getResources().getString(R.string.edit_title));
+        final EditText titleEditText = new EditText(getActivity());
+        alert.setView(titleEditText);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                String value = titleEditText.getText().toString();
+                ((TasksActivity)getActivity()).setActionBarTitle(value);
+
+                mTaskHeadTitle = value;
+            }
+        });
+
+        alert.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        alert.show();
     }
 
     @Override
@@ -130,6 +181,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         Intent intent = new Intent();
         intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, isEmptyTaskHead);
         intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);
+        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE, mTaskHeadTitle);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
@@ -143,12 +195,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
     }
 
-    @Override
-    public void onPause() {
+    public void onBackPressed() {
 
         boolean isEmptyTaskHead = mPresenter.validateEmptyTaskHead(mTaskHeadTitle, mTasksAdapter.getCount());
         showTaskHeadList(isEmptyTaskHead);
-
-        super.onPause();
     }
 }

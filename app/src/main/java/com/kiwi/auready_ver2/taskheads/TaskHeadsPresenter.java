@@ -50,7 +50,11 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
 
-        if (LoginActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {
+        Log.d("kiwi_test", "requestCode = " + String.valueOf(requestCode));
+        Log.d("kiwi_test", "resultCode = " + String.valueOf(resultCode));
+
+        if (TaskHeadsActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {
+
             int loginOrOut = data.getIntExtra(LoginUtils.LOGIN_LOGOUT, 10);
             boolean isSuccess = data.getBooleanExtra(LoginUtils.IS_SUCCESS, false);
             if (loginOrOut == LoginUtils.LOGIN) {
@@ -71,40 +75,22 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
             }
         }
 
-        if(TasksActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
+        if(TaskHeadsActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
+
+            Log.d("kiwi_test", "entered in REQ_ADD_TASK");
             boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, false);
             String taskHeadId = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
+            String taskHeadTitle = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
             if(isEmptyTasks) {
+                Log.d("kiwi_test", "entered in isEmptyTasks");
                 mTaskHeadView.showEmptyTaskHeadError();
 //                deleteTaskHead(taskHeadId);
                 deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
+            } else {
+
+                saveTaskHead(taskHeadId, taskHeadTitle);
             }
         }
-    }
-
-    @Override
-    public void addNewTaskHead() {
-
-        final TaskHead newTaskHead = new TaskHead();
-        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
-                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
-                    @Override
-                    public void onSuccess(SaveTaskHead.ResponseValue response) {
-
-                        // open AddEditView
-                        mTaskHeadView.openTasks(newTaskHead);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void openTaskHead(TaskHead clickedTaskHead) {
-
     }
 
     @Override
@@ -116,11 +102,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                     @Override
                     public void onSuccess(GetTaskHeads.ResponseValue response) {
                         List<TaskHead> taskHeads = response.getTaskHeads();
-                        for(TaskHead taskHead : taskHeads) {
-
-                            Log.d("kiwi_test", "entered into loadTaskHeads, title is " + taskHead.getTitle());
-                        }
-
                         processTaskHeads(taskHeads);
                     }
 
@@ -169,7 +150,59 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     }
 
     @Override
-    public void editTasks(@NonNull TaskHead requestedTaskHead) {
+    public void saveTaskHead(String taskHeadId, String title) {
+        if(taskHeadId == null || taskHeadId.isEmpty()) {
+            createTaskHead();
+        }
+        else {
+            updateTaskHead(taskHeadId, title);
+        }
+    }
+
+    private void createTaskHead() {
+
+        final TaskHead newTaskHead = new TaskHead();
+        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
+                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+                    @Override
+                    public void onSuccess(SaveTaskHead.ResponseValue response) {
+
+                        // open AddEditView
+                        mTaskHeadView.openTasks(newTaskHead);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    private void updateTaskHead(String taskHeadId, String title) {
+
+        Log.d("kiwi_test", "entered in updateTaskHead()");
+
+        if(taskHeadId == null) {
+            throw new RuntimeException("updateTask() was called but taskHead is new.");
+        }
+        final TaskHead taskHead = new TaskHead(taskHeadId, title);
+        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
+                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SaveTaskHead.ResponseValue response) {
+                        loadTaskHeads();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void editTaskHead(@NonNull TaskHead requestedTaskHead) {
         checkNotNull(requestedTaskHead, "requestedTaskHead cannot be null");
         mTaskHeadView.openTasks(requestedTaskHead);
     }

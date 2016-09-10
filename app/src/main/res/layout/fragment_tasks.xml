@@ -12,6 +12,7 @@
         android:dividerHeight="1px"
         dslv:drag_enabled="true"
         dslv:float_alpha="0.6"
-        dslv:use_default_controller="false"/>
+        dslv:use_default_controller="false"
+        android:descendantFocusability="beforeDescendants"/>
 
 </LinearLayout>

@@ -69,7 +69,6 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasks.ResponseValue response) {
-                        Log.d("test", "entered GetTask onSuccess()");
                         List<Task> tasks = response.getTasks();
                         mTasksView.showTasks(tasks);
                     }

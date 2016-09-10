@@ -35,16 +35,14 @@ public interface TaskHeadsContract {
 
         void result(int requestCode, int resultCode, Intent data);
 
-        void addNewTaskHead();
-
-        void openTaskHead(TaskHead clickedTaskHead);
-
         void loadTaskHeads();
 
-        void editTasks(@NonNull TaskHead requestedTaskHead);
+        void editTaskHead(@NonNull TaskHead requestedTaskHead);
 
         void deleteTaskHead(@NonNull String taskHeadId);
 
         void deleteTaskHeadByIsEmptyTaskHead(String taskHeadId);
+
+        void saveTaskHead(String taskHeadId, String title);
     }
 }

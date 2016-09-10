@@ -28,6 +28,9 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     private static final String TAG = "Tag_MainActivity";
 
+    public static final int REQ_LOGINOUT = 1;
+    public static final int REQ_ADD_TASK = 2;
+
     public static final String EXTRA_TASKHEAD_ID = "TASKHEAD_ID";
     public static final String EXTRA_TASKHEAD_TITLE = "TASKHEAD_TITLE";
 
@@ -199,7 +202,7 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, LoginActivity.REQ_LOGINOUT);
+        startActivityForResult(intent, TaskHeadsActivity.REQ_LOGINOUT);
     }
 
     /*

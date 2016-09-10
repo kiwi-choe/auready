@@ -23,7 +23,9 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.test.InstrumentationRegistry.getTargetContext;
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
@@ -36,6 +38,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkPositionIndex;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.core.IsNot.not;
 
@@ -49,7 +52,9 @@ public class TasksViewTest {
     private static final String TASK_DESCRIPTION1 = "someday";
     private static final String TASK_DESCRIPTION2 = "we will know";
     private static final String TASK_DESCRIPTION3 = "OK?";
+    private static final String TASK_DESCRIPTION4 = "EDITTTTTTTTTTTT";
 
+    private static final String TITLE1 = "SWEET HEART";
     /*
         * {@link Task}s stub that is added to the fake service API layer.
         * */
@@ -115,17 +120,7 @@ public class TasksViewTest {
         onView(allOf(withId(R.id.complete),
                 hasSibling(withText(TASK_DESCRIPTION3)))).check(matches(isChecked()));
     }
-    @Test
-    public void completeTask() {
-        // Given 1 active 2 complete tasks stub
-        loadTasks();
 
-        // Mark the task as complete
-        clickCheckBoxForTask(TASK_DESCRIPTION1);
-
-        // Verify task is shown as complete
-
-    }
 
     private void clickCheckBoxForTask(String description) {
         onView(allOf(withId(R.id.complete),

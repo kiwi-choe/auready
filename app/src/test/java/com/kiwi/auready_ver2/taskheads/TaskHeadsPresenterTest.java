@@ -29,6 +29,9 @@ import static org.mockito.Mockito.verify;
  */
 public class TaskHeadsPresenterTest {
 
+    private static final String TASKHEAD_ID = "stubTaskHeadId";
+    private static final String TITLE = "stubTitle";
+
     private static List<TaskHead> TASKHEADS;
 
     private TaskHeadsPresenter mTaskHeadsPresenter;
@@ -75,15 +78,17 @@ public class TaskHeadsPresenterTest {
     }
 
     @Test
-    public void clickOnFab_showsAddTasksUi() {
-        mTaskHeadsPresenter.addNewTaskHead();
+    public void saveNewTaskHeadToRepository_showAddTasksUi() {
+        // Create new taskHead
+        mTaskHeadsPresenter.saveTaskHead("", "");
 
+        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
         verify(mTaskHeadView).openTasks(any(TaskHead.class));
     }
 
     @Test
-    public void clickOnFab_createNewTaskHead() {
-        mTaskHeadsPresenter.addNewTaskHead();
+    public void updateTaskHeadToRepository() {
+        mTaskHeadsPresenter.saveTaskHead(TASKHEAD_ID, TITLE);
 
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
     }
@@ -91,9 +96,9 @@ public class TaskHeadsPresenterTest {
     @Test
     public void clickOnTaskHead_openTasksViewWithTaskHeadId() {
         // Given a stubbed a taskHead
-        TaskHead requestedTaskHead = new TaskHead("title1");
+        TaskHead requestedTaskHead = new TaskHead(TASKHEAD_ID, TITLE);
 
-        mTaskHeadsPresenter.editTasks(requestedTaskHead);
+        mTaskHeadsPresenter.editTaskHead(requestedTaskHead);
         verify(mTaskHeadView).openTasks(any(TaskHead.class));
     }
 

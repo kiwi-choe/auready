@@ -65,9 +65,15 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
             mItemListener = new TaskHeadsAdapter.TaskHeadItemListener() {
 
         @Override
-        public void onLongClick(TaskHead taskHead) {
+        public void onItemLongClick(TaskHead taskHead) {
             checkNotNull(taskHead);
             mPresenter.deleteTaskHead(taskHead.getId());
+        }
+
+        @Override
+        public void onItemClick(TaskHead taskHead) {
+            checkNotNull(taskHead);
+            mPresenter.editTaskHead(taskHead);
         }
     };
 
@@ -106,7 +112,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.addNewTaskHead();
+                mPresenter.saveTaskHead("", "");
             }
         });
 
@@ -140,7 +146,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         Intent intent = new Intent(getContext(), TasksActivity.class);
         intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHead.getId());
         intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE, taskHead.getTitle());
-        startActivityForResult(intent, TasksActivity.REQ_ADD_TASK);
+        startActivityForResult(intent, TaskHeadsActivity.REQ_ADD_TASK);
     }
 
     @Override
@@ -155,8 +161,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mNoTaskHeadTxt.setVisibility(View.GONE);
         mTaskHeadListView.setVisibility(View.VISIBLE);
         mTaskHeadsAdapter.replaceData(taskHeads);
-
-        Log.d("kiwi_test", "taskHeads's size is " + String.valueOf(taskHeads.size()));
     }
 
     @Override

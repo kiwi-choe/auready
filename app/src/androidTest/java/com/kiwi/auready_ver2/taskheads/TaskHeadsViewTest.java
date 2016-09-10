@@ -186,8 +186,6 @@ public class TaskHeadsViewTest {
         onView(withId(R.id.taskhead_list))
                 .check(matches(not(isDisplayed())));
     }
-
-
     @Test
     public void showTaskHeads() {
         loadTaskHeads();
@@ -198,6 +196,7 @@ public class TaskHeadsViewTest {
         onView(withItemText(TITLE2)).check(matches(isDisplayed()));
         onView(withItemText(TITLE3)).check(matches(isDisplayed()));
     }
+
     @Test
     public void onLongClickedTaskHeadItem_deleteTaskHead() {
 
@@ -211,6 +210,24 @@ public class TaskHeadsViewTest {
         onView(withItemText(TITLE2)).check(doesNotExist());
     }
 
+    @Test
+    public void onClickTaskHeadItem_openTaskHead() {
+        loadTaskHeads();
+
+        onView(withText(TITLE1)).perform(click());
+
+        onView(withText(TITLE1)).check(matches(isDisplayed()));
+//        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void addTaskHeadToTaskHeadList() {
+        // Create a taskHead
+        onView(withId(R.id.fab_add_task)).perform(click());
+
+        // Verify taskHead is displayed on screen
+        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
+    }
 
     /*
     * Useful methods for test
