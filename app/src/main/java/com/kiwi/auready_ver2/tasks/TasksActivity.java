@@ -60,7 +60,8 @@ public class TasksActivity extends AppCompatActivity {
                 Injection.provideSaveTasks(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideCompleteTask(getApplicationContext()),
-                Injection.provideActivateTask(getApplicationContext()));
+                Injection.provideActivateTask(getApplicationContext()),
+                Injection.provideSortTasks(getApplicationContext()));
     }
 
     @Override

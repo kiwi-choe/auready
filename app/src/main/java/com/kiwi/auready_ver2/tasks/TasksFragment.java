@@ -58,8 +58,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         @Override
         public void onAddTaskButtonClick() {
 
-            Task newTask = new Task(mTaskHeadId);
-            mPresenter.saveTask(newTask);
+            mPresenter.addTask();
         }
 
         @Override
@@ -87,7 +86,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             mTaskHeadTitle = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
         }
 
-        mTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskItemListener);
+        mTasksAdapter = new TasksAdapter(new ArrayList<Task>(0), mTaskHeadId, mTaskItemListener);
     }
 
 

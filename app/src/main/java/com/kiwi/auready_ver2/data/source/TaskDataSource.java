@@ -41,4 +41,7 @@ public interface TaskDataSource {
     void completeTask(@NonNull Task task);
 
     void activateTask(@NonNull Task task);
+
+
+    void sortTasks(List<Task> taskList);
 }

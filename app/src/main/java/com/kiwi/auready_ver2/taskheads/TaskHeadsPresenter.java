@@ -50,9 +50,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
 
-        Log.d("kiwi_test", "requestCode = " + String.valueOf(requestCode));
-        Log.d("kiwi_test", "resultCode = " + String.valueOf(resultCode));
-
         if (TaskHeadsActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {
 
             int loginOrOut = data.getIntExtra(LoginUtils.LOGIN_LOGOUT, 10);
@@ -77,12 +74,10 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
         if(TaskHeadsActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
 
-            Log.d("kiwi_test", "entered in REQ_ADD_TASK");
             boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, false);
             String taskHeadId = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
             String taskHeadTitle = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
             if(isEmptyTasks) {
-                Log.d("kiwi_test", "entered in isEmptyTasks");
                 mTaskHeadView.showEmptyTaskHeadError();
 //                deleteTaskHead(taskHeadId);
                 deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
@@ -179,8 +174,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     }
 
     private void updateTaskHead(String taskHeadId, String title) {
-
-        Log.d("kiwi_test", "entered in updateTaskHead()");
 
         if(taskHeadId == null) {
             throw new RuntimeException("updateTask() was called but taskHead is new.");

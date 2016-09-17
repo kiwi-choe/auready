@@ -12,7 +12,9 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SortTasks;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,17 +31,25 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final SaveTask mSaveTask;
     private final CompleteTask mCompleteTask;
     private final ActivateTask mActivateTask;
+    private final SortTasks mSortTasks;
 
     private final FilterFactory mFilterFactory;
 
     private String mTaskHeadId;
+
+    /*
+    * Task List that can be controlled - add, delete, modify
+    * For TasksAdapter and TaskRepository
+    * */
+    public List<Task> mTaskList;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetTasks getTasks,
                           @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask,
-                          @NonNull CompleteTask completeTask, @NonNull ActivateTask activateTask) {
+                          @NonNull CompleteTask completeTask, @NonNull ActivateTask activateTask,
+                          @NonNull SortTasks sortTasks) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -49,6 +59,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         mSaveTask = checkNotNull(saveTask, "saveTask cannot be null!");
         mCompleteTask = checkNotNull(completeTask, "completeTask cannot be null");
         mActivateTask = checkNotNull(activateTask, "activateTask cannot be null");
+        mSortTasks = checkNotNull(sortTasks, "sortTasks cannot be null");
 
         mFilterFactory = new FilterFactory();
 
@@ -63,7 +74,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void loadTasks() {
 
-        if(mTaskHeadId == null || mTaskHeadId.isEmpty()) {
+        if (mTaskHeadId == null || mTaskHeadId.isEmpty()) {
             Log.d("test", "entered mTaskHeadId is null? or empty");
             mTasksView.showInvalidTaskHeadError();
             return;
@@ -74,6 +85,11 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(GetTasks.ResponseValue response) {
                         List<Task> tasks = response.getTasks();
+                        for (Task task : tasks) {
+                            Log.d("kiwi_test", "tasks values : " + task.getDescription() +
+                                    " iscompleted: " + String.valueOf(task.isCompleted()) +
+                                    " order: " + String.valueOf(task.getOrder()));
+                        }
                         mTasksView.showTasks(tasks);
                     }
 
@@ -138,6 +154,54 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(ActivateTask.ResponseValue response) {
+                        loadTasks();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void saveTasks(List<Task> tasks) {
+
+    }
+
+    @Override
+    public void addTask() {
+
+        if(mTaskList == null) {
+            mTaskList = new ArrayList<>();
+        }
+        Task newTask = new Task(mTaskHeadId);
+        mTaskList.add(newTask);
+
+        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
+                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SaveTask.ResponseValue response) {
+                        sortTasks();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+
+    }
+
+    private void sortTasks() {
+
+        mUseCaseHandler.execute(mSortTasks, new SortTasks.RequestValues(mTaskList),
+                new UseCase.UseCaseCallback<SortTasks.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SortTasks.ResponseValue response) {
                         loadTasks();
                     }
 

@@ -69,4 +69,9 @@ public class TaskLocalDataSource implements TaskDataSource {
 
     }
 
+    @Override
+    public void sortTasks(List<Task> taskList) {
+
+    }
+
 }

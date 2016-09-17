@@ -17,6 +17,8 @@ public class Task {
 
     private boolean mCompleted;
 
+    private int mOrder;
+
     /*
     * To create a new active Task
     * */
@@ -25,6 +27,7 @@ public class Task {
         mTaskHeadId = taskHeadId;
         mDescription = "";
         mCompleted = false;
+        mOrder = 0;
     }
 
     /*
@@ -35,6 +38,7 @@ public class Task {
         mTaskHeadId = taskHeadId;
         mDescription = description;
         mCompleted = false;
+        mOrder = 0;
     }
 
     /*
@@ -46,6 +50,7 @@ public class Task {
         mId = id;
         mDescription = description;
         mCompleted = false;
+        mOrder = 0;
     }
 
     /*
@@ -58,6 +63,7 @@ public class Task {
         mId = id;
         mDescription = description;
         mCompleted = completed;
+        mOrder = 0;
     }
 
     /*
@@ -69,6 +75,7 @@ public class Task {
         mId = UUID.randomUUID().toString();;
         mDescription = description;
         mCompleted = completed;
+        mOrder = 0;
     }
 
     public String getDescription() {
@@ -91,4 +98,18 @@ public class Task {
         return mTaskHeadId;
     }
 
+    public int getOrder() {
+        return mOrder;
+    }
+    public void setOrder(int order) {
+        mOrder = order;
+    }
+
+    public void increaseOrder() {
+        mOrder++;
+    }
+
+    public void decreaseOrder() {
+        mOrder--;
+    }
 }

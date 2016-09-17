@@ -25,6 +25,7 @@ import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.tasks.domain.usecase.SortTasks;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -107,5 +108,9 @@ public class Injection {
 
     public static ActivateTask provideActivateTask(@NonNull Context context) {
         return new ActivateTask(Injection.provideTaskRepository(context));
+    }
+
+    public static SortTasks provideSortTasks(@NonNull Context context) {
+        return new SortTasks(Injection.provideTaskRepository(context));
     }
 }

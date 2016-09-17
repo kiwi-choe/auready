@@ -5,9 +5,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.util.OrderAscCompare;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,9 +51,13 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(callback);
 
         Map<String, Task> cachedTasks = getTasksWithTaskHeadId(taskHeadId);
+
         // Respond immediately with cache if available
         if (cachedTasks != null) {
             List<Task> taskList = new ArrayList<>(cachedTasks.values());
+            // Sorting by order
+            Collections.sort(taskList, new OrderAscCompare());
+
             callback.onTasksLoaded(taskList);
             return;
         }
@@ -143,29 +149,95 @@ public class TaskRepository implements TaskDataSource {
     @Override
     public void completeTask(@NonNull Task task) {
         checkNotNull(task);
-        mTaskRemoteDataSource.completeTask(task);
+//        mTaskRemoteDataSource.completeTask(task);
 
         Task completedTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), true);
         // Do in memory cache update to keep the app UI up to date
         putToCachedTasks(completedTask);
+
+        // Increase the order of complete tasks
+        updateTasksOrderNextOf(task);
+    }
+
+    private void updateTasksOrderNextOf(Task task) {
+        Map<String, Task> cachedTasks = getTasksWithTaskHeadId(task.getTaskHeadId());
+
+        if (cachedTasks != null) {
+            int sizeOfCachedTasks = cachedTasks.size();
+
+            Task changedTask = cachedTasks.get(task.getId());
+            int orderOfChangedTask = changedTask.getOrder();
+
+            for (String key : cachedTasks.keySet()) {
+                Task tmpTask = cachedTasks.get(key);
+
+                // Active -> Complete
+                if (changedTask.isCompleted()) {
+                    // order of task +1 ~ size of tasks
+                    if (orderOfChangedTask + 1 < tmpTask.getOrder() &&
+                            tmpTask.getOrder() < sizeOfCachedTasks) {
+                        tmpTask.decreaseOrder();
+                    }
+                    // Set the order of changedTask
+                    changedTask.setOrder(sizeOfCachedTasks - 1);
+                }
+                // Complete -> Active
+                else {
+                    // size of active tasks ~ order of task
+                    int numOfActiveTasks = getNumOfActiveTasks(cachedTasks);
+                    if(numOfActiveTasks <= tmpTask.getOrder() &&
+                            tmpTask.getOrder() < orderOfChangedTask) {
+                        tmpTask.increaseOrder();
+                    }
+                    // Set the order of changedTask
+                    changedTask.setOrder(numOfActiveTasks);
+                }
+            }
+        }
+
+    }
+
+    private int getNumOfActiveTasks(Map<String, Task> cachedTasks) {
+        Map<String, Task> tasks = cachedTasks;
+        int numOfActiveTasks = 0;
+
+        for(String key:tasks.keySet()) {
+            if(tasks.get(key).isActive()) {
+                numOfActiveTasks++;
+            }
+        }
+        return numOfActiveTasks;
     }
 
     @Override
     public void activateTask(@NonNull Task task) {
         checkNotNull(task);
-        mTaskRemoteDataSource.activateTask(task);
+//        mTaskRemoteDataSource.activateTask(task);
 
-        Task activeTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), false);
+        Task activeTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription());
         putToCachedTasks(activeTask);
+
+        // Decrease the order of active tasks
+        updateTasksOrderNextOf(task);
     }
 
+    @Override
+    public void sortTasks(List<Task> taskList) {
+        int size = taskList.size();
+        for(int i = 0; i < size; i++) {
+            Task task = taskList.get(i);
+            task.setOrder(i);
+
+            putToCachedTasks(task);
+        }
+    }
 
     private void putToCachedTasks(Task task) {
-        if(mCachedTasks == null) {
+        if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
         }
         Map<String, Task> tasks = mCachedTasks.get(task.getTaskHeadId());
-        if(tasks == null) {
+        if (tasks == null) {
             tasks = new LinkedHashMap<>();
         }
         tasks.put(task.getId(), task);

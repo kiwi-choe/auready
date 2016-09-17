@@ -19,12 +19,15 @@ import java.util.List;
 public class TasksAdapter extends BaseTasksAdapter {
 
     private List<Task> mTasks;
+    private final String mTaskHeadId;
     private TaskItemListener mItemListener;
 
-    public TasksAdapter(List<Task> tasks, TaskItemListener itemListener) {
+    public TasksAdapter(List<Task> tasks, String taskHeadId, TaskItemListener itemListener) {
         super();
         setList(tasks);
         setButtonPosition();
+
+        mTaskHeadId = taskHeadId;
         mItemListener = itemListener;
     }
 
@@ -96,29 +99,29 @@ public class TasksAdapter extends BaseTasksAdapter {
         viewHolder.complete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(task.isCompleted()) {
                     // to active task
-                    mItemListener.onActivateTaskClick(task);
+//                    mItemListener.onActivateTaskClick(task);
                 } else {
                     // to completed
-                    mItemListener.onCompleteTaskClick(task);
+//                    mItemListener.onCompleteTaskClick(task);
+
                 }
             }
         });
 
         viewHolder.description.setText(task.getDescription());
-        viewHolder.description.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    mItemListener.onDescriptionFocusChanged(
-                            viewHolder.description.getText().toString(),
-                            task.getId()
-                    );
-                }
-            }
-        });
+//        viewHolder.description.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if(!hasFocus) {
+//                    mItemListener.onDescriptionFocusChanged(
+//                            viewHolder.description.getText().toString(),
+//                            task.getId()
+//                    );
+//                }
+//            }
+//        });
     }
 
     private void bindView_addButton(View view) {
@@ -126,6 +129,8 @@ public class TasksAdapter extends BaseTasksAdapter {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Task newTask = new Task(mTaskHeadId);
                 mItemListener.onAddTaskButtonClick();
             }
         });
