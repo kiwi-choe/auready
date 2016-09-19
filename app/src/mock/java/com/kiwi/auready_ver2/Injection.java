@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
@@ -112,5 +113,9 @@ public class Injection {
 
     public static SortTasks provideSortTasks(@NonNull Context context) {
         return new SortTasks(Injection.provideTaskRepository(context));
+    }
+
+    public static DeleteTask provideDeleteTask(@NonNull Context context) {
+        return new DeleteTask(Injection.provideTaskRepository(context));
     }
 }

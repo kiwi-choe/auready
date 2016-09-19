@@ -111,17 +111,24 @@ public class TasksAdapter extends BaseTasksAdapter {
         });
 
         viewHolder.description.setText(task.getDescription());
-//        viewHolder.description.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if(!hasFocus) {
-//                    mItemListener.onDescriptionFocusChanged(
-//                            viewHolder.description.getText().toString(),
-//                            task.getId()
-//                    );
-//                }
-//            }
-//        });
+        viewHolder.description.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    mItemListener.onDescriptionFocusChanged(
+                            viewHolder.description.getText().toString(),
+                            task.getId()
+                    );
+                }
+            }
+        });
+
+        viewHolder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemListener.onDeleteTask(task.getId());
+            }
+        });
     }
 
     private void bindView_addButton(View view) {
@@ -168,5 +175,7 @@ public class TasksAdapter extends BaseTasksAdapter {
         void onAddTaskButtonClick();
 
         void onDescriptionFocusChanged(String description, String taskId);
+
+        void onDeleteTask(String taskId);
     }
 }

@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -101,19 +103,21 @@ public class TaskRepositoryTest {
         // before order
         assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(task2.getId()).getOrder(), is(1));
 
-        List<Task> tasksAddedOne = new ArrayList<>();
-        tasksAddedOne.add(task1);
+        LinkedHashMap<String, Task> tasksAddedOne = new LinkedHashMap<>();
+        tasksAddedOne.put(task1.getId(), task1);
         // add new task
         Task newTask = new Task(TASKHEAD_ID);
-        tasksAddedOne.add(newTask);
-        tasksAddedOne.add(task2);
-        tasksAddedOne.add(task3);
+        tasksAddedOne.put(newTask.getId(), newTask);
+        tasksAddedOne.put(task2.getId(), task2);
+        tasksAddedOne.put(task3.getId(), task3);
 
         mTaskRepository.sortTasks(tasksAddedOne);
 
         // after order
         assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(task2.getId()).getOrder(), is(2));
     }
+
+
     @After
     public void destroyRepositoryInstance() {
         TaskRepository.destroyInstance();

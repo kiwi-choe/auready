@@ -9,13 +9,16 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SortTasks;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,6 +35,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final CompleteTask mCompleteTask;
     private final ActivateTask mActivateTask;
     private final SortTasks mSortTasks;
+    private final DeleteTask mDeleteTask;
 
     private final FilterFactory mFilterFactory;
 
@@ -41,7 +45,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     * Task List that can be controlled - add, delete, modify
     * For TasksAdapter and TaskRepository
     * */
-    public List<Task> mTaskList;
+    public LinkedHashMap<String, Task> mTaskList;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
@@ -49,7 +53,8 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull GetTasks getTasks,
                           @NonNull SaveTasks saveTasks, @NonNull SaveTask saveTask,
                           @NonNull CompleteTask completeTask, @NonNull ActivateTask activateTask,
-                          @NonNull SortTasks sortTasks) {
+                          @NonNull SortTasks sortTasks,
+                          @NonNull DeleteTask deleteTask) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -60,6 +65,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         mCompleteTask = checkNotNull(completeTask, "completeTask cannot be null");
         mActivateTask = checkNotNull(activateTask, "activateTask cannot be null");
         mSortTasks = checkNotNull(sortTasks, "sortTasks cannot be null");
+        mDeleteTask = checkNotNull(deleteTask, "deleteTask cannot be null");
 
         mFilterFactory = new FilterFactory();
 
@@ -111,24 +117,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void saveTask(@NonNull final Task task) {
-        checkNotNull(task);
-
-        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
-                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
-                    @Override
-                    public void onSuccess(SaveTask.ResponseValue response) {
-                        loadTasks();
-                    }
-
-                    @Override
-                    public void onError() {
-                        mTasksView.showLoadingErrorTasksError();
-                    }
-                });
-    }
-
-    @Override
     public void completeTask(@NonNull Task task) {
         checkNotNull(task, "activeTask cannot be null");
         mUseCaseHandler.execute(mCompleteTask, new CompleteTask.RequestValues(task),
@@ -170,13 +158,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void addTask() {
+    public void addTask(Task newTask) {
+        checkNotNull(newTask);
 
         if(mTaskList == null) {
-            mTaskList = new ArrayList<>();
+            mTaskList = new LinkedHashMap<>();
         }
-        Task newTask = new Task(mTaskHeadId);
-        mTaskList.add(newTask);
+        mTaskList.put(newTask.getId(), newTask);
 
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
@@ -191,8 +179,51 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     }
                 });
+    }
 
+    @Override
+    public void editTask(@NonNull Task editedTask) {
+        checkNotNull(editedTask);
 
+        // Save the existing task
+        if(mTaskList.containsKey(editedTask.getId())) {
+            mTaskList.put(editedTask.getId(), editedTask);
+        }
+
+        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(editedTask),
+                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SaveTask.ResponseValue response) {
+                        loadTasks();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void deleteTask(String taskId) {
+        if(mTaskList != null && mTaskList.containsKey(taskId)) {
+            mTaskList.remove(taskId);
+        }
+
+        mUseCaseHandler.execute(mDeleteTask, new DeleteTask.RequestValues(taskId),
+                new UseCase.UseCaseCallback<DeleteTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteTask.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     private void sortTasks() {

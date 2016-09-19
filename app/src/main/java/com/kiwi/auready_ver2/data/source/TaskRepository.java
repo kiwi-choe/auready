@@ -222,13 +222,16 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(List<Task> taskList) {
-        int size = taskList.size();
-        for(int i = 0; i < size; i++) {
-            Task task = taskList.get(i);
-            task.setOrder(i);
+    public void sortTasks(LinkedHashMap<String, Task>  taskList) {
 
+        int order = 0;
+        for(Map.Entry<String, Task> entry:taskList.entrySet()) {
+
+            Task task = entry.getValue();
+            task.setOrder(order);
             putToCachedTasks(task);
+
+            order++;
         }
     }
 

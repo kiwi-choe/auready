@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -70,8 +71,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(List<Task> taskList) {
+    public void sortTasks(LinkedHashMap<String, Task> taskList) {
 
     }
-
 }

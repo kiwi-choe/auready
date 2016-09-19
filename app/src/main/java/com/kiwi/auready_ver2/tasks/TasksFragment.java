@@ -58,7 +58,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         @Override
         public void onAddTaskButtonClick() {
 
-            mPresenter.addTask();
+            Task newTask = new Task(mTaskHeadId);
+            mPresenter.addTask(newTask);
         }
 
         @Override
@@ -66,7 +67,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
             Log.d("kiwi_test", "Focus changed of task: " + description);
             Task editedTask = new Task(mTaskHeadId, taskId, description);
-            mPresenter.saveTask(editedTask);
+            mPresenter.editTask(editedTask);
+        }
+
+        @Override
+        public void onDeleteTask(String taskId) {
+            mPresenter.deleteTask(taskId);
         }
     };
 

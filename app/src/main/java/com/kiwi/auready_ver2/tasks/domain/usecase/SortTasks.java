@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,19 +24,19 @@ public class SortTasks extends UseCase<SortTasks.RequestValues, SortTasks.Respon
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        List<Task> tasks = requestValues.getTasks();
+        LinkedHashMap<String, Task>  tasks = requestValues.getTasks();
         mTaskRepository.sortTasks(tasks);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final List<Task> mTasks;
+        private final LinkedHashMap<String, Task> mTasks;
 
-        public RequestValues(@NonNull List<Task> tasks) {
+        public RequestValues(@NonNull LinkedHashMap<String, Task> tasks) {
             mTasks = checkNotNull(tasks, "tasks cannot be null");
         }
 
-        public List<Task> getTasks() {
+        public LinkedHashMap<String, Task> getTasks() {
             return mTasks;
         }
     }

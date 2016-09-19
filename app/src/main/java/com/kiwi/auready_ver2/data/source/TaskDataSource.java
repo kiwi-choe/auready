@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Task;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -43,5 +44,5 @@ public interface TaskDataSource {
     void activateTask(@NonNull Task task);
 
 
-    void sortTasks(List<Task> taskList);
+    void sortTasks(LinkedHashMap<String, Task> taskList);
 }

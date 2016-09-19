@@ -82,7 +82,7 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(List<Task> taskList) {
+    public void sortTasks(LinkedHashMap<String, Task> taskList) {
 
     }
 

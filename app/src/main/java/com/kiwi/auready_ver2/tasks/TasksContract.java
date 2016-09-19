@@ -34,14 +34,16 @@ public class TasksContract {
 
         boolean validateEmptyTaskHead(String taskHeadTitle, int numOfTasks);
 
-        void saveTask(Task task);
-
         void completeTask(@NonNull Task task);
 
         void activateTask(@NonNull Task task);
 
         void saveTasks(List<Task> tasks);
 
-        void addTask();
+        void addTask(@NonNull Task newTask);
+
+        void editTask(@NonNull Task editedTask);
+
+        void deleteTask(String taskId);
     }
 }

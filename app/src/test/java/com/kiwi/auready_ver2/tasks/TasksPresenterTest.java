@@ -8,6 +8,7 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
@@ -20,6 +21,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
@@ -27,6 +29,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -76,9 +79,10 @@ public class TasksPresenterTest {
         CompleteTask completeTask = new CompleteTask(mTaskRepository);
         ActivateTask activateTask = new ActivateTask(mTaskRepository);
         SortTasks sortTasks = new SortTasks(mTaskRepository);
+        DeleteTask deleteTask = new DeleteTask(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getTasks, saveTasks, saveTask, completeTask, activateTask, sortTasks);
+                getTasks, saveTasks, saveTask, completeTask, activateTask, sortTasks, deleteTask);
     }
 
     @Test
@@ -92,18 +96,6 @@ public class TasksPresenterTest {
         ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
         assertTrue(showTasksArgumentCaptor.getValue().size() == 3);
-    }
-
-    @Test
-    public void saveNewTask() {
-        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID); // Set mTaskHeadId in Presenter
-
-        // Given Stub taskHeadId and Task Object
-        Task newTask = new Task(TASKHEAD_ID);
-        mTasksPresenter.saveTask(newTask);
-
-        verify(mTaskRepository).saveTask(eq(newTask), mSaveTaskCallbackCaptor.capture());
-        mSaveTaskCallbackCaptor.getValue().onTaskSaved();
     }
 
     @Test
@@ -167,10 +159,14 @@ public class TasksPresenterTest {
         verify(mTasksView).showInvalidTaskHeadError();
     }
 
+//    Modifying
+
     @Test
     public void addTask() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
-        mTasksPresenter.addTask();
+
+        Task newTask = new Task(TASKHEAD_ID);
+        mTasksPresenter.addTask(newTask);
 
         assertThat(mTasksPresenter.mTaskList.size(), is(1));
 
@@ -178,7 +174,44 @@ public class TasksPresenterTest {
         verify(mTaskRepository).saveTask(any(Task.class), mSaveTaskCallbackCaptor.capture());
         mSaveTaskCallbackCaptor.getValue().onTaskSaved();
         // 2. Update tasks(order)
-        verify(mTaskRepository).sortTasks(any(List.class));
+        verify(mTaskRepository).sortTasks(any(LinkedHashMap.class));
     }
 
+    @Test
+    public void editTask_description() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
+
+        // Save a task
+        Task newTask = new Task(TASKHEAD_ID);
+        mTasksPresenter.addTask(newTask);
+
+        String description = "DESCRIPTION";
+        Task editedTask = new Task(TASKHEAD_ID, newTask.getId(), description);
+        mTasksPresenter.editTask(editedTask);
+
+        // Update description of the existing task
+        assertThat(mTasksPresenter.mTaskList.get(editedTask.getId()).getDescription(), is(description));
+        // Save the existing task
+        verify(mTaskRepository, times(2)).saveTask(any(Task.class), mSaveTaskCallbackCaptor.capture());
+        mSaveTaskCallbackCaptor.getValue().onTaskSaved();
+    }
+
+    @Test
+    public void deleteTask() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD_ID);
+
+        // Save 2 tasks
+        Task task1 = new Task(TASKHEAD_ID);
+        mTasksPresenter.addTask(task1);
+        Task task2 = new Task(TASKHEAD_ID);
+        mTasksPresenter.addTask(task2);
+
+        assertThat(mTasksPresenter.mTaskList.size(), is(2));
+        // Delete one task
+        mTasksPresenter.deleteTask(task1.getId());
+
+        assertThat(mTasksPresenter.mTaskList.size(), is(1));
+
+        verify(mTaskRepository).deleteTask(task1.getId());
+    }
 }
