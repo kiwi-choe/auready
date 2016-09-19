@@ -44,6 +44,6 @@ public class TasksContract {
 
         void editTask(@NonNull Task editedTask);
 
-        void deleteTask(String taskId);
+        void deleteTask(@NonNull Task task);
     }
 }

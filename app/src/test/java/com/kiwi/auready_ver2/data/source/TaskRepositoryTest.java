@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.TaskHead;
 
 import org.junit.After;
 import org.junit.Before;
@@ -40,6 +41,7 @@ public class TaskRepositoryTest {
     @Mock
     private TaskDataSource.SaveTaskCallback mSaveTaskCallback;
 
+
     @Captor
     private ArgumentCaptor<TaskDataSource.GetTasksCallback> mTasksCallbackCaptor;
 
@@ -58,7 +60,8 @@ public class TaskRepositoryTest {
 
         // Then the service API are called and cache is updated.
         verify(mTaskRemoteDataSource).saveTask(eq(newTask), any(TaskDataSource.SaveTaskCallback.class));
-        assertThat(mTaskRepository.mCachedTasks.size(), is(1));
+
+        assertThat(mTaskRepository.mCachedTasks.get(newTask.getTaskHeadId()).containsKey(newTask.getId()), is(true));
     }
 
     @Test
@@ -117,6 +120,18 @@ public class TaskRepositoryTest {
         assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(task2.getId()).getOrder(), is(2));
     }
 
+    @Test
+    public void deleteTask() {
+        Task task1 = new Task(TASKHEAD_ID, "task1");
+        mTaskRepository.saveTask(task1, mSaveTaskCallback);
+        Task task2 = new Task(TASKHEAD_ID, "task2");
+        mTaskRepository.saveTask(task2, mSaveTaskCallback);
+
+        assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).containsKey(task1.getId()), is(true));
+
+        mTaskRepository.deleteTask(task1);
+        assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).containsKey(task1.getId()), is(false));
+    }
 
     @After
     public void destroyRepositoryInstance() {

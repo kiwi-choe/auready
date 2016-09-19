@@ -71,8 +71,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onDeleteTask(String taskId) {
-            mPresenter.deleteTask(taskId);
+        public void onDeleteTask(Task task) {
+            mPresenter.deleteTask(task);
         }
     };
 

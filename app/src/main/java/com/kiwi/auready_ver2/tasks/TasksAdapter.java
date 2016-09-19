@@ -126,7 +126,7 @@ public class TasksAdapter extends BaseTasksAdapter {
         viewHolder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onDeleteTask(task.getId());
+                mItemListener.onDeleteTask(task);
             }
         });
     }
@@ -176,6 +176,6 @@ public class TasksAdapter extends BaseTasksAdapter {
 
         void onDescriptionFocusChanged(String description, String taskId);
 
-        void onDeleteTask(String taskId);
+        void onDeleteTask(Task task);
     }
 }

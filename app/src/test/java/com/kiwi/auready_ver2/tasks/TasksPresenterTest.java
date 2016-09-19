@@ -208,10 +208,10 @@ public class TasksPresenterTest {
 
         assertThat(mTasksPresenter.mTaskList.size(), is(2));
         // Delete one task
-        mTasksPresenter.deleteTask(task1.getId());
+        mTasksPresenter.deleteTask(task1);
 
         assertThat(mTasksPresenter.mTaskList.size(), is(1));
 
-        verify(mTaskRepository).deleteTask(task1.getId());
+        verify(mTaskRepository).deleteTask(task1);
     }
 }

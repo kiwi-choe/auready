@@ -206,12 +206,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void deleteTask(String taskId) {
-        if(mTaskList != null && mTaskList.containsKey(taskId)) {
-            mTaskList.remove(taskId);
+    public void deleteTask(@NonNull Task task) {
+        checkNotNull(task);
+        if(mTaskList != null && mTaskList.containsKey(task.getId())) {
+            mTaskList.remove(task.getId());
         }
 
-        mUseCaseHandler.execute(mDeleteTask, new DeleteTask.RequestValues(taskId),
+        mUseCaseHandler.execute(mDeleteTask, new DeleteTask.RequestValues(task),
                 new UseCase.UseCaseCallback<DeleteTask.ResponseValue>() {
 
                     @Override

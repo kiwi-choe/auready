@@ -46,7 +46,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTask(@NonNull String taskId) {
+    public void deleteTask(@NonNull Task task) {
 
     }
 

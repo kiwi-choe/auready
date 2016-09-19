@@ -104,9 +104,11 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void deleteTask(@NonNull String taskId) {
-
-
+    public void deleteTask(@NonNull Task task) {
+        checkNotNull(task);
+        if(mCachedTasks.get(task.getTaskHeadId()).containsKey(task.getId())) {
+            mCachedTasks.get(task.getTaskHeadId()).remove(task.getId());
+        }
     }
 
     @Override
@@ -185,7 +187,7 @@ public class TaskRepository implements TaskDataSource {
                 else {
                     // size of active tasks ~ order of task
                     int numOfActiveTasks = getNumOfActiveTasks(cachedTasks);
-                    if(numOfActiveTasks <= tmpTask.getOrder() &&
+                    if (numOfActiveTasks <= tmpTask.getOrder() &&
                             tmpTask.getOrder() < orderOfChangedTask) {
                         tmpTask.increaseOrder();
                     }
@@ -201,8 +203,8 @@ public class TaskRepository implements TaskDataSource {
         Map<String, Task> tasks = cachedTasks;
         int numOfActiveTasks = 0;
 
-        for(String key:tasks.keySet()) {
-            if(tasks.get(key).isActive()) {
+        for (String key : tasks.keySet()) {
+            if (tasks.get(key).isActive()) {
                 numOfActiveTasks++;
             }
         }
@@ -222,10 +224,10 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(LinkedHashMap<String, Task>  taskList) {
+    public void sortTasks(LinkedHashMap<String, Task> taskList) {
 
         int order = 0;
-        for(Map.Entry<String, Task> entry:taskList.entrySet()) {
+        for (Map.Entry<String, Task> entry : taskList.entrySet()) {
 
             Task task = entry.getValue();
             task.setOrder(order);
@@ -236,12 +238,17 @@ public class TaskRepository implements TaskDataSource {
     }
 
     private void putToCachedTasks(Task task) {
+
+        Map<String, Task> tasks;
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
-        }
-        Map<String, Task> tasks = mCachedTasks.get(task.getTaskHeadId());
-        if (tasks == null) {
             tasks = new LinkedHashMap<>();
+
+        } else {
+            tasks = mCachedTasks.get(task.getTaskHeadId());
+            if (tasks == null) {
+                tasks = new LinkedHashMap<>();
+            }
         }
         tasks.put(task.getId(), task);
         mCachedTasks.put(task.getTaskHeadId(), tasks);

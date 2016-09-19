@@ -27,7 +27,7 @@ public interface TaskDataSource {
 
     void getAllTasks(@NonNull GetTasksCallback callback);                   // Get all tasks
 
-    void deleteTask(@NonNull String taskHeadId);
+    void deleteTask(@NonNull Task task);
 
     void saveTasks(List<Task> tasks);
 
