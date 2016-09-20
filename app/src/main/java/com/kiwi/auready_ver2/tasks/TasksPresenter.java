@@ -217,7 +217,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTask.ResponseValue response) {
-
+                        sortTasks();
                     }
 
                     @Override

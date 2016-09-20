@@ -207,11 +207,11 @@ public class TasksPresenterTest {
         mTasksPresenter.addTask(task2);
 
         assertThat(mTasksPresenter.mTaskList.size(), is(2));
-        // Delete one task
+        // 1. Delete one task
         mTasksPresenter.deleteTask(task1);
-
         assertThat(mTasksPresenter.mTaskList.size(), is(1));
-
         verify(mTaskRepository).deleteTask(task1);
+        // 2. Update tasks(order)
+        verify(mTaskRepository).sortTasks(any(LinkedHashMap.class));
     }
 }
