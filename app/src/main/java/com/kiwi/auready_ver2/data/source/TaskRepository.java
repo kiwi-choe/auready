@@ -111,6 +111,8 @@ public class TaskRepository implements TaskDataSource {
     @Override
     public void deleteTask(@NonNull Task task) {
         checkNotNull(task);
+        mTaskLocalDataSource.deleteTask(task);
+
         if(mCachedTasks.get(task.getTaskHeadId()).containsKey(task.getId())) {
             mCachedTasks.get(task.getTaskHeadId()).remove(task.getId());
         }

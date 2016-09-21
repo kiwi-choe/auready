@@ -135,14 +135,18 @@ public class TaskRepositoryTest {
 
     @Test
     public void deleteTask() {
+        // Save 2 tasks
         Task task1 = new Task(TASKHEAD_ID, "task1");
         mTaskRepository.saveTask(task1, mSaveTaskCallback);
         Task task2 = new Task(TASKHEAD_ID, "task2");
         mTaskRepository.saveTask(task2, mSaveTaskCallback);
-
         assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).containsKey(task1.getId()), is(true));
 
+        // When deleted
         mTaskRepository.deleteTask(task1);
+        // Verify the data sources were called
+        verify(mTaskLocalDataSource).deleteTask(task1);
+        // Verify it's removed from repository
         assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).containsKey(task1.getId()), is(false));
     }
 

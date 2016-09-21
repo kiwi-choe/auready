@@ -17,6 +17,7 @@ import java.util.List;
 import static junit.framework.Assert.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsNot.not;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -96,5 +97,49 @@ public class TaskLocalDataSourceTest {
 
         verify(callback).onDataNotAvailable();
         verify(callback, never()).onTasksLoaded(anyList());
+    }
+
+    @Test
+    public void deleteTask_taskNotRetrievable() {
+        // Save two tasks
+        final Task newTask1 = new Task(TASKHEAD_ID);
+        mLocalDataSource.saveTask(newTask1, new TaskDataSource.SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+                fail();
+            }
+        });
+        final Task newTask2 = new Task(TASKHEAD_ID);
+        mLocalDataSource.saveTask(newTask2, new TaskDataSource.SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+                fail();
+            }
+        });
+
+        // When newTask1 is deleted
+        mLocalDataSource.deleteTask(newTask1);
+
+        // Then only newTask2 can be retrieved from the persistent repository
+        mLocalDataSource.getTasks(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+                assertThat(tasks.size(), is(1));
+                assertThat(tasks.get(0).getId(), is(newTask2.getId()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail("One task should be retrieved at least.");
+            }
+        });
     }
 }
