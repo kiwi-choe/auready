@@ -37,6 +37,11 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
+    public void deleteAllTasks() {
+
+    }
+
+    @Override
     public void getTasks(String taskHeadId, @NonNull GetTasksCallback callback) {
 
         if (TASKS_OF_TASKHEAD_SERVICE_DATA.get(taskHeadId) == null) {

@@ -27,4 +27,14 @@ public final class PersistenceContract {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = "title";
     }
+
+    public static abstract class TaskEntry {
+        public static final String TABLE_NAME = "task";
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_HEAD_ID = "taskheadid";
+        public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_COMPLETED = "completed";
+        public static final String COLUMN_ORDER = "sequence";
+    }
+
 }

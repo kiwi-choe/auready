@@ -66,6 +66,14 @@ public class Task {
         mOrder = 0;
     }
 
+    public Task(String taskHeadId, String id, String description, boolean completed, int order) {
+        mTaskHeadId = taskHeadId;
+        mId = id;
+        mDescription = description;
+        mCompleted = completed;
+        mOrder = order;
+    }
+
     /*
     * To create a completed Task.
     * Use this only on testing.
@@ -77,6 +85,7 @@ public class Task {
         mCompleted = completed;
         mOrder = 0;
     }
+
 
     public String getDescription() {
         return mDescription;
@@ -111,5 +120,9 @@ public class Task {
 
     public void decreaseOrder() {
         mOrder--;
+    }
+
+    public boolean getCompleted() {
+        return mCompleted;
     }
 }

@@ -42,10 +42,15 @@ public class TaskRepository implements TaskDataSource {
         mTaskLocalDataSource = checkNotNull(taskLocalDataSource);
     }
 
+    @Override
+    public void deleteAllTasks() {
+
+    }
+
     /*
-    * Gets tasks from local data source by taskHeadId unless the table is new or empty. In that case it
-    * uses the network data source. This is done to simplify the sample.
-    * */
+        * Gets tasks from local data source by taskHeadId unless the table is new or empty. In that case it
+        * uses the network data source. This is done to simplify the sample.
+        * */
     public void getTasks(@NonNull final String taskHeadId, @NonNull final GetTasksCallback callback) {
         checkNotNull(taskHeadId);
         checkNotNull(callback);
@@ -117,12 +122,24 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task, @NonNull final SaveTaskCallback callback) {
+    public void saveTask(@NonNull final Task task, @NonNull final SaveTaskCallback callback) {
         checkNotNull(task);
         mTaskRemoteDataSource.saveTask(task, new SaveTaskCallback() {
             @Override
             public void onTaskSaved() {
-                callback.onTaskSaved();
+
+//                callback.onTaskSaved();
+                mTaskLocalDataSource.saveTask(task, new SaveTaskCallback() {
+                    @Override
+                    public void onTaskSaved() {
+                        callback.onTaskSaved();
+                    }
+
+                    @Override
+                    public void onTaskNotSaved() {
+                        callback.onTaskNotSaved();
+                    }
+                });
             }
 
             @Override
@@ -130,22 +147,10 @@ public class TaskRepository implements TaskDataSource {
                 callback.onTaskNotSaved();
             }
         });
-//        mTaskLocalDataSource.saveTask(task, new SaveTaskCallback() {
-//            @Override
-//            public void onTaskSaved() {
-//                callback.onTaskSaved();
-//            }
-//
-//            @Override
-//            public void onTaskNotSaved() {
-//                callback.onTaskNotSaved();
-//            }
-//        });
+
 
         // Do in memory cache update to keep the app UI up to date
         putToCachedTasks(task);
-        // when testing, used only cache.
-        callback.onTaskSaved();
     }
 
     @Override

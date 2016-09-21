@@ -17,6 +17,8 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
+    void deleteAllTasks();
+
     interface GetTasksCallback {
         void onTasksLoaded(List<Task> tasks);
 

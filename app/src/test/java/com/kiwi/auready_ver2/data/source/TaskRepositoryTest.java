@@ -43,7 +43,9 @@ public class TaskRepositoryTest {
 
 
     @Captor
-    private ArgumentCaptor<TaskDataSource.GetTasksCallback> mTasksCallbackCaptor;
+    private ArgumentCaptor<TaskDataSource.GetTasksCallback> mGetTasksCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.SaveTaskCallback> mSaveTaskCallbackCaptor;
 
     @Before
     public void setup() {
@@ -61,7 +63,18 @@ public class TaskRepositoryTest {
         // Then the service API are called and cache is updated.
         verify(mTaskRemoteDataSource).saveTask(eq(newTask), any(TaskDataSource.SaveTaskCallback.class));
 
-        assertThat(mTaskRepository.mCachedTasks.get(newTask.getTaskHeadId()).containsKey(newTask.getId()), is(true));
+        assertThat(mTaskRepository.mCachedTasks.size(), is(1));
+    }
+
+    @Test
+    public void saveTask_localDataSource() {
+        Task newTask = new Task(TASKHEAD_ID);
+        mTaskRepository.saveTask(newTask, mSaveTaskCallback);
+
+        verify(mTaskRemoteDataSource).saveTask(eq(newTask), mSaveTaskCallbackCaptor.capture());
+        mSaveTaskCallbackCaptor.getValue().onTaskSaved();
+
+        verify(mTaskLocalDataSource).saveTask(eq(newTask), any(TaskDataSource.SaveTaskCallback.class));
     }
 
     @Test
