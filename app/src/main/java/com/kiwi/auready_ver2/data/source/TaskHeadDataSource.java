@@ -12,6 +12,8 @@ import java.util.List;
 public interface TaskHeadDataSource {
 
 
+    void editTitle(@NonNull TaskHead taskHead);
+
     interface LoadTaskHeadsCallback {
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
 

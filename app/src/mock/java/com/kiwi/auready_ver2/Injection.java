@@ -3,14 +3,14 @@ package com.kiwi.auready_ver2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.tasks.domain.filter.FilterFactory;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.EditTitle;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditDescription;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
-import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTasks;
 import com.kiwi.auready_ver2.data.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
@@ -82,6 +82,10 @@ public class Injection {
         return new SaveTaskHead(Injection.provideTaskHeadRepository(context));
     }
 
+    public static EditTitle provideEditTitle(@NonNull Context context) {
+        return new EditTitle(Injection.provideTaskHeadRepository(context));
+    }
+
     /*
     * Task
     * */
@@ -93,10 +97,6 @@ public class Injection {
 
     public static GetTasks provideGetTasks(@NonNull Context context) {
         return new GetTasks(Injection.provideTaskRepository(context));
-    }
-
-    public static SaveTasks provideSaveTasks(@NonNull Context context) {
-        return new SaveTasks(Injection.provideTaskRepository(context));
     }
 
     public static SaveTask provideSaveTask(@NonNull Context context) {
@@ -118,4 +118,9 @@ public class Injection {
     public static DeleteTask provideDeleteTask(@NonNull Context context) {
         return new DeleteTask(Injection.provideTaskRepository(context));
     }
+
+    public static EditDescription provideEditDescription(@NonNull Context context) {
+        return new EditDescription(Injection.provideTaskRepository(context));
+    }
+
 }

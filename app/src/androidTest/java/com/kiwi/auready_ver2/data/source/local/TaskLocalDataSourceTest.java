@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import static junit.framework.Assert.fail;
@@ -62,7 +63,7 @@ public class TaskLocalDataSourceTest {
         });
 
         // Then the task can be retrieved from the persistent repository
-        mLocalDataSource.getTasks(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
+        mLocalDataSource.getTasksByTaskHeadId(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
                 assertThat(tasks.get(0).getId(), is(newTask.getId()));
@@ -93,7 +94,7 @@ public class TaskLocalDataSourceTest {
         // When all tasks are deleted
         mLocalDataSource.deleteAllTasks();
         // Then the retrieved tasks is an empty list
-        mLocalDataSource.getTasks(TASKHEAD_ID, callback);
+        mLocalDataSource.getTasksByTaskHeadId(TASKHEAD_ID, callback);
 
         verify(callback).onDataNotAvailable();
         verify(callback, never()).onTasksLoaded(anyList());
@@ -129,7 +130,7 @@ public class TaskLocalDataSourceTest {
         mLocalDataSource.deleteTask(newTask1);
 
         // Then only newTask2 can be retrieved from the persistent repository
-        mLocalDataSource.getTasks(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
+        mLocalDataSource.getTasksByTaskHeadId(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
                 assertThat(tasks.size(), is(1));
@@ -139,6 +140,124 @@ public class TaskLocalDataSourceTest {
             @Override
             public void onDataNotAvailable() {
                 fail("One task should be retrieved at least.");
+            }
+        });
+    }
+
+    @Test
+    public void updateOrderOfTasks_retrievedTasks() {
+        LinkedList<Task> taskList = new LinkedList<>();
+
+        final Task task1 = new Task(TASKHEAD_ID, "active", 0);
+        Task task2 = new Task(TASKHEAD_ID, "completed", true, 1);
+
+        // Save two tasks
+        mLocalDataSource.saveTask(task1, new TaskDataSource.SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+
+            }
+        });
+        mLocalDataSource.saveTask(task2, new TaskDataSource.SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+
+            }
+        });
+
+        // before sorting
+        mLocalDataSource.getTasksByTaskHeadId(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+                assertThat(tasks.get(0).getOrder(), is(0));
+                assertThat(tasks.get(1).getOrder(), is(1));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+
+        taskList.add(task1);
+        // Add new task (event)
+        Task newTask = new Task(TASKHEAD_ID, "new task", 0);
+        mLocalDataSource.saveTask(newTask, new TaskDataSource.SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+                fail();
+            }
+        });
+        taskList.add(newTask);
+
+        taskList.add(task2);
+
+        mLocalDataSource.sortTasks(taskList);
+
+        // after sorting
+        mLocalDataSource.getTasksByTaskHeadId(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+                assertThat(tasks.get(0).getDescription(), is("active"));
+                assertThat(tasks.get(0).getOrder(), is(0));
+                assertThat(tasks.get(1).getDescription(), is("new task"));
+
+                assertThat(tasks.get(1).getOrder(), is(1));
+                assertThat(tasks.get(2).getDescription(), is("completed"));
+                assertThat(tasks.get(2).getOrder(), is(2));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+    }
+
+    @Test
+    public void editDescriptionOfTask_retrievedTasks() {
+        final Task task1 = new Task(TASKHEAD_ID, "original", 0);
+
+        // Save new task
+        mLocalDataSource.saveTask(task1, new TaskDataSource.SaveTaskCallback() {
+            @Override
+            public void onTaskSaved() {
+            }
+
+            @Override
+            public void onTaskNotSaved() {
+
+            }
+        });
+
+        final Task editTask = new Task(TASKHEAD_ID, task1.getId(), "edited!!", task1.getOrder());
+        // Update editedTask description
+        mLocalDataSource.editDescription(editTask);
+
+        // Get
+        mLocalDataSource.getTasksByTaskHeadId(TASKHEAD_ID, new TaskDataSource.GetTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+                assertThat(tasks.get(0).getDescription(), is(editTask.getDescription()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
             }
         });
     }

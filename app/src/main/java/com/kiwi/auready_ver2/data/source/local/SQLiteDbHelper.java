@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
 
 /**
  * Created by kiwi on 7/4/16.
@@ -28,6 +29,12 @@ public class SQLiteDbHelper extends SQLiteOpenHelper {
                     FriendEntry.COLUMN_NAME + TEXT_TYPE +
                     " )";
 
+    private static final String SQL_CREATE_TASKHEAD_TABLE =
+            "CREATE TABLE IF NOT EXISTS " + TaskHeadEntry.TABLE_NAME + " (" +
+                    TaskHeadEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
+                    TaskHeadEntry.COLUMN_TITLE + TEXT_TYPE +
+                    " )";
+
     private static final String SQL_CREATE_TASK_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TaskEntry.TABLE_NAME + " (" +
                     TaskEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
@@ -45,6 +52,7 @@ public class SQLiteDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_FRIEND_TABLE);
+        db.execSQL(SQL_CREATE_TASKHEAD_TABLE);
         db.execSQL(SQL_CREATE_TASK_TABLE);
     }
 
@@ -52,6 +60,7 @@ public class SQLiteDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
             db.execSQL("DROP TABLE IF EXISTS " + FriendEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + TaskHeadEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + TaskEntry.TABLE_NAME);
 
             onCreate(db);

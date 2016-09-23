@@ -7,6 +7,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallback;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.EditTitle;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
 
@@ -61,8 +62,9 @@ public class TaskHeadsPresenterTest {
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
         DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository);
         SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);
+        EditTitle editTitle = new EditTitle(mTaskHeadRepository);
 
-        return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead, saveTaskHead);
+        return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead, saveTaskHead, editTitle);
     }
 
     @Test
@@ -80,17 +82,18 @@ public class TaskHeadsPresenterTest {
     @Test
     public void saveNewTaskHeadToRepository_showAddTasksUi() {
         // Create new taskHead
-        mTaskHeadsPresenter.saveTaskHead("", "");
+        mTaskHeadsPresenter.saveTaskHead();
 
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
         verify(mTaskHeadView).openTasks(any(TaskHead.class));
     }
 
     @Test
-    public void updateTaskHeadToRepository() {
-        mTaskHeadsPresenter.saveTaskHead(TASKHEAD_ID, TITLE);
+    public void editTitleOfTaskHead() {
+        TaskHead taskHead = new TaskHead(TASKHEAD_ID, "title!!");
+        mTaskHeadsPresenter.editTaskHead(taskHead);
 
-        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
+        verify(mTaskHeadRepository).editTitle(taskHead);
     }
 
     @Test

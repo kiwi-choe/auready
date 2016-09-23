@@ -10,6 +10,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.EditTitle;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
@@ -30,14 +31,19 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private final GetTaskHeads mGetTaskHeads;
     private final DeleteTaskHead mDeleteTaskHead;
     private final SaveTaskHead mSaveTaskHead;
+    private final EditTitle mEditTitle;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
-                              @NonNull GetTaskHeads getTaskHeads, @NonNull DeleteTaskHead deleteTaskHead, SaveTaskHead saveTaskHead) {
+                              @NonNull GetTaskHeads getTaskHeads,
+                              @NonNull DeleteTaskHead deleteTaskHead,
+                              @NonNull SaveTaskHead saveTaskHead,
+                              @NonNull EditTitle editTitle) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
         mDeleteTaskHead = checkNotNull(deleteTaskHead, "deleteTaskHead cannot be null");
         mSaveTaskHead = checkNotNull(saveTaskHead, "saveTaskHead cannot be null");
+        mEditTitle = checkNotNull(editTitle, "editTitle cannot be null");
 
         mTaskHeadView.setPresenter(this);
     }
@@ -82,8 +88,8 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 //                deleteTaskHead(taskHeadId);
                 deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
             } else {
-
-                saveTaskHead(taskHeadId, taskHeadTitle);
+                TaskHead taskHead = new TaskHead(taskHeadId, taskHeadTitle);
+                editTaskHead(taskHead);
             }
         }
     }
@@ -145,17 +151,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     }
 
     @Override
-    public void saveTaskHead(String taskHeadId, String title) {
-        if(taskHeadId == null || taskHeadId.isEmpty()) {
-            createTaskHead();
-        }
-        else {
-            updateTaskHead(taskHeadId, title);
-        }
-    }
-
-    private void createTaskHead() {
-
+    public void saveTaskHead() {
         final TaskHead newTaskHead = new TaskHead();
         mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
                 new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
@@ -173,17 +169,13 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                 });
     }
 
-    private void updateTaskHead(String taskHeadId, String title) {
-
-        if(taskHeadId == null) {
-            throw new RuntimeException("updateTask() was called but taskHead is new.");
-        }
-        final TaskHead taskHead = new TaskHead(taskHeadId, title);
-        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
-                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
-
+    @Override
+    public void editTaskHead(@NonNull TaskHead requestedTaskHead) {
+        checkNotNull(requestedTaskHead, "requestedTaskHead cannot be null");
+        mUseCaseHandler.execute(mEditTitle, new EditTitle.RequestValues(requestedTaskHead),
+                new UseCase.UseCaseCallback<EditTitle.ResponseValue>() {
                     @Override
-                    public void onSuccess(SaveTaskHead.ResponseValue response) {
+                    public void onSuccess(EditTitle.ResponseValue response) {
                         loadTaskHeads();
                     }
 
@@ -192,12 +184,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     }
                 });
-    }
-
-    @Override
-    public void editTaskHead(@NonNull TaskHead requestedTaskHead) {
-        checkNotNull(requestedTaskHead, "requestedTaskHead cannot be null");
-        mTaskHeadView.openTasks(requestedTaskHead);
     }
 
     private void processTaskHeads(List<TaskHead> taskHeads) {

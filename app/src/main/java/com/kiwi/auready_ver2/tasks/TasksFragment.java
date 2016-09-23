@@ -56,17 +56,18 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onAddTaskButtonClick() {
+        public void onAddTaskButtonClick(int newActiveTaskPosition) {
 
             Task newTask = new Task(mTaskHeadId);
+            newTask.setOrder(newActiveTaskPosition);
             mPresenter.addTask(newTask);
         }
 
         @Override
-        public void onDescriptionFocusChanged(String description, String taskId) {
+        public void onDescriptionFocusChanged(String description, String taskId, int taskOrder) {
 
             Log.d("kiwi_test", "Focus changed of task: " + description);
-            Task editedTask = new Task(mTaskHeadId, taskId, description);
+            Task editedTask = new Task(mTaskHeadId, taskId, description, taskOrder);
             mPresenter.editTask(editedTask);
         }
 
@@ -183,6 +184,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showTaskHeadList(boolean isEmptyTaskHead) {
+
+        Log.d("kiwi_test", "called showTaskHeadList");
+
         Intent intent = new Intent();
         intent.putExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, isEmptyTaskHead);
         intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, mTaskHeadId);

@@ -9,8 +9,8 @@ import com.kiwi.auready_ver2.util.OrderAscCompare;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,11 +47,20 @@ public class TaskRepository implements TaskDataSource {
 
     }
 
+    @Override
+    public void editDescription(@NonNull Task task) {
+        checkNotNull(task);
+
+        mTaskLocalDataSource.editDescription(task);
+
+        putToCachedTasks(task);
+    }
+
     /*
         * Gets tasks from local data source by taskHeadId unless the table is new or empty. In that case it
         * uses the network data source. This is done to simplify the sample.
         * */
-    public void getTasks(@NonNull final String taskHeadId, @NonNull final GetTasksCallback callback) {
+    public void getTasksByTaskHeadId(@NonNull final String taskHeadId, @NonNull final GetTasksCallback callback) {
         checkNotNull(taskHeadId);
         checkNotNull(callback);
 
@@ -60,9 +69,17 @@ public class TaskRepository implements TaskDataSource {
         // Respond immediately with cache if available
         if (cachedTasks != null) {
             List<Task> taskList = new ArrayList<>(cachedTasks.values());
+            for (Task task : taskList) {
+                Log.d("kiwi_test", "tasks values : " + task.getDescription() +
+                        " order: " + String.valueOf(task.getOrder()));
+            }
             // Sorting by order
             Collections.sort(taskList, new OrderAscCompare());
-
+            Log.d("kiwi_test", "after sorting-------------------");
+            for (Task task : taskList) {
+                Log.d("kiwi_test", "tasks values : " + task.getDescription() +
+                        " order: " + String.valueOf(task.getOrder()));
+            }
             callback.onTasksLoaded(taskList);
             return;
         }
@@ -70,7 +87,7 @@ public class TaskRepository implements TaskDataSource {
         // Load from server if needed.
 
         // Is the task in the local? If not, query the network.
-        mTaskLocalDataSource.getTasks(taskHeadId, new GetTasksCallback() {
+        mTaskLocalDataSource.getTasksByTaskHeadId(taskHeadId, new GetTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
                 callback.onTasksLoaded(tasks);
@@ -78,7 +95,7 @@ public class TaskRepository implements TaskDataSource {
 
             @Override
             public void onDataNotAvailable() {
-                mTaskRemoteDataSource.getTasks(taskHeadId, new GetTasksCallback() {
+                mTaskRemoteDataSource.getTasksByTaskHeadId(taskHeadId, new GetTasksCallback() {
                     @Override
                     public void onTasksLoaded(List<Task> tasks) {
                         callback.onTasksLoaded(tasks);
@@ -113,14 +130,9 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(task);
         mTaskLocalDataSource.deleteTask(task);
 
-        if(mCachedTasks.get(task.getTaskHeadId()).containsKey(task.getId())) {
+        if (mCachedTasks.get(task.getTaskHeadId()).containsKey(task.getId())) {
             mCachedTasks.get(task.getTaskHeadId()).remove(task.getId());
         }
-    }
-
-    @Override
-    public void saveTasks(List<Task> tasks) {
-
     }
 
     @Override
@@ -160,7 +172,7 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(task);
 //        mTaskRemoteDataSource.completeTask(task);
 
-        Task completedTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), true);
+        Task completedTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), true, 0);
         // Do in memory cache update to keep the app UI up to date
         putToCachedTasks(completedTask);
 
@@ -223,7 +235,7 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(task);
 //        mTaskRemoteDataSource.activateTask(task);
 
-        Task activeTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription());
+        Task activeTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), task.getOrder());
         putToCachedTasks(activeTask);
 
         // Decrease the order of active tasks
@@ -231,16 +243,15 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(LinkedHashMap<String, Task> taskList) {
+    public void sortTasks(LinkedList<Task> taskList) {
 
-        int order = 0;
-        for (Map.Entry<String, Task> entry : taskList.entrySet()) {
+        mTaskLocalDataSource.sortTasks(taskList);
 
-            Task task = entry.getValue();
-            task.setOrder(order);
+        int size = taskList.size();
+        for (int i = 0; i < size; i++) {
+            Task task = taskList.get(i);
+            task.setOrder(i);
             putToCachedTasks(task);
-
-            order++;
         }
     }
 

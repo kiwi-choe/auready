@@ -10,11 +10,11 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,7 +34,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     public static TaskLocalDataSource getInstance(@NonNull Context context) {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new TaskLocalDataSource(context);
         }
         return INSTANCE;
@@ -48,23 +48,40 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTasks(String taskHeadId, @NonNull GetTasksCallback callback) {
+    public void editDescription(@NonNull Task task) {
+        checkNotNull(task);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
+
+            String selection = TaskEntry.COLUMN_ID + " LIKE ?";
+            String[] selectionArgs = {task.getId()};
+
+            db.update(TaskEntry.TABLE_NAME, values, selection, selectionArgs);
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(DBExceptionTag.TAG_SQLITE, "Error when update description of task");
+        } finally {
+            db.endTransaction();
+        }
+        db.close();
+    }
+
+    @Override
+    public void getTasksByTaskHeadId(String taskHeadId, @NonNull GetTasksCallback callback) {
         List<Task> tasks = new ArrayList<>();
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
-        String[] projection = {
-                TaskEntry.COLUMN_ID,
-                TaskEntry.COLUMN_HEAD_ID,
-                TaskEntry.COLUMN_DESCRIPTION,
-                TaskEntry.COLUMN_COMPLETED,
-                TaskEntry.COLUMN_ORDER
-        };
+        String QUERY = String.format("SELECT * FROM %s WHERE %s = '%s' ORDER BY %s asc;",
+                TaskEntry.TABLE_NAME, TaskEntry.COLUMN_HEAD_ID, taskHeadId, TaskEntry.COLUMN_ORDER);
 
-        Cursor c = db.query(
-                TaskEntry.TABLE_NAME, projection, null, null, null, null, TaskEntry.COLUMN_ORDER);
+        Cursor c = db.rawQuery(QUERY, null);
 
-        if(c != null && c.getCount() > 0) {
-            while(c.moveToNext()) {
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
                 String id = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ID));
                 String headId = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_HEAD_ID));
                 String description = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_DESCRIPTION));
@@ -75,12 +92,12 @@ public class TaskLocalDataSource implements TaskDataSource {
                 tasks.add(task);
             }
         }
-        if(c!=null) {
+        if (c != null) {
             c.close();
         }
         db.close();
 
-        if(tasks.isEmpty()) {
+        if (tasks.isEmpty()) {
             // This will be called if the table is new or just empty.
             callback.onDataNotAvailable();
         } else {
@@ -98,15 +115,10 @@ public class TaskLocalDataSource implements TaskDataSource {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String selection = TaskEntry.COLUMN_ID + " LIKE ?";
-        String[] selectionArgs = { task.getId() };
+        String[] selectionArgs = {task.getId()};
 
         db.delete(TaskEntry.TABLE_NAME, selection, selectionArgs);
         db.close();
-    }
-
-    @Override
-    public void saveTasks(List<Task> tasks) {
-
     }
 
     @Override
@@ -127,16 +139,14 @@ public class TaskLocalDataSource implements TaskDataSource {
             db.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new task");
+
+            callback.onTaskNotSaved();
         } finally {
             db.endTransaction();
         }
         db.close();
 
-        if(task != null) {
-            callback.onTaskSaved();
-        } else {
-            callback.onTaskNotSaved();
-        }
+        callback.onTaskSaved();
     }
 
     @Override
@@ -150,7 +160,53 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(LinkedHashMap<String, Task> taskList) {
+    public void sortTasks(LinkedList<Task> taskList) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        db.beginTransaction();
+        try {
+            int size = taskList.size();
+            for (int i = 0; i < size; i++) {
+                Task task = taskList.get(i);
+                ContentValues values = new ContentValues();
+                values.put(TaskEntry.COLUMN_ORDER, i);
+
+                String selection = TaskEntry.COLUMN_ID + " LIKE ?";
+                String[] selectionArgs = {task.getId()};
+
+                db.update(TaskEntry.TABLE_NAME, values, selection, selectionArgs);
+
+            }
+            db.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(DBExceptionTag.TAG_SQLITE, "Error update to " + TaskEntry.TABLE_NAME + ". ", e);
+        } finally {
+            db.endTransaction();
+        }
+
+        db.close();
     }
+//
+//    @Override
+//    public void sortTask(Task task) {
+//        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+//
+//        db.beginTransaction();
+//        try {
+//            ContentValues values = new ContentValues();
+//
+//            values.put(TaskEntry.COLUMN_ID, task.getId());
+//            values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
+//
+//            db.update(TaskEntry.TABLE_NAME, values,
+//                    TaskEntry.COLUMN_ID + "=" + task.getId(), null);
+//            db.setTransactionSuccessful();
+//        } catch (SQLException e) {
+//            Log.e(DBExceptionTag.TAG_SQLITE, "Error update to " + TaskEntry.TABLE_NAME + ". ", e);
+//        } finally {
+//            db.endTransaction();
+//        }
+//
+//        db.close();
+//    }
 }

@@ -73,7 +73,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         @Override
         public void onItemClick(TaskHead taskHead) {
             checkNotNull(taskHead);
-            mPresenter.editTaskHead(taskHead);
+//            mPresenter.editTaskHead(taskHead);
+            openTasks(taskHead);
         }
     };
 
@@ -112,7 +113,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveTaskHead("", "");
+                mPresenter.saveTaskHead();
             }
         });
 

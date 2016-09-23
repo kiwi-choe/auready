@@ -1,8 +1,6 @@
 package com.kiwi.auready_ver2.data.source;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
 
 import org.junit.After;
 import org.junit.Before;
@@ -12,10 +10,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.LinkedList;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -80,7 +75,7 @@ public class TaskRepositoryTest {
     @Test
     public void completeTask() {
         // Given a stub active task in the repository
-        Task newTask = new Task(TASKHEAD_ID, "Im being with you");
+        Task newTask = new Task(TASKHEAD_ID, "Im being with you", 0);
         mTaskRepository.saveTask(newTask, mSaveTaskCallback);
 
         mTaskRepository.completeTask(newTask);
@@ -93,7 +88,7 @@ public class TaskRepositoryTest {
     @Test
     public void activateTask() {
         // Given a stub complete task in the repository
-        Task newTask = new Task(TASKHEAD_ID, "go sleep", true);
+        Task newTask = new Task(TASKHEAD_ID, "go sleep", true, 0);
         mTaskRepository.saveTask(newTask, mSaveTaskCallback);
 
         mTaskRepository.activateTask(newTask);
@@ -107,28 +102,25 @@ public class TaskRepositoryTest {
     public void sortTasks() {
         // Given stubs one active, two complete
         Task task1 = new Task(TASKHEAD_ID);
-        task1.setOrder(0);
         mTaskRepository.saveTask(task1, mSaveTaskCallback);
-        Task task2 = new Task(TASKHEAD_ID, "completed one", true);
-        task2.setOrder(1);
+        Task task2 = new Task(TASKHEAD_ID, "completed one", true, 1);
         mTaskRepository.saveTask(task2, mSaveTaskCallback);
-        Task task3 = new Task(TASKHEAD_ID, "completed two", true);
-        task3.setOrder(2);
+        Task task3 = new Task(TASKHEAD_ID, "completed two", true, 2);
         mTaskRepository.saveTask(task3, mSaveTaskCallback);
 
         // before order
         assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(task2.getId()).getOrder(), is(1));
 
-        LinkedHashMap<String, Task> tasksAddedOne = new LinkedHashMap<>();
-        tasksAddedOne.put(task1.getId(), task1);
+        LinkedList<Task> tasksAddedOne = new LinkedList<>();
+        tasksAddedOne.add(task1);
         // add new task
         Task newTask = new Task(TASKHEAD_ID);
-        tasksAddedOne.put(newTask.getId(), newTask);
-        tasksAddedOne.put(task2.getId(), task2);
-        tasksAddedOne.put(task3.getId(), task3);
+        tasksAddedOne.add(newTask);
+        tasksAddedOne.add(task2);
+        tasksAddedOne.add(task3);
 
         mTaskRepository.sortTasks(tasksAddedOne);
-
+        verify(mTaskLocalDataSource).sortTasks(tasksAddedOne);
         // after order
         assertThat(mTaskRepository.mCachedTasks.get(TASKHEAD_ID).get(task2.getId()).getOrder(), is(2));
     }
@@ -136,9 +128,9 @@ public class TaskRepositoryTest {
     @Test
     public void deleteTask() {
         // Save 2 tasks
-        Task task1 = new Task(TASKHEAD_ID, "task1");
+        Task task1 = new Task(TASKHEAD_ID, "task1", 0);
         mTaskRepository.saveTask(task1, mSaveTaskCallback);
-        Task task2 = new Task(TASKHEAD_ID, "task2");
+        Task task2 = new Task(TASKHEAD_ID, "task2", 1);
         mTaskRepository.saveTask(task2, mSaveTaskCallback);
         assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).containsKey(task1.getId()), is(true));
 
@@ -150,6 +142,19 @@ public class TaskRepositoryTest {
         assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).containsKey(task1.getId()), is(false));
     }
 
+    @Test
+    public void editDescription() {
+        // Save 2 tasks
+        Task task1 = new Task(TASKHEAD_ID, "task1", 0);
+        mTaskRepository.saveTask(task1, mSaveTaskCallback);
+
+        Task editTask = new Task(TASKHEAD_ID, task1.getId(), "editTask!!", task1.getOrder());
+        mTaskRepository.editDescription(editTask);
+
+        verify(mTaskLocalDataSource).editDescription(editTask);
+        assertThat(mTaskRepository.mCachedTasks.get(task1.getTaskHeadId()).get(task1.getId()).getDescription(),
+                is(editTask.getDescription()));
+    }
     @After
     public void destroyRepositoryInstance() {
         TaskRepository.destroyInstance();

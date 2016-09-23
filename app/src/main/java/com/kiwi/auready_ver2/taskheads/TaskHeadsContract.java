@@ -43,6 +43,6 @@ public interface TaskHeadsContract {
 
         void deleteTaskHeadByIsEmptyTaskHead(String taskHeadId);
 
-        void saveTaskHead(String taskHeadId, String title);
+        void saveTaskHead();
     }
 }

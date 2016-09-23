@@ -60,8 +60,8 @@ public class TasksViewTest {
         * */
     private static final List<Task> EMPTY_TASKS = new ArrayList<>(0);
     // 3 tasks, one active and two completed
-    private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1),
-            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true), new Task(TASKHEAD_ID, TASK_DESCRIPTION3, true));
+    private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1, 0),
+            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true, 0), new Task(TASKHEAD_ID, TASK_DESCRIPTION3, true, 0));
 
     @Rule
     public ActivityTestRule<TasksActivity> mTasksActivityTestRule =

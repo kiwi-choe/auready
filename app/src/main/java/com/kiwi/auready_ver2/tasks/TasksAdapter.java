@@ -117,7 +117,8 @@ public class TasksAdapter extends BaseTasksAdapter {
                 if(!hasFocus) {
                     mItemListener.onDescriptionFocusChanged(
                             viewHolder.description.getText().toString(),
-                            task.getId()
+                            task.getId(),
+                            viewHolder.ref
                     );
                 }
             }
@@ -137,8 +138,7 @@ public class TasksAdapter extends BaseTasksAdapter {
             @Override
             public void onClick(View v) {
 
-                Task newTask = new Task(mTaskHeadId);
-                mItemListener.onAddTaskButtonClick();
+                mItemListener.onAddTaskButtonClick(getBtnPosition());
             }
         });
     }
@@ -172,9 +172,9 @@ public class TasksAdapter extends BaseTasksAdapter {
 
         void onActivateTaskClick(Task task);
 
-        void onAddTaskButtonClick();
+        void onAddTaskButtonClick(int newActiveTaskPosition);
 
-        void onDescriptionFocusChanged(String description, String taskId);
+        void onDescriptionFocusChanged(String description, String taskId, int taskOrder);
 
         void onDeleteTask(Task task);
     }

@@ -38,7 +38,6 @@ public class TasksContract {
 
         void activateTask(@NonNull Task task);
 
-        void saveTasks(List<Task> tasks);
 
         void addTask(@NonNull Task newTask);
 

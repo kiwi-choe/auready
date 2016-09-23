@@ -29,28 +29,28 @@ public class Task {
         mCompleted = false;
         mOrder = 0;
     }
-
     /*
-    * To create a new active Task with description
+    * To create a new active Task
+    * with order
     * */
-    public Task(String taskHeadId, String description) {
+    public Task(@NonNull String taskHeadId, String description, int order) {
         mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
         mDescription = description;
         mCompleted = false;
-        mOrder = 0;
+        mOrder = order;
     }
 
     /*
     * To create an active Task if the Task already has an id
     * Update the existing task.
     * */
-    public Task(String taskHeadId, String id, String description) {
+    public Task(String taskHeadId, String id, String description, int order) {
         mTaskHeadId = taskHeadId;
         mId = id;
         mDescription = description;
         mCompleted = false;
-        mOrder = 0;
+        mOrder = order;
     }
 
     /*
@@ -58,14 +58,6 @@ public class Task {
     *
     * A completed task can be made after creating an active task
     * */
-    public Task(String taskHeadId, String id, String description, boolean completed) {
-        mTaskHeadId = taskHeadId;
-        mId = id;
-        mDescription = description;
-        mCompleted = completed;
-        mOrder = 0;
-    }
-
     public Task(String taskHeadId, String id, String description, boolean completed, int order) {
         mTaskHeadId = taskHeadId;
         mId = id;
@@ -78,12 +70,12 @@ public class Task {
     * To create a completed Task.
     * Use this only on testing.
     * */
-    public Task(String taskHeadId, String description, boolean completed) {
+    public Task(String taskHeadId, String description, boolean completed, int order) {
         mTaskHeadId = taskHeadId;
         mId = UUID.randomUUID().toString();;
         mDescription = description;
         mCompleted = completed;
-        mOrder = 0;
+        mOrder = order;
     }
 
 

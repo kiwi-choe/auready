@@ -30,6 +30,11 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     }
 
     @Override
+    public void editTitle(@NonNull TaskHead taskHead) {
+
+    }
+
+    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
 
         if(TASKHEADS_SERVICE_DATA.size() == 0) {

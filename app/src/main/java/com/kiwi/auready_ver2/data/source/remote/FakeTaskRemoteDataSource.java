@@ -10,6 +10,7 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,12 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTasks(String taskHeadId, @NonNull GetTasksCallback callback) {
+    public void editDescription(@NonNull Task task) {
+
+    }
+
+    @Override
+    public void getTasksByTaskHeadId(String taskHeadId, @NonNull GetTasksCallback callback) {
 
         if (TASKS_OF_TASKHEAD_SERVICE_DATA.get(taskHeadId) == null) {
             callback.onDataNotAvailable();
@@ -60,10 +66,6 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
 
     }
 
-    @Override
-    public void saveTasks(List<Task> tasks) {
-
-    }
 
     @Override
     public void saveTask(Task task, @NonNull SaveTaskCallback callback) {
@@ -74,6 +76,7 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
         }
         tasksOfTaskHeadId.add(task);
         TASKS_OF_TASKHEAD_SERVICE_DATA.put(task.getTaskHeadId(), tasksOfTaskHeadId);
+        callback.onTaskSaved();
     }
 
     @Override
@@ -87,7 +90,7 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void sortTasks(LinkedHashMap<String, Task> taskList) {
+    public void sortTasks(LinkedList<Task> taskList) {
 
     }
 

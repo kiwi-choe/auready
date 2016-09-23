@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -69,7 +70,53 @@ public class TaskHeadRepositoryTest {
         verify(mLoadTaskHeadsCallback).onTaskHeadsLoaded(TASKHEADS);
     }
 
+    @Test
+    public void saveTaskHead_retrieveTaskHead() {
+        final TaskHead taskHead = new TaskHead();
+        mTaskHeadsRepository.saveTaskHead(taskHead);
 
+        verify(mTaskHeadsLocalDataSource).saveTaskHead(taskHead);
+
+        assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(taskHead.getId()), is(true));
+
+        mTaskHeadsRepository.getTaskHeads(new TaskHeadDataSource.LoadTaskHeadsCallback() {
+            @Override
+            public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
+                assertThat(taskHeads.get(0).getId(), is(taskHead.getId()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+    }
+
+    @Test
+    public void editTitle() {
+        // Save new one
+        TaskHead taskHead = new TaskHead();
+        mTaskHeadsRepository.saveTaskHead(taskHead);
+
+        // Edit title
+        final TaskHead editTaskHead = new TaskHead(taskHead.getId(), "title!!");
+        mTaskHeadsRepository.editTitle(editTaskHead);
+
+        verify(mTaskHeadsLocalDataSource).editTitle(editTaskHead);
+        assertThat(mTaskHeadsRepository.mCachedTaskHeads.get(taskHead.getId()).getTitle(), is(editTaskHead.getTitle()));
+
+        mTaskHeadsRepository.getTaskHeads(new TaskHeadDataSource.LoadTaskHeadsCallback() {
+            @Override
+            public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
+                assertThat(taskHeads.get(0).getTitle(), is(editTaskHead.getTitle()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+    }
     private void setTaskHeadsAvailable(TaskHeadDataSource dataSource, List<TaskHead> taskHeads) {
         verify(dataSource).getTaskHeads(mTaskHeadsCallbackCaptor.capture());
         mTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(taskHeads);
