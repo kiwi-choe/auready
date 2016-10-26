@@ -1,7 +1,8 @@
-package com.kiwi.auready_ver2.data;
+package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 
 import java.util.List;

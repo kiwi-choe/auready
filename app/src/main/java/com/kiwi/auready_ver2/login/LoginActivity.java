@@ -1,13 +1,14 @@
 package com.kiwi.auready_ver2.login;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.login.google.GoogleSignInFragment;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class LoginActivity extends AppCompatActivity implements
@@ -18,11 +19,20 @@ public class LoginActivity extends AppCompatActivity implements
     // interface
     private LoginActivityListener mListener;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        addFragments();
+
+        initView();
+    }
+
+    private void addFragments() {
+
+        // Local login
         LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.content_frame);
         if (loginFragment == null) {
@@ -30,14 +40,22 @@ public class LoginActivity extends AppCompatActivity implements
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     loginFragment, R.id.content_frame, LoginFragment.TAG_LOGINFRAGMENT);
         }
-        // Create the presenter
+
         LoginPresenter presenter = new LoginPresenter(
                 Injection.provideUseCaseHandler(),
                 loginFragment,
                 Injection.provideSaveFriends(getApplicationContext())
         );
 
-        initView();
+        // Google Sign-In
+        GoogleSignInFragment googleSignInFragment = (GoogleSignInFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.google_signin_frame);
+        if(googleSignInFragment == null) {
+            googleSignInFragment = GoogleSignInFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
+                    googleSignInFragment, R.id.google_signin_frame, GoogleSignInFragment.TAG_GOOGLE_SIGNIN_FRAG);
+        }
+
     }
 
     private void initView() {
@@ -86,7 +104,9 @@ public class LoginActivity extends AppCompatActivity implements
         mListener.onSendData(email, name);
     }
 
-    // Interface with LoginFragment
+    /*
+    * Interface with LoginFragment
+    * */
     public interface LoginActivityListener {
         void onSendData(String registeredEmail, String registeredName);
     }

@@ -54,6 +54,9 @@
     <string name="taskhead_empty_err">empty tasks and title</string>
     <string name="title_hint">TITLE</string>
     <string name="edit_title">EDIT TITLE</string>
+    <!-- Server Client ID. This should be a valid web oauth 2.0 client id obtained
+    from  https://console.developers.google.com/ -->
+    <string name="google_server_client_id">851140601460-fqbr26rjkor9ab557l6l4vrmbg3bh4gi.apps.googleusercontent.com</string>
 
 
 </resources>

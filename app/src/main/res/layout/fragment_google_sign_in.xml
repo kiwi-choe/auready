@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.kiwi.auready_ver2.login.google.GoogleSignInFragment"
+    android:orientation="horizontal">
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/bt_google_signin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        tools:visibility="gone" />
+</LinearLayout>
