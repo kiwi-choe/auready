@@ -33,12 +33,12 @@ public interface LoginContract {
 
         boolean validateEmail(String email);
         boolean validatePassword(String password);
-        void attemptLogin(String email, String password, String name);
+        void attemptLogin(String email, String password);
 
         void onEmailError(int stringResource);
         void onPasswordError(int stringResource);
 
-        void requestLogin(String email, String password, String name);
+        void requestLogin(String email, String password);
 
         void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail, String loggedInName);
 

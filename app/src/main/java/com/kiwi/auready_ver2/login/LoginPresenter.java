@@ -84,18 +84,15 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void attemptLogin(String email, String password, String name) {
+    public void attemptLogin(String email, String password) {
 
         if(validateEmail(email) && validatePassword(password)) {
-            // Check that edName has string name
-            String[] result = email.split(LoginUtils.EMAIL_TOKEN);
-            name = result[0];
+            requestLogin(email, password);
         }
-        requestLogin(email, password, name);
     }
 
     @Override
-    public void requestLogin(final String email, String password, final String name) {
+    public void requestLogin(final String email, String password) {
 
         ILoginService loginService =
                 ServiceGenerator.createService(ILoginService.class);
@@ -113,9 +110,9 @@ public class LoginPresenter implements LoginContract.Presenter {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     // Save tokenInfo to sharedPreferences
-                    onLoginSuccess(response.body(), email, name);
-                } else if (response.code() == 404) {
-                    onLoginFail(R.string.login_fail_message_404);
+//                    onLoginSuccess(response.body());
+                } else if (response.code() == 400) {
+                    onLoginFail(R.string.login_fail_message_400);
                 }
             }
 

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -32,14 +33,16 @@ public class LoginFragment extends Fragment implements
 
     private EditText mEmail;
     private EditText mPassword;
-    private EditText mName;
     private Button mBtLoginComplete;
     private TextView mBtSignupOpen;
     private Button mBtLogoutComplete;
+    private LinearLayout mSocialLoginLayout;
 
     private LoginContract.Presenter mPresenter;
 
     private AccessTokenStore mAccessTokenStore;
+
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -56,12 +59,12 @@ public class LoginFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_login, container, false);
         mEmail = (EditText) root.findViewById(R.id.ed_email);
         mPassword = (EditText) root.findViewById(R.id.ed_password);
-        mName = (EditText) root.findViewById(R.id.ed_name);
 
         mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
         mBtSignupOpen = (TextView) root.findViewById(R.id.bt_signup_open);
         mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
 
+        mSocialLoginLayout = (LinearLayout) root.findViewById(R.id.social_login_layout);
         return root;
     }
 
@@ -153,14 +156,15 @@ public class LoginFragment extends Fragment implements
         int id = v.getId();
         switch (id) {
             case R.id.bt_signup_open:
+                // Set visibility of 'social_login_layout' to GONE
+                mSocialLoginLayout.setVisibility(View.GONE);
                 startSignupFragment();
                 break;
 
             case R.id.bt_login_complete:
                 mPresenter.attemptLogin(
                         mEmail.getText().toString(),
-                        mPassword.getText().toString(),
-                        mName.getText().toString());
+                        mPassword.getText().toString());
                 break;
 
             case R.id.bt_logout_complete:
@@ -169,7 +173,6 @@ public class LoginFragment extends Fragment implements
                 break;
         }
     }
-
 
     private void startSignupFragment() {
 
@@ -190,12 +193,6 @@ public class LoginFragment extends Fragment implements
             @Override
             public void run() {
                 mEmail.setText(registeredEmail);
-            }
-        });
-        mName.post(new Runnable() {
-            @Override
-            public void run() {
-                mName.setText(registeredName);
             }
         });
     }

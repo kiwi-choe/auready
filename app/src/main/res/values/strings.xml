@@ -21,7 +21,8 @@
     <string name="email_format_err">email format is invalid</string>
     <string name="password_empty_err">password is empty</string>
     <string name="signup_fail_message_404">You are already registered</string>
-    <string name="login_fail_message_404">Login failed</string>
+    <string name="login_fail_message_400">login failed. Input the correct id or password</string>
+    <string name="login_fail_message_401">login failed.</string>
     <string name="login_fail_message_onfailure">Called onFailure()</string>
     <string name="login_success_msg">Login succeed</string>
 
