@@ -17,10 +17,12 @@ import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.data.source.remote.FakeTaskHeadRemoteDataSource;
+import com.kiwi.auready_ver2.login.LoginActivity;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -71,24 +73,32 @@ public class TaskHeadsViewTest {
 
     private TaskHeadsActivity mActivity;
 
+//    @Rule
+//    public ActivityTestRule<TaskHeadsActivity> mActivityTestRule =
+//            new ActivityTestRule<>(TaskHeadsActivity.class, true, false);
+
     @Rule
     public ActivityTestRule<TaskHeadsActivity> mActivityTestRule =
-            new ActivityTestRule<>(TaskHeadsActivity.class, true, false);
+            new ActivityTestRule<>(TaskHeadsActivity.class);
 
     @Before
     public void setup() {
         mActivity = mActivityTestRule.getActivity();
     }
 
+    @After
+    public void cleanup() {
+        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
+        accessTokenStore.logoutUser();
+    }
     @Test
     public void clickOnAndroidHomeIcon_OpensNavigation() {
-        // Check that left drawer is closed at startup
+
+        // Check that left drawer is opened at startup
         onView(ViewMatchers.withId(R.id.drawer_layout))
                 .check(matches(isClosed(Gravity.START)));
-
         // Open Drawer
         onView(withContentDescription("Navigate up")).perform(click());
-
 
         // Check if drawer is open
         onView(withId(R.id.drawer_layout))
@@ -155,8 +165,7 @@ public class TaskHeadsViewTest {
                 .check(matches(isClosed(Gravity.START)))
                 .perform(open());
 
-        // Set Member's view
-        // 1. Set loggedInEmail to nav_name and nav_email
+        // Set loggedInEmail to nav_name and nav_email
         onView(withId(R.id.nav_name))
                 .check(matches(withText(loggedInName)));
         onView(withId(R.id.nav_email))
@@ -166,7 +175,7 @@ public class TaskHeadsViewTest {
     @Test
     public void openTasksView() {
 
-        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.add_taskhead_bt)).perform(click());
         // open TaskView
         onView(withId(R.id.add_taskview_bt)).check(matches(isDisplayed()));
     }
@@ -174,7 +183,7 @@ public class TaskHeadsViewTest {
     @Test
     public void showNoTaskHeadView_whenNoTaskHead() {
         // Create new taskHead
-        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.add_taskhead_bt)).perform(click());
 
         // Show taskHead empty error message to snackbar
         String msg = mActivity.getString(R.string.taskhead_empty_err);
@@ -221,9 +230,9 @@ public class TaskHeadsViewTest {
     }
 
     @Test
-    public void addTaskHeadToTaskHeadList() {
+    public void addNewTaskHeadToTaskHeadList() {
         // Create a taskHead
-        onView(withId(R.id.fab_add_task)).perform(click());
+        onView(withId(R.id.add_taskhead_bt)).perform(click());
 
         // Verify taskHead is displayed on screen
         onView(withItemText(TITLE1)).check(matches(isDisplayed()));
@@ -240,8 +249,8 @@ public class TaskHeadsViewTest {
         assertEquals(userName, accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, ""));
         assertEquals(userEmail, accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, ""));
 
-//        accessTokenStore.setLoggedInStatus();
-//        assertTrue(accessTokenStore.isLoggedIn());
+        accessTokenStore.setLoggedInStatus();
+        assertTrue(accessTokenStore.isLoggedIn());
     }
 
     private Matcher<View> withItemText(final String itemText) {

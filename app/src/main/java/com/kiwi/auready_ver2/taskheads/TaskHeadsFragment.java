@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -107,10 +108,9 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskheads, container, false);
 
-        // Set Floating button
-        FloatingActionButton fb =
-                (FloatingActionButton) getActivity().findViewById(R.id.fab_add_task);
-        fb.setOnClickListener(new View.OnClickListener() {
+        // Set AddTaskHead button
+        Button addTaskHeadBt = (Button) root.findViewById(R.id.add_taskhead_bt);
+        addTaskHeadBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.saveTaskHead();

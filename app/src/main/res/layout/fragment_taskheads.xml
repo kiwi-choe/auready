@@ -11,11 +11,18 @@
         xmlns:dslv="http://schemas.android.com/apk/res-auto"
         android:id="@+id/taskhead_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:dividerHeight="1px"
         dslv:drag_enabled="true"
         dslv:float_alpha="0.6"
         dslv:use_default_controller="false"/>
+
+    <Button
+        android:id="@+id/add_taskhead_bt"
+        android:text="@string/add_taskhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"/>
 
     <TextView
         android:id="@+id/no_taskhead_txt"
