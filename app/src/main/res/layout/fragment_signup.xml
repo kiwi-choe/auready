@@ -22,8 +22,7 @@
             android:gravity="center"
             android:hint="@string/login_hint_email"
             android:inputType="textEmailAddress"
-            android:maxLines="1"
-            android:singleLine="true" />
+            android:maxLines="1"/>
 
         <EditText
             android:id="@+id/ed_name"
@@ -43,7 +42,7 @@
             android:gravity="center"
             android:hint="@string/login_hint_password"
             android:inputType="textPassword"
-            android:singleLine="true" />
+            android:maxLines="1" />
 
         <Button
             android:id="@+id/bt_signup_complete"

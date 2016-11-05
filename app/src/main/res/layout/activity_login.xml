@@ -30,6 +30,7 @@
         android:layout_weight="7" />
 
     <LinearLayout
+        android:id="@+id/social_login_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"

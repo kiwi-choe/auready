@@ -101,10 +101,10 @@ public class TasksAdapter extends BaseTasksAdapter {
             public void onClick(View v) {
                 if(task.isCompleted()) {
                     // to active task
-//                    mItemListener.onActivateTaskClick(task);
+                    mItemListener.onActivateTaskClick(task);
                 } else {
                     // to completed
-//                    mItemListener.onCompleteTaskClick(task);
+                    mItemListener.onCompleteTaskClick(task);
 
                 }
             }

@@ -53,12 +53,18 @@
     <string name="loading_tasks_error">Error while loading tasks</string>
     <string name="no_tasks">No Tasks. Add new task!</string>
     <string name="taskhead_empty_err">empty tasks and title</string>
-    <string name="title_hint">TITLE</string>
+    <string name="menu_title">TITLE</string>
     <string name="edit_title">EDIT TITLE</string>
     <!-- Server Client ID. This should be a valid web oauth 2.0 client id obtained
     from  https://console.developers.google.com/ -->
     <string name="google_server_client_id">851140601460-fqbr26rjkor9ab557l6l4vrmbg3bh4gi.apps.googleusercontent.com</string>
     <string name="add_taskhead">+ ADD TASK LIST</string>
+    <string name="menu_create">Create</string>
+    <string name="taskheadsetting_title">Setting Task List</string>
+    <string name="taskhead_title">Title</string>
+    <string name="member_title">Members</string>
+    <string name="label_title">Label</string>
+    <string name="choose_label_bt">+ Choose a Label</string>
 
 
 </resources>

@@ -91,20 +91,10 @@ public class TaskHeadsViewTest {
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
         accessTokenStore.logoutUser();
     }
-    @Test
-    public void clickOnAndroidHomeIcon_OpensNavigation() {
 
-        // Check that left drawer is opened at startup
-        onView(ViewMatchers.withId(R.id.drawer_layout))
-                .check(matches(isClosed(Gravity.START)));
-        // Open Drawer
-        onView(withContentDescription("Navigate up")).perform(click());
-
-        // Check if drawer is open
-        onView(withId(R.id.drawer_layout))
-                .check(matches(isOpen(Gravity.START)));
-    }
-
+    /*
+    * Navigation View
+    * */
     @Test
     public void clickOnLoginNavigationItem_showsLoginScreen() {
         // Open Drawer to click on navigation
@@ -120,64 +110,67 @@ public class TaskHeadsViewTest {
         onView(withId(R.id.ed_email)).check(matches(isDisplayed()));
     }
 
+//    @Test
+//    public void setMemberNavView_whenLoggedIn() {
+//        // Set logged in status
+//        setLoggedIn(USER_NAME, USER_EMAIL);
+//
+//        // Open Drawer to click on navigation
+//        onView(withId(R.id.drawer_layout))
+//                .check(matches(isClosed(Gravity.START)))
+//                .perform(open());
+//
+//        onView(withId(R.id.nav_email)).check(matches(isDisplayed()));
+//
+//        onView(withId(R.id.bt_manage_friend)).check(matches(isDisplayed()));
+//    }
+
+//    @Test
+//    public void clickOnBtManageFriend_showsFriendView() {
+//
+//        setLoggedIn(USER_NAME, USER_EMAIL);
+//
+//        // Open Drawer to click on navigation
+//        onView(withId(R.id.drawer_layout))
+//                .check(matches(isClosed(Gravity.START)))
+//                .perform(open());
+//
+//        onView(withId(R.id.bt_manage_friend)).perform(click());
+//
+//        // Check that FriendActivity was opened.
+//        onView(withId(R.id.friend_list_layout)).check(matches(isDisplayed()));
+//    }
+
+//    @Test
+//    public void setSuccessUi_whenLoginSuccess() {
+//
+//        // Stub of logged in name and email
+//        String loggedInName = "nameOfaa";
+//        String loggedInEmail = "aaa@aaa.aaa";
+//
+//        setLoggedIn(loggedInName, loggedInEmail);
+//
+//        // Open Drawer to click on navigation
+//        onView(withId(R.id.drawer_layout))
+//                .check(matches(isClosed(Gravity.START)))
+//                .perform(open());
+//
+//        // Set loggedInEmail to nav_name and nav_email
+//        onView(withId(R.id.nav_name))
+//                .check(matches(withText(loggedInName)));
+//        onView(withId(R.id.nav_email))
+//                .check(matches(withText(loggedInEmail)));
+//    }
+
+    /*
+    * TaskHead ListView
+    * */
     @Test
-    public void setMemberNavView_whenLoggedIn() {
-        // Set logged in status
-        setLoggedIn(USER_NAME, USER_EMAIL);
-
-        // Open Drawer to click on navigation
-        onView(withId(R.id.drawer_layout))
-                .check(matches(isClosed(Gravity.START)))
-                .perform(open());
-
-        onView(withId(R.id.nav_email)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.bt_manage_friend)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void clickOnBtManageFriend_showsFriendView() {
-
-        setLoggedIn(USER_NAME, USER_EMAIL);
-
-        // Open Drawer to click on navigation
-        onView(withId(R.id.drawer_layout))
-                .check(matches(isClosed(Gravity.START)))
-                .perform(open());
-
-        onView(withId(R.id.bt_manage_friend)).perform(click());
-
-        // Check that FriendActivity was opened.
-        onView(withId(R.id.friend_list_layout)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void setSuccessUi_whenLoginSuccess() {
-
-        // Stub of logged in name and email
-        String loggedInName = "nameOfaa";
-        String loggedInEmail = "aaa@aaa.aaa";
-
-        setLoggedIn(loggedInName, loggedInEmail);
-
-        // Open Drawer to click on navigation
-        onView(withId(R.id.drawer_layout))
-                .check(matches(isClosed(Gravity.START)))
-                .perform(open());
-
-        // Set loggedInEmail to nav_name and nav_email
-        onView(withId(R.id.nav_name))
-                .check(matches(withText(loggedInName)));
-        onView(withId(R.id.nav_email))
-                .check(matches(withText(loggedInEmail)));
-    }
-
-    @Test
-    public void openTasksView() {
+    public void openTaskHeadSettingView() {
 
         onView(withId(R.id.add_taskhead_bt)).perform(click());
-        // open TaskView
-        onView(withId(R.id.add_taskview_bt)).check(matches(isDisplayed()));
+        // Open TaskHeadSettingView
+        onView(withId(R.id.taskhead_title)).check(matches(isDisplayed()));
     }
 
     @Test
@@ -235,7 +228,7 @@ public class TaskHeadsViewTest {
         onView(withId(R.id.add_taskhead_bt)).perform(click());
 
         // Verify taskHead is displayed on screen
-        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
+//        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
     }
 
     /*

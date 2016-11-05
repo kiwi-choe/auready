@@ -28,6 +28,13 @@
         android:id="@+id/no_taskhead_txt"
         android:text="@string/no_taskheads"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
+    <!-- temp button to show task view -->
+    <Button
+        android:id="@+id/temp_show_tasksview_bt"
+        android:text="TEMP BUTTON TO SHOW TASKS VIEW"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

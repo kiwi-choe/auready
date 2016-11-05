@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.ActionBarOverlayLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +18,9 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.customlistview.DragSortListView;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.taskheads.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
+import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void onResume() {
         super.onResume();
+        // Destroy all menu and recall onCreateOptionsMenu
+        getActivity().supportInvalidateOptionsMenu();
         mPresenter.start();
     }
 
@@ -108,12 +112,19 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskheads, container, false);
 
+        // Set ActionBar
+        ActionBar ab = ((TaskHeadsActivity)getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
+
         // Set AddTaskHead button
         Button addTaskHeadBt = (Button) root.findViewById(R.id.add_taskhead_bt);
         addTaskHeadBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveTaskHead();
+                openTaskHeadSetting();
             }
         });
 
@@ -125,6 +136,15 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         // Set no taskHead textview
         mNoTaskHeadTxt = (TextView) root.findViewById(R.id.no_taskhead_txt);
 
+        // FIXME: 11/3/16 Temp button to show tasks view
+        Button btTemp = (Button) root.findViewById(R.id.temp_show_tasksview_bt);
+        btTemp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TaskHead taskHead = new TaskHead("temp taskhead title");
+                openTasks(taskHead);
+            }
+        });
         return root;
     }
 
@@ -174,6 +194,12 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public void showEmptyTaskHeadError() {
 
         Snackbar.make(getView(), getString(R.string.taskhead_empty_err), Snackbar.LENGTH_LONG).show();
+    }
+
+    private void openTaskHeadSetting() {
+        TaskHeadDetailFragment taskHeadDetailFragment = TaskHeadDetailFragment.newInstance();
+        ActivityUtils.replaceFragment(getFragmentManager(),
+                taskHeadDetailFragment, R.id.content_frame, TaskHeadDetailFragment.TAG_TASKHEADSETTING);
     }
 
     // Interface with TaskHeadsActivity

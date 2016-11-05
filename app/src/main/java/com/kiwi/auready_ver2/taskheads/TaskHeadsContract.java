@@ -16,8 +16,6 @@ public interface TaskHeadsContract {
 
     interface View extends BaseView<Presenter> {
 
-        void setPresenter(TaskHeadsContract.Presenter tasksPresenter);
-
         void setLoginSuccessUI();
 
         void showTaskHeads(List<TaskHead> taskHeads);

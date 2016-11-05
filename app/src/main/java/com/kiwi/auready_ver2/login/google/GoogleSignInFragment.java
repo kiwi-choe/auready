@@ -58,6 +58,7 @@ public class GoogleSignInFragment extends Fragment implements
         root.findViewById(R.id.bt_google_signin).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("test IdToken", "clicked google signin button");
                 getIdToken();
             }
         });
@@ -73,17 +74,19 @@ public class GoogleSignInFragment extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        Log.d("test IdToken", "clicked onactivityresult()");
         if(requestCode == RC_GET_TOKEN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if(result.isSuccess()) {
                 String idToken = result.getSignInAccount().getIdToken();
-                Log.d("test idToken", "IdToken: " + idToken);
+                String email = result.getSignInAccount().getEmail();
+                Log.d("test idToken", "IdToken: " + idToken + " email:" + email);
             }
         }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d("test idToken", "Connection is failed.");
     }
 }

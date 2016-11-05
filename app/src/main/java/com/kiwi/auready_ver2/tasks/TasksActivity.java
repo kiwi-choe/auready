@@ -4,6 +4,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.View;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
@@ -17,20 +19,14 @@ public class TasksActivity extends AppCompatActivity {
     private TasksFragment mTasksFragment;
     private TasksPresenter mPresenter;
 
-    private ActionBar mActionBar;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
 
         // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
         setSupportActionBar(toolbar);
-        mActionBar = getSupportActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
-        mActionBar.setDisplayShowHomeEnabled(true);
-
 
         mTasksFragment =
                 (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
@@ -42,7 +38,7 @@ public class TasksActivity extends AppCompatActivity {
 
             taskHeadId = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
             taskHeadTitle = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
-            mActionBar.setTitle(taskHeadTitle);
+//            ab.setTitle(taskHeadTitle);
             Bundle bundle = new Bundle();
             bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
             bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE, taskHeadTitle);
@@ -70,11 +66,6 @@ public class TasksActivity extends AppCompatActivity {
         onBackPressed();
         return true;
     }
-
-    public void setActionBarTitle(String title) {
-        mActionBar.setTitle(title);
-    }
-
 
     @Override
     public void onBackPressed() {

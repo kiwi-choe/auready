@@ -125,4 +125,8 @@ public class TaskHeadsPresenterTest {
         // Then the repository and the view are notified.
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
     }
+
+    /*
+    * Connect TaskHead and TaskHeadSetting
+    * */
 }
