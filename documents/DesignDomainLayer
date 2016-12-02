@@ -1,4 +1,4 @@
-[The functions]
+# [The functions]
 
 Login, Signup
 - localLogin
@@ -10,7 +10,7 @@ Managing Friend
 	- findFriend
 - deleteFriend
 
-Todo(personal)
+Task(personal)
 - addNewTodo
 - deleteTodo
 - changeTitleOfTodo
@@ -21,15 +21,60 @@ Todo(personal)
 - changeOrderTodoItem
 
 
-[Entites]
+# [Models]
 
-- Login, Signup
+## Login, Signup
 ClientCredentials, TokenInfo
 
-- Managing Friend
+## Managing Friend
 Friend
 
-- Todo(personal)
-Todo
-TodoItem
+## About Task
+- TaskHead ; Local only(stored in Local DB)
+{
+    id:             int,
+    remote_id:      String,
+    title:          String,
+    members:        List<String>,
+    membersCnt:     int,
+    order:          int,
+    modifiedTime:   long
+}
+- TaskHead ; for Server(just schema)
+{
+    id:             int,
+    remote_id:      String,
+    title:          String,
+    members:        List<String>,
+    membersCnt:     int,
+    orderMap:       [{orderSchema}],
+    tasks:          [{taskSchema}],
+    modifiedTime:   long
+}
+* When try to Request, Response, use this schema is same to Server's
+- Task
+{
+    id:             int,
+    remote_id:      String,
+    description:    String,
+    detailNote:     String,
+    completed:      int,
+    order:          int
+}
 
+## Log
+; There should be Logs about all kinds of models that need to sync with Server.
+
+- TaskLog
+{
+    command:        Enum{ADD, MOD, DEL},
+    remote_id:      String,
+    membersCnt:     int,
+    jsonStrOfObj:   String
+}
+- TaskHeadLog
+{
+    command:        Enum{ADD, MOD, DEL},
+    remote_id:      String,
+    jsonStrOfObj:   String
+}
