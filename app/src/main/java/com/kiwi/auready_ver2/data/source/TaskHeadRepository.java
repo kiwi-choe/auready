@@ -25,7 +25,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     /*
     * This variable has package local visibility so it can be accessed from tests.
     * */
-    Map<String, TaskHead> mCachedTaskHeads;
+    public Map<String, TaskHead> mCachedTaskHeads;
 
     private boolean mCacheIsDirty;
 

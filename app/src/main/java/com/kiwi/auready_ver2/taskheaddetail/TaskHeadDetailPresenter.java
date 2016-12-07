@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.taskheads.taskheaddetail;
+package com.kiwi.auready_ver2.taskheaddetail;
 
 /**
  * Created by kiwi on 11/2/16.

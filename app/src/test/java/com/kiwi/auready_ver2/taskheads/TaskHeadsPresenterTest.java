@@ -7,9 +7,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallback;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.EditTitle;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +19,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -61,10 +57,8 @@ public class TaskHeadsPresenterTest {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
         DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository);
-        SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);
-        EditTitle editTitle = new EditTitle(mTaskHeadRepository);
 
-        return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead, saveTaskHead, editTitle);
+        return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead);
     }
 
     @Test
@@ -76,57 +70,22 @@ public class TaskHeadsPresenterTest {
 
         ArgumentCaptor<List> showTaskHeadsArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mTaskHeadView).showTaskHeads(showTaskHeadsArgumentCaptor.capture());
-        assertTrue(showTaskHeadsArgumentCaptor.getValue().size() == 3);
+        assertTrue(showTaskHeadsArgumentCaptor.getValue().size() == TASKHEADS.size());
     }
 
     @Test
-    public void saveNewTaskHeadToRepository_showAddTasksUi() {
-        // Create new taskHead
-        mTaskHeadsPresenter.saveTaskHead();
-
-        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
-        verify(mTaskHeadView).openTasks(any(TaskHead.class));
-    }
-
-    @Test
-    public void editTitleOfTaskHead() {
-        TaskHead taskHead = new TaskHead(TASKHEAD_ID, "title!!");
-        mTaskHeadsPresenter.editTaskHead(taskHead);
-
-        verify(mTaskHeadRepository).editTitle(taskHead);
-    }
-
-    @Test
-    public void clickOnTaskHead_openTasksViewWithTaskHeadId() {
-        // Given a stubbed a taskHead
-        TaskHead requestedTaskHead = new TaskHead(TASKHEAD_ID, TITLE);
-
-        mTaskHeadsPresenter.editTaskHead(requestedTaskHead);
-        verify(mTaskHeadView).openTasks(any(TaskHead.class));
-    }
-
-    @Test
-    public void deleteTaskHead() {
-
-        TaskHead taskHead = new TaskHead("title1");
-        // When the deletion of a taskHead is requested,
+    public void deleteTaskHead_andLoadIntoView() {
+        // Given an stubbed taskHead
+        TaskHead taskHead = new TaskHead(TITLE);
         mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
 
-        // Then the repository are notified.
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
     }
 
     @Test
-    public void deleteTaskHeadByIsEmptyTaskHead() {
-        TaskHead taskHead = new TaskHead();
-        // When the deletion of a taskHead is requested,
-        mTaskHeadsPresenter.deleteTaskHeadByIsEmptyTaskHead(taskHead.getId());
+    public void clickOnAddBt_ShowsAddTaskHeadUi() {
+        mTaskHeadsPresenter.addNewTask();
 
-        // Then the repository and the view are notified.
-        verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
+        verify(mTaskHeadView).showAddTaskHead();
     }
-
-    /*
-    * Connect TaskHead and TaskHeadSetting
-    * */
 }

@@ -12,7 +12,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Fetches the list of taskHeads.
+ * Fetches the list of taskHead.
  */
 public class GetTaskHeads extends UseCase<GetTaskHeads.RequestValues, GetTaskHeads.ResponseValue> {
 

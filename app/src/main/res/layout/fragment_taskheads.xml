@@ -6,23 +6,10 @@
     tools:context=".taskheads.TaskHeadsFragment"
     android:orientation="vertical">
 
-    <com.kiwi.auready_ver2.customlistview.DragSortListView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:dslv="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/taskhead_list"
+    <ListView
+        android:id="@+id/taskheads"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:dividerHeight="1px"
-        dslv:drag_enabled="true"
-        dslv:float_alpha="0.6"
-        dslv:use_default_controller="false"/>
-
-    <Button
-        android:id="@+id/add_taskhead_bt"
-        android:text="@string/add_taskhead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:id="@+id/no_taskhead_txt"
@@ -31,10 +18,4 @@
         android:layout_height="wrap_content"
         android:visibility="gone"/>
 
-    <!-- temp button to show task view -->
-    <Button
-        android:id="@+id/temp_show_tasksview_bt"
-        android:text="TEMP BUTTON TO SHOW TASKS VIEW"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 </LinearLayout>

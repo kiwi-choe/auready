@@ -1,14 +1,13 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.customlistview.DragSortListView;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.List;
@@ -18,15 +17,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  *
  */
-public class TaskHeadsAdapter extends BaseAdapter implements
-        DragSortListView.DropListener {
+public class TaskHeadsAdapter extends BaseAdapter {
 
+    private final TaskHeadsFragment.TaskHeadItemListener mItemListener;
     private List<TaskHead> mTaskHeads;
-    private TaskHeadItemListener mItemListener;
 
-    public TaskHeadsAdapter(List<TaskHead> taskHeads, TaskHeadItemListener itemListener) {
+    public TaskHeadsAdapter(List<TaskHead> taskHeads, TaskHeadsFragment.TaskHeadItemListener itemListener) {
         setList(taskHeads);
         mItemListener = itemListener;
+    }
+
+    public void replaceData(List<TaskHead> taskHeads) {
+        setList(taskHeads);
+        notifyDataSetChanged();
+    }
+
+    private void setList(List<TaskHead> taskHeads) {
+        mTaskHeads = checkNotNull(taskHeads);
     }
 
     @Override
@@ -45,70 +52,24 @@ public class TaskHeadsAdapter extends BaseAdapter implements
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
-
+    public View getView(int i, View view, ViewGroup viewGroup) {
         View rowView = view;
-        if(rowView == null) {
+        if (rowView == null) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
             rowView = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
-
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.titleTV = (TextView) rowView.findViewById(R.id.title);
-
-            rowView.setTag(viewHolder);
         }
-        bindView(rowView, position);
 
-        return rowView;
-    }
+        final TaskHead taskHead = getItem(i);
 
-    private void bindView(View view, final int position) {
-
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        final TaskHead taskHead = getItem(position);
-
-        viewHolder.titleTV.setText(taskHead.getTitle());
-
-        // Delete the item
-        viewHolder.titleTV.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                mItemListener.onItemLongClick(taskHead);
-                return true;    // true if the callback consumed the long click.
-            }
-        });
-
-        // Edit the item
-        viewHolder.titleTV.setOnClickListener(new View.OnClickListener() {
+        TextView titleTV = (TextView) rowView.findViewById(R.id.taskheaddetail_title);
+        titleTV.setText(taskHead.getTitle());
+        Button deleteBt = (Button) rowView.findViewById(R.id.delete_bt);
+        deleteBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onItemClick(taskHead);
+                mItemListener.onDeleteClick(taskHead);
             }
         });
-    }
-
-    public void setList(@NonNull List<TaskHead> list) {
-        mTaskHeads = checkNotNull(list);
-    }
-
-    public void replaceData(List<TaskHead> taskHeads) {
-        setList(taskHeads);
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void drop(int from, int to) {
-
-    }
-
-    private class ViewHolder {
-        public TextView titleTV;
-    }
-
-    public interface TaskHeadItemListener {
-
-        void onItemLongClick(TaskHead taskHead);
-
-        void onItemClick(TaskHead taskHead);
+        return rowView;
     }
 }

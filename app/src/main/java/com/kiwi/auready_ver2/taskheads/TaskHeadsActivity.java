@@ -8,7 +8,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -53,7 +52,7 @@ public class TaskHeadsActivity extends AppCompatActivity
         if (taskHeadsFragment == null) {
             taskHeadsFragment = TaskHeadsFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), taskHeadsFragment, R.id.content_frame, TaskHeadsFragment.TAG_TASKSFRAGMENT);
+                    getSupportFragmentManager(), taskHeadsFragment, R.id.content_frame, TaskHeadsFragment.TAG_TASKHEADSFRAGMENT);
         }
 
         // Create the presenter
@@ -61,9 +60,7 @@ public class TaskHeadsActivity extends AppCompatActivity
                 Injection.provideUseCaseHandler(),
                 taskHeadsFragment,
                 Injection.provideGetTaskHeads(getApplicationContext()),
-                Injection.provideDeleteTaskHead(getApplicationContext()),
-                Injection.provideSaveTaskHead(getApplicationContext()),
-                Injection.provideEditTitle(getApplicationContext()));
+                Injection.provideDeleteTaskHead(getApplicationContext()));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

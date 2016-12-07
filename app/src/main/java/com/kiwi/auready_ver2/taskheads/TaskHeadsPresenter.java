@@ -1,20 +1,12 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.EditTitle;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
-import com.kiwi.auready_ver2.tasks.TasksActivity;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.SaveTaskHead;
-import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.List;
 
@@ -30,20 +22,13 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private UseCaseHandler mUseCaseHandler;
     private final GetTaskHeads mGetTaskHeads;
     private final DeleteTaskHead mDeleteTaskHead;
-    private final SaveTaskHead mSaveTaskHead;
-    private final EditTitle mEditTitle;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
-                              @NonNull GetTaskHeads getTaskHeads,
-                              @NonNull DeleteTaskHead deleteTaskHead,
-                              @NonNull SaveTaskHead saveTaskHead,
-                              @NonNull EditTitle editTitle) {
+                              @NonNull GetTaskHeads getTaskHeads, DeleteTaskHead deleteTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
         mDeleteTaskHead = checkNotNull(deleteTaskHead, "deleteTaskHead cannot be null");
-        mSaveTaskHead = checkNotNull(saveTaskHead, "saveTaskHead cannot be null");
-        mEditTitle = checkNotNull(editTitle, "editTitle cannot be null");
 
         mTaskHeadView.setPresenter(this);
     }
@@ -51,47 +36,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void start() {
         loadTaskHeads();
-    }
-
-    @Override
-    public void result(int requestCode, int resultCode, Intent data) {
-
-        if (TaskHeadsActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {
-
-            int loginOrOut = data.getIntExtra(LoginUtils.LOGIN_LOGOUT, 10);
-            boolean isSuccess = data.getBooleanExtra(LoginUtils.IS_SUCCESS, false);
-            if (loginOrOut == LoginUtils.LOGIN) {
-                if (isSuccess) {
-                    mTaskHeadView.setLoginSuccessUI();
-                }
-                else {
-
-                }
-            }
-            else if (loginOrOut == LoginUtils.LOGOUT) {
-                if (isSuccess) {
-
-                }
-                else {
-
-                }
-            }
-        }
-
-        if(TaskHeadsActivity.REQ_ADD_TASK == requestCode && Activity.RESULT_OK == resultCode) {
-
-            boolean isEmptyTasks = data.getBooleanExtra(TasksActivity.EXTRA_ISEMPTY_TASKHEAD, false);
-            String taskHeadId = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
-            String taskHeadTitle = data.getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_TITLE);
-            if(isEmptyTasks) {
-                mTaskHeadView.showEmptyTaskHeadError();
-//                deleteTaskHead(taskHeadId);
-                deleteTaskHeadByIsEmptyTaskHead(taskHeadId);
-            } else {
-                TaskHead taskHead = new TaskHead(taskHeadId, taskHeadTitle);
-                editTaskHead(taskHead);
-            }
-        }
     }
 
     @Override
@@ -113,84 +57,32 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                 });
     }
 
-    @Override
-    public void deleteTaskHead(@NonNull String taskHeadId) {
-
-        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
-                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
-//                        mTaskHeadView.showTaskHeadDeleted();
-                        loadTaskHeads();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void deleteTaskHeadByIsEmptyTaskHead(String taskHeadId) {
-
-        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
-                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
-//                        loadTaskHeads();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void saveTaskHead() {
-        final TaskHead newTaskHead = new TaskHead();
-        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
-                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
-                    @Override
-                    public void onSuccess(SaveTaskHead.ResponseValue response) {
-
-                        // open AddEditView
-                        mTaskHeadView.openTasks(newTaskHead);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void editTaskHead(@NonNull TaskHead requestedTaskHead) {
-        checkNotNull(requestedTaskHead, "requestedTaskHead cannot be null");
-        mUseCaseHandler.execute(mEditTitle, new EditTitle.RequestValues(requestedTaskHead),
-                new UseCase.UseCaseCallback<EditTitle.ResponseValue>() {
-                    @Override
-                    public void onSuccess(EditTitle.ResponseValue response) {
-                        loadTaskHeads();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
     private void processTaskHeads(List<TaskHead> taskHeads) {
         if(taskHeads.isEmpty()) {
             mTaskHeadView.showNoTaskHeads();
         } else {
             mTaskHeadView.showTaskHeads(taskHeads);
         }
+    }
+
+    @Override
+    public void deleteTaskHead(String taskHeadId) {
+        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
+                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
+                    @Override
+                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
+                        loadTaskHeads();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void addNewTask() {
+        mTaskHeadView.showAddTaskHead();
     }
 }

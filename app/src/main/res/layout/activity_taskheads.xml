@@ -23,39 +23,48 @@
     tools:context=".taskheads.TaskHeadsActivity"
     tools:openDrawer="start">
 
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- toolbar -->
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorPrimary"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/Toolbar"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <!-- toolbar -->
-            <android.support.design.widget.AppBarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/colorPrimary"
-                    android:minHeight="?attr/actionBarSize"
-                    android:theme="@style/Toolbar"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-            </android.support.design.widget.AppBarLayout>
+            android:fitsSystemWindows="true">
             <!-- content main -->
             <FrameLayout
                 android:id="@id/content_frame"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                android:layout_height="match_parent" />
+            <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" />-->
 
-        </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab_add_taskhead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_add"
+                app:fabSize="normal"
+                app:layout_anchor="@id/content_frame"
+                app:layout_anchorGravity="bottom|right|end" />
+        </android.support.design.widget.CoordinatorLayout>
+    </LinearLayout>
 
     <!-- Navigation Drawer -->
     <android.support.design.widget.NavigationView

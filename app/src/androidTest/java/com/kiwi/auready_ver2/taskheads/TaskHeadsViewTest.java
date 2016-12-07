@@ -109,90 +109,27 @@ public class TaskHeadsViewTest {
         // Check that Login Activity was opened
         onView(withId(R.id.ed_email)).check(matches(isDisplayed()));
     }
-
+//
 //    @Test
-//    public void setMemberNavView_whenLoggedIn() {
-//        // Set logged in status
-//        setLoggedIn(USER_NAME, USER_EMAIL);
+//    public void showNoTaskHeadView_whenNoTaskHead() {
+//        // Create new taskHead
+//        onView(withId(R.id.add_taskhead_bt)).perform(click());
 //
-//        // Open Drawer to click on navigation
-//        onView(withId(R.id.drawer_layout))
-//                .check(matches(isClosed(Gravity.START)))
-//                .perform(open());
+//        // Show taskHead empty error message to snackbar
+//        String msg = mActivity.getString(R.string.taskhead_empty_err);
+//        onView(withText(msg)).check(matches(isDisplayed()));
 //
-//        onView(withId(R.id.nav_email)).check(matches(isDisplayed()));
+//        // Show no taskHeadView
+//        onView(withId(R.id.no_taskhead_txt)).check(matches(isDisplayed()));
 //
-//        onView(withId(R.id.bt_manage_friend)).check(matches(isDisplayed()));
+//        onView(withId(R.id.taskhead_list))
+//                .check(matches(not(isDisplayed())));
 //    }
-
-//    @Test
-//    public void clickOnBtManageFriend_showsFriendView() {
-//
-//        setLoggedIn(USER_NAME, USER_EMAIL);
-//
-//        // Open Drawer to click on navigation
-//        onView(withId(R.id.drawer_layout))
-//                .check(matches(isClosed(Gravity.START)))
-//                .perform(open());
-//
-//        onView(withId(R.id.bt_manage_friend)).perform(click());
-//
-//        // Check that FriendActivity was opened.
-//        onView(withId(R.id.friend_list_layout)).check(matches(isDisplayed()));
-//    }
-
-//    @Test
-//    public void setSuccessUi_whenLoginSuccess() {
-//
-//        // Stub of logged in name and email
-//        String loggedInName = "nameOfaa";
-//        String loggedInEmail = "aaa@aaa.aaa";
-//
-//        setLoggedIn(loggedInName, loggedInEmail);
-//
-//        // Open Drawer to click on navigation
-//        onView(withId(R.id.drawer_layout))
-//                .check(matches(isClosed(Gravity.START)))
-//                .perform(open());
-//
-//        // Set loggedInEmail to nav_name and nav_email
-//        onView(withId(R.id.nav_name))
-//                .check(matches(withText(loggedInName)));
-//        onView(withId(R.id.nav_email))
-//                .check(matches(withText(loggedInEmail)));
-//    }
-
-    /*
-    * TaskHead ListView
-    * */
-    @Test
-    public void openTaskHeadSettingView() {
-
-        onView(withId(R.id.add_taskhead_bt)).perform(click());
-        // Open TaskHeadSettingView
-        onView(withId(R.id.taskhead_title)).check(matches(isDisplayed()));
-    }
-
-    @Test
-    public void showNoTaskHeadView_whenNoTaskHead() {
-        // Create new taskHead
-        onView(withId(R.id.add_taskhead_bt)).perform(click());
-
-        // Show taskHead empty error message to snackbar
-        String msg = mActivity.getString(R.string.taskhead_empty_err);
-        onView(withText(msg)).check(matches(isDisplayed()));
-
-        // Show no taskHeadView
-        onView(withId(R.id.no_taskhead_txt)).check(matches(isDisplayed()));
-
-        onView(withId(R.id.taskhead_list))
-                .check(matches(not(isDisplayed())));
-    }
     @Test
     public void showTaskHeads() {
         loadTaskHeads();
 
-        onView(withId(R.id.taskhead_list)).check(matches(isDisplayed()));
+        onView(withId(R.id.taskheads)).check(matches(isDisplayed()));
 
         onView(withItemText(TITLE1)).check(matches(isDisplayed()));
         onView(withItemText(TITLE2)).check(matches(isDisplayed()));
@@ -200,52 +137,27 @@ public class TaskHeadsViewTest {
     }
 
     @Test
-    public void onLongClickedTaskHeadItem_deleteTaskHead() {
+    public void deleteTaskHead() {
+        // Load 1 taskhead
+        loadATaskHead();
+        // there is a taskhead with TITLE1
+        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
 
-        // Given taskHead stubs
-        loadTaskHeads();
-
-        // On longClick the item with TITLE2
-        onView(withText(TITLE2)).perform(longClick());
-
-        // Verify one taskHead was deleted
-        onView(withItemText(TITLE2)).check(doesNotExist());
+        // click delete button
+        onView(withId(R.id.delete_bt)).perform(click());
+        // no taskheads in the listview
+        onView(withId(R.id.no_taskhead_txt)).check(matches(isDisplayed()));
     }
 
     @Test
-    public void onClickTaskHeadItem_openTaskHead() {
-        loadTaskHeads();
-
-        onView(withText(TITLE1)).perform(click());
-
-        onView(withText(TITLE1)).check(matches(isDisplayed()));
-//        onView(withId(R.id.task_list)).check(matches(isDisplayed()));
+    public void clickAddTaskHeadBt_opensAddTaskHeadUi() {
+        onView(withId(R.id.fab_add_taskhead)).perform(click());
+        // Check if the add taskHead screen is displayed
+        onView(withId(R.id.taskheaddetail_title)).check(matches(isDisplayed()));
     }
-
-    @Test
-    public void addNewTaskHeadToTaskHeadList() {
-        // Create a taskHead
-        onView(withId(R.id.add_taskhead_bt)).perform(click());
-
-        // Verify taskHead is displayed on screen
-//        onView(withItemText(TITLE1)).check(matches(isDisplayed()));
-    }
-
     /*
     * Useful methods for test
     * */
-    private void setLoggedIn(String userName, String userEmail) {
-        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
-        TokenInfo tokenInfo = new TokenInfo("", "");
-        accessTokenStore.save(tokenInfo, userName, userEmail);
-
-        assertEquals(userName, accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, ""));
-        assertEquals(userEmail, accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, ""));
-
-        accessTokenStore.setLoggedInStatus();
-        assertTrue(accessTokenStore.isLoggedIn());
-    }
-
     private Matcher<View> withItemText(final String itemText) {
         checkArgument(!TextUtils.isEmpty(itemText), "itemText cannot be null or empty");
         return new TypeSafeMatcher<View>() {
@@ -265,6 +177,10 @@ public class TaskHeadsViewTest {
 
     private void loadTaskHeads() {
         startActivityWithStubbedTasks(TASKHEADS);
+    }
+    private void loadATaskHead() {
+        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1));
+        startActivityWithStubbedTasks(taskheads);
     }
     private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {
         // Add tasks stub to the fake service api layer.

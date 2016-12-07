@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:layout_height="50dp"
+    android:weightSum="10">
 
     <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
+        android:id="@+id/taskheaddetail_title"
+        android:layout_weight="8"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/delete_bt"
+        android:text="DEL"
+        android:layout_weight="2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

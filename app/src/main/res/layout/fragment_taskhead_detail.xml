@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.kiwi.auready_ver2.taskheads.taskheaddetail.TaskHeadDetailFragment">
+    tools:context="com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment">
 
     <EditText
-        android:id="@+id/taskhead_title"
+        android:id="@+id/taskheaddetail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/taskhead_title" />
@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <ListView
-        android:id="@+id/taskhead_member_list"
+        android:id="@+id/taskheaddetail_member_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

@@ -1,8 +1,5 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -22,25 +19,15 @@ public interface TaskHeadsContract {
 
         void showNoTaskHeads();
 
-        void openTasks(TaskHead requestedTaskHead);
-
-        void showTaskHeadDeleted();
-
-        void showEmptyTaskHeadError();
+        void showAddTaskHead();
     }
 
     interface Presenter extends BasePresenter {
 
-        void result(int requestCode, int resultCode, Intent data);
-
         void loadTaskHeads();
 
-        void editTaskHead(@NonNull TaskHead requestedTaskHead);
+        void deleteTaskHead(String taskHeadId);
 
-        void deleteTaskHead(@NonNull String taskHeadId);
-
-        void deleteTaskHeadByIsEmptyTaskHead(String taskHeadId);
-
-        void saveTaskHead();
+        void addNewTask();
     }
 }

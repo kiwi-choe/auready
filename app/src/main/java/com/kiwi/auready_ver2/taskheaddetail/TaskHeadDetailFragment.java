@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.taskheads.taskheaddetail;
+package com.kiwi.auready_ver2.taskheaddetail;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +12,7 @@ import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 public class TaskHeadDetailFragment extends Fragment {
 
-    public static final String TAG_TASKHEADSETTING = "tag_TaskHeadSettingFragment";
+    public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFragment";
 
     public TaskHeadDetailFragment() {
         // Required empty public constructor
@@ -41,7 +41,7 @@ public class TaskHeadDetailFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_taskhead_detail, container, false);
 
         // Set Toolbar
-        ActionBar ab = ((TaskHeadsActivity) getActivity()).getSupportActionBar();
+        ActionBar ab = ((TaskHeadDetailActivity) getActivity()).getSupportActionBar();
         if (ab != null) {
             ab.setDisplayShowCustomEnabled(true);
             ab.setDisplayHomeAsUpEnabled(false);
@@ -60,13 +60,13 @@ public class TaskHeadDetailFragment extends Fragment {
 ////            // Show fragment on back stack
 ////            TaskHeadsFragment taskHeadsFragment = TaskHeadsFragment.newInstance();
 ////            ActivityUtils.replaceFragment(getFragmentManager(),
-////                    taskHeadsFragment, R.id.content_frame, TaskHeadsFragment.TAG_TASKSFRAGMENT);
+////                    taskHeadsFragment, R.id.content_frame, TaskHeadsFragment.TAG_TASKHEADSFRAGMENT);
 ////            return true;
 ////        } else
 //        if (R.id.menu_create == id) {
 //            // Create new TaskHead
 //            // Save this taskHead
-//            // Send intent to TaskHeadsActivity
+//            // Send intent to TaskHeadDetailActivity
 //        } else if(R.id.m)
 //        return super.onOptionsItemSelected(item);
 //    }
