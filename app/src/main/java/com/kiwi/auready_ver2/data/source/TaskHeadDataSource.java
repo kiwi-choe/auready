@@ -11,18 +11,26 @@ import java.util.List;
  */
 public interface TaskHeadDataSource {
 
-
-    void editTitle(@NonNull TaskHead taskHead);
-
     interface LoadTaskHeadsCallback {
+
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
+
+        void onDataNotAvailable();
+    }
+    interface GetTaskHeadCallback {
+
+        void onTaskHeadLoaded(TaskHead taskHead);
 
         void onDataNotAvailable();
     }
 
     void getTaskHeads(@NonNull LoadTaskHeadsCallback callback);
 
-    void deleteTaskHead(@NonNull String taskHeadId);
+    void getTaskHead(@NonNull String taskHeadId, @NonNull GetTaskHeadCallback callback);
 
     void saveTaskHead(@NonNull TaskHead taskHead);
+
+    void deleteTaskHead(@NonNull String taskHeadId);
+
+    void deleteAllTaskHeads();
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
@@ -12,6 +13,9 @@ import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry
  * Created by kiwi on 7/4/16.
  */
 public class SQLiteDbHelper extends SQLiteOpenHelper {
+
+    // Object mapper for serializing and deserializing JSON strings
+    public static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     // Database info
     // If you change the db scheme, you must increment the database version
@@ -32,7 +36,8 @@ public class SQLiteDbHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TASKHEAD_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TaskHeadEntry.TABLE_NAME + " (" +
                     TaskHeadEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
-                    TaskHeadEntry.COLUMN_TITLE + TEXT_TYPE +
+                    TaskHeadEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
+                    TaskHeadEntry.COLUMN_MEMBERS + TEXT_TYPE +
                     " )";
 
     private static final String SQL_CREATE_TASK_TABLE =

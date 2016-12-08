@@ -13,12 +13,13 @@ public interface TaskHeadDetailContract {
 
     interface View extends BaseView<Presenter> {
 
+        boolean isActive();
     }
 
     interface Presenter extends BasePresenter {
 
-//        void saveTaskHead(String title, List<String> memberList);   // create or update
+        void saveTaskHead(String title, List<String> memberList);   // create or update
 
-//        void populateTaskHead();        // Get TaskHead if exists the taskHeadId
+        void populateTaskHead();        // Get TaskHead if exists the taskHeadId
     }
 }

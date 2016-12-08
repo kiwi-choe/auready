@@ -16,6 +16,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
@@ -28,6 +29,7 @@ public class TaskHeadsPresenterTest {
 
     private static final String TASKHEAD_ID = "stubTaskHeadId";
     private static final String TITLE = "stubTitle";
+    private static final List<String> MEMBERS = Lists.newArrayList("me");
 
     private static List<TaskHead> TASKHEADS;
 
@@ -47,9 +49,9 @@ public class TaskHeadsPresenterTest {
 
         mTaskHeadsPresenter = givenTaskHeadsPresenter();
 
-        // Start the taskHeads to 3.
-        TASKHEADS = Lists.newArrayList(new TaskHead("title1"),
-                new TaskHead("title2"), new TaskHead("title3"));
+        // Start 3 taskHeads with title and only a member.
+        TASKHEADS = Lists.newArrayList(new TaskHead("title1", MEMBERS),
+                new TaskHead("title2", MEMBERS), new TaskHead("title3", MEMBERS));
     }
 
     private TaskHeadsPresenter givenTaskHeadsPresenter() {
@@ -76,7 +78,7 @@ public class TaskHeadsPresenterTest {
     @Test
     public void deleteTaskHead_andLoadIntoView() {
         // Given an stubbed taskHead
-        TaskHead taskHead = new TaskHead(TITLE);
+        TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
         mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
 
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());

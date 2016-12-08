@@ -40,35 +40,14 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
     }
 
     @Override
-    public void editTitle(@NonNull TaskHead taskHead) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
-
-            String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
-            String[] selectionArgs = {taskHead.getId()};
-
-            db.update(TaskHeadEntry.TABLE_NAME, values, selection, selectionArgs);
-            db.setTransactionSuccessful();
-        } catch (SQLException e) {
-            Log.e(DBExceptionTag.TAG_SQLITE, "Error when update title of taskHead");
-        } finally {
-            db.endTransaction();
-        }
-        db.close();
-    }
-
-    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
         List<TaskHead> taskHeads = new ArrayList<>();
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
                 TaskHeadEntry.COLUMN_ID,
-                TaskHeadEntry.COLUMN_TITLE
+                TaskHeadEntry.COLUMN_TITLE,
+                TaskHeadEntry.COLUMN_MEMBERS
         };
 
         Cursor c = db.query(
@@ -78,8 +57,9 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
             while(c.moveToNext()) {
                 String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
                 String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
+                String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
 
-                TaskHead taskHead = new TaskHead(id, title);
+                TaskHead taskHead = new TaskHead(id, title, members);
                 taskHeads.add(taskHead);
             }
         }
@@ -96,8 +76,63 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
     }
 
     @Override
-    public void deleteTaskHead(@NonNull String taskHeadId) {
+    public void getTaskHead(@NonNull String taskHeadId, @NonNull GetTaskHeadCallback callback) {
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
+        String[] projection = {
+                TaskHeadEntry.COLUMN_ID,
+                TaskHeadEntry.COLUMN_TITLE,
+                TaskHeadEntry.COLUMN_MEMBERS
+        };
+
+        String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
+        String[] selectionArgs = { taskHeadId };
+
+        Cursor c = db.query(
+                TaskHeadEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+
+        TaskHead taskHead = null;
+
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            String itemId = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
+            String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
+            String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
+
+            taskHead = new TaskHead(itemId, title, members);
+        }
+        if (c != null) {
+            c.close();
+        }
+
+        db.close();
+
+        if (taskHead != null) {
+            callback.onTaskHeadLoaded(taskHead);
+        } else {
+            callback.onDataNotAvailable();
+        }
+    }
+
+    @Override
+    public void deleteTaskHead(@NonNull String taskHeadId) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
+        String[] selectionArgs = { taskHeadId };
+
+        db.delete(TaskHeadEntry.TABLE_NAME, selection, selectionArgs);
+
+        db.close();
+    }
+
+    @Override
+    public void deleteAllTaskHeads() {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        db.delete(TaskHeadEntry.TABLE_NAME, null, null);
+
+        db.close();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.taskheads.domain.usecase;
+package com.kiwi.auready_ver2.taskheaddetail.domain.usecase;
 
 import android.support.annotation.NonNull;
 
@@ -9,24 +9,24 @@ import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by kiwi on 9/23/16.
+ * Created by kiwi on 8/26/16.
  */
-public class EditTitle extends UseCase<EditTitle.RequestValues, EditTitle.ResponseValue> {
+public class SaveTaskHead extends UseCase<SaveTaskHead.RequestValues, SaveTaskHead.ResponseValue> {
 
     private final TaskHeadRepository mTaskHeadRepository;
 
-    public EditTitle(@NonNull TaskHeadRepository taskHeadRepository) {
+    public SaveTaskHead(@NonNull TaskHeadRepository taskHeadRepository) {
         mTaskHeadRepository = checkNotNull(taskHeadRepository, "taskHeadRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         TaskHead taskHead = requestValues.getTaskHead();
-        mTaskHeadRepository.editTitle(taskHead);
+        mTaskHeadRepository.saveTaskHead(taskHead);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
-    public static final class RequestValues implements UseCase.RequestValues {
+    public static class RequestValues implements UseCase.RequestValues {
         private final TaskHead mTaskHead;
 
         public RequestValues(@NonNull TaskHead taskHead) {
@@ -38,7 +38,6 @@ public class EditTitle extends UseCase<EditTitle.RequestValues, EditTitle.Respon
         }
     }
 
-    public static final class ResponseValue implements UseCase.ResponseValue {
+    public static class ResponseValue implements UseCase.ResponseValue {    }
 
-    }
 }

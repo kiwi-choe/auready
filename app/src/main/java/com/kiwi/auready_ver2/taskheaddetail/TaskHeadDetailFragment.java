@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.view.LayoutInflater;
@@ -10,9 +11,12 @@ import android.view.ViewGroup;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
-public class TaskHeadDetailFragment extends Fragment {
+public class TaskHeadDetailFragment extends Fragment implements
+TaskHeadDetailContract.View {
 
     public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFragment";
+
+    private TaskHeadDetailContract.Presenter mPresenter;
 
     public TaskHeadDetailFragment() {
         // Required empty public constructor
@@ -31,7 +35,13 @@ public class TaskHeadDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().supportInvalidateOptionsMenu();
+//        getActivity().supportInvalidateOptionsMenu();
+        mPresenter.start();
+    }
+
+    @Override
+    public void setPresenter(@NonNull TaskHeadDetailContract.Presenter presenter) {
+        mPresenter = presenter;
     }
 
     @Override
@@ -52,6 +62,12 @@ public class TaskHeadDetailFragment extends Fragment {
         }
         return root;
     }
+
+    @Override
+    public boolean isActive() {
+        return isAdded();
+    }
+
 
 //    @Override
 //    public boolean onOptionsItemSelected(MenuItem item) {

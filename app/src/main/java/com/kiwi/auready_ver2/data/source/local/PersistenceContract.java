@@ -26,6 +26,7 @@ public final class PersistenceContract {
         public static final String TABLE_NAME = "taskhead";
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_MEMBERS = "members";
     }
 
     public static abstract class TaskEntry {

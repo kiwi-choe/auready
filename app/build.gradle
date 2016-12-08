@@ -80,6 +80,11 @@ dependencies {
 
     // Google service
     compile 'com.google.android.gms:play-services-auth:9.8.0'
+
+    // Converting
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.+'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.+'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.6.+'
 }
 
 /*
