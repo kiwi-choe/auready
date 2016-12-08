@@ -64,7 +64,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                     @Override
                     public void onSuccess(GetTaskHead.ResponseValue response) {
-
+                        showTaskHead(response.getTaskHead());
                     }
 
                     @Override
@@ -74,17 +74,25 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 });
     }
 
+    private void showTaskHead(TaskHead taskHead) {
+        // The view may not be able to handle UI updates anymore
+        if(mView.isActive()) {
+            mView.setTitle(taskHead.getTitle());
+            mView.setMembers(taskHead.getMembers());
+        }
+    }
+
     private void createTaskHead(String title, List<String> members) {
         TaskHead newTaskHead = new TaskHead(title, members);
         if(newTaskHead.isEmpty()) {
-//            mView.showEmptyTaskHeadError();
+            mView.showEmptyTaskHeadError();
         } else {
             mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
                     new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
 
                         @Override
                         public void onSuccess(SaveTaskHead.ResponseValue response) {
-
+                            mView.showTaskHeadsView();
                         }
 
                         @Override
