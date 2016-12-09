@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Intent;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.core.deps.guava.collect.Lists;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -10,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ListView;
 
+import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
@@ -60,15 +62,15 @@ public class TaskHeadsViewTest {
     private static final String TITLE1 = "Don't be hurry";
     private static final String TITLE2 = "just";
     private static final String TITLE3 = "keep going";
-
+    private static List<String> MEMBERS = Lists.newArrayList("memberid1", "memberid2", "memberid3");
     private static final String USER_NAME = "KIWIYA";
     private static final String USER_EMAIL = "KIWIYA@gmail.com";
 
     /*
     * {@link TaskHead} stub that is added to the fake service API layer.
     * */
-    private static List<TaskHead> TASKHEADS = Lists.newArrayList(new TaskHead(TITLE1),
-            new TaskHead(TITLE2), new TaskHead(TITLE3));
+    private static List<TaskHead> TASKHEADS = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS),
+            new TaskHead(TITLE2, MEMBERS), new TaskHead(TITLE3, MEMBERS));
 
 
     private TaskHeadsActivity mActivity;
@@ -88,6 +90,10 @@ public class TaskHeadsViewTest {
 
     @After
     public void cleanup() {
+        // Doing this in @Before avoid a race condition(duplicate data).
+        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
+                .deleteAllTaskHeads();
+
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
         accessTokenStore.logoutUser();
     }
@@ -96,7 +102,7 @@ public class TaskHeadsViewTest {
     * Navigation View
     * */
     @Test
-    public void clickOnLoginNavigationItem_showsLoginScreen() {
+    public void clickOnAccountNavigationItem_showsLoginScreen() {
         // Open Drawer to click on navigation
         onView(withId(R.id.drawer_layout))
                 .check(matches(isClosed(Gravity.START)))
@@ -138,6 +144,10 @@ public class TaskHeadsViewTest {
 
     @Test
     public void deleteTaskHead() {
+        // Doing this in @Before avoid a race condition(duplicate data).
+        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
+                .deleteAllTaskHeads();
+
         // Load 1 taskhead
         loadATaskHead();
         // there is a taskhead with TITLE1
@@ -179,7 +189,7 @@ public class TaskHeadsViewTest {
         startActivityWithStubbedTasks(TASKHEADS);
     }
     private void loadATaskHead() {
-        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1));
+        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS));
         startActivityWithStubbedTasks(taskheads);
     }
     private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {

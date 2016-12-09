@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.source.FakeFriendRemoteDataSource;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
@@ -63,7 +64,7 @@ public class Injection {
     /*
     * TaskHead
     * */
-    private static TaskHeadRepository provideTaskHeadRepository(@NonNull Context context) {
+    public static TaskHeadRepository provideTaskHeadRepository(@NonNull Context context) {
         checkNotNull(context);
         return TaskHeadRepository.getInstance(FakeTaskHeadRemoteDataSource.getInstance(),
                 TaskHeadLocalDataSource.getInstance(context));
@@ -71,6 +72,10 @@ public class Injection {
 
     public static GetTaskHeads provideGetTaskHeads(@NonNull Context context) {
         return new GetTaskHeads(Injection.provideTaskHeadRepository(context));
+    }
+
+    public static GetTaskHead provideGetTaskHead(@NonNull Context context) {
+        return new GetTaskHead(Injection.provideTaskHeadRepository(context));
     }
 
     public static DeleteTaskHead provideDeleteTaskHead(@NonNull Context context) {
@@ -117,5 +122,4 @@ public class Injection {
     public static EditDescription provideEditDescription(@NonNull Context context) {
         return new EditDescription(Injection.provideTaskRepository(context));
     }
-
 }

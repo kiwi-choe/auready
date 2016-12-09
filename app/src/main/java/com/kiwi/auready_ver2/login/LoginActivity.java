@@ -8,7 +8,7 @@ import android.support.v7.widget.Toolbar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.login.google.GoogleSignInFragment;
+//import com.kiwi.auready_ver2.login.google.GoogleSignInFragment;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class LoginActivity extends AppCompatActivity implements
@@ -48,13 +48,13 @@ public class LoginActivity extends AppCompatActivity implements
         );
 
         // Google Sign-In
-        GoogleSignInFragment googleSignInFragment = (GoogleSignInFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.google_signin_frame);
-        if(googleSignInFragment == null) {
-            googleSignInFragment = GoogleSignInFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    googleSignInFragment, R.id.google_signin_frame, GoogleSignInFragment.TAG_GOOGLE_SIGNIN_FRAG);
-        }
+//        GoogleSignInFragment googleSignInFragment = (GoogleSignInFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.google_signin_frame);
+//        if(googleSignInFragment == null) {
+//            googleSignInFragment = GoogleSignInFragment.newInstance();
+//            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
+//                    googleSignInFragment, R.id.google_signin_frame, GoogleSignInFragment.TAG_GOOGLE_SIGNIN_FRAG);
+//        }
 
     }
 

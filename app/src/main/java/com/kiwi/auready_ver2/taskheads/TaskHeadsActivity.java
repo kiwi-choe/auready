@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendActivity;
 import com.kiwi.auready_ver2.login.LoginActivity;
+import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -81,9 +83,14 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     private void initView() {
 
-        // Set toolbar
+        // Set Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar ab = getSupportActionBar();
+        if (ab != null) {
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+            ab.setDisplayHomeAsUpEnabled(true);
+        }
 
         // Set Drawer layout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -144,7 +151,7 @@ public class TaskHeadsActivity extends AppCompatActivity
         Log.d("test!!", "entered setMemberNavView");
 
         mNavHeaderName.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name"));
-        mNavHeaderEmail.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL,  "Not saved email"));
+        mNavHeaderEmail.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email"));
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
