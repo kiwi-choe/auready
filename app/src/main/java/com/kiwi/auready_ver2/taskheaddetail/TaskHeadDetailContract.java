@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
+import android.content.Intent;
+
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 
@@ -17,11 +19,13 @@ public interface TaskHeadDetailContract {
 
         void setMembers(List<String> members);
 
-        void clickCreateBt(String taskHeadId);
+        void setResultToTaskHeadsView(String taskHeadId);
+
+        boolean isActive();
 
         void showEmptyTaskHeadError();
 
-        void clickCancelBt();
+        void cancelCreateTaskHead();
     }
 
     interface Presenter extends BasePresenter {
@@ -29,5 +33,7 @@ public interface TaskHeadDetailContract {
         void saveTaskHead(String title, List<String> memberList);   // create or update
 
         void populateTaskHead();        // Get TaskHead if exists the taskHeadId
+
+        void result(int requestCode, int resultCode, Intent data);
     }
 }
