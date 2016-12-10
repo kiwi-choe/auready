@@ -23,7 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.friend.FriendActivity;
+import com.kiwi.auready_ver2.friend.FriendsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         memberAddBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), FriendActivity.class);
+                Intent intent = new Intent(getActivity(), FriendsActivity.class);
                 startActivity(intent);
             }
         });
