@@ -89,7 +89,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onSuccess(SaveTaskHead.ResponseValue response) {
-                            mView.setResultToTaskHeadsView(newTaskHead.getId());
+                            mView.clickCreateBt(newTaskHead.getId());
                         }
 
                         @Override
