@@ -14,15 +14,14 @@ public interface TaskHeadDetailContract {
     interface View extends BaseView<Presenter> {
 
         void setTitle(String title);
+        
         void setMembers(List<String> members);
 
-        void setResultToTaskHeadsView(String taskHeadId);
-
-        boolean isActive();
+        void clickCreateBt(String taskHeadId);
 
         void showEmptyTaskHeadError();
 
-        void cancelCreateTaskHead();
+        void clickCancelBt();
     }
 
     interface Presenter extends BasePresenter {
