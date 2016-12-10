@@ -132,7 +132,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     }
 
     @Override
-    public void showAddTaskHead() {
+    public void showTaskHeadDetail() {
         Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
         startActivityForResult(intent, TaskHeadDetailActivity.REQ_ADD_TASKHEAD);
     }
