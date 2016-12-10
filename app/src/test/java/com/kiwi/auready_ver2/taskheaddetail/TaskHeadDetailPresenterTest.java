@@ -45,9 +45,6 @@ public class TaskHeadDetailPresenterTest {
         MockitoAnnotations.initMocks(this);
 
         MEMBERS = Lists.newArrayList("memberid1", "memberid2", "memberid3");
-
-        // The presenter won't update the view unless it's active.
-        when(mTaskHeadDetailView.isActive()).thenReturn(true);
     }
 
     @Test

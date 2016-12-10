@@ -130,11 +130,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public boolean isActive() {
-        return isAdded();
-    }
-
-    @Override
     public void showEmptyTaskHeadError() {
         Snackbar.make(mTitle, getString(R.string.empty_taskhead_message), Snackbar.LENGTH_LONG).show();
     }

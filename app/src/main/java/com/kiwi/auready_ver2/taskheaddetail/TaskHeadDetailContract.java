@@ -18,8 +18,6 @@ public interface TaskHeadDetailContract {
 
         void setResultToTaskHeadsView(String taskHeadId);
 
-        boolean isActive();
-
         void showEmptyTaskHeadError();
 
         void cancelCreateTaskHead();
