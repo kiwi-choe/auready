@@ -66,6 +66,7 @@
     <string name="label_title">Label</string>
     <string name="choose_label_bt">+ Choose a Label</string>
     <string name="empty_taskhead_message">TASKHEAD cannot be empty!</string>
+    <string name="add_member">Add member</string>
 
 
 </resources>

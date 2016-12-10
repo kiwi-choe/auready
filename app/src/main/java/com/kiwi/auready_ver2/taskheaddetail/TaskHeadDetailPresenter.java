@@ -1,7 +1,5 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -90,7 +88,6 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     private void showTaskHead(TaskHead taskHead) {
-        mView.setTitle(taskHead.getTitle());
         mView.setTitle(taskHead.getTitle());
         mView.setMembers(taskHead.getMembers());
     }

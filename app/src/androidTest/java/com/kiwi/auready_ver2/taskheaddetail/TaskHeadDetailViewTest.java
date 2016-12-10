@@ -1,10 +1,10 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
-import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.intent.matcher.IntentMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 
 import org.junit.Rule;
@@ -20,6 +20,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static android.support.test.espresso.intent.Intents.intended;
 
 /**
  * Created by kiwi on 12/9/16.
@@ -62,5 +63,18 @@ public class TaskHeadDetailViewTest {
 
         // Show back view (TaskHeadsView)
         onView(withId(R.id.taskheads)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void openTaskHeadDetailView_showMemberAddButton(){
+        onView(withId(R.id.member_add_bt)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clickMemberAddButton_showFriendsActivity(){
+        onView(withId(R.id.member_add_bt)).perform(click());
+
+        onView(withId(R.id.ed_search_people)).check(matches(isDisplayed()));
+//        intended(IntentMatchers.toPackage("com.kiwi.auready_ver2.friend.FriendActivity"));
     }
 }
