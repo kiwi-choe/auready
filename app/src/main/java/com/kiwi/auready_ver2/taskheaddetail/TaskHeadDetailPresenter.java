@@ -47,7 +47,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void saveTaskHead(String title, List<String> members) {
-        if(isNewTaskHead()) {
+        if (isNewTaskHead()) {
             createTaskHead(title, members);
         } else {
 //            updateTaskHead(title, members);
@@ -56,7 +56,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void populateTaskHead() {
-        if(mTaskHeadId == null) {
+        if (mTaskHeadId == null) {
             throw new RuntimeException("populateTaskHead() was called but taskhead is new.");
         }
         mUseCaseHandler.execute(mGetTaskHead, new GetTaskHead.RequestValues(mTaskHeadId),
@@ -75,16 +75,13 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     private void showTaskHead(TaskHead taskHead) {
-        // The view may not be able to handle UI updates anymore
-        if(mView.isActive()) {
-            mView.setTitle(taskHead.getTitle());
-            mView.setMembers(taskHead.getMembers());
-        }
+        mView.setTitle(taskHead.getTitle());
+        mView.setMembers(taskHead.getMembers());
     }
 
     private void createTaskHead(String title, List<String> members) {
         final TaskHead newTaskHead = new TaskHead(title, members);
-        if(newTaskHead.isEmpty()) {
+        if (newTaskHead.isEmpty()) {
             mView.showEmptyTaskHeadError();
         } else {
             mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),

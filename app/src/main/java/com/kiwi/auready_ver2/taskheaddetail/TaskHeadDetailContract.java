@@ -14,7 +14,7 @@ public interface TaskHeadDetailContract {
     interface View extends BaseView<Presenter> {
 
         void setTitle(String title);
-        
+
         void setMembers(List<String> members);
 
         void clickCreateBt(String taskHeadId);
