@@ -23,26 +23,10 @@ public class TasksContract {
 
         void showInvalidTaskHeadError();
 
-        void showLoadingErrorTasksError();
-
-        void showTaskHeadList(boolean isEmptyTaskHead);
     }
 
     interface Presenter extends BasePresenter {
 
         void loadTasks();
-
-        boolean validateEmptyTaskHead(String taskHeadTitle, int numOfTasks);
-
-        void completeTask(@NonNull Task task);
-
-        void activateTask(@NonNull Task task);
-
-
-        void addTask(@NonNull Task newTask);
-
-        void editTask(@NonNull Task editedTask);
-
-        void deleteTask(@NonNull Task task);
     }
 }
