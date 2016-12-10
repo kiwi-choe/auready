@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -74,6 +75,11 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 });
     }
 
+    @Override
+    public void result(int requestCode, int resultCode, Intent data) {
+
+    }
+
     private void showTaskHead(TaskHead taskHead) {
         mView.setTitle(taskHead.getTitle());
         mView.setMembers(taskHead.getMembers());
@@ -89,7 +95,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onSuccess(SaveTaskHead.ResponseValue response) {
-                            mView.clickCreateBt(newTaskHead.getId());
+                            mView.setResultToTaskHeadsView(newTaskHead.getId());
                         }
 
                         @Override

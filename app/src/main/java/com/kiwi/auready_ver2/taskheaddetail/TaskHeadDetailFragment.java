@@ -8,15 +8,22 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.friend.FriendActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +47,9 @@ public class TaskHeadDetailFragment extends Fragment implements
     private MembersAdapter mMemberListAdapter;
     private List<String> mMembers;
 
+    private ActionModeCallback mActionModeCallBack;
+    private ActionMode mActionMode;
+
     public TaskHeadDetailFragment() {
         // Required empty public constructor
     }
@@ -53,6 +63,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         mMembers = new ArrayList<>(0);
         mMemberListAdapter = new MembersAdapter(new ArrayList<String>(0));
+        mActionModeCallBack = new ActionModeCallback();
     }
 
     @Override
@@ -74,7 +85,33 @@ public class TaskHeadDetailFragment extends Fragment implements
 
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
         mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
+        View memberAddBtLayout = inflater.inflate(R.layout.member_add_bt, null, false);
+        mMemberListView.addFooterView(memberAddBtLayout);
         mMemberListView.setAdapter(mMemberListAdapter);
+        mMemberListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                mActionMode = getActivity().startActionMode(mActionModeCallBack);
+                return true;
+            }
+        });
+
+        Button memberAddBt = (Button) memberAddBtLayout.findViewById(R.id.member_add_bt);
+        memberAddBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), FriendActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // Todo
+        List<String> list = new ArrayList<>();
+        for(int i=0; i<10; i++){
+            list.add("test item " + i);
+        }
+
+        setMembers(list);
 
         // Set custom actionbar views
         ActionBar ab = ((TaskHeadDetailActivity)getActivity()).getSupportActionBar();
@@ -98,7 +135,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCancelBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickCancelBt();
+                cancelCreateTaskHead();
             }
         });
         mCreateBt.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +159,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void clickCreateBt(String taskHeadId) {
+    public void setResultToTaskHeadsView(String taskHeadId) {
         Intent intent = getActivity().getIntent();
         intent.putExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID, taskHeadId);
         getActivity().setResult(Activity.RESULT_OK, intent);
@@ -135,7 +172,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void clickCancelBt() {
+    public void cancelCreateTaskHead() {
         Intent intent = getActivity().getIntent();
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
@@ -187,6 +224,30 @@ public class TaskHeadDetailFragment extends Fragment implements
             memberIdTV.setText(memberId);
 
             return rowView;
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            Toast.makeText(getContext(), "onCreateActionMode", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            mActionMode = null;
         }
     }
 }

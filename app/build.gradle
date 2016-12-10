@@ -77,6 +77,7 @@ dependencies {
     // Espresso UI Testing dependencies.
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion"
     androidTestCompile("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion")
+    androidTestCompile("com.android.support.test.espresso:espresso-intents:$rootProject.ext.espressoVersion")
 
     // Floating button
     compile 'com.android.support:support-v4:23.4.0'

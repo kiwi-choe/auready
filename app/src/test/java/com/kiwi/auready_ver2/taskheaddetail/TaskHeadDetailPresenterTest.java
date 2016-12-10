@@ -21,7 +21,6 @@ import java.util.List;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the implementation of {@link TaskHeadDetailPresenter}.
@@ -58,7 +57,7 @@ public class TaskHeadDetailPresenterTest {
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
         // and the view updated.
         // TODO: 12/9/16 need a TaskHeadId instead of any(String)
-        verify(mTaskHeadDetailView).clickCreateBt(any(String.class));
+        verify(mTaskHeadDetailView).setResultToTaskHeadsView(any(String.class));
     }
 
     @Test
