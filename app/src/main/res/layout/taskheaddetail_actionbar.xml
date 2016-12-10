@@ -4,12 +4,14 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/cancel_taskhead"
         android:text="Cancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="start"/>
 
     <TextView
+        android:id="@+id/create_taskhead"
         android:text="Create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

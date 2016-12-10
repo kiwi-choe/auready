@@ -9,7 +9,7 @@
         android:id="@+id/taskheaddetail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/taskhead_title" />
+        android:hint="@string/taskheaddetail_title" />
 
     <TextView
         android:text="@string/member_title"

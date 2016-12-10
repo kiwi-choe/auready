@@ -3,15 +3,12 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +134,16 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
 
     @Override
     public void saveTaskHead(@NonNull TaskHead taskHead) {
+        checkNotNull(taskHead);
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        ContentValues values = new ContentValues();
+        values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
+        values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
+        values.put(TaskHeadEntry.COLUMN_MEMBERS, taskHead.getMembersString());
+
+        db.insert(TaskHeadEntry.TABLE_NAME, null, values);
+
+        db.close();
     }
 }

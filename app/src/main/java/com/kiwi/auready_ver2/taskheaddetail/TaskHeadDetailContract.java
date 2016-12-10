@@ -16,11 +16,13 @@ public interface TaskHeadDetailContract {
         void setTitle(String title);
         void setMembers(List<String> members);
 
-        void showTaskHeadsView();
+        void setResultToTaskHeadsView(String taskHeadId);
 
         boolean isActive();
 
         void showEmptyTaskHeadError();
+
+        void cancelCreateTaskHead();
     }
 
     interface Presenter extends BasePresenter {

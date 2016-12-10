@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
+import com.kiwi.auready_ver2.tasks.TasksActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public void onResume() {
         super.onResume();
         // Destroy all menu and recall onCreateOptionsMenu
-        getActivity().supportInvalidateOptionsMenu();
+//        getActivity().supportInvalidateOptionsMenu();
         mPresenter.start();
     }
 
@@ -135,6 +137,18 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         startActivityForResult(intent, TaskHeadDetailActivity.REQ_ADD_TASKHEAD);
     }
 
+    @Override
+    public void showTasksView(String taskHeadId) {
+        Intent intent = new Intent(getContext(), TasksActivity.class);
+        startActivityForResult(intent, TasksActivity.REQ_TASKS);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Snackbar.make(mTaskHeadsView, "CANCELED", Snackbar.LENGTH_LONG).show();
+        mPresenter.result(requestCode, resultCode, data);
+    }
+
     // Interface with TaskHeadsActivity
     public interface TasksFragmentListener {
         void onLoginSuccess();
@@ -150,6 +164,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
             mPresenter.deleteTaskHead(clickedTaskHead.getId());
         }
     };
+
     public interface TaskHeadItemListener {
         void onDeleteClick(TaskHead clickedTaskHead);
     }

@@ -83,7 +83,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     private void createTaskHead(String title, List<String> members) {
-        TaskHead newTaskHead = new TaskHead(title, members);
+        final TaskHead newTaskHead = new TaskHead(title, members);
         if(newTaskHead.isEmpty()) {
             mView.showEmptyTaskHeadError();
         } else {
@@ -92,7 +92,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onSuccess(SaveTaskHead.ResponseValue response) {
-                            mView.showTaskHeadsView();
+                            mView.setResultToTaskHeadsView(newTaskHead.getId());
                         }
 
                         @Override

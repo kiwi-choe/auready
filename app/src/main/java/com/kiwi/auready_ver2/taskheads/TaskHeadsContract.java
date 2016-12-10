@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.content.Intent;
+
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -20,6 +22,8 @@ public interface TaskHeadsContract {
         void showNoTaskHeads();
 
         void showAddTaskHead();
+
+        void showTasksView(String taskHeadId);
     }
 
     interface Presenter extends BasePresenter {
@@ -29,5 +33,7 @@ public interface TaskHeadsContract {
         void deleteTaskHead(String taskHeadId);
 
         void addNewTask();
+
+        void result(int requestCode, int resultCode, Intent data);
     }
 }

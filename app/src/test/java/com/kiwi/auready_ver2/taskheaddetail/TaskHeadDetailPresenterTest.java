@@ -60,7 +60,8 @@ public class TaskHeadDetailPresenterTest {
         // Then a taskhead is saved in the repository
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
         // and the view updated.
-        verify(mTaskHeadDetailView).showTaskHeadsView();
+        // TODO: 12/9/16 need a TaskHeadId instead of any(String)
+        verify(mTaskHeadDetailView).setResultToTaskHeadsView(any(String.class));
     }
 
     @Test

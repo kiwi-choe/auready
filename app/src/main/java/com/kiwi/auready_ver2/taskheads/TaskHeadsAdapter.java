@@ -61,7 +61,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
         final TaskHead taskHead = getItem(i);
 
-        TextView titleTV = (TextView) rowView.findViewById(R.id.taskheaddetail_title);
+        TextView titleTV = (TextView) rowView.findViewById(R.id.taskhead_title);
         titleTV.setText(taskHead.getTitle());
         Button deleteBt = (Button) rowView.findViewById(R.id.delete_bt);
         deleteBt.setOnClickListener(new View.OnClickListener() {

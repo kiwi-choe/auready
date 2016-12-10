@@ -1,10 +1,15 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
+import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 
@@ -84,5 +89,18 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void addNewTask() {
         mTaskHeadView.showAddTaskHead();
+    }
+
+    @Override
+    public void result(int requestCode, int resultCode, Intent data) {
+        if(TaskHeadDetailActivity.REQ_ADD_TASKHEAD == requestCode
+                && Activity.RESULT_OK == resultCode) {
+            // Created TaskHead, Open TasksView of this taskhead
+            if (data.hasExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID)) {
+                String taskHeadId = data.getStringExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID);
+                mTaskHeadView.showTasksView(taskHeadId);
+            }
+            // Canceled create taskhead, Open TaskHeadsView
+        }
     }
 }

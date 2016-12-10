@@ -61,7 +61,7 @@
     <string name="add_taskhead">+ ADD TASK LIST</string>
     <string name="menu_create">Create</string>
     <string name="taskheadsetting_title">Setting Task List</string>
-    <string name="taskhead_title">Title</string>
+    <string name="taskheaddetail_title">Title</string>
     <string name="member_title">Members</string>
     <string name="label_title">Label</string>
     <string name="choose_label_bt">+ Choose a Label</string>

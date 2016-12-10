@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data;
 
 import android.support.annotation.NonNull;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.kiwi.auready_ver2.data.source.local.SQLiteDbHelper;
 
@@ -82,9 +83,18 @@ public class TaskHead {
         return mMembers;
     }
 
+    public String getMembersString() {
+        String strMembers = null;
+        try {
+            strMembers = SQLiteDbHelper.OBJECT_MAPPER.writeValueAsString(mMembers);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return strMembers;
+    }
+
     public boolean isEmpty() {
-        return (mTitle == null || "".equals(mTitle) &&
-                (mMembers == null) || (mMembersCnt == 0));
+        return (mTitle == null || "".equals(mTitle));
     }
 
     private void setMembersCnt() {

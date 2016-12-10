@@ -6,7 +6,7 @@
     android:weightSum="10">
 
     <TextView
-        android:id="@+id/taskheaddetail_title"
+        android:id="@+id/taskhead_title"
         android:layout_weight="8"
         android:layout_width="0dp"
         android:layout_height="match_parent"
