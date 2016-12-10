@@ -4,9 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +21,10 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class FriendFragment extends Fragment implements FriendContract.View {
+public class FriendsFragment extends Fragment implements FriendContract.View {
 
     public static final String TAG_FRIENDFRAG = "TAG_FriendFragment";
+    public static final String ARG_FRIENDS = "arg_friends";
 
     private FriendContract.Presenter mPresenter;
 
@@ -36,12 +35,12 @@ public class FriendFragment extends Fragment implements FriendContract.View {
     private LinearLayout mNoSearchedEmailView;
     private TextView mLoadingIndicator;
 
-    public FriendFragment() {
+    public FriendsFragment() {
         // Required empty public constructor
     }
 
-    public static FriendFragment newInstance() {
-        return new FriendFragment();
+    public static FriendsFragment newInstance() {
+        return new FriendsFragment();
     }
 
     @Override

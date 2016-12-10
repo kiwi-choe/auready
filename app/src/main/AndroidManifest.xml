@@ -18,7 +18,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".login.LoginActivity" />
-        <activity android:name=".friend.FriendActivity" />
+        <activity android:name=".friend.FriendsActivity" />
         <activity android:name=".friend.FindActivity" />
         <activity
             android:name=".tasks.TasksActivity"

@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import java.util.List;
@@ -77,23 +76,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         return root;
     }
 
-    @Override
-    public boolean isActive() {
-        return isAdded();
-    }
-
-    @Override
-    public void showInvalidTaskHeadError() {
-
-
-    }
-
-    @Override
-    public void showTasks(List<Task> tasks) {
-//        mTasksAdapter.replaceData(tasks);
-    }
-
     private void showMessage(String message) {
         Snackbar.make(getView(), message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void setTitle(String title) {
+
+    }
+
+    @Override
+    public void setMembers(List<String> members) {
+
     }
 }

@@ -1,11 +1,15 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.friend.FriendsActivity;
+import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
@@ -74,7 +78,19 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 });
     }
 
+    @Override
+    public void result(int requestCode, int resultCode, Intent data) {
+        if(FriendsActivity.REQ_FRIENDS == requestCode
+            && Activity.RESULT_OK == requestCode) {
+            if(data.hasExtra(FriendsFragment.ARG_FRIENDS)) {
+//                List<Friend> friends = data.getParcelableArrayListExtra(Friend.KEY);
+//                mView.setMembers(friends);
+            }
+        }
+    }
+
     private void showTaskHead(TaskHead taskHead) {
+        mView.setTitle(taskHead.getTitle());
         mView.setTitle(taskHead.getTitle());
         mView.setMembers(taskHead.getMembers());
     }
@@ -89,7 +105,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onSuccess(SaveTaskHead.ResponseValue response) {
-                            mView.clickCreateBt(newTaskHead.getId());
+                            mView.setResultToTaskHeadsView(newTaskHead.getId());
                         }
 
                         @Override

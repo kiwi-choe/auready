@@ -6,7 +6,10 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
+import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
+import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ActivateTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.CompleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
@@ -55,7 +58,12 @@ public class TasksPresenterTest {
     @Mock
     private TasksContract.View mTasksView;
     @Mock
+    private TaskHeadRepository mTaskHeadRepository;
+    @Mock
     private TaskRepository mTaskRepository;
+
+    @Captor
+    private ArgumentCaptor<TaskHeadDataSource.GetTaskHeadCallback> mGetTaskHeadCallbackCaptor;
     @Captor
     private ArgumentCaptor<TaskDataSource.GetTasksCallback> mLoadTasksCallbackCaptor;
     @Captor
@@ -65,30 +73,29 @@ public class TasksPresenterTest {
     public void setup() {
 
         MockitoAnnotations.initMocks(this);
-
-        // The presenter won't update the view unless it's active
-        when(mTasksView.isActive()).thenReturn(true);
     }
 
     @Test
-    public void loadTaskHead_withValidTaskHeadId() {
-        // When TasksPresenter is asked to open a taskhead
+    public void getTaskHeadFromRepo_withValidTaskHeadId() {
+        // Given the tasksPresenter with valid taskheadId
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
-        //
+        // When the presenter is asked to populate an existing taskhead
+        mTasksPresenter.populateTaskHead();
+        // Then the taskhead repo is queried
+        verify(mTaskHeadRepository).getTaskHead(eq(TASKHEAD.getId()), mGetTaskHeadCallbackCaptor.capture());
+        mGetTaskHeadCallbackCaptor.getValue().onTaskHeadLoaded(TASKHEAD);
+        // and update view related TaskHead
+        verify(mTasksView).setTitle(TASKHEAD.getTitle());
+        verify(mTasksView).setMembers(TASKHEAD.getMembers());
     }
+
     private TasksPresenter givenTasksPresenter(String taskHeadId) {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
-        GetTasks getTasks = new GetTasks(mTaskRepository);
-        SaveTask saveTask = new SaveTask(mTaskRepository);
-        CompleteTask completeTask = new CompleteTask(mTaskRepository);
-        ActivateTask activateTask = new ActivateTask(mTaskRepository);
-        SortTasks sortTasks = new SortTasks(mTaskRepository);
-        DeleteTask deleteTask = new DeleteTask(mTaskRepository);
-        EditDescription editDescription = new EditDescription(mTaskRepository);
+        GetTaskHead getTaskHead = new GetTaskHead(mTaskHeadRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getTasks, saveTask, completeTask, activateTask, sortTasks, deleteTask, editDescription);
+                getTaskHead);
     }
 
 }

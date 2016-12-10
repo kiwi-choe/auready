@@ -58,7 +58,7 @@ public class TaskHeadDetailPresenterTest {
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
         // and the view updated.
         // TODO: 12/9/16 need a TaskHeadId instead of any(String)
-        verify(mTaskHeadDetailView).clickCreateBt(any(String.class));
+        verify(mTaskHeadDetailView).setResultToTaskHeadsView(any(String.class));
     }
 
     @Test

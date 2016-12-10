@@ -12,7 +12,9 @@ import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
-public class FriendActivity extends AppCompatActivity {
+public class FriendsActivity extends AppCompatActivity {
+
+    public static final int REQ_FRIENDS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +30,18 @@ public class FriendActivity extends AppCompatActivity {
             ab.setDisplayShowHomeEnabled(true);
         }
 
-        FriendFragment friendFragment =
-                (FriendFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-        if (friendFragment == null) {
-            friendFragment = FriendFragment.newInstance();
+        FriendsFragment friendsFragment =
+                (FriendsFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        if (friendsFragment == null) {
+            friendsFragment = FriendsFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), friendFragment, R.id.content_frame, FriendFragment.TAG_FRIENDFRAG);
+                    getSupportFragmentManager(), friendsFragment, R.id.content_frame, FriendsFragment.TAG_FRIENDFRAG);
         }
 
         // Create Presenter
         FriendPresenter presenter = new FriendPresenter(
                 Injection.provideUseCaseHandler(),
-                friendFragment,
+                friendsFragment,
                 Injection.provideGetFriends(getApplicationContext())
         );
 
@@ -70,7 +72,7 @@ public class FriendActivity extends AppCompatActivity {
 
     private void openFindView() {
         Intent intent =
-                new Intent(FriendActivity.this, FindActivity.class);
+                new Intent(FriendsActivity.this, FindActivity.class);
         startActivity(intent);
     }
 }

@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * Created by kiwi on 11/2/16.
  */
-
 public interface TaskHeadDetailContract {
 
     interface View extends BaseView<Presenter> {
@@ -20,8 +19,6 @@ public interface TaskHeadDetailContract {
         void setMembers(List<String> members);
 
         void setResultToTaskHeadsView(String taskHeadId);
-
-        boolean isActive();
 
         void showEmptyTaskHeadError();
 

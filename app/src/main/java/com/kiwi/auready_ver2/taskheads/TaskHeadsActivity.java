@@ -17,9 +17,8 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
-import com.kiwi.auready_ver2.friend.FriendActivity;
+import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.login.LoginActivity;
-import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -193,7 +192,7 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     private void startFriendActivity() {
         Intent intent =
-                new Intent(TaskHeadsActivity.this, FriendActivity.class);
+                new Intent(TaskHeadsActivity.this, FriendsActivity.class);
         startActivity(intent);
     }
 

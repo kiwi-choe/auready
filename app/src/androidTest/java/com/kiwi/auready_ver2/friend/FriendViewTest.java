@@ -36,8 +36,8 @@ public class FriendViewTest {
     private static final String NAME1 = "nameOfaa";
 
     @Rule
-    public ActivityTestRule<FriendActivity> mActivityTestRule =
-            new ActivityTestRule<>(FriendActivity.class);
+    public ActivityTestRule<FriendsActivity> mActivityTestRule =
+            new ActivityTestRule<>(FriendsActivity.class);
 
     /*
         * A custom {@link Matcher} which matches an item in a {@link ListView} bt its text.

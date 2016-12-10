@@ -98,7 +98,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCancelBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickCancelBt();
+                cancelCreateTaskHead();
             }
         });
         mCreateBt.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +122,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void clickCreateBt(String taskHeadId) {
+    public void setResultToTaskHeadsView(String taskHeadId) {
         Intent intent = getActivity().getIntent();
         intent.putExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID, taskHeadId);
         getActivity().setResult(Activity.RESULT_OK, intent);
@@ -135,7 +135,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void clickCancelBt() {
+    public void cancelCreateTaskHead() {
         Intent intent = getActivity().getIntent();
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
