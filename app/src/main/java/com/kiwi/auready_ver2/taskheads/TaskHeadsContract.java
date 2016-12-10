@@ -21,7 +21,7 @@ public interface TaskHeadsContract {
 
         void showNoTaskHeads();
 
-        void showAddTaskHead();
+        void showTaskHeadDetail();
 
         void showTasksView(String taskHeadId);
     }
