@@ -20,6 +20,7 @@ public class Friend implements Parcelable {
 
     private String mEmail;
     private String mName;
+    private String name;
 
     /*
     * Use this constructor to create a new Friend.
@@ -93,5 +94,10 @@ public class Friend implements Parcelable {
         mId = in.readString();
         mEmail = in.readString();
         mName = in.readString();
+    }
+
+    // FIXME: 12/12/16 for test view
+    public void setName(String name) {
+        this.name = name;
     }
 }

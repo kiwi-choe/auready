@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.tasks;
 
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
+import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class TasksContract {
 
         void setTitle(String title);
 
-        void setMembers(List<String> members);
+        void setMembers(List<Friend> members);
     }
 
     interface Presenter extends BasePresenter {

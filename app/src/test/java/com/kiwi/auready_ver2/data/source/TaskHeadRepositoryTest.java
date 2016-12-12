@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data.source;
 
 import com.google.common.collect.Lists;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import org.junit.After;
@@ -29,7 +30,8 @@ import static org.mockito.Mockito.verify;
 public class TaskHeadRepositoryTest {
 
     // member is one(me)
-    private static List<String> MEMBERS = Lists.newArrayList("me");
+    private static List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
+            new Friend("email3", "name3"));
     private static final List<TaskHead> TASKHEADS =
             Lists.newArrayList(new TaskHead("title1", MEMBERS),
                     new TaskHead("title2", MEMBERS), new TaskHead("title3", MEMBERS));
@@ -58,6 +60,7 @@ public class TaskHeadRepositoryTest {
         mTaskHeadsRepository = TaskHeadRepository.getInstance(
                 mTaskHeadRemoteDataSource, mTaskHeadLocalDataSource);
     }
+
     @After
     public void destroyRepositoryInstance() {
         TaskHeadRepository.destroyInstance();
@@ -141,6 +144,9 @@ public class TaskHeadRepositoryTest {
         verify(mGetTaskCallback).onDataNotAvailable();
     }
 
+    /*
+    * Save and update a TaskHead
+    * */
     @Test
     public void saveTaskHead_retrieveTaskHead() {
         final TaskHead taskHead = new TaskHead();
@@ -154,6 +160,35 @@ public class TaskHeadRepositoryTest {
             @Override
             public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
                 assertThat(taskHeads.get(0).getId(), is(taskHead.getId()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+    }
+
+    @Test
+    public void updateMemberOfTaskHead_retrieveTaskHead() {
+        // Save a new taskHead
+        String TITLE = "title_test";
+        TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
+        mTaskHeadsRepository.saveTaskHead(taskHead);
+
+        // Modify the value of member column
+        final List<Friend> modifiedMembers = MEMBERS;
+        modifiedMembers.add(new Friend("new member email", "new member name"));
+        TaskHead changedTaskHead = new TaskHead(taskHead.getId(), TITLE, modifiedMembers);
+        // Save the changed taskHead
+        mTaskHeadsRepository.saveTaskHead(changedTaskHead);
+        verify(mTaskHeadLocalDataSource).saveTaskHead(changedTaskHead);
+
+        // Retrieve the taskhead
+        mTaskHeadsRepository.getTaskHead(changedTaskHead.getId(), new TaskHeadDataSource.GetTaskHeadCallback() {
+            @Override
+            public void onTaskHeadLoaded(TaskHead taskHead) {
+                assertThat(taskHead.getMembers(), is(modifiedMembers));
             }
 
             @Override
@@ -184,7 +219,8 @@ public class TaskHeadRepositoryTest {
     @Test
     public void deleteAllTaskHeads_deleteTaskHeadsFromLocal() {
         // Save 3 stub taskheads in the repository
-        List<String> memebers = Lists.newArrayList("mem1");
+        List<Friend> memebers = MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
+                new Friend("email3", "name3"));
         TaskHead newTaskHead = new TaskHead("title1", memebers);
         mTaskHeadsRepository.saveTaskHead(newTaskHead);
         TaskHead newTaskHead2 = new TaskHead("title2", memebers);
@@ -198,6 +234,7 @@ public class TaskHeadRepositoryTest {
 
         assertThat(mTaskHeadsRepository.mCachedTaskHeads.size(), is(0));
     }
+
     /*
     * convenience methods
     * */
@@ -205,6 +242,7 @@ public class TaskHeadRepositoryTest {
         verify(dataSource).getTaskHeads(mTaskHeadsCallbackCaptor.capture());
         mTaskHeadsCallbackCaptor.getValue().onDataNotAvailable();
     }
+
     private void setTaskHeadsAvailable(TaskHeadDataSource dataSource, List<TaskHead> taskHeads) {
         verify(dataSource).getTaskHeads(mTaskHeadsCallbackCaptor.capture());
         mTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(taskHeads);

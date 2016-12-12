@@ -1,11 +1,17 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.friend.FriendsActivity;
+import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
@@ -16,6 +22,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
@@ -27,7 +34,7 @@ import static org.mockito.Mockito.verify;
  */
 public class TaskHeadDetailPresenterTest {
 
-    private static List<String> MEMBERS;
+    private static List<Friend> MEMBERS;
 
     @Mock
     private TaskHeadRepository mTaskHeadRepository;
@@ -43,7 +50,8 @@ public class TaskHeadDetailPresenterTest {
     public void setupMocksAndView() {
         MockitoAnnotations.initMocks(this);
 
-        MEMBERS = Lists.newArrayList("memberid1", "memberid2", "memberid3");
+        MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
+                new Friend("email3", "name3"));
     }
 
     @Test

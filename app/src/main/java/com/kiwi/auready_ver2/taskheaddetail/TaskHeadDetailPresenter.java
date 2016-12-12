@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +53,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     @Override
-    public void saveTaskHead(String title, List<String> members) {
+    public void saveTaskHead(String title, List<Friend> members) {
         if (isNewTaskHead()) {
             createTaskHead(title, members);
         } else {
@@ -81,10 +84,10 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
         if(FriendsActivity.REQ_FRIENDS == requestCode
-            && Activity.RESULT_OK == requestCode) {
+            && Activity.RESULT_OK == resultCode) {
             if(data.hasExtra(FriendsFragment.ARG_FRIENDS)) {
-//                List<Friend> friends = data.getParcelableArrayListExtra(Friend.KEY);
-//                mView.setMembers(friends);
+                ArrayList<Friend> friends = data.getParcelableArrayListExtra(Friend.KEY);
+                mView.setMembers(friends);
             }
         }
     }
@@ -94,7 +97,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
         mView.setMembers(taskHead.getMembers());
     }
 
-    private void createTaskHead(String title, List<String> members) {
+    private void createTaskHead(String title, List<Friend> members) {
         final TaskHead newTaskHead = new TaskHead(title, members);
         if (newTaskHead.isEmpty()) {
             mView.showEmptyTaskHeadError();

@@ -11,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import java.util.List;
@@ -86,7 +87,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void setMembers(List<String> members) {
+    public void setMembers(List<Friend> members) {
 
     }
 }

@@ -20,13 +20,13 @@ public class TaskHead {
 
     private final String mId;
     private String mTitle;
-    private List<String> mMembers;
+    private List<Friend> mMembers;
     private int mMembersCnt;
 
     /*
     * Use this constructor to create a new TaskHead.
     * */
-    public TaskHead(String title, List<String> members) {
+    public TaskHead(String title, List<Friend> members) {
         mId = UUID.randomUUID().toString();
         mTitle = title;
         mMembers = members;
@@ -54,7 +54,7 @@ public class TaskHead {
         * Use this constructor to create a Task if the TaskHead already has an id
         * (copy of another task)
         * */
-    public TaskHead(@NonNull String id, String title, List<String> members) {
+    public TaskHead(@NonNull String id, String title, List<Friend> members) {
         mId = checkNotNull(id, "id cannot be null");
         mTitle = title;
         mMembers = members;
@@ -79,7 +79,7 @@ public class TaskHead {
         return mId;
     }
 
-    public List<String> getMembers() {
+    public List<Friend> getMembers() {
         return mMembers;
     }
 

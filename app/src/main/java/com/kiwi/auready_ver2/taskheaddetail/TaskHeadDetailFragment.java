@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     private EditText mTitle;
     private ListView mMemberListView;
     private MembersAdapter mMemberListAdapter;
-    private List<String> mMembers;
+    private List<Friend> mMembers;
 
     private ActionModeCallback mActionModeCallBack;
     private ActionMode mActionMode;
@@ -62,7 +63,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMembers = new ArrayList<>(0);
-        mMemberListAdapter = new MembersAdapter(new ArrayList<String>(0));
+        mMemberListAdapter = new MembersAdapter(new ArrayList<Friend>(0));
         mActionModeCallBack = new ActionModeCallback();
     }
 
@@ -106,9 +107,12 @@ public class TaskHeadDetailFragment extends Fragment implements
         });
 
         // Todo
-        List<String> list = new ArrayList<>();
+        List<Friend> list = new ArrayList<>();
         for(int i=0; i<10; i++){
-            list.add("test item " + i);
+            Friend friend = new Friend("member", "membername");
+            String name = "" + String.valueOf(i);
+            friend.setName(name);
+            list.add(friend);
         }
 
         setMembers(list);
@@ -153,7 +157,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void setMembers(List<String> members) {
+    public void setMembers(List<Friend> members) {
         mMembers = members;
         mMemberListAdapter.replaceData(members);
     }
@@ -181,17 +185,17 @@ public class TaskHeadDetailFragment extends Fragment implements
     // TODO: 12/9/16 What type of Adapter is better?
     private static class MembersAdapter extends BaseAdapter {
 
-        private List<String> mMembers;
+        private List<Friend> mMembers;
 
-        public MembersAdapter(List<String> members) {
+        public MembersAdapter(List<Friend> members) {
             setList(members);
         }
 
-        private void setList(List<String> members) {
+        private void setList(List<Friend> members) {
             mMembers = checkNotNull(members);
         }
 
-        public void replaceData(List<String> members) {
+        public void replaceData(List<Friend> members) {
             setList(members);
             notifyDataSetChanged();
         }
@@ -202,7 +206,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         }
 
         @Override
-        public String getItem(int position) {
+        public Friend getItem(int position) {
             return mMembers.get(position);
         }
 
@@ -218,10 +222,10 @@ public class TaskHeadDetailFragment extends Fragment implements
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 rowView = inflater.inflate(R.layout.member_item, parent, false);
             }
-            final String memberId = getItem(position);
+            final Friend member = getItem(position);
 
-            TextView memberIdTV = (TextView) rowView.findViewById(R.id.member_id);
-            memberIdTV.setText(memberId);
+            TextView memberNameTV = (TextView) rowView.findViewById(R.id.member_name);
+            memberNameTV.setText(member.getName());
 
             return rowView;
         }

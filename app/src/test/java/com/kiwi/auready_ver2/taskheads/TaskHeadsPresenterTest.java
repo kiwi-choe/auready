@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallback;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
@@ -28,7 +29,8 @@ public class TaskHeadsPresenterTest {
 
     private static final String TASKHEAD_ID = "stubTaskHeadId";
     private static final String TITLE = "stubTitle";
-    private static final List<String> MEMBERS = Lists.newArrayList("me");
+    private static final List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
+            new Friend("email3", "name3"));
 
     private static List<TaskHead> TASKHEADS;
 
