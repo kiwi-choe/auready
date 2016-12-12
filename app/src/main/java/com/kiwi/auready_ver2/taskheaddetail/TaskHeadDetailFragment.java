@@ -102,7 +102,7 @@ public class TaskHeadDetailFragment extends Fragment implements
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), FriendsActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, FriendsActivity.REQ_FRIENDS);
             }
         });
 
