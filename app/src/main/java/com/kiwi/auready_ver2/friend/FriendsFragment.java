@@ -21,12 +21,12 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class FriendsFragment extends Fragment implements FriendContract.View {
+public class FriendsFragment extends Fragment implements FriendsContract.View {
 
     public static final String TAG_FRIENDFRAG = "TAG_FriendFragment";
     public static final String ARG_FRIENDS = "arg_friends";
 
-    private FriendContract.Presenter mPresenter;
+    private FriendsContract.Presenter mPresenter;
 
     private FriendsAdapter mListAdapter;
 
@@ -94,7 +94,7 @@ public class FriendsFragment extends Fragment implements FriendContract.View {
     }
 
     @Override
-    public void setPresenter(@NonNull FriendContract.Presenter presenter) {
+    public void setPresenter(@NonNull FriendsContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
     }
 

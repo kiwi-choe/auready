@@ -39,7 +39,7 @@ public class FriendsActivity extends AppCompatActivity {
         }
 
         // Create Presenter
-        FriendPresenter presenter = new FriendPresenter(
+        FriendsPresenter presenter = new FriendsPresenter(
                 Injection.provideUseCaseHandler(),
                 friendsFragment,
                 Injection.provideGetFriends(getApplicationContext())

@@ -9,7 +9,7 @@ import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
-import com.kiwi.auready_ver2.friend.FriendContract;
+import com.kiwi.auready_ver2.friend.FriendsContract;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 
@@ -55,7 +55,7 @@ public class LoginPresenterTest {
     private FriendRepository mFriendRepository;
 
     @Mock
-    private FriendContract.View mFriendView;
+    private FriendsContract.View mFriendView;
 
     @Before
     public void setUp() throws Exception {

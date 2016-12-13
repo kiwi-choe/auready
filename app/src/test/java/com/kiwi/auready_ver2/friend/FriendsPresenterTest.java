@@ -24,14 +24,14 @@ import static org.mockito.Mockito.verify;
 /**
  * Created by kiwi on 6/30/16.
  */
-public class FriendPresenterTest {
+public class FriendsPresenterTest {
 
     private static ArrayList<Friend> FRIENDS;
 
-    private FriendPresenter mFriendPresenter;
+    private FriendsPresenter mFriendsPresenter;
 
     @Mock
-    private FriendContract.View mFriendView;
+    private FriendsContract.View mFriendView;
 
     @Mock
     private FriendRepository mFriendRepository;
@@ -45,24 +45,24 @@ public class FriendPresenterTest {
 
         MockitoAnnotations.initMocks(this);
 
-        mFriendPresenter = givenFriendPresenter();
+        mFriendsPresenter = givenFriendPresenter();
 
         // We start the friends to 3.
         FRIENDS = Lists.newArrayList(new Friend("aa", "name1"), new Friend("bb", "name2"), new Friend("cc", "name3"));
     }
 
-    private FriendPresenter givenFriendPresenter() {
+    private FriendsPresenter givenFriendPresenter() {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetFriends getFriends = new GetFriends(mFriendRepository);
 
-        return new FriendPresenter(useCaseHandler, mFriendView, getFriends);
+        return new FriendsPresenter(useCaseHandler, mFriendView, getFriends);
     }
 
     @Test
     public void loadFriendsFromRepositoryAndLoadIntoView() {
 
-        mFriendPresenter.loadFriends();
+        mFriendsPresenter.loadFriends();
 
         // Callback is captured and invoked with stubbed friends
         verify(mFriendRepository).getFriends(mLoadFriendsCallbackCaptor.capture());

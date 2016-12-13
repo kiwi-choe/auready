@@ -26,7 +26,7 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
     @Override
     protected void executeUseCase(final RequestValues values) {
 
-        mTaskRepository.getTasksByTaskHeadId(values.getTaskHeadId(), new TaskDataSource.GetTasksCallback() {
+        mTaskRepository.getTasks(values.getTaskHeadId(), values.getMemberId(), new TaskDataSource.GetTasksCallback() {
 
             @Override
             public void onTasksLoaded(List<Task> tasks) {
@@ -44,13 +44,19 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
 
     public static class RequestValues implements UseCase.RequestValues {
         private final String mTaskHeadId;
+        private final String mMemberId;
 
-        public RequestValues(@NonNull String taskHeadId) {
+        public RequestValues(@NonNull String taskHeadId, @NonNull String memberId) {
             mTaskHeadId = checkNotNull(taskHeadId);
+            mMemberId = checkNotNull(memberId);
         }
 
         public String getTaskHeadId() {
             return mTaskHeadId;
+        }
+
+        public String getMemberId() {
+            return mMemberId;
         }
     }
 

@@ -1,7 +1,5 @@
 package com.kiwi.auready_ver2.friend;
 
-import android.support.annotation.NonNull;
-
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Friend;
@@ -12,7 +10,7 @@ import java.util.List;
 /**
  * Created by kiwi on 6/28/16.
  */
-public interface FriendContract {
+public interface FriendsContract {
 
     interface View extends BaseView<Presenter> {
 

@@ -9,8 +9,8 @@ import com.kiwi.auready_ver2.util.OrderAscCompare;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,10 +28,12 @@ public class TaskRepository implements TaskDataSource {
 
     /*
     * This variable has package local visibility so it can be accessed from tests.
-    * First Map: KEY taskHeadId, VALUE tasks
-    * Second Map: KEY taskId, VALUE task
+    * First Map: (Key: taskHeadId, memberId), (Value: tasks of member)
+    * Second Map: mTasksOfMember(Key: taskId), (Value: task)
     * */
-    public Map<String, Map<String, Task>> mCachedTasks;
+    public Map<TaskMapKey, Map<String, Task>> mCachedTasks;
+    public Map<String, Task> mTasksOfMember;
+
     private boolean mCacheIsDirty;
 
     // Prevent direct instantiation
@@ -47,229 +49,31 @@ public class TaskRepository implements TaskDataSource {
 
     }
 
-    @Override
-    public void editDescription(@NonNull Task task) {
-        checkNotNull(task);
-
-        mTaskLocalDataSource.editDescription(task);
-
-        putToCachedTasks(task);
-    }
-
     /*
         * Gets tasks from local data source by taskHeadId unless the table is new or empty. In that case it
         * uses the network data source. This is done to simplify the sample.
         * */
-    public void getTasksByTaskHeadId(@NonNull final String taskHeadId, @NonNull final GetTasksCallback callback) {
-        checkNotNull(taskHeadId);
-        checkNotNull(callback);
+    @Override
+    public void getTasks(String taskHeadId, String memberId, @NonNull GetTasksCallback callback) {
 
-        Map<String, Task> cachedTasks = getTasksWithTaskHeadId(taskHeadId);
-
-        // Respond immediately with cache if available
-        if (cachedTasks != null) {
-            List<Task> taskList = new ArrayList<>(cachedTasks.values());
-            for (Task task : taskList) {
-                Log.d("kiwi_test", "tasks values : " + task.getDescription() +
-                        " order: " + String.valueOf(task.getOrder()));
-            }
-            // Sorting by order
-            Collections.sort(taskList, new OrderAscCompare());
-            Log.d("kiwi_test", "after sorting-------------------");
-            for (Task task : taskList) {
-                Log.d("kiwi_test", "tasks values : " + task.getDescription() +
-                        " order: " + String.valueOf(task.getOrder()));
-            }
-            callback.onTasksLoaded(taskList);
-            return;
-        }
-
-        // Load from server if needed.
-
-        // Is the task in the local? If not, query the network.
-        mTaskLocalDataSource.getTasksByTaskHeadId(taskHeadId, new GetTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                callback.onTasksLoaded(tasks);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                mTaskRemoteDataSource.getTasksByTaskHeadId(taskHeadId, new GetTasksCallback() {
-                    @Override
-                    public void onTasksLoaded(List<Task> tasks) {
-                        callback.onTasksLoaded(tasks);
-                    }
-
-                    @Override
-                    public void onDataNotAvailable() {
-                        callback.onDataNotAvailable();
-                    }
-                });
-            }
-        });
     }
 
     @Override
-    public void getAllTasks(@NonNull GetTasksCallback callback) {
-
-    }
-
-    @Nullable
-    private Map<String, Task> getTasksWithTaskHeadId(@NonNull String taskHeadId) {
-        checkNotNull(taskHeadId);
-        if (mCachedTasks == null || mCachedTasks.isEmpty()) {
-            return null;
-        } else {
-            return mCachedTasks.get(taskHeadId);
-        }
-    }
-
-    @Override
-    public void deleteTask(@NonNull Task task) {
+    public void saveTask(@NonNull Task task) {
         checkNotNull(task);
-        mTaskLocalDataSource.deleteTask(task);
+//        mTaskRemoteDataSource.saveTask(task);
+        mTaskLocalDataSource.saveTask(task);
 
-        if (mCachedTasks.get(task.getTaskHeadId()).containsKey(task.getId())) {
-            mCachedTasks.get(task.getTaskHeadId()).remove(task.getId());
+        // Do in memory cache update
+        if(mTasksOfMember == null) {
+            mTasksOfMember = new LinkedHashMap<>();
         }
-    }
+        mTasksOfMember.put(task.getId(), task);
 
-    @Override
-    public void saveTask(@NonNull final Task task, @NonNull final SaveTaskCallback callback) {
-        checkNotNull(task);
-        mTaskRemoteDataSource.saveTask(task, new SaveTaskCallback() {
-            @Override
-            public void onTaskSaved() {
-
-//                callback.onTaskSaved();
-                mTaskLocalDataSource.saveTask(task, new SaveTaskCallback() {
-                    @Override
-                    public void onTaskSaved() {
-                        callback.onTaskSaved();
-                    }
-
-                    @Override
-                    public void onTaskNotSaved() {
-                        callback.onTaskNotSaved();
-                    }
-                });
-            }
-
-            @Override
-            public void onTaskNotSaved() {
-                callback.onTaskNotSaved();
-            }
-        });
-
-
-        // Do in memory cache update to keep the app UI up to date
-        putToCachedTasks(task);
-    }
-
-    @Override
-    public void completeTask(@NonNull Task task) {
-        checkNotNull(task);
-//        mTaskRemoteDataSource.completeTask(task);
-
-        Task completedTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), true, 0);
-        // Do in memory cache update to keep the app UI up to date
-        putToCachedTasks(completedTask);
-
-        // Increase the order of complete tasks
-        updateTasksOrderNextOf(task);
-    }
-
-    private void updateTasksOrderNextOf(Task task) {
-        Map<String, Task> cachedTasks = getTasksWithTaskHeadId(task.getTaskHeadId());
-
-        if (cachedTasks != null) {
-            int sizeOfCachedTasks = cachedTasks.size();
-
-            Task changedTask = cachedTasks.get(task.getId());
-            int orderOfChangedTask = changedTask.getOrder();
-
-            for (String key : cachedTasks.keySet()) {
-                Task tmpTask = cachedTasks.get(key);
-
-                // Active -> Complete
-                if (changedTask.isCompleted()) {
-                    // order of task +1 ~ size of tasks
-                    if (orderOfChangedTask + 1 < tmpTask.getOrder() &&
-                            tmpTask.getOrder() < sizeOfCachedTasks) {
-                        tmpTask.decreaseOrder();
-                    }
-                    // Set the order of changedTask
-                    changedTask.setOrder(sizeOfCachedTasks - 1);
-                }
-                // Complete -> Active
-                else {
-                    // size of active tasks ~ order of task
-                    int numOfActiveTasks = getNumOfActiveTasks(cachedTasks);
-                    if (numOfActiveTasks <= tmpTask.getOrder() &&
-                            tmpTask.getOrder() < orderOfChangedTask) {
-                        tmpTask.increaseOrder();
-                    }
-                    // Set the order of changedTask
-                    changedTask.setOrder(numOfActiveTasks);
-                }
-            }
-        }
-
-    }
-
-    private int getNumOfActiveTasks(Map<String, Task> cachedTasks) {
-        Map<String, Task> tasks = cachedTasks;
-        int numOfActiveTasks = 0;
-
-        for (String key : tasks.keySet()) {
-            if (tasks.get(key).isActive()) {
-                numOfActiveTasks++;
-            }
-        }
-        return numOfActiveTasks;
-    }
-
-    @Override
-    public void activateTask(@NonNull Task task) {
-        checkNotNull(task);
-//        mTaskRemoteDataSource.activateTask(task);
-
-        Task activeTask = new Task(task.getTaskHeadId(), task.getId(), task.getDescription(), task.getOrder());
-        putToCachedTasks(activeTask);
-
-        // Decrease the order of active tasks
-        updateTasksOrderNextOf(task);
-    }
-
-    @Override
-    public void sortTasks(LinkedList<Task> taskList) {
-
-        mTaskLocalDataSource.sortTasks(taskList);
-
-        int size = taskList.size();
-        for (int i = 0; i < size; i++) {
-            Task task = taskList.get(i);
-            task.setOrder(i);
-            putToCachedTasks(task);
-        }
-    }
-
-    private void putToCachedTasks(Task task) {
-
-        Map<String, Task> tasks;
-        if (mCachedTasks == null) {
+        if(mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
-            tasks = new LinkedHashMap<>();
-
-        } else {
-            tasks = mCachedTasks.get(task.getTaskHeadId());
-            if (tasks == null) {
-                tasks = new LinkedHashMap<>();
-            }
         }
-        tasks.put(task.getId(), task);
-        mCachedTasks.put(task.getTaskHeadId(), tasks);
+        mCachedTasks.put(new TaskMapKey(task.getTaskHeadId(), task.getMemberId()), mTasksOfMember);
     }
 
     public static TaskRepository getInstance(TaskDataSource taskRemoteDataSource,
@@ -278,10 +82,6 @@ public class TaskRepository implements TaskDataSource {
             INSTANCE = new TaskRepository(taskRemoteDataSource, taskLocalDataSource);
         }
         return INSTANCE;
-    }
-
-    public void refreshTasks() {
-        mCacheIsDirty = true;
     }
 
     /*

@@ -12,6 +12,7 @@ public class Task {
     private final String mId;
 
     private final String mTaskHeadId;
+    private final String mMemberId;
 
     private String mDescription;
 
@@ -21,21 +22,13 @@ public class Task {
 
     /*
     * To create a new active Task
-    * */
-    public Task(@NonNull String taskHeadId) {
-        mId = UUID.randomUUID().toString();
-        mTaskHeadId = taskHeadId;
-        mDescription = "";
-        mCompleted = false;
-        mOrder = 0;
-    }
-    /*
-    * To create a new active Task
     * with order
     * */
-    public Task(@NonNull String taskHeadId, String description, int order) {
+    public Task(@NonNull String taskHeadId, @NonNull String memberId,
+                String description, int order) {
         mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
+        mMemberId = memberId;
         mDescription = description;
         mCompleted = false;
         mOrder = order;
@@ -45,8 +38,10 @@ public class Task {
     * To create an active Task if the Task already has an id
     * Update the existing task.
     * */
-    public Task(String taskHeadId, String id, String description, int order) {
+    public Task(@NonNull String taskHeadId, @NonNull String memberId, @NonNull String id,
+                String description, int order) {
         mTaskHeadId = taskHeadId;
+        mMemberId = memberId;
         mId = id;
         mDescription = description;
         mCompleted = false;
@@ -55,23 +50,12 @@ public class Task {
 
     /*
     * To create a completed Task.
-    *
-    * A completed task can be made after creating an active task
-    * */
-    public Task(String taskHeadId, String id, String description, boolean completed, int order) {
-        mTaskHeadId = taskHeadId;
-        mId = id;
-        mDescription = description;
-        mCompleted = completed;
-        mOrder = order;
-    }
-
-    /*
-    * To create a completed Task.
     * Use this only on testing.
     * */
-    public Task(String taskHeadId, String description, boolean completed, int order) {
+    public Task(@NonNull String taskHeadId, @NonNull String memberId,
+                String description, boolean completed, int order) {
         mTaskHeadId = taskHeadId;
+        mMemberId = memberId;
         mId = UUID.randomUUID().toString();;
         mDescription = description;
         mCompleted = completed;
@@ -116,5 +100,13 @@ public class Task {
 
     public boolean getCompleted() {
         return mCompleted;
+    }
+
+    public String getMemberId() {
+        return mMemberId;
+    }
+
+    public boolean isEmpty() {
+        return (mDescription == null || "".equals(mDescription));
     }
 }

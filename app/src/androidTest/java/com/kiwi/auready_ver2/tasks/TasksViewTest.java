@@ -49,6 +49,7 @@ import static org.hamcrest.core.IsNot.not;
 public class TasksViewTest {
 
     private static final String TASKHEAD_ID = "stubTaskHeadId";
+    private static final String MEMBER_ID = "stubMemberId";
     private static final String TASK_DESCRIPTION1 = "someday";
     private static final String TASK_DESCRIPTION2 = "we will know";
     private static final String TASK_DESCRIPTION3 = "OK?";
@@ -59,9 +60,9 @@ public class TasksViewTest {
         * {@link Task}s stub that is added to the fake service API layer.
         * */
     private static final List<Task> EMPTY_TASKS = new ArrayList<>(0);
-    // 3 tasks, one active and two completed
-    private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, TASK_DESCRIPTION1, 0),
-            new Task(TASKHEAD_ID, TASK_DESCRIPTION2, true, 0), new Task(TASKHEAD_ID, TASK_DESCRIPTION3, true, 0));
+    // 3 tasks, one active and two completed tasks of a member
+    private static List<Task> TASKS = Lists.newArrayList(new Task(TASKHEAD_ID, MEMBER_ID, TASK_DESCRIPTION1, 0),
+            new Task(TASKHEAD_ID, MEMBER_ID, TASK_DESCRIPTION2, true, 0), new Task(TASKHEAD_ID, MEMBER_ID, TASK_DESCRIPTION3, true, 0));
 
     @Rule
     public ActivityTestRule<TasksActivity> mTasksActivityTestRule =
