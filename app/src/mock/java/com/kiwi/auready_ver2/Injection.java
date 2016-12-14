@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.data.source.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
@@ -16,8 +17,8 @@ import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskHeadLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
-import com.kiwi.auready_ver2.data.source.remote.FakeTaskHeadRemoteDataSource;
-import com.kiwi.auready_ver2.data.source.remote.FakeTaskRemoteDataSource;
+import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
+import com.kiwi.auready_ver2.data.source.FakeTaskRemoteDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
@@ -41,6 +42,7 @@ public class Injection {
         return FriendRepository.getInstance(FakeFriendRemoteDataSource.getInstance(),
                 FriendLocalDataSource.getInstance(context));
     }
+
     public static UseCaseHandler provideUseCaseHandler() {
         return UseCaseHandler.getInstance();
     }
@@ -75,7 +77,8 @@ public class Injection {
     }
 
     public static DeleteTaskHead provideDeleteTaskHead(@NonNull Context context) {
-        return new DeleteTaskHead(Injection.provideTaskHeadRepository(context));
+        return new DeleteTaskHead(Injection.provideTaskHeadRepository(context),
+                Injection.provideTaskRepository(context));
     }
 
     public static SaveTaskHead provideSaveTaskHead(@NonNull Context context) {
@@ -101,5 +104,9 @@ public class Injection {
 
     public static DeleteTask provideDeleteTask(@NonNull Context context) {
         return new DeleteTask(Injection.provideTaskRepository(context));
+    }
+
+    public static DeleteTasks provideDeleteTasks(@NonNull Context context) {
+        return new DeleteTasks(Injection.provideTaskRepository(context));
     }
 }

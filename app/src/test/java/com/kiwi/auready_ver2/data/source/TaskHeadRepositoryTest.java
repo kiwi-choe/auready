@@ -7,7 +7,6 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -17,7 +16,6 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -200,12 +198,12 @@ public class TaskHeadRepositoryTest {
 
     @Test
     public void deleteTaskHead_deleteTaskHeadToServiceApiRemovedFromCache() {
-        // 1. Save taskHeads
+        // Save taskHeads
         TaskHead newTaskHead = new TaskHead();
         mTaskHeadsRepository.saveTaskHead(newTaskHead);
         assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(newTaskHead.getId()), is(true));
 
-        // 2. Delete a taskHead
+        // Delete a taskHead is asked to TaskHeadRepository
         mTaskHeadsRepository.deleteTaskHead(newTaskHead.getId());
 
         // Verify the data sources were called

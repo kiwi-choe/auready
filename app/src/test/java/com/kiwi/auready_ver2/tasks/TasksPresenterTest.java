@@ -11,6 +11,7 @@ import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
@@ -24,9 +25,6 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -66,7 +64,7 @@ public class TasksPresenterTest {
     @Captor
     private ArgumentCaptor<TaskHeadDataSource.GetTaskHeadCallback> mGetTaskHeadCallbackCaptor;
     @Captor
-    private ArgumentCaptor<TaskDataSource.GetTasksCallback> mLoadTasksCallbackCaptor;
+    private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
 
     @Before
     public void setup() {
@@ -89,8 +87,6 @@ public class TasksPresenterTest {
         verify(mTasksView).setMembers(TASKHEAD.getMembers());
     }
 
-    // test when start, populate if the taskheadId exists
-
     @Test
     public void getTasksFromRepo_withTaskHeadIdAndMemberId_andUpdateView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
@@ -107,21 +103,34 @@ public class TasksPresenterTest {
     }
 
     @Test
-    public void saveTask() {
+    public void createTask() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
         // Create a new task
         String memberId = TASKS.get(0).getMemberId();
         String description = "description new task";
         int order = TASKS.size();
-        mTasksPresenter.saveTask(memberId, description, order);
+        mTasksPresenter.createTask(memberId, description, order);
         // Then a task is saved in the repository
         verify(mTaskRepository).saveTask(any(Task.class));
     }
 
     @Test
-    public void updateTask() {
+    public void updateTask_editTask() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+
+        String memberId = TASKS.get(0).getMemberId();
+        int order = TASKS.size();
         // Update a task
+        mTasksPresenter.updateTask(memberId, "taskId", "changed description", order);
+        verify(mTaskRepository).saveTask(any(Task.class));
+    }
+
+    @Test
+    public void deleteTask() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+        Task task = TASKS.get(0);
+        mTasksPresenter.deleteTask(task.getId());
+        verify(mTaskRepository).deleteTask(task.getId());
     }
 
     private TasksPresenter givenTasksPresenter(String taskHeadId) {
@@ -129,9 +138,10 @@ public class TasksPresenterTest {
         GetTaskHead getTaskHead = new GetTaskHead(mTaskHeadRepository);
         GetTasks getTasks = new GetTasks(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
+        DeleteTask deleteTask = new DeleteTask(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getTaskHead, getTasks, saveTask);
+                getTaskHead, getTasks, saveTask, deleteTask);
     }
 
 }

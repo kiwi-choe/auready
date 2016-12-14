@@ -13,6 +13,7 @@ import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
         if (isNewTaskHead()) {
             createTaskHead(title, members);
         } else {
-//            updateTaskHead(title, members);
+            updateTaskHead(title, members);
         }
     }
 
@@ -82,9 +83,9 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
-        if(FriendsActivity.REQ_FRIENDS == requestCode
-            && Activity.RESULT_OK == resultCode) {
-            if(data.hasExtra(FriendsFragment.ARG_FRIENDS)) {
+        if (FriendsActivity.REQ_FRIENDS == requestCode
+                && Activity.RESULT_OK == resultCode) {
+            if (data.hasExtra(FriendsFragment.ARG_FRIENDS)) {
                 ArrayList<Friend> friends = data.getParcelableArrayListExtra(Friend.KEY);
                 mView.setMembers(friends);
             }
@@ -117,7 +118,27 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
         }
     }
 
+    private void updateTaskHead(String title, List<Friend> members) {
+        if (mTaskHeadId == null) {
+            throw new RuntimeException("updateTaskHead() was called but taskHead is new.");
+        }
+        final TaskHead taskHead = new TaskHead(mTaskHeadId, title, members);
+        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
+                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SaveTaskHead.ResponseValue response) {
+                        mView.setResultToTaskHeadsView(taskHead.getId());
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
     private boolean isNewTaskHead() {
-        return true;
+        return mTaskHeadId == null;
     }
 }

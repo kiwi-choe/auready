@@ -7,6 +7,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
@@ -26,6 +27,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final GetTaskHead mGetTaskHead;
     private GetTasks mGetTasks;
     private SaveTask mSaveTask;
+    private DeleteTask mDeleteTask;
 
     private String mTaskHeadId;
 
@@ -40,14 +42,16 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetTaskHead getTaskHead,
                           @NonNull GetTasks getTasks,
-                          @NonNull SaveTask saveTask) {
+                          @NonNull SaveTask saveTask,
+                          @NonNull DeleteTask deleteTask) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
 
         mGetTaskHead = checkNotNull(getTaskHead, "getTaskHead cannot be null");
         mGetTasks = checkNotNull(getTasks, "getTasks cannot be null");
-        mSaveTask = checkNotNull(saveTask, "saveTask cannot be null");
+        mSaveTask = checkNotNull(saveTask, "createTask cannot be null");
+        mDeleteTask = checkNotNull(deleteTask, "deleteTask cannot be null");
 
         mTasksView.setPresenter(this);
         // init mTaskList
@@ -100,17 +104,8 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void saveTask(@NonNull String memberId, @NonNull String description, @NonNull int order) {
-        if (isNewTask()) {
-            createTask(memberId, description, order);
-        } else {
-            // update
-        }
-    }
-
-    private void createTask(String memberId, String description, int order) {
+    public void createTask(@NonNull String memberId, @NonNull String description, @NonNull int order) {
         Task newTask = new Task(mTaskHeadId, memberId, description, order);
-
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
@@ -126,8 +121,40 @@ public class TasksPresenter implements TasksContract.Presenter {
                 });
     }
 
-    private boolean isNewTask() {
-        return true;
+    @Override
+    public void updateTask(@NonNull String memberId, @NonNull String taskId, @NonNull String description, @NonNull int order) {
+        checkNotNull(taskId);
+        Task newTask = new Task(mTaskHeadId, memberId, taskId, description, order);
+        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
+                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SaveTask.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void deleteTask(@NonNull String id) {
+        mUseCaseHandler.execute(mDeleteTask, new DeleteTask.RequestValues(id),
+                new UseCase.UseCaseCallback<DeleteTask.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteTask.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     private void processTasks(List<Task> tasks) {

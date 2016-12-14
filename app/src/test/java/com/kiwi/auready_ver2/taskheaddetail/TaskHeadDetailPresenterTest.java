@@ -1,8 +1,5 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
-import android.app.Activity;
-import android.content.Intent;
-
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -10,8 +7,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
-import com.kiwi.auready_ver2.friend.FriendsActivity;
-import com.kiwi.auready_ver2.friend.FriendsFragment;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
@@ -22,7 +18,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
@@ -38,6 +33,9 @@ public class TaskHeadDetailPresenterTest {
 
     @Mock
     private TaskHeadRepository mTaskHeadRepository;
+    @Mock
+    private TaskRepository mTasksRepository;
+
     @Mock
     private TaskHeadDetailContract.View mTaskHeadDetailView;
 
@@ -75,6 +73,18 @@ public class TaskHeadDetailPresenterTest {
 
         verify(mTaskHeadDetailView).showEmptyTaskHeadError();
     }
+    @Test
+    public void saveExistingTaskHead_editTitle() {
+        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter("taskHeadId_mock");
+
+        // Modify title and ask to save
+        mTaskHeadDetailPresenter.saveTaskHead("changed title", MEMBERS);
+
+        // Then a taskhead is saved in the repo and the view updated
+        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
+        verify(mTaskHeadDetailView).setResultToTaskHeadsView(any(String.class));
+    }
+
     @Test
     public void getTaskHeadFromRepo_callsRepoAndUpdatesView() {
 

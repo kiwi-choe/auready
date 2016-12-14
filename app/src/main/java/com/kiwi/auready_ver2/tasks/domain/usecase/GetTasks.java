@@ -26,7 +26,7 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
     @Override
     protected void executeUseCase(final RequestValues values) {
 
-        mTaskRepository.getTasks(values.getTaskHeadId(), values.getMemberId(), new TaskDataSource.GetTasksCallback() {
+        mTaskRepository.getTasks(values.getTaskHeadId(), values.getMemberId(), new TaskDataSource.LoadTasksCallback() {
 
             @Override
             public void onTasksLoaded(List<Task> tasks) {

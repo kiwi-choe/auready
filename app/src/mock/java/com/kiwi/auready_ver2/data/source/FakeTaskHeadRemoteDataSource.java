@@ -1,13 +1,10 @@
-package com.kiwi.auready_ver2.data.source.remote;
+package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 
 import com.google.common.collect.Lists;
-import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 
 import java.util.LinkedHashMap;
 import java.util.List;

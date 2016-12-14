@@ -4,8 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Task;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -18,16 +16,26 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
-    void deleteAllTasks();
-
-    interface GetTasksCallback {
+    interface LoadTasksCallback {
         void onTasksLoaded(List<Task> tasks);
 
         void onDataNotAvailable();
     }
 
+    interface DeleteTasksCallback {
+        void onDeleteSuccess();
+
+        void onDeleteFail();
+    }
+
     // Get tasks by taskHeadId and memberId
-    void getTasks(String taskHeadId, String memberId, @NonNull GetTasksCallback callback);
+    void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback);
 
     void saveTask(@NonNull Task task);
+
+    void deleteTasks(@NonNull String taskHeadId, @NonNull DeleteTasksCallback callback);
+
+    void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
+
+    void deleteTask(@NonNull String id);
 }

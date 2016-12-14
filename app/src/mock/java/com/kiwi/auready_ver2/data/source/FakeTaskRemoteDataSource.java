@@ -1,11 +1,9 @@
-package com.kiwi.auready_ver2.data.source.remote;
+package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.source.TaskDataSource;
-import com.kiwi.auready_ver2.data.source.TaskMapKey;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,12 +33,22 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteAllTasks() {
+    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
 
     }
 
     @Override
-    public void getTasks(String taskHeadId, String memberId, @NonNull GetTasksCallback callback) {
+    public void deleteTasks(@NonNull String taskHeadId, @NonNull DeleteTasksCallback callback) {
+
+    }
+
+    @Override
+    public void deleteTask(@NonNull String id) {
+
+    }
+
+    @Override
+    public void getTasks(String taskHeadId, String memberId, @NonNull LoadTasksCallback callback) {
 
     }
 

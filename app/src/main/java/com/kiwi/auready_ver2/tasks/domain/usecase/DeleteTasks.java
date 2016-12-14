@@ -10,29 +10,35 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 9/19/16.
  */
-public class DeleteTask extends UseCase<DeleteTask.RequestValues, DeleteTask.ResponseValue> {
+public class DeleteTasks extends UseCase<DeleteTasks.RequestValues, DeleteTasks.ResponseValue> {
 
     private final TaskRepository mTaskRepository;
 
-    public DeleteTask(@NonNull TaskRepository taskRepository) {
+    public DeleteTasks(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository);
     }
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.deleteTask(values.getId());
+        mTaskRepository.deleteTasks(values.getTaskHeadId(), values.getMemberId());
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final String mId;
+        private final String mTaskHeadId;
+        private final String mMemberId;
 
-        public RequestValues(@NonNull String id) {
-            mId = checkNotNull(id);
+        public RequestValues(@NonNull String taskHeadId, @NonNull String memberId) {
+            mTaskHeadId = taskHeadId;
+            mMemberId = memberId;
         }
 
-        public String getId() {
-            return mId;
+        public String getTaskHeadId() {
+            return mTaskHeadId;
+        }
+
+        public String getMemberId() {
+            return mMemberId;
         }
     }
 

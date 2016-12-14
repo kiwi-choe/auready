@@ -16,7 +16,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
-import com.kiwi.auready_ver2.data.source.remote.FakeTaskHeadRemoteDataSource;
+import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

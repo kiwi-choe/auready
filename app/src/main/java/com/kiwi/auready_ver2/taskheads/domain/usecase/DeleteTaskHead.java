@@ -3,24 +3,41 @@ package com.kiwi.auready_ver2.taskheads.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Deletes a TaskHead from the TaskHeadRepository.
+ * Before a taskHead, delete tasks of this taskHead
  */
 public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, DeleteTaskHead.ResponseValue>{
 
     private final TaskHeadRepository mTaskHeadRepository;
+    private final TaskRepository mTaskRepository;
 
-    public DeleteTaskHead(@NonNull TaskHeadRepository taskHeadRepository) {
+    public DeleteTaskHead(@NonNull TaskHeadRepository taskHeadRepository, @NonNull TaskRepository taskRepository) {
         mTaskHeadRepository = checkNotNull(taskHeadRepository);
+        mTaskRepository = checkNotNull(taskRepository);
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mTaskHeadRepository.deleteTaskHead(requestValues.getTaskHeadId());
+        final String taskHeadId = requestValues.getTaskHeadId();
+        mTaskRepository.deleteTasks(taskHeadId, new TaskDataSource.DeleteTasksCallback() {
+            @Override
+            public void onDeleteSuccess() {
+                mTaskHeadRepository.deleteTaskHead(taskHeadId);
+            }
+
+            @Override
+            public void onDeleteFail() {
+
+            }
+        });
+
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

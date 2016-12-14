@@ -35,9 +35,15 @@ public class TasksContract {
 
         void populateTaskHead();
 
-        // Get tasks by mTaskHeadId and memberId
+        // Get tasks by taskHeadId and memberId
         void getTasks(@NonNull String memberId);
 
-        void saveTask(@NonNull String memberId, @NonNull String description, @NonNull int order);
+        void createTask(@NonNull String memberId,
+                        @NonNull String description, @NonNull int order);
+
+        void updateTask(@NonNull String memberId, @NonNull String taskId,
+                        @NonNull String description, @NonNull int order);
+
+        void deleteTask(@NonNull String id);
     }
 }

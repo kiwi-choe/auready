@@ -5,8 +5,10 @@ import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallback;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 
@@ -20,6 +22,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -39,10 +43,15 @@ public class TaskHeadsPresenterTest {
     @Mock
     private TaskHeadRepository mTaskHeadRepository;
     @Mock
+    private TaskRepository mTaskRepository;
+
+    @Mock
     private TaskHeadsContract.View mTaskHeadView;
 
     @Captor
     private ArgumentCaptor<LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.DeleteTasksCallback> mDeleteTasksCallbackCaptor;
 
     @Before
     public void setup() {
@@ -59,7 +68,7 @@ public class TaskHeadsPresenterTest {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
-        DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository);
+        DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository, mTaskRepository);
 
         return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead);
     }
@@ -82,7 +91,24 @@ public class TaskHeadsPresenterTest {
         TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
         mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
 
+        // Verify deleteTasks is called
+        verify(mTaskRepository).deleteTasks(eq(taskHead.getId()), mDeleteTasksCallbackCaptor.capture());
+        mDeleteTasksCallbackCaptor.getValue().onDeleteSuccess();
+
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
+    }
+
+    @Test
+    public void whenDeleteTasksIsFailed_cannotDeleteTaskHead() {
+        // Given an stubbed taskHead
+        TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
+        mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
+
+        // deleteTasks is failed
+        verify(mTaskRepository).deleteTasks(eq(taskHead.getId()), mDeleteTasksCallbackCaptor.capture());
+        mDeleteTasksCallbackCaptor.getValue().onDeleteFail();
+        // verify that cannot delete the taskHead
+        verify(mTaskHeadRepository, never()).deleteTaskHead(taskHead.getId());
     }
 
     @Test

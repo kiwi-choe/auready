@@ -1,21 +1,10 @@
 package com.kiwi.auready_ver2.data.source.local;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,19 +30,27 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteAllTasks() {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.delete(TaskEntry.TABLE_NAME, null, null);
-        db.close();
+    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
+
+    }
+    @Override
+    public void deleteTasks(@NonNull String taskHeadId, @NonNull DeleteTasksCallback callback) {
+
+    }
+    @Override
+    public void deleteTask(@NonNull String id) {
+
     }
 
     @Override
-    public void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull GetTasksCallback callback) {
+    public void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback) {
 
     }
 
     @Override
     public void saveTask(@NonNull Task task) {
     }
+
+
 
 }
