@@ -1,9 +1,6 @@
 package com.kiwi.auready_ver2.data.source;
 
-import com.google.common.collect.Lists;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
@@ -37,14 +35,14 @@ public class TaskRepositoryTest {
     * {@link Task}s stub that is added to the fake service API layer.
     * */
     // 3 tasks, one active and two completed of MEMBER the index 0
-    private static final List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
-            new Friend("email3", "name3"));
-    private static TaskHead TASKHEAD = new TaskHead("title1", MEMBERS);
-
-    private static List<Task> TASKS = Lists.newArrayList(
-            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description", 0),
-            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
-            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
+//    private static final List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
+//            new Friend("email3", "name3"));
+//    private static TaskHead TASKHEAD = new TaskHead("title1", MEMBERS);
+//
+//    private static List<Task> TASKS = Lists.newArrayList(
+//            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description", 0),
+//            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
+//            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
 
     private TaskRepository mTaskRepository;
 

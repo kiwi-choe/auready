@@ -1,11 +1,8 @@
 package com.kiwi.auready_ver2.tasks;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
@@ -24,6 +21,9 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -33,24 +33,6 @@ import static org.mockito.Mockito.verify;
  * Unit tests for the implementation of {@link TasksPresenter}.
  */
 public class TasksPresenterTest {
-
-    private static final String INVALID_TASKHEAD_ID = "";
-    private static final String TASK_DESCRIPTION1 = "someday";
-    private static final String TASK_DESCRIPTION2 = "we will know";
-    private static final String TASK_DESCRIPTION3 = "OK?";
-
-    /*
-    * {@link Task}s stub that is added to the fake service API layer.
-    * */
-    // 3 tasks, one active and two completed of MEMBER the index 0
-    private static final List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
-            new Friend("email3", "name3"));
-    private static TaskHead TASKHEAD = new TaskHead("title1", MEMBERS);
-
-    private static List<Task> TASKS = Lists.newArrayList(
-            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), TASK_DESCRIPTION1, 0),
-            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), TASK_DESCRIPTION2, true, 0),
-            new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), TASK_DESCRIPTION3, true, 0));
 
     private TasksPresenter mTasksPresenter;
 
