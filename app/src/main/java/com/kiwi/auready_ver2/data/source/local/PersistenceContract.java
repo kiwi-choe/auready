@@ -33,6 +33,7 @@ final class PersistenceContract {
         static final String TABLE_NAME = "task";
         static final String COLUMN_ID = "_id";
         static final String COLUMN_HEAD_ID = "taskheadid";
+        static final String COLUMN_MEMBER_ID = "memberid";
         static final String COLUMN_DESCRIPTION = "description";
         static final String COLUMN_COMPLETED = "completed";
         static final String COLUMN_ORDER = "sequence";

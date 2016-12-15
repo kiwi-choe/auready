@@ -73,10 +73,10 @@ public class TaskRepository implements TaskDataSource {
     }
 
     /*
-        * Gets tasks from local data source by taskHeadId and memberId
-        * unless the table is new or empty. In that case it uses the network data source.
-        * This is done to simplify the sample.
-        * */
+    * Gets tasks from local data source by taskHeadId and memberId
+    * unless the table is new or empty. In that case it uses the network data source.
+    * This is done to simplify the sample.
+    * */
     @Override
     public void getTasks(@NonNull final String taskHeadId, @NonNull final String memberId, @NonNull final LoadTasksCallback callback) {
         checkNotNull(taskHeadId);

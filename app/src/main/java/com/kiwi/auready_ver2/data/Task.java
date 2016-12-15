@@ -9,10 +9,10 @@ import java.util.UUID;
  */
 public class Task {
 
-    private final String mId;
+    private String mId;
 
-    private final String mTaskHeadId;
-    private final String mMemberId;
+    private String mTaskHeadId;
+    private String mMemberId;
 
     private String mDescription;
 
@@ -57,6 +57,19 @@ public class Task {
         mTaskHeadId = taskHeadId;
         mMemberId = memberId;
         mId = UUID.randomUUID().toString();;
+        mDescription = description;
+        mCompleted = completed;
+        mOrder = order;
+    }
+
+    /*
+    * Get task from local db
+    * */
+    public Task(String id, String taskHeadId, String memberId,
+                String description, boolean completed, int order) {
+        mId = id;
+        mTaskHeadId = taskHeadId;
+        mMemberId = memberId;
         mDescription = description;
         mCompleted = completed;
         mOrder = order;
