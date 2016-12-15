@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "851140601460",
+    "project_id": "auready-ver2"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851140601460:android:f4302d765590548d",
+        "android_client_info": {
+          "package_name": "com.kiwi.auready_ver2.mock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "851140601460-4kqjf0l3s2gj3odebm1av0ue29ncl8o7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kiwi.auready_ver2",
+            "certificate_hash": "9B2D35035CFF8BBEC50AA42FBB0B71AE4DAD88B0"
+          }
+        },
+        {
+          "client_id": "851140601460-fqbr26rjkor9ab557l6l4vrmbg3bh4gi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYDJGFfpZJ7SQFhZpneN6TM3S4wvUKKRA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
