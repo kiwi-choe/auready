@@ -80,9 +80,9 @@ public class TasksPresenterTest {
         verify(mTaskRepository).getTasks(eq(TASKHEAD.getId()), eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
-        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
-        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
-        assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
+//        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
+//        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
+//        assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
     }
 
     @Test
@@ -93,6 +93,10 @@ public class TasksPresenterTest {
 
         verify(mTaskRepository).getTasks(eq(TASKHEAD.getId()), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
+        assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
     }
     @Test
     public void createTask() {

@@ -95,8 +95,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
-                        List<Task> tasks = response.getTasks();
-                        processTasks(tasks);
+
                     }
 
                     @Override
@@ -113,7 +112,8 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(GetTasksOfTaskHead.ResponseValue response) {
-
+                        List<Task> tasks = response.getTasks();
+                        processTasks(tasks);
                     }
 
                     @Override
