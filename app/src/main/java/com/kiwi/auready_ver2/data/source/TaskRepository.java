@@ -57,10 +57,12 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull String taskHeadId, @NonNull DeleteTasksCallback callback) {
-        mTaskLocalDataSource.deleteTasks(taskHeadId, callback);
+    public void deleteTasks(@NonNull String taskHeadId) {
+        mTaskLocalDataSource.deleteTasks(taskHeadId);
 
-        mCachedTasksByTaskHeadId.remove(taskHeadId);
+        if(mCachedTasksByTaskHeadId != null) {
+            mCachedTasksByTaskHeadId.remove(taskHeadId);
+        }
     }
 
     @Override

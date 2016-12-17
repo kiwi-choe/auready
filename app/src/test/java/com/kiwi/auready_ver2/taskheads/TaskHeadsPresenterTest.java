@@ -92,23 +92,9 @@ public class TaskHeadsPresenterTest {
         mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
 
         // Verify deleteTasks is called
-        verify(mTaskRepository).deleteTasks(eq(taskHead.getId()), mDeleteTasksCallbackCaptor.capture());
-        mDeleteTasksCallbackCaptor.getValue().onDeleteSuccess();
-
+        verify(mTaskRepository).deleteTasks(eq(taskHead.getId()));
+        // and deleteTaskHead is called
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
-    }
-
-    @Test
-    public void whenDeleteTasksIsFailed_cannotDeleteTaskHead() {
-        // Given an stubbed taskHead
-        TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
-        mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
-
-        // deleteTasks is failed
-        verify(mTaskRepository).deleteTasks(eq(taskHead.getId()), mDeleteTasksCallbackCaptor.capture());
-        mDeleteTasksCallbackCaptor.getValue().onDeleteFail();
-        // verify that cannot delete the taskHead
-        verify(mTaskHeadRepository, never()).deleteTaskHead(taskHead.getId());
     }
 
     @Test
