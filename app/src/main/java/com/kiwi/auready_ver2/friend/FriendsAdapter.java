@@ -95,6 +95,10 @@ class FriendsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public ArrayList<Friend> getCheckedItems() {
+        return mSelectedFriends;
+    }
+
     private class ViewHolder {
         CheckBox friendCheckbox;
         TextView friendName;

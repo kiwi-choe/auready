@@ -24,7 +24,7 @@ public interface FriendsContract {
 
         void setLoadingIndicator(boolean active);
 
-        void setResultToTaskHeadDetailView(List<Friend> selectedFriends);
+        void setResultToTaskHeadDetailView(ArrayList<Friend> selectedFriends);
     }
 
     interface Presenter extends BasePresenter {
