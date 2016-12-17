@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Deletes a TaskHead from the TaskHeadRepository.
- * Before a taskHead, delete tasks of this taskHead
+ * Before delete a taskHead, delete tasks of this taskHead
  */
 public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, DeleteTaskHead.ResponseValue>{
 
@@ -30,6 +30,8 @@ public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, Delete
             @Override
             public void onDeleteSuccess() {
                 mTaskHeadRepository.deleteTaskHead(taskHeadId);
+
+                getUseCaseCallback().onSuccess(new ResponseValue());
             }
 
             @Override
@@ -37,8 +39,6 @@ public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, Delete
 
             }
         });
-
-        getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
