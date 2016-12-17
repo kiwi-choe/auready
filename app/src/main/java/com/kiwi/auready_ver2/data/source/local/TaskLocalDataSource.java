@@ -51,19 +51,14 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull String taskHeadId, @NonNull DeleteTasksCallback callback) {
+    public void deleteTasks(@NonNull String taskHeadId) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String whereClause = COLUMN_HEAD_ID + " LIKE?";
         String[] whereArgs = {taskHeadId};
-        int deleted = db.delete(TABLE_NAME, whereClause, whereArgs);
+        db.delete(TABLE_NAME, whereClause, whereArgs);
+
         db.close();
-        // TODO: 12/15/16 Compare 'deleted' to 'tasks of taskHead'
-        if(deleted != 0) {
-            callback.onDeleteSuccess();
-        } else {
-            callback.onDeleteFail();
-        }
     }
 
     @Override

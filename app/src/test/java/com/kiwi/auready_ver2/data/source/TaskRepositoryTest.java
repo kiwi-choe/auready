@@ -52,8 +52,8 @@ public class TaskRepositoryTest {
     private TaskDataSource mTaskRemoteDataSource;
     @Mock
     private TaskDataSource.LoadTasksCallback mLoadTasksCallback;
-@Mock
-private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
+    @Mock
+    private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
 
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
@@ -124,8 +124,8 @@ private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
         saveStubbedTasks(TASKS);
 
         String taskHeadId = TASKS.get(0).getTaskHeadId();
-        mTaskRepository.deleteTasks(taskHeadId, mDeleteTasksCallback);
-        verify(mTaskLocalDataSource).deleteTasks(taskHeadId, mDeleteTasksCallback);
+        mTaskRepository.deleteTasks(taskHeadId);
+        verify(mTaskLocalDataSource).deleteTasks(taskHeadId);
 
         assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(taskHeadId), is(false));
     }

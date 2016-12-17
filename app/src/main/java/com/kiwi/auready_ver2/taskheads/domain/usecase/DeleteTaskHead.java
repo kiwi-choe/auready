@@ -13,7 +13,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Deletes a TaskHead from the TaskHeadRepository.
  * Before delete a taskHead, delete tasks of this taskHead
  */
-public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, DeleteTaskHead.ResponseValue>{
+public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, DeleteTaskHead.ResponseValue> {
 
     private final TaskHeadRepository mTaskHeadRepository;
     private final TaskRepository mTaskRepository;
@@ -26,19 +26,10 @@ public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, Delete
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         final String taskHeadId = requestValues.getTaskHeadId();
-        mTaskRepository.deleteTasks(taskHeadId, new TaskDataSource.DeleteTasksCallback() {
-            @Override
-            public void onDeleteSuccess() {
-                mTaskHeadRepository.deleteTaskHead(taskHeadId);
+        mTaskRepository.deleteTasks(taskHeadId);
+        mTaskHeadRepository.deleteTaskHead(taskHeadId);
 
-                getUseCaseCallback().onSuccess(new ResponseValue());
-            }
-
-            @Override
-            public void onDeleteFail() {
-
-            }
-        });
+        getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
@@ -53,5 +44,6 @@ public class DeleteTaskHead extends UseCase<DeleteTaskHead.RequestValues, Delete
         }
     }
 
-    public static final class ResponseValue implements UseCase.ResponseValue {}
+    public static final class ResponseValue implements UseCase.ResponseValue {
+    }
 }

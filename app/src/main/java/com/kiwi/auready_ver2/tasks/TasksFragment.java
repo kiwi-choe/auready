@@ -96,7 +96,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void setTitle(String title) {
-        getActivity().getActionBar().setTitle(title);
+//        getActivity().getActionBar().setTitle(title);
     }
 
     @Override
