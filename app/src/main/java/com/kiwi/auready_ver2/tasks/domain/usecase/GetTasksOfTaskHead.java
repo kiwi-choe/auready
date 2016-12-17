@@ -14,19 +14,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Fetches the list of tasks by taskHeadId.
  */
-public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseValue> {
+public class GetTasksOfTaskHead extends UseCase<GetTasksOfTaskHead.RequestValues, GetTasksOfTaskHead.ResponseValue> {
 
 
     private final TaskRepository mTaskRepository;
 
-    public GetTasks(@NonNull TaskRepository taskRepository) {
+    public GetTasksOfTaskHead(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(final RequestValues values) {
 
-        mTaskRepository.getTasks(values.getTaskHeadId(), values.getMemberId(), new TaskDataSource.LoadTasksCallback() {
+        mTaskRepository.getTasks(values.getTaskHeadId(), new TaskDataSource.LoadTasksCallback() {
 
             @Override
             public void onTasksLoaded(List<Task> tasks) {
@@ -44,19 +44,13 @@ public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseV
 
     public static class RequestValues implements UseCase.RequestValues {
         private final String mTaskHeadId;
-        private final String mMemberId;
 
-        public RequestValues(@NonNull String taskHeadId, @NonNull String memberId) {
+        public RequestValues(@NonNull String taskHeadId) {
             mTaskHeadId = checkNotNull(taskHeadId);
-            mMemberId = checkNotNull(memberId);
         }
 
         public String getTaskHeadId() {
             return mTaskHeadId;
-        }
-
-        public String getMemberId() {
-            return mMemberId;
         }
     }
 

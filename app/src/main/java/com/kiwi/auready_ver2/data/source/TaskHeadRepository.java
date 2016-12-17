@@ -75,10 +75,10 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         TaskHead cachedTaskHead = getTaskHeadWithId(taskHeadId);
 
         // Respond immediately with cache if available
-//        if(cachedTaskHead != null) {
-//            callback.onTaskHeadLoaded(cachedTaskHead);
-//            return;
-//        }
+        if(cachedTaskHead != null) {
+            callback.onTaskHeadLoaded(cachedTaskHead);
+            return;
+        }
 
         // Is the taskhead in the local? if not, query the network.
         mTaskHeadLocalDataSource.getTaskHead(taskHeadId, new GetTaskHeadCallback() {

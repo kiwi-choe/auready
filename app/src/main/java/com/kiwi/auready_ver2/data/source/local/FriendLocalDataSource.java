@@ -50,6 +50,18 @@ public class FriendLocalDataSource implements FriendDataSource {
     }
 
     @Override
+    public void deleteFriend(@NonNull String id) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        String selection = FriendEntry.COLUMN_ID + " LIKE?";
+        String[] selectionArgs = {id};
+
+        db.delete(FriendEntry.TABLE_NAME, selection, selectionArgs);
+
+        db.close();
+    }
+
+    @Override
     public void getFriends(@NonNull LoadFriendsCallback callback) {
         List<Friend> friends = new ArrayList<>();
         SQLiteDatabase db = mDbHelper.getReadableDatabase();

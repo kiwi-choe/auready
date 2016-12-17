@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.friend;
 
+import android.support.annotation.NonNull;
+
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Friend;
@@ -14,21 +16,20 @@ public interface FriendsContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showNoFriends();
         void showFriends(List<Friend> friendList);
 
         void showSearchedEmailList(ArrayList<String> searchedEmailList);
         void showNoResultByEmail();
-        void showFriendDeleted();
 
         void setLoadingIndicator(boolean active);
 
-        void showNoFriends();
     }
 
     interface Presenter extends BasePresenter {
 
         void loadFriends();
 
-        void deleteFriend(String friendId);
+        void deleteFriend(@NonNull String id);
     }
 }

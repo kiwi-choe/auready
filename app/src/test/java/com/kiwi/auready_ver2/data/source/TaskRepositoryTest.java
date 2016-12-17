@@ -104,7 +104,7 @@ private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
     }
 
     @Test
-    public void deleteTask_deleteTaskToRemote() {
+    public void deleteTask_deleteTaskToLocalAndRemote() {
         // Save task
         Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
         mTaskRepository.saveTask(newTask);
@@ -178,6 +178,33 @@ private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
 
         // Verify that data fetched from Remote was saved in Local
         verify(mTaskLocalDataSource, times(TASKS.size())).saveTask(any(Task.class));
+    }
+
+    @Test
+    public void getTasksOfTaskHead_fromLocal() {
+        mTaskRepository.getTasks(TASKHEAD_ID, mLoadTasksCallback);
+
+        // Set tasks available from local
+        verify(mTaskLocalDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
+    }
+
+    @Test
+    public void getTasksOfTaskHead_fromRemote() {
+        mTaskRepository.getTasks(TASKHEAD_ID, mLoadTasksCallback);
+
+        // Local has no data available,
+        verify(mTaskLocalDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
+        // and call to Remote has data available
+        verify(mTaskRemoteDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        // Verify the tasks from Remote are returned, not local
+        verify(mTaskLocalDataSource, never()).getTasks(TASKHEAD_ID, mLoadTasksCallback);
+        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
     }
 
     @Test

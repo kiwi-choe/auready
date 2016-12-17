@@ -29,6 +29,11 @@ public class FakeFriendRemoteDataSource implements FriendDataSource {
     }
 
     @Override
+    public void deleteFriend(@NonNull String id) {
+
+    }
+
+    @Override
     public void getFriends(@NonNull LoadFriendsCallback callback) {
 
     }

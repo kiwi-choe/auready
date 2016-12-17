@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.friend;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -96,11 +97,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     @Override
     public void setPresenter(@NonNull FriendsContract.Presenter presenter) {
         mPresenter = checkNotNull(presenter);
-    }
-
-    @Override
-    public void showFriendDeleted() {
-
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 
 import java.util.ArrayList;
@@ -24,14 +25,17 @@ public class FriendsPresenter implements FriendsContract.Presenter {
     private final FriendsContract.View mFriendView;
     private final UseCaseHandler mUseCaseHandler;
     private final GetFriends mGetFriends;
+    private final DeleteFriend mDeleteFriend;
 
     public FriendsPresenter(@NonNull UseCaseHandler useCaseHandler,
                             @NonNull FriendsContract.View friendView,
-                            @NonNull GetFriends getFriends) {
+                            @NonNull GetFriends getFriends,
+                            @NonNull DeleteFriend deleteFriend) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mFriendView = checkNotNull(friendView, "friendView cannot be null");
 
         mGetFriends = checkNotNull(getFriends, "getFriends cannot be null");
+        mDeleteFriend = checkNotNull(deleteFriend);
 
         mFriendView.setPresenter(this);
     }
@@ -64,7 +68,20 @@ public class FriendsPresenter implements FriendsContract.Presenter {
     }
 
     @Override
-    public void deleteFriend(String requestedFriendId) {
+    public void deleteFriend(@NonNull String id) {
+        mUseCaseHandler.execute(mDeleteFriend, new DeleteFriend.RequestValues(id),
+                new UseCase.UseCaseCallback<DeleteFriend.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteFriend.ResponseValue response) {
+                        loadFriends();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
      }
 
     private void processFriends(List<Friend> friends) {

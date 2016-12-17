@@ -8,7 +8,8 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import java.util.LinkedList;
@@ -25,9 +26,10 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final TasksContract.View mTasksView;
 
     private final GetTaskHead mGetTaskHead;
-    private GetTasks mGetTasks;
-    private SaveTask mSaveTask;
-    private DeleteTask mDeleteTask;
+    private final GetTasksOfMember mGetTasksOfMember;
+    private final GetTasksOfTaskHead mGetTasksOfTaskHead;
+    private final SaveTask mSaveTask;
+    private final DeleteTask mDeleteTask;
 
     private String mTaskHeadId;
 
@@ -41,17 +43,19 @@ public class TasksPresenter implements TasksContract.Presenter {
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetTaskHead getTaskHead,
-                          @NonNull GetTasks getTasks,
+                          @NonNull GetTasksOfMember getTasksOfMember,
                           @NonNull SaveTask saveTask,
-                          @NonNull DeleteTask deleteTask) {
+                          @NonNull DeleteTask deleteTask,
+                          @NonNull GetTasksOfTaskHead getTasksOfTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
 
         mGetTaskHead = checkNotNull(getTaskHead, "getTaskHead cannot be null");
-        mGetTasks = checkNotNull(getTasks, "getTasks cannot be null");
+        mGetTasksOfMember = checkNotNull(getTasksOfMember, "getTasksOfMember cannot be null");
         mSaveTask = checkNotNull(saveTask, "createTask cannot be null");
         mDeleteTask = checkNotNull(deleteTask, "deleteTask cannot be null");
+        mGetTasksOfTaskHead = checkNotNull(getTasksOfTaskHead);
 
         mTasksView.setPresenter(this);
         // init mTaskList
@@ -62,7 +66,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void start() {
         if(mTaskHeadId != null) {
             populateTaskHead();
-//            populateTasks();
         }
     }
 
@@ -87,13 +90,30 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void getTasks(@NonNull String memberId) {
         checkNotNull(memberId);
 
-        mUseCaseHandler.execute(mGetTasks, new GetTasks.RequestValues(mTaskHeadId, memberId),
-                new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
+        mUseCaseHandler.execute(mGetTasksOfMember, new GetTasksOfMember.RequestValues(mTaskHeadId, memberId),
+                new UseCase.UseCaseCallback<GetTasksOfMember.ResponseValue>() {
 
                     @Override
-                    public void onSuccess(GetTasks.ResponseValue response) {
+                    public void onSuccess(GetTasksOfMember.ResponseValue response) {
                         List<Task> tasks = response.getTasks();
                         processTasks(tasks);
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void getTasks() {
+        mUseCaseHandler.execute(mGetTasksOfTaskHead, new GetTasksOfTaskHead.RequestValues(mTaskHeadId),
+                new UseCase.UseCaseCallback<GetTasksOfTaskHead.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(GetTasksOfTaskHead.ResponseValue response) {
+
                     }
 
                     @Override

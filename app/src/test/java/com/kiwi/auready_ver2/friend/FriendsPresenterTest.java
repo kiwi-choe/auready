@@ -6,6 +6,9 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 
 import org.junit.Before;
@@ -19,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -35,9 +40,12 @@ public class FriendsPresenterTest {
 
     @Mock
     private FriendRepository mFriendRepository;
+    @Mock
+    private TaskHeadRepository mTaskHeadRepository;
 
     @Captor
     private ArgumentCaptor<FriendDataSource.LoadFriendsCallback> mLoadFriendsCallbackCaptor;
+
 
 
     @Before
@@ -55,8 +63,9 @@ public class FriendsPresenterTest {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetFriends getFriends = new GetFriends(mFriendRepository);
+        DeleteFriend deleteFriend = new DeleteFriend(mFriendRepository);
 
-        return new FriendsPresenter(useCaseHandler, mFriendView, getFriends);
+        return new FriendsPresenter(useCaseHandler, mFriendView, getFriends, deleteFriend);
     }
 
     @Test
@@ -77,4 +86,14 @@ public class FriendsPresenterTest {
         assertTrue(showFriendsArgumentCaptor.getValue().size() == 3);
     }
 
+    @Test
+    public void deleteFriendFromRepo_updateView() {
+        Friend friend = FRIENDS.get(0);
+        mFriendsPresenter.deleteFriend(friend.getId());
+
+        // Verify deleteFriend is called
+        verify(mFriendRepository).deleteFriend((eq(friend.getId())));
+        // Update view
+        // load friends for updating list
+    }
 }

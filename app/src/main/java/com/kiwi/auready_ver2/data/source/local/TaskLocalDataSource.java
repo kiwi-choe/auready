@@ -116,6 +116,46 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
+    public void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback) {
+        List<Task> tasks = new ArrayList<>(0);
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String[] columns = {
+                COLUMN_ID,
+                COLUMN_DESCRIPTION,
+                COLUMN_COMPLETED,
+                COLUMN_ORDER
+        };
+
+        String selection = COLUMN_HEAD_ID + " LIKE?";
+        String[] selectionArgs = {taskHeadId};
+        Cursor c = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+                String id = c.getString(c.getColumnIndex(COLUMN_ID));
+                String memberId = c.getString(c.getColumnIndex(COLUMN_MEMBER_ID));
+                String description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
+                boolean completed = (c.getInt(c.getColumnIndex(COLUMN_COMPLETED))) != 0;
+                int order = c.getInt(c.getColumnIndex(COLUMN_ORDER));
+
+                Task task = new Task(id, taskHeadId, memberId, description, completed, order);
+                tasks.add(task);
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+        db.close();
+        if (tasks.isEmpty()) {
+            // This will be called if the table is new or just empty.
+            callback.onDataNotAvailable();
+        } else {
+            callback.onTasksLoaded(tasks);
+        }
+
+    }
+
+    @Override
     public void saveTask(@NonNull Task task) {
         checkNotNull(task);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();

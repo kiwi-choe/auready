@@ -91,4 +91,15 @@ public class FriendRepositoryTest {
         // Then the persistent repository are called
         verify(mFriendLocalDataSource).saveFriend(newFriend);
     }
+
+    @Test
+    public void deleteFriend() {
+        Friend friend = new Friend("aa@aa.com", "nameOfaa");
+        mFriendRepository.deleteFriend(friend.getId());
+
+        verify(mFriendRemoteDataSource).deleteFriend(friend.getId());
+        verify(mFriendLocalDataSource).deleteFriend(friend.getId());
+
+
+    }
 }
