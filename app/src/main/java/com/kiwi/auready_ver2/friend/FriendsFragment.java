@@ -1,11 +1,13 @@
 package com.kiwi.auready_ver2.friend;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -33,6 +35,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     private LinearLayout mNoFriendsView;
     private LinearLayout mNoSearchedEmailView;
     private TextView mLoadingIndicator;
+    private ListView mListView;
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -46,6 +49,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0), mItemListener);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -61,8 +66,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         View root = inflater.inflate(R.layout.fragment_friend, container, false);
 
         // Set up Friends view
-        ListView listView = (ListView) root.findViewById(R.id.friend_list);
-        listView.setAdapter(mListAdapter);
+        mListView = (ListView) root.findViewById(R.id.friend_list);
+        mListView.setAdapter(mListAdapter);
         mFriendsView = (LinearLayout) root.findViewById(R.id.friend_list_layout);
 
         // Set up no friends and searching user view
@@ -71,6 +76,25 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         mLoadingIndicator = (TextView) root.findViewById(R.id.loading_indicator);
 
         return root;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_open_findview) {
+            openFindView();
+            return true;
+        } else if (id == R.id.action_confirm) {
+//            List<Friend> selectedFriends = mListAdapter.getCheckedItems();
+//            setResultToTaskHeadDetailView(selectedFriends);
+        }
+        return false;
+    }
+
+    private void openFindView() {
+        Intent intent =
+                new Intent(getActivity(), FindActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -99,11 +123,16 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
 
     @Override
     public void setLoadingIndicator(final boolean active) {
-        if(active) {
+        if (active) {
             mLoadingIndicator.setText(R.string.loading_friends);
         } else {
             mLoadingIndicator.setText("");
         }
+    }
+
+    @Override
+    public void setResultToTaskHeadDetailView(List<Friend> selectedFriends) {
+
     }
 
     @Override

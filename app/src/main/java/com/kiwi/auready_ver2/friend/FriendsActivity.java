@@ -62,17 +62,6 @@ public class FriendsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_open_findview) {
-            openFindView();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void openFindView() {
-        Intent intent =
-                new Intent(FriendsActivity.this, FindActivity.class);
-        startActivity(intent);
+        return false;
     }
 }
