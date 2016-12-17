@@ -14,6 +14,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -116,16 +117,22 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void replaceMemberList(ArrayList<Friend> members) {
-        setMemberList(members);
+    public void replaceMemberList(List<Friend> members) {
+        setMemberList((ArrayList) members);
     }
 
     private void setMemberList(ArrayList<Friend> members) {
         mMemberList = members;
     }
 
-    public void replaceTasksList(ArrayList<ArrayList<Task>> tasksList) {
-        setTasksList(tasksList);
+    public void replaceTasksList(List<Task> tasksList) {
+        List<Task> taskOfMember = new ArrayList<>(0);
+//        for(Task task:tasksList) {
+//            if(mMemberList.)
+//            taskOfMember.add(task.getOrder(), task);
+//
+//        }
+        setTasksList((ArrayList) tasksList);
     }
 
     private void setTasksList(ArrayList<ArrayList<Task>> tasksList) {

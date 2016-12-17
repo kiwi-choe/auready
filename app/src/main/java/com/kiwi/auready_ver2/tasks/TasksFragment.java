@@ -101,20 +101,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void setMembers(List<Friend> members) {
-        mTasksAdapter.replaceMemberList((ArrayList) members);
+        mTasksAdapter.replaceMemberList(members);
     }
 
     @Override
     public void showTasks(List<Task> tasks) {
-        ArrayList<ArrayList<Task>> tasksList = new ArrayList<ArrayList<Task>>();
-        ArrayList<Task> taskContents = new ArrayList<>();
-
-        tasks.get(0).getMemberId();
-
-//        tasksList.add();
-
-
-        mTasksAdapter.replaceTasksList(tasksList);
+        mTasksAdapter.replaceTasksList(tasks);
     }
 
     @Override
