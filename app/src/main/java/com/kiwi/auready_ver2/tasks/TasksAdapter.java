@@ -126,17 +126,15 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     }
 
     public void replaceTasksList(List<Task> tasksList) {
-        List<Task> taskOfMember = new ArrayList<>(0);
-//        for(Task task:tasksList) {
-//            if(mMemberList.)
-//            taskOfMember.add(task.getOrder(), task);
-//
-//        }
-        setTasksList((ArrayList) tasksList);
-    }
-
-    private void setTasksList(ArrayList<ArrayList<Task>> tasksList) {
-        mTasksList = tasksList;
+        for (int i = 0; i < mMemberList.size(); i++) {
+            ArrayList<Task> taskOfMember = new ArrayList<>(0);
+            for (Task task : tasksList) {
+                if (task.getMemberId().equals(mMemberList.get(i).getId())) {
+                    taskOfMember.add(task.getOrder(), task);
+                }
+            }
+            mTasksList.add(taskOfMember);
+        }
     }
 
     private class GroupViewHolder {

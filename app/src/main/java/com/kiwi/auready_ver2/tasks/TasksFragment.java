@@ -44,10 +44,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
         }
-
 
 
 //        groupList.add("member 1");
@@ -96,7 +95,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void setTitle(String title) {
-        getActivity().getActionBar().setTitle(title);
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setTitle(title);
+        }
     }
 
     @Override
