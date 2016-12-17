@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -7,12 +7,25 @@
     <CheckBox
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true" />
 
     <TextView
         android:id="@+id/task"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_toRightOf="@id/checkbox"
         android:paddingStart="20dp" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/delete_task_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="Delete" />
+
+    <Button
+        android:id="@+id/add_task_btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>
