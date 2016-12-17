@@ -60,10 +60,10 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void start() {
-//        if(mTaskHeadId != null) {
-//            populateTaskHead();
+        if(mTaskHeadId != null) {
+            populateTaskHead();
 //            populateTasks();
-//        }
+        }
     }
 
     @Override

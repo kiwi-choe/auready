@@ -60,6 +60,12 @@ public class TaskHeadsAdapter extends BaseAdapter {
         }
 
         final TaskHead taskHead = getItem(i);
+        rowView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mItemListener.onTaskHeadItemClick(taskHead.getId());
+            }
+        });
 
         TextView titleTV = (TextView) rowView.findViewById(R.id.taskhead_title);
         titleTV.setText(taskHead.getTitle());

@@ -10,8 +10,8 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
         android:paddingBottom="5dp"/>
 
-    <ListView
-        android:id="@+id/members"
+    <ExpandableListView
+        android:id="@+id/expand_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
