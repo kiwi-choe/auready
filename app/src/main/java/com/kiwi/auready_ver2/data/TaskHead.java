@@ -109,7 +109,7 @@ public class TaskHead {
         if(strMembers.length() != 0) {
             try {
                 mMembers =
-                        SQLiteDbHelper.OBJECT_MAPPER.readValue(strMembers, new TypeReference<ArrayList<Friend>>(){});
+                        SQLiteDbHelper.OBJECT_MAPPER.readValue(strMembers, new TypeReference<List<Friend>>(){});
             } catch (IOException e) {
                 e.printStackTrace();
             }
