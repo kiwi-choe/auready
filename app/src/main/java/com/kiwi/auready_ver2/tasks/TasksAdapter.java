@@ -21,16 +21,18 @@ import java.util.List;
  */
 public class TasksAdapter extends BaseExpandableListAdapter {
 
+    final private TasksFragment.TaskItemListener mTaskItemListener;
     private ArrayList<Friend> mMemberList = null;
     private ArrayList<ArrayList<Task>> mTasksList = null;
     private LayoutInflater mInflater = null;
 
-    public TasksAdapter(Context context, ArrayList<Friend> memberList, ArrayList<ArrayList<Task>> tasksList) {
+    public TasksAdapter(Context context, ArrayList<Friend> memberList, ArrayList<ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
         super();
 
         mInflater = LayoutInflater.from(context);
         mMemberList = memberList;
         mTasksList = tasksList;
+        mTaskItemListener = taskItemListener;
     }
 
     @Override
@@ -40,7 +42,8 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int memberPosition) {
-        return mTasksList.get(memberPosition).size();
+        // + 1 : footer view for each member list
+        return mTasksList.get(memberPosition).size() + 1;
     }
 
     @Override
@@ -100,14 +103,38 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = new ChildViewHolder();
             viewHolder.taskTextView = (TextView) view.findViewById(R.id.task);
             viewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+            viewHolder.deleteTaskBtn = (Button) view.findViewById(R.id.delete_task_btn);
+
+            viewHolder.addTaskBtn = (Button) view.findViewById(R.id.add_task_btn);
 
             view.setTag(viewHolder);
         } else {
             viewHolder = (ChildViewHolder) view.getTag();
         }
 
+        if (isLastTask) {
+            viewHolder.addTaskBtn.setVisibility(View.VISIBLE);
+            viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTaskItemListener.onAddTaskClick();
+                }
+            });
+
+            viewHolder.taskTextView.setVisibility(View.GONE);
+            viewHolder.checkBox.setVisibility(View.GONE);
+            viewHolder.deleteTaskBtn.setVisibility(View.GONE);
+
+        } else {
+            viewHolder.addTaskBtn.setVisibility(View.GONE);
+            viewHolder.taskTextView.setVisibility(View.VISIBLE);
+            viewHolder.checkBox.setVisibility(View.VISIBLE);
+            viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
+        }
+
         ArrayList<Task> tasksList = mTasksList.get(memberPosition);
         viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
+        viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
 
         return view;
     }
@@ -125,25 +152,16 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         mMemberList = members;
     }
 
-    public void replaceTasksList(List<Task> tasks) {
-//        List<Task> taskOfMember = new ArrayList<>(0);
-//        for(Task task:tasks) {
-//
-//            // add the task to each member
-//            taskOfMember.add(task.getOrder(), task);
-//
-//            // add tasks to tasksList
-//            // Find the member of tasks
-//            int size = mTasksList.size();
-//            for(int i = 0; i < size; i++) {
-//                if(mTasksList.get(i).
-//            }
-//        }
-
-    }
-
-    private void setTasksList(ArrayList<ArrayList<Task>> tasksList) {
-        mTasksList = tasksList;
+    public void replaceTasksList(List<Task> tasksList) {
+        for (int i = 0; i < mMemberList.size(); i++) {
+            ArrayList<Task> taskOfMember = new ArrayList<>(0);
+            for (Task task : tasksList) {
+                if (task.getMemberId().equals(mMemberList.get(i).getId())) {
+                    taskOfMember.add(task.getOrder(), task);
+                }
+            }
+            mTasksList.add(taskOfMember);
+        }
     }
 
     private class GroupViewHolder {
@@ -154,5 +172,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private class ChildViewHolder {
         TextView taskTextView;
         CheckBox checkBox;
+        Button deleteTaskBtn;
+        Button addTaskBtn;
     }
 }

@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import java.util.ArrayList;
@@ -44,10 +46,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
         }
-
 
 
 //        groupList.add("member 1");
@@ -62,7 +63,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 //        childList.add(childContents);
 //        childList.add(childContents);
 
-        mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Friend>(), new ArrayList<ArrayList<Task>>());
+        mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Friend>(), new ArrayList<ArrayList<Task>>(), mTaskItemListener);
     }
 
 
@@ -81,9 +82,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_tasks, container, false);
-
         // Set ListView
+        View root = inflater.inflate(R.layout.fragment_tasks, container, false);
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
 
@@ -96,7 +96,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void setTitle(String title) {
-//        getActivity().getActionBar().setTitle(title);
+        if (getActivity().getActionBar() != null) {
+            getActivity().getActionBar().setTitle(title);
+        }
     }
 
     @Override
@@ -112,5 +114,28 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void showNoTasks() {
 
+    }
+
+    TaskItemListener mTaskItemListener = new TaskItemListener() {
+        @Override
+        public void onTaskItemClick(String taskHeadId) {
+
+        }
+
+        @Override
+        public void onDeleteClick(TaskHead clickedTaskHead) {
+
+        }
+
+        @Override
+        public void onAddTaskClick() {
+
+        }
+    };
+
+    public interface TaskItemListener {
+        void onTaskItemClick(String taskHeadId);
+        void onDeleteClick(TaskHead clickedTaskHead);
+        void onAddTaskClick();
     }
 }
