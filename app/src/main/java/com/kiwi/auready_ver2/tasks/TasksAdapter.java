@@ -125,14 +125,21 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         mMemberList = members;
     }
 
-    public void replaceTasksList(List<Task> tasksList) {
-        List<Task> taskOfMember = new ArrayList<>(0);
-//        for(Task task:tasksList) {
-//            if(mMemberList.)
+    public void replaceTasksList(List<Task> tasks) {
+//        List<Task> taskOfMember = new ArrayList<>(0);
+//        for(Task task:tasks) {
+//
+//            // add the task to each member
 //            taskOfMember.add(task.getOrder(), task);
 //
+//            // add tasks to tasksList
+//            // Find the member of tasks
+//            int size = mTasksList.size();
+//            for(int i = 0; i < size; i++) {
+//                if(mTasksList.get(i).
+//            }
 //        }
-        setTasksList((ArrayList) tasksList);
+
     }
 
     private void setTasksList(ArrayList<ArrayList<Task>> tasksList) {
