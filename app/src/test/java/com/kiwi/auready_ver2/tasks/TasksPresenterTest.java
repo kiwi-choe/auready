@@ -101,12 +101,12 @@ public class TasksPresenterTest {
     @Test
     public void createTask() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
-        // Create a new task
+        // Create a new taskTextView
         String memberId = TASKS.get(0).getMemberId();
-        String description = "description new task";
+        String description = "description new taskTextView";
         int order = TASKS.size();
         mTasksPresenter.createTask(memberId, description, order);
-        // Then a task is saved in the repository
+        // Then a taskTextView is saved in the repository
         verify(mTaskRepository).saveTask(any(Task.class));
     }
 
@@ -116,7 +116,7 @@ public class TasksPresenterTest {
 
         String memberId = TASKS.get(0).getMemberId();
         int order = TASKS.size();
-        // Update a task
+        // Update a taskTextView
         mTasksPresenter.updateTask(memberId, "taskId", "changed description", order);
         verify(mTaskRepository).saveTask(any(Task.class));
     }
