@@ -160,12 +160,21 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     TaskHeadItemListener
             mItemListener = new TaskHeadItemListener() {
         @Override
+        public void onTaskHeadItemClick(String taskHeadId) {
+            Intent intent = new Intent(getContext(), TasksActivity.class);
+            intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+
+            startActivity(intent);
+        }
+
+        @Override
         public void onDeleteClick(TaskHead clickedTaskHead) {
             mPresenter.deleteTaskHead(clickedTaskHead.getId());
         }
     };
 
     public interface TaskHeadItemListener {
+        void onTaskHeadItemClick(String taskHeadId);
         void onDeleteClick(TaskHead clickedTaskHead);
     }
 }

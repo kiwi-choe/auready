@@ -7,14 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,7 +26,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
 
     private TextView mTitleView;
-    private ListView mTasksView;
+    private ExpandableListView mTasksView;
     private TasksAdapter mTasksAdapter;
 
     private String mTaskHeadId;
@@ -47,7 +49,23 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             mTaskHeadId = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
         }
 
-        mTasksAdapter = new TasksAdapter();
+        ArrayList<String> groupList = new ArrayList<>();
+        ArrayList<ArrayList<String>> childList= new ArrayList<ArrayList<String>>();
+        ArrayList<String> childContents = new ArrayList<>();
+
+        groupList.add("member 1");
+        groupList.add("member 2");
+        groupList.add("member 3");
+
+        childContents.add("task 1");
+        childContents.add("task 2");
+        childContents.add("task 3");
+
+        childList.add(childContents);
+        childList.add(childContents);
+        childList.add(childContents);
+
+        mTasksAdapter = new TasksAdapter(getContext(), groupList, childList);
     }
 
 
@@ -72,8 +90,17 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTitleView = (TextView) root.findViewById(R.id.tasks_title);
         mTitleView.setText(mTaskHeadTitle);
         // Set ListView
-        mTasksView = (ListView) root.findViewById(R.id.members);
+        mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+
+        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                Toast.makeText(getContext(), "onGroupClick", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        });
+
 
         return root;
     }
