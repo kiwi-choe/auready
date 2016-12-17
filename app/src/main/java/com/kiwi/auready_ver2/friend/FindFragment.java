@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.friend;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -10,8 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
+
+import java.util.ArrayList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -24,6 +26,10 @@ public class FindFragment extends Fragment implements
     public static final String TAG_FINDFRAG = "Tag_FindFragment";
     private FindContract.Presenter mPresenter;
 
+    // testing
+    private ArrayList<Friend> TEST_FRIENDS;
+    private int TEST_FRIENDS_CNT;
+
     public FindFragment() {
         // Required empty public constructor
     }
@@ -34,7 +40,22 @@ public class FindFragment extends Fragment implements
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        // testing
+        TEST_FRIENDS = Lists.newArrayList(
+                new Friend("email1", "name1"),
+                new Friend("email2", "name2"),
+                new Friend("email3", "name3"),
+                new Friend("email4", "name4"),
+                new Friend("email5", "name5"),
+                new Friend("email6", "name6"),
+                new Friend("email7", "name7"),
+                new Friend("email8", "name8"),
+                new Friend("email9", "name9"),
+                new Friend("email10", "name10"));
+        TEST_FRIENDS_CNT = -1;
     }
 
     @Override
@@ -47,9 +68,10 @@ public class FindFragment extends Fragment implements
         btSaveFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // testing
                 // Stub a Friend
-                Friend friend = new Friend("aa@aa.com", "nameOfaa");
-                mPresenter.saveFriend(friend);
+                TEST_FRIENDS_CNT = (TEST_FRIENDS_CNT+1) % 10;
+                mPresenter.saveFriend(TEST_FRIENDS.get(TEST_FRIENDS_CNT));
             }
         });
         return root;
