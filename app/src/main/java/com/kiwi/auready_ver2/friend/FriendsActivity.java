@@ -42,8 +42,8 @@ public class FriendsActivity extends AppCompatActivity {
         FriendsPresenter presenter = new FriendsPresenter(
                 Injection.provideUseCaseHandler(),
                 friendsFragment,
-                Injection.provideGetFriends(getApplicationContext())
-        );
+                Injection.provideGetFriends(getApplicationContext()),
+                Injection.provideDeleteFriend(getApplicationContext()));
 
     }
 

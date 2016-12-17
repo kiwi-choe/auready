@@ -53,6 +53,11 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
+    public void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback) {
+
+    }
+
+    @Override
     public void saveTask(@NonNull Task task) {
 
     }

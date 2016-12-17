@@ -45,6 +45,13 @@ public class FriendRepository implements FriendDataSource {
     }
 
     @Override
+    public void deleteFriend(@NonNull String id) {
+        checkNotNull(id);
+        mFriendRemoteDataSource.deleteFriend(id);
+mFriendsLocalDataSource.deleteFriend(id);
+    }
+
+    @Override
     public void getFriends(@NonNull final LoadFriendsCallback callback) {
         checkNotNull(callback);
 

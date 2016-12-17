@@ -13,6 +13,8 @@ public interface FriendDataSource {
 
     void deleteAllFriends();
 
+    void deleteFriend(@NonNull String id);
+
     interface LoadFriendsCallback {
 
         void onFriendsLoaded(List<Friend> friends);

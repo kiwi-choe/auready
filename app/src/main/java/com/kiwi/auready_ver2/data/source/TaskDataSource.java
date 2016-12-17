@@ -30,11 +30,14 @@ public interface TaskDataSource {
 
     // Get tasks by taskHeadId and memberId
     void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback);
+    // Get tasks by taskHeadId
+    void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback);
 
     void saveTask(@NonNull Task task);
 
+    // When delete a taskhead
     void deleteTasks(@NonNull String taskHeadId, @NonNull DeleteTasksCallback callback);
-
+    // When delete a member of taskHeadDetail(update taskhead)
     void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
 
     void deleteTask(@NonNull String id);

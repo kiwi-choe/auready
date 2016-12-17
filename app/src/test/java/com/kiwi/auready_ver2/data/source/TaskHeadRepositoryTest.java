@@ -130,6 +130,7 @@ public class TaskHeadRepositoryTest {
 
         verify(mTaskHeadLocalDataSource).getTaskHead(eq(TASKHEAD_ID), any(
                 TaskHeadDataSource.GetTaskHeadCallback.class));
+
     }
 
     @Test

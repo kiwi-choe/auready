@@ -9,7 +9,8 @@ import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import org.junit.Before;
@@ -85,6 +86,15 @@ public class TasksPresenterTest {
     }
 
     @Test
+    public void getTasksFromRepo_withTaskHeadId_updateView() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+        // Get tasks by taskHeadId
+        mTasksPresenter.getTasks();
+
+        verify(mTaskRepository).getTasks(eq(TASKHEAD.getId()), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+    }
+    @Test
     public void createTask() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
         // Create a new task
@@ -118,12 +128,13 @@ public class TasksPresenterTest {
     private TasksPresenter givenTasksPresenter(String taskHeadId) {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHead getTaskHead = new GetTaskHead(mTaskHeadRepository);
-        GetTasks getTasks = new GetTasks(mTaskRepository);
+        GetTasksOfMember getTasksOfMember = new GetTasksOfMember(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
         DeleteTask deleteTask = new DeleteTask(mTaskRepository);
+        GetTasksOfTaskHead getTasksOfTaskHead = new GetTasksOfTaskHead(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getTaskHead, getTasks, saveTask, deleteTask);
+                getTaskHead, getTasksOfMember, saveTask, deleteTask, getTasksOfTaskHead);
     }
 
 }
