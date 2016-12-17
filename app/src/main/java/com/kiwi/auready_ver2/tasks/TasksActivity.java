@@ -11,8 +11,6 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
 
-    public static final int REQ_TASKS = 2;
-
     private TasksFragment mTasksFragment;
     private TasksPresenter mPresenter;
 
