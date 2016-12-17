@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,6 +112,8 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         } else {
             viewHolder = (ChildViewHolder) view.getTag();
         }
+
+        Log.d("MY_LOG", "getChildView position : " + taskPosition);
 
         if (isLastTask) {
             viewHolder.addTaskBtn.setVisibility(View.VISIBLE);

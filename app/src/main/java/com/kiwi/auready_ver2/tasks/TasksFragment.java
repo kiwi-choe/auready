@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,8 +98,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void setTitle(String title) {
-        if (getActivity().getActionBar() != null) {
-            getActivity().getActionBar().setTitle(title);
+        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
         }
     }
 
@@ -135,7 +137,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     public interface TaskItemListener {
         void onTaskItemClick(String taskHeadId);
+
         void onDeleteClick(TaskHead clickedTaskHead);
+
         void onAddTaskClick();
     }
 }

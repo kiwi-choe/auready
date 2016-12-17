@@ -3,13 +3,11 @@ package com.kiwi.auready_ver2.friend;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -140,67 +138,9 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         dialog.show();
     }
 
-    private class FriendsAdapter extends BaseAdapter {
-
-        private List<Friend> mFriends;
-        private FriendItemListener mItemListener;
-
-        public FriendsAdapter(List<Friend> friends, FriendItemListener itemListener) {
-            setList(friends);
-            mItemListener = itemListener;
-        }
-
-        private void setList(List<Friend> friends) {
-            mFriends = checkNotNull(friends);
-        }
-
-        @Override
-        public int getCount() {
-            return mFriends.size();
-        }
-
-        @Override
-        public Friend getItem(int position) {
-            return mFriends.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup parent) {
-            View rowView = view;
-            if(rowView == null) {
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                rowView = inflater.inflate(R.layout.friend_item, parent, false);
-            }
-
-            final Friend friend = getItem(position);
-            String name = friend.getName();
-            TextView txtName = (TextView) rowView.findViewById(R.id.txt_name);
-            txtName.setText(name);
-
-            rowView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mItemListener.onLongClick(friend);
-                    return true;    // true if the callback consumed the long click.
-                }
-            });
-            return rowView;
-        }
-
-        public void replaceData(List<Friend> friendList) {
-            setList(friendList);
-            notifyDataSetChanged();
-        }
-    }
-
     public interface FriendItemListener {
 
-        void onLongClick(Friend clickedFriend);
+        void onDeleteFriend(Friend clickedFriend);
     }
 
     /*
@@ -208,9 +148,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     * */
     FriendItemListener mItemListener = new FriendItemListener() {
         @Override
-        public void onLongClick(Friend clickedFriend) {
+        public void onDeleteFriend(Friend clickedFriend) {
             showDeleteFriendAlert(clickedFriend);
         }
     };
-
 }
