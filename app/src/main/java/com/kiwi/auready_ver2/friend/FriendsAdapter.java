@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.friend;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +14,7 @@ import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -26,6 +26,8 @@ class FriendsAdapter extends BaseAdapter {
 
     private boolean[] mSelectedFriends;
 
+    private List<Friend> mSearchedFriends = new ArrayList<>();
+
     public FriendsAdapter(List<Friend> friends, FriendsFragment.FriendItemListener itemListener) {
         setList(friends);
         mItemListener = itemListener;
@@ -34,17 +36,18 @@ class FriendsAdapter extends BaseAdapter {
 
     private void setList(List<Friend> friends) {
         mFriends = checkNotNull(friends);
+        mSearchedFriends.addAll(mFriends);
         mSelectedFriends = new boolean[friends.size()];
     }
 
     @Override
     public int getCount() {
-        return mFriends.size();
+        return mSearchedFriends.size();
     }
 
     @Override
     public Friend getItem(int position) {
-        return mFriends.get(position);
+        return mSearchedFriends.get(position);
     }
 
     @Override
@@ -77,11 +80,24 @@ class FriendsAdapter extends BaseAdapter {
         viewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                mSelectedFriends[position] = isChecked;
+
+                String checkedItemId = mSearchedFriends.get(position).getId();
+                for (int i = 0; i < mFriends.size(); i++) {
+                    Friend friend = mFriends.get(i);
+                    if (friend.getId().equals(checkedItemId)) {
+                        mSelectedFriends[i] = isChecked;
+                        break;
+                    }
+                }
             }
         });
 
-        viewHolder.friendCheckbox.setChecked(mSelectedFriends[position]);
+        for (int i = 0; i < mFriends.size(); i++) {
+            if (friend.getId().equals(mFriends.get(i).getId())) {
+                viewHolder.friendCheckbox.setChecked(mSelectedFriends[i]);
+                break;
+            }
+        }
 
         return rowView;
     }
@@ -101,6 +117,29 @@ class FriendsAdapter extends BaseAdapter {
         }
 
         return checkedItems;
+    }
+
+    public void inputSearchText(String searchText) {
+        searchText = searchText.toLowerCase(Locale.getDefault());
+
+        mSearchedFriends.clear();
+        if (searchText.length() == 0) {
+            mSearchedFriends.addAll(mFriends);
+        } else {
+            for (Friend friend : mFriends) {
+                if (friend.getName().contains(searchText)) {
+                    mSearchedFriends.add(friend);
+                }
+            }
+        }
+
+        if (mSearchedFriends.isEmpty()) {
+            mItemListener.onNoSearchedFriend();
+        } else {
+            mItemListener.onFindSearchedFriends();
+        }
+
+        notifyDataSetChanged();
     }
 
     private class ViewHolder {

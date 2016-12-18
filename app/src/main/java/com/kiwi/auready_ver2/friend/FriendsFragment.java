@@ -7,20 +7,23 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -78,6 +81,26 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         mNoFriendsView = (LinearLayout) root.findViewById(R.id.no_friends_layout);
         mNoSearchedEmailView = (LinearLayout) root.findViewById(R.id.no_searched_email_layout);
         mLoadingIndicator = (TextView) root.findViewById(R.id.loading_indicator);
+
+        // Set up search editText
+        final EditText searchEditText = (EditText) root.findViewById(R.id.ed_search_people);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String searchText = searchEditText.getText().toString().toLowerCase(Locale.getDefault());
+                mListAdapter.inputSearchText(searchText);
+            }
+        });
 
         return root;
     }
@@ -174,9 +197,26 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         dialog.show();
     }
 
+    private void showNoSearchedFriend() {
+        mFriendsView.setVisibility(View.GONE);
+        mNoFriendsView.setVisibility(View.VISIBLE);
+
+        TextView noSearchedFriend = (TextView) mNoFriendsView.findViewById(R.id.txt_no_friends);
+        noSearchedFriend.setText("There is no searched Item..");
+    }
+
+    private void showSearchedFriends() {
+        mFriendsView.setVisibility(View.VISIBLE);
+        mNoFriendsView.setVisibility(View.GONE);
+    }
+
     public interface FriendItemListener {
 
         void onDeleteFriend(Friend clickedFriend);
+
+        void onNoSearchedFriend();
+
+        void onFindSearchedFriends();
     }
 
     /*
@@ -187,5 +227,18 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         public void onDeleteFriend(Friend clickedFriend) {
             showDeleteFriendAlert(clickedFriend);
         }
+
+        @Override
+        public void onNoSearchedFriend() {
+            showNoSearchedFriend();
+        }
+
+        @Override
+        public void onFindSearchedFriends() {
+            showSearchedFriends();
+        }
+
+
     };
+
 }
