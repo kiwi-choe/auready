@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.friend;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
 
     public static final String TAG_FRIENDFRAG = "TAG_FriendFragment";
     public static final String ARG_FRIENDS = "arg_friends";
+
+    public static final String EXTRA_KEY_SELECTED_FRIENDS = "extraKeyOfSelectedFriends";
 
     private FriendsContract.Presenter mPresenter;
 
@@ -86,7 +89,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
             openFindView();
             return true;
         } else if (id == R.id.action_confirm) {
-            List<Friend> selectedFriends = mListAdapter.getCheckedItems();
+            ArrayList<Friend> selectedFriends = (ArrayList<Friend>) mListAdapter.getCheckedItems();
             setResultToTaskHeadDetailView(selectedFriends);
         }
         return false;
@@ -132,8 +135,11 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     }
 
     @Override
-    public void setResultToTaskHeadDetailView(List<Friend> selectedFriends) {
-        Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
+    public void setResultToTaskHeadDetailView(ArrayList<Friend> selectedFriends) {
+        Intent intent = getActivity().getIntent();
+        intent.putParcelableArrayListExtra(EXTRA_KEY_SELECTED_FRIENDS, selectedFriends);
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
 
     @Override

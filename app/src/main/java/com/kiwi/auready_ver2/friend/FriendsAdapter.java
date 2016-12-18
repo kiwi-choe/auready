@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;

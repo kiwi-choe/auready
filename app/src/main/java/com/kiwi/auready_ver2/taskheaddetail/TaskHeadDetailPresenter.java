@@ -86,7 +86,8 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
         if (FriendsActivity.REQ_FRIENDS == requestCode
                 && Activity.RESULT_OK == resultCode) {
             if (data.hasExtra(FriendsFragment.ARG_FRIENDS)) {
-                ArrayList<Friend> friends = data.getParcelableArrayListExtra(Friend.KEY);
+                ArrayList<Friend> friends =
+                        data.getParcelableArrayListExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS);
                 mView.setMembers(friends);
             }
         }
