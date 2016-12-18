@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.friend;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,7 @@ class FriendsAdapter extends BaseAdapter {
 
     private void setList(List<Friend> friends) {
         mFriends = checkNotNull(friends);
+        mSelectedFriends = new boolean[friends.size()];
     }
 
     @Override
@@ -90,7 +92,15 @@ class FriendsAdapter extends BaseAdapter {
     }
 
     public List<Friend> getCheckedItems() {
-        return null;
+        List<Friend> checkedItems = new ArrayList<>();
+
+        for (int i = 0; i < mFriends.size(); i++) {
+            if (mSelectedFriends[i]) {
+                checkedItems.add(mFriends.get(i));
+            }
+        }
+
+        return checkedItems;
     }
 
     private class ViewHolder {
