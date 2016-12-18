@@ -120,8 +120,6 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = (ChildViewHolder) view.getTag();
         }
 
-        Log.d("MY_LOG", "getChildView position : " + taskPosition);
-
         if (isLastTask) {
             viewHolder.addTaskBtn.setVisibility(View.VISIBLE);
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {

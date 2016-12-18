@@ -11,19 +11,24 @@
     <CheckBox
         android:id="@+id/friend_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"/>
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:focusable="false"/>
 
     <TextView
         android:id="@+id/friend_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/friend_checkbox"/>
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/friend_checkbox"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
     <Button
         android:id="@+id/delete_friend_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:focusable="false"
+        android:text="Delete" />
 </RelativeLayout>
