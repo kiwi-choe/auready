@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,8 +86,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
             openFindView();
             return true;
         } else if (id == R.id.action_confirm) {
-//            List<Friend> selectedFriends = mListAdapter.getCheckedItems();
-//            setResultToTaskHeadDetailView(selectedFriends);
+            List<Friend> selectedFriends = mListAdapter.getCheckedItems();
+            setResultToTaskHeadDetailView(selectedFriends);
         }
         return false;
     }
@@ -132,7 +133,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
 
     @Override
     public void setResultToTaskHeadDetailView(List<Friend> selectedFriends) {
-
+        Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
     }
 
     @Override

@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -23,12 +22,12 @@ class FriendsAdapter extends BaseAdapter {
 
     private FriendsFragment.FriendItemListener mItemListener;
 
-    private ArrayList<Friend> mSelectedFriends;
+    private boolean[] mSelectedFriends;
 
     public FriendsAdapter(List<Friend> friends, FriendsFragment.FriendItemListener itemListener) {
         setList(friends);
         mItemListener = itemListener;
-        mSelectedFriends = new ArrayList<>();
+
     }
 
     private void setList(List<Friend> friends) {
@@ -62,8 +61,7 @@ class FriendsAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.friendCheckbox = (CheckBox) rowView.findViewById(R.id.friend_checkbox);
             viewHolder.friendName = (TextView) rowView.findViewById(R.id.friend_name);
-            viewHolder.deleteFriendBtn= (Button) rowView.findViewById(R.id.delete_friend_btn);
-            viewHolder.isChecked = false;
+            viewHolder.deleteFriendBtn = (Button) rowView.findViewById(R.id.delete_friend_btn);
 
             rowView.setTag(viewHolder);
         } else {
@@ -76,16 +74,11 @@ class FriendsAdapter extends BaseAdapter {
         viewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked){
-                    mSelectedFriends.add(friend);
-                } else {
-                    mSelectedFriends.remove(friend);
-                }
-
+                mSelectedFriends[position] = isChecked;
             }
         });
 
-        viewHolder.friendCheckbox.setChecked(viewHolder.isChecked);
+        viewHolder.friendCheckbox.setChecked(mSelectedFriends[position]);
 
         return rowView;
     }
@@ -95,12 +88,14 @@ class FriendsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public List<Friend> getCheckedItems() {
+        return null;
+    }
+
     private class ViewHolder {
         CheckBox friendCheckbox;
         TextView friendName;
         Button deleteFriendBtn;
-
-        boolean isChecked;
     }
 }
 
