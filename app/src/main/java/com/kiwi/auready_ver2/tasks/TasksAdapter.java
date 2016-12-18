@@ -43,8 +43,13 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int memberPosition) {
+
         // + 1 : footer view for each member list
-        return mTasksList.get(memberPosition).size() + 1;
+        if (mTasksList.isEmpty()) {
+            return 1;
+        } else {
+            return mTasksList.get(memberPosition).size() + 1;
+        }
     }
 
     @Override
@@ -83,11 +88,13 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = new GroupViewHolder();
             viewHolder.memberName = (TextView) view.findViewById(R.id.member_name);
             viewHolder.auready_btn = (Button) view.findViewById(R.id.member_add_bt);
+            viewHolder.delete_member_btn = (Button) view.findViewById(R.id.delete_member_btn);
 
             view.setTag(viewHolder);
         } else {
             viewHolder = (GroupViewHolder) view.getTag();
         }
+
 
         viewHolder.memberName.setText(mMemberList.get(memberPosition).getName());
         return view;
@@ -127,17 +134,16 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.taskTextView.setVisibility(View.GONE);
             viewHolder.checkBox.setVisibility(View.GONE);
             viewHolder.deleteTaskBtn.setVisibility(View.GONE);
-
         } else {
             viewHolder.addTaskBtn.setVisibility(View.GONE);
             viewHolder.taskTextView.setVisibility(View.VISIBLE);
             viewHolder.checkBox.setVisibility(View.VISIBLE);
             viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
-        }
 
-        ArrayList<Task> tasksList = mTasksList.get(memberPosition);
-        viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
-        viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
+            ArrayList<Task> tasksList = mTasksList.get(memberPosition);
+            viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
+            viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
+        }
 
         return view;
     }
@@ -170,6 +176,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private class GroupViewHolder {
         TextView memberName;
         Button auready_btn;
+        Button delete_member_btn;
     }
 
     private class ChildViewHolder {

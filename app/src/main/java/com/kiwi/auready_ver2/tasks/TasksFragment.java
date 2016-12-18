@@ -7,9 +7,11 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -51,19 +54,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
         }
-
-
-//        groupList.add("member 1");
-//        groupList.add("member 2");
-//        groupList.add("member 3");
-//
-//        childContents.add("taskTextView 1");
-//        childContents.add("taskTextView 2");
-//        childContents.add("taskTextView 3");
-//
-//        childList.add(childContents);
-//        childList.add(childContents);
-//        childList.add(childContents);
 
         mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Friend>(), new ArrayList<ArrayList<Task>>(), mTaskItemListener);
     }

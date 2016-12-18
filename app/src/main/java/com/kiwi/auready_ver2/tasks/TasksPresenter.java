@@ -12,6 +12,7 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -189,5 +190,4 @@ public class TasksPresenter implements TasksContract.Presenter {
         mTasksView.setTitle(taskHead.getTitle());
         mTasksView.setMembers(taskHead.getMembers());
     }
-
 }
