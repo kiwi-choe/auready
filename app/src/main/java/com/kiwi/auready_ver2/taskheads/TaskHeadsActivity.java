@@ -24,7 +24,7 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TaskHeadsActivity extends AppCompatActivity
-        implements TaskHeadsFragment.TasksFragmentListener {
+        implements TaskHeadsFragment.TaskHeadsFragmentListener {
 
     private static final String TAG = "Tag_MainActivity";
 

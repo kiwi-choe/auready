@@ -10,13 +10,17 @@ import java.util.List;
  */
 public class LoginResponse {
 
+    @SerializedName("name")
+    private String name;
+
     @SerializedName("tokenInfo")
     private TokenInfo tokenInfo;
 
     @SerializedName("friendList")
     private List<Friend> friends;
 
-    public LoginResponse(TokenInfo tokenInfo, List<Friend> friends) {
+    public LoginResponse(String name, TokenInfo tokenInfo, List<Friend> friends) {
+        this.name = name;
         this.tokenInfo = tokenInfo;
         this.friends = friends;
     }
@@ -27,5 +31,9 @@ public class LoginResponse {
 
     public List<Friend> getFriends() {
         return friends;
+    }
+
+    public String getName() {
+        return name;
     }
 }

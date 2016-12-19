@@ -8,6 +8,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
+import com.kiwi.auready_ver2.data.api_model.TokenInfo;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.FriendsContract;
 import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
@@ -38,7 +39,7 @@ import retrofit2.mock.NetworkBehavior;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by kiwi on 6/12/16.
+ * Unit test LoginPresenter
  */
 public class LoginPresenterTest {
 
@@ -76,36 +77,38 @@ public class LoginPresenterTest {
                 .build();
     }
 
-//    @Test
-//    public void setLoginSuccessUi_whenLoginSucceed() {
-//
-//        // Create the loginInfo stub
-//        String email = "dd@gmail.com";
-//        String password = "123";
-//
-//        // Request login to Server
-//        mLoginPresenter.requestLogin(email, password);
-//
-//        Response<LoginResponse> loginResponse = null;
-//        try {
-//            loginResponse = executeMockLoginService(email, password);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//
-//        }
-//
-//        // Succeed to request login
-//        if (loginResponse != null && loginResponse.isSuccessful()) {
-//
-//            mLoginPresenter.onLoginSuccess(loginResponse.body(), email, name);
-//
-//            TokenInfo tokenInfo = loginResponse.body().getTokenInfo();
-//            Assert.assertEquals("access token1", tokenInfo.getAccessToken());
-//            Assert.assertEquals("token type1", tokenInfo.getTokenType());
-//
-//            verify(mLoginView).setLoginSuccessUI(tokenInfo, name, email);
-//        }
-//    }
+    @Test
+    public void setLoginSuccessUi_whenLoginSucceed() {
+
+        // Create the loginInfo stub
+        String email = "dd@gmail.com";
+//        String name = "dd";
+        String password = "123";
+
+        // Request login to Server
+        mLoginPresenter.requestLogin(email, password);
+
+        Response<LoginResponse> loginResponse = null;
+        try {
+            loginResponse = executeMockLoginService(email, password);
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+
+        // Succeed to request login
+        if (loginResponse != null && loginResponse.isSuccessful()) {
+
+            mLoginPresenter.onLoginSuccess(loginResponse.body(), email);
+
+            TokenInfo tokenInfo = loginResponse.body().getTokenInfo();
+            Assert.assertEquals("access token1", tokenInfo.getAccessToken());
+            Assert.assertEquals("token type1", tokenInfo.getTokenType());
+
+            String name = loginResponse.body().getName();
+            verify(mLoginView).setLoginSuccessUI(tokenInfo, email, name);
+        }
+    }
 
 
     private Response<LoginResponse> executeMockLoginService(String email, String password) throws IOException {
