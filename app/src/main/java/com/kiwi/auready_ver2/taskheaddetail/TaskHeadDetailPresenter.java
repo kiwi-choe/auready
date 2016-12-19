@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -85,7 +86,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     public void result(int requestCode, int resultCode, Intent data) {
         if (FriendsActivity.REQ_FRIENDS == requestCode
                 && Activity.RESULT_OK == resultCode) {
-            if (data.hasExtra(FriendsFragment.ARG_FRIENDS)) {
+            if (data.hasExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS)) {
                 ArrayList<Friend> friends =
                         data.getParcelableArrayListExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS);
                 mView.setMembers(friends);

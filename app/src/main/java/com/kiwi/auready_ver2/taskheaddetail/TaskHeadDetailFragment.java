@@ -107,15 +107,15 @@ public class TaskHeadDetailFragment extends Fragment implements
         });
 
         // Todo
-        List<Friend> list = new ArrayList<>();
-        for(int i=0; i<10; i++){
-            Friend friend = new Friend("member", "membername");
-            String name = "" + String.valueOf(i);
-            friend.setName(name);
-            list.add(friend);
-        }
+//        List<Friend> list = new ArrayList<>();
+//        for(int i=0; i<10; i++){
+//            Friend friend = new Friend("member", "membername");
+//            String name = "" + String.valueOf(i);
+//            friend.setName(name);
+//            list.add(friend);
+//        }
 
-        setMembers(list);
+//        setMembers(list);
 
         // Set custom actionbar views
         ActionBar ab = ((TaskHeadDetailActivity)getActivity()).getSupportActionBar();
@@ -229,6 +229,11 @@ public class TaskHeadDetailFragment extends Fragment implements
 
             return rowView;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode, resultCode, data);
     }
 
     private class ActionModeCallback implements ActionMode.Callback {

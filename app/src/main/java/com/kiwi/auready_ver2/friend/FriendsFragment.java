@@ -5,10 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +32,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class FriendsFragment extends Fragment implements FriendsContract.View {
 
     public static final String TAG_FRIENDFRAG = "TAG_FriendFragment";
-    public static final String ARG_FRIENDS = "arg_friends";
 
     public static final String EXTRA_KEY_SELECTED_FRIENDS = "extraKeyOfSelectedFriends";
 
