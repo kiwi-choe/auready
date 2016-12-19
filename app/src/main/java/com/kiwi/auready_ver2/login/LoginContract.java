@@ -20,7 +20,7 @@ public interface LoginContract {
         void showEmailError(int resourceId);
         void showPasswordError(int resourceId);
 
-        void setLoginSuccessUI(TokenInfo tokenInfo, String userName, String userEmail);
+        void setLoginSuccessUI(TokenInfo tokenInfo, String userEmail, String userName);
 
         void showLoginFailMessage(int stringResource);
 
@@ -40,7 +40,7 @@ public interface LoginContract {
 
         void requestLogin(String email, String password);
 
-        void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail, String loggedInName);
+        void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail);
 
         void onLoginFail(int stringResource);
 

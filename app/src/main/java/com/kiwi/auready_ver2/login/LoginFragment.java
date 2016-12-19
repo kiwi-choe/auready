@@ -72,7 +72,7 @@ public class LoginFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAccessTokenStore = AccessTokenStore.getInstance();
+        mAccessTokenStore = AccessTokenStore.getInstance(getActivity().getApplicationContext());
 
         mBtLoginComplete.setOnClickListener(this);
         mBtSignupOpen.setOnClickListener(this);
@@ -98,11 +98,10 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLoginSuccessUI(TokenInfo tokenInfo, String name, String email) {
+    public void setLoginSuccessUI(TokenInfo tokenInfo, String email, String name) {
 
         // 1. Save tokenInfo to SharedPreferences
-        mAccessTokenStore.save(tokenInfo, name, email);
-
+        mAccessTokenStore.save(tokenInfo, email, name);
         // 2. popup message
         Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
         // 3. Send result OK and the logged in email to TasksView
@@ -157,7 +156,9 @@ public class LoginFragment extends Fragment implements
         switch (id) {
             case R.id.bt_signup_open:
                 // Set visibility of 'social_login_layout' to GONE
-                mSocialLoginLayout.setVisibility(View.GONE);
+                if(mSocialLoginLayout!=null) {
+                    mSocialLoginLayout.setVisibility(View.GONE);
+                }
                 startSignupFragment();
                 break;
 

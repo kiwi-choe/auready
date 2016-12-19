@@ -50,7 +50,9 @@
             android:text="@string/fragment_login_bt_signup"
             android:background="@android:color/transparent"
             android:layout_marginTop="@dimen/fragment_login_signup_margin"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:clickable="true"
+            android:onClick="onClick" />
     </LinearLayout>
 
     <Button

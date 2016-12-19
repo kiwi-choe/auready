@@ -49,13 +49,13 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public boolean validateEmail(String email) {
 
-        if(email == null || TextUtils.isEmpty(email)) {
+        if (email == null || TextUtils.isEmpty(email)) {
             onEmailError(R.string.email_empty_err);
             return false;
         }
         // Check email format
         Matcher matcher = LoginUtils.VALID_EMAIL_ADDRESS_REGEX.matcher(email);
-        if(!matcher.find()) {
+        if (!matcher.find()) {
             onEmailError(R.string.email_format_err);
             return false;
         }
@@ -66,7 +66,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public boolean validatePassword(String password) {
 
-        if(password == null || password.isEmpty()) {
+        if (password == null || password.isEmpty()) {
             onPasswordError(R.string.password_empty_err);
             return false;
         }
@@ -86,7 +86,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void attemptLogin(String email, String password) {
 
-        if(validateEmail(email) && validatePassword(password)) {
+        if (validateEmail(email) && validatePassword(password)) {
             requestLogin(email, password);
         }
     }
@@ -110,7 +110,7 @@ public class LoginPresenter implements LoginContract.Presenter {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     // Save tokenInfo to sharedPreferences
-//                    onLoginSuccess(response.body());
+                    onLoginSuccess(response.body(), email);
                 } else if (response.code() == 400) {
                     onLoginFail(R.string.login_fail_message_400);
                 }
@@ -126,14 +126,16 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail, String loggedInName) {
+    public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail) {
 
         List<Friend> friends = loginResponse.getFriends();
-
+        // Add loggedInUser to Friend DB
+        Friend me = new Friend(loggedInEmail, loginResponse.getName());
+        friends.add(me);
         // Save friends of this logged in user
         saveFriends(friends);
         // send logged in email to MainView
-        mLoginView.setLoginSuccessUI(loginResponse.getTokenInfo(), loggedInName, loggedInEmail);
+        mLoginView.setLoginSuccessUI(loginResponse.getTokenInfo(), loggedInEmail, loginResponse.getName());
     }
 
     @Override
@@ -144,9 +146,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void saveFriends(List<Friend> friends) {
         // Save into FriendRepository
-        if(friends.size() == 0) {
-            // just skip to save
-        } else {
+        if (friends.size() != 0) {
             mUseCaseHandler.execute(mSaveFriends, new SaveFriends.RequestValues(friends),
                     new UseCase.UseCaseCallback<SaveFriends.ResponseValue>() {
                         @Override
@@ -174,10 +174,9 @@ public class LoginPresenter implements LoginContract.Presenter {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     onLogoutSuccess();
-                }
-                else {
+                } else {
                     onLogoutFail();
                 }
             }

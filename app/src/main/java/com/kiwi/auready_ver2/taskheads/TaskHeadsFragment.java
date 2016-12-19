@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,7 +29,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     private TaskHeadsContract.Presenter mPresenter;
 
     // interface
-    private TasksFragmentListener mListener;
+    private TaskHeadsFragmentListener mListener;
     private TaskHeadsAdapter mTaskHeadsAdapter;
 
     private TextView mNoTaskHeadTxt;
@@ -61,11 +60,11 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof TasksFragmentListener) {
-            mListener = (TasksFragmentListener) context;
+        if (context instanceof TaskHeadsFragmentListener) {
+            mListener = (TaskHeadsFragmentListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement TasksFragmentListener");
+                    + " must implement TaskHeadsFragmentListener");
         }
     }
 
@@ -152,7 +151,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     }
 
     // Interface with TaskHeadsActivity
-    public interface TasksFragmentListener {
+    public interface TaskHeadsFragmentListener {
         void onLoginSuccess();
     }
 

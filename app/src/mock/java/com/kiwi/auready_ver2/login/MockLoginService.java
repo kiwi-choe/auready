@@ -18,6 +18,7 @@ import retrofit2.mock.BehaviorDelegate;
  */
 public class MockLoginService implements ILoginService {
 
+    private static final String STUB_NAME = "loggedInName";
     private static List<Friend> STUB_FRIENDS = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
 
     private final BehaviorDelegate<ILoginService> delegate;
@@ -31,7 +32,7 @@ public class MockLoginService implements ILoginService {
 
         // TokenInfo Stub
         TokenInfo tokenInfo = new TokenInfo("access token1", "token type1");
-        LoginResponse loginResponse = new LoginResponse(tokenInfo, STUB_FRIENDS);
+        LoginResponse loginResponse = new LoginResponse(STUB_NAME, tokenInfo, STUB_FRIENDS);
         return delegate.returningResponse(loginResponse).login(clientCredential);
     }
 

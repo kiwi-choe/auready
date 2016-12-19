@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.login;
 
+import android.content.Intent;
 import android.support.test.espresso.matcher.BoundedMatcher;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
@@ -8,12 +9,14 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.login.LoginActivity;
 
 import junit.framework.Assert;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +41,15 @@ public class LoginViewTest {
     @Rule
     public ActivityTestRule<LoginActivity> mLoginActivityTestRule =
             new ActivityTestRule<>(LoginActivity.class);
+
+    private LoginActivity mActivity;
+
+    private AccessTokenStore mAccessTokenStore;
+
+    @Before
+    public void setup() {
+        mActivity = mLoginActivityTestRule.getActivity();
+    }
 
     public static Matcher<View> hasErrorText(final String expectedError) {
         return new BoundedMatcher<View, View>(View.class) {
@@ -116,7 +128,6 @@ public class LoginViewTest {
 
     @Test
     public void clickSignupButton_openSignupFragment() {
-
         // Click signupButton
         onView(withId(R.id.bt_signup_open)).perform(click());
         // Check that Signup Fragment is opened
@@ -133,4 +144,5 @@ public class LoginViewTest {
     //q 메인(TaskHeadsActivity)의 텍스트뷰에 대한 테스트는 어떻게 하지?
     // q How to check that LoginActivity is finished?
 //    public void sendResultToTasks_whenLoginSucceed() {
+
 }

@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,8 +26,10 @@ import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +48,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     private TextView mCreateBt;
 
     private EditText mTitle;
-    private ListView mMemberListView;
     private MembersAdapter mMemberListAdapter;
     private List<Friend> mMembers;
 
@@ -62,9 +65,17 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mMembers = new ArrayList<>(0);
-        mMemberListAdapter = new MembersAdapter(new ArrayList<Friend>(0));
+
+        initMembers();
+        mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
+
         mActionModeCallBack = new ActionModeCallback();
+    }
+
+    private void initMembers() {
+        mMembers = new ArrayList<>(0);
+        // Add the current user to members
+
     }
 
     @Override
@@ -84,8 +95,20 @@ public class TaskHeadDetailFragment extends Fragment implements
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskhead_detail, container, false);
 
+        // Set custom actionbar views
+        ActionBar ab = ((TaskHeadDetailActivity)getActivity()).getSupportActionBar();
+        ab.setDisplayShowHomeEnabled(false);
+        ab.setDisplayShowTitleEnabled(false);
+        View customView = inflater.inflate(
+                R.layout.taskheaddetail_actionbar, null);
+        mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
+        mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
+        ab.setCustomView(customView);
+        ab.setDisplayShowCustomEnabled(true);
+
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
-        mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
+
+        ListView mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
         View memberAddBtLayout = inflater.inflate(R.layout.member_add_bt, null, false);
         mMemberListView.addFooterView(memberAddBtLayout);
         mMemberListView.setAdapter(mMemberListAdapter);
@@ -106,30 +129,6 @@ public class TaskHeadDetailFragment extends Fragment implements
             }
         });
 
-        // Todo
-//        List<Friend> list = new ArrayList<>();
-//        for(int i=0; i<10; i++){
-//            Friend friend = new Friend("member", "membername");
-//            String name = "" + String.valueOf(i);
-//            friend.setName(name);
-//            list.add(friend);
-//        }
-
-//        setMembers(list);
-
-        // Set custom actionbar views
-        ActionBar ab = ((TaskHeadDetailActivity)getActivity()).getSupportActionBar();
-        ab.setDisplayShowHomeEnabled(false);
-        ab.setDisplayShowTitleEnabled(false);
-
-        View customView = inflater.inflate(
-                R.layout.taskheaddetail_actionbar, null);
-
-        mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
-        mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
-
-        ab.setCustomView(customView);
-        ab.setDisplayShowCustomEnabled(true);
         return root;
     }
 
@@ -158,7 +157,6 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void setMembers(List<Friend> members) {
-        mMembers = members;
         mMemberListAdapter.replaceData(members);
     }
 
@@ -180,55 +178,6 @@ public class TaskHeadDetailFragment extends Fragment implements
         Intent intent = getActivity().getIntent();
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
-    }
-
-    // TODO: 12/9/16 What type of Adapter is better?
-    private static class MembersAdapter extends BaseAdapter {
-
-        private List<Friend> mMembers;
-
-        public MembersAdapter(List<Friend> members) {
-            setList(members);
-        }
-
-        private void setList(List<Friend> members) {
-            mMembers = checkNotNull(members);
-        }
-
-        public void replaceData(List<Friend> members) {
-            setList(members);
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getCount() {
-            return mMembers.size();
-        }
-
-        @Override
-        public Friend getItem(int position) {
-            return mMembers.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = convertView;
-            if (rowView == null) {
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                rowView = inflater.inflate(R.layout.member_item, parent, false);
-            }
-            final Friend member = getItem(position);
-
-            TextView memberNameTV = (TextView) rowView.findViewById(R.id.member_name);
-            memberNameTV.setText(member.getName());
-
-            return rowView;
-        }
     }
 
     @Override
