@@ -9,6 +9,7 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
@@ -52,6 +53,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
             populateTaskHead();
         }
     }
+
 
     @Override
     public void saveTaskHead(String title, List<Friend> members) {

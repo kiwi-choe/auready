@@ -36,6 +36,7 @@ import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.verify;
  */
 public class LoginPresenterTest {
 
+    private static final String MY_ID_OF_FRIEND = "stubbedId";
 
     private LoginPresenter mLoginPresenter;
 
@@ -106,7 +108,8 @@ public class LoginPresenterTest {
             Assert.assertEquals("token type1", tokenInfo.getTokenType());
 
             String name = loginResponse.body().getName();
-            verify(mLoginView).setLoginSuccessUI(tokenInfo, email, name);
+            // FIXME: 12/20/16 failed test
+            verify(mLoginView).setLoginSuccessUI(eq(tokenInfo), eq(email), eq(name), eq(MY_ID_OF_FRIEND));
         }
     }
 

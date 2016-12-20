@@ -20,7 +20,7 @@ public interface LoginContract {
         void showEmailError(int resourceId);
         void showPasswordError(int resourceId);
 
-        void setLoginSuccessUI(TokenInfo tokenInfo, String userEmail, String userName);
+        void setLoginSuccessUI(TokenInfo tokenInfo, String userEmail, String userName, String myIdOfFriend);
 
         void showLoginFailMessage(int stringResource);
 

@@ -125,16 +125,6 @@ public class TaskHeadDetailPresenterTest {
         verify(mTaskHeadRepository, never()).getTaskHead(eq("taskHeadId"), mGetTaskHeadCallbackCaptor.capture());
     }
 
-    @Test
-    public void getMeFromFriendRepo_whenStart() {
-        // when start taskHeadDetail with null taskheadId
-        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
-
-        mTaskHeadDetailPresenter.start();
-        // Verify that add ME to members
-
-    }
-
     private TaskHeadDetailPresenter givenTaskHeadDetailPresenter(String taskHeadId) {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);

@@ -135,7 +135,7 @@ public class LoginPresenter implements LoginContract.Presenter {
         // Save friends of this logged in user
         saveFriends(friends);
         // send logged in email to MainView
-        mLoginView.setLoginSuccessUI(loginResponse.getTokenInfo(), loggedInEmail, loginResponse.getName());
+        mLoginView.setLoginSuccessUI(loginResponse.getTokenInfo(), loggedInEmail, loginResponse.getName(), me.getId());
     }
 
     @Override
@@ -152,7 +152,6 @@ public class LoginPresenter implements LoginContract.Presenter {
                         @Override
                         public void onSuccess(SaveFriends.ResponseValue response) {
                             // finish this activity and open the main
-
                         }
 
                         @Override

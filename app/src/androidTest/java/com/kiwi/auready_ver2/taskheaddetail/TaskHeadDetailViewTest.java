@@ -77,4 +77,10 @@ public class TaskHeadDetailViewTest {
         onView(withId(R.id.ed_search_people)).check(matches(isDisplayed()));
 //        intended(IntentMatchers.toPackage("com.kiwi.auready_ver2.friend.FriendActivity"));
     }
+
+    @Test
+    public void openView_withNonTaskHeadId_showMEtoMembersView() {
+        onView(withId(R.id.taskheaddetail_member_list)).check(matches(isDisplayed()));
+        onView(withText("userName")).check(matches(isDisplayed()));
+    }
 }

@@ -11,7 +11,12 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 public class TaskHeadDetailActivity extends AppCompatActivity {
 
     public static final int REQ_ADD_TASKHEAD = 1;
+
     public static final String ARG_TASKHEAD_ID = "arg_taskhead_id";
+
+    public static final String ARG_USEREMAIL = "arg_userEmail";
+    public static final String ARG_USERNAME = "arg_userName";
+    public static final String ARG_MY_ID_OF_FRIEND = "arg_myIdOfFriend";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,6 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
 
             if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
                 taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
-
                 Bundle bundle = new Bundle();
                 bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
                 taskHeadDetailFragment.setArguments(bundle);

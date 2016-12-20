@@ -66,18 +66,14 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        initMembers();
+        mMembers = new ArrayList<>(0);
+        if(getArguments() == null) {
+            initMembers();
+        }
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
-
         mActionModeCallBack = new ActionModeCallback();
     }
 
-    private void initMembers() {
-        mMembers = new ArrayList<>(0);
-        // Add the current user to members
-
-    }
 
     @Override
     public void onResume() {
@@ -97,7 +93,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_taskhead_detail, container, false);
 
         // Set custom actionbar views
-        ActionBar ab = ((TaskHeadDetailActivity)getActivity()).getSupportActionBar();
+        ActionBar ab = ((TaskHeadDetailActivity) getActivity()).getSupportActionBar();
         ab.setDisplayShowHomeEnabled(false);
         ab.setDisplayShowTitleEnabled(false);
         View customView = inflater.inflate(
@@ -180,6 +176,23 @@ public class TaskHeadDetailFragment extends Fragment implements
         Intent intent = getActivity().getIntent();
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
+    }
+
+    @Override
+    public void initMembers() {
+        // Add the current user to members
+        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(getActivity().getApplicationContext());
+        // testing
+        accessTokenStore.save_forTesting("userEmail", "userName", "myIdOfFriend");
+
+        String myIdOfFriend = accessTokenStore.getStringValue(AccessTokenStore.MY_ID_OF_FRIEND, "");
+        String myEmail = accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "");
+        String myName = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
+
+        Friend me = new Friend(myIdOfFriend, myEmail, myName);
+        mMembers.add(0, me);
+
+//        mMemberListAdapter.notifyDataSetChanged();
     }
 
     @Override

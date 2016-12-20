@@ -32,6 +32,7 @@ public class AccessTokenStore {
     private static final String TOKEN_TYPE = "token_type";
     public static final String USER_EMAIL = "userEmail";
     public static final String USER_NAME = "userName";
+    public static final String MY_ID_OF_FRIEND = "myIdOfFriend";
 
     public AccessTokenStore(Context context) {
         mPref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
@@ -62,7 +63,7 @@ public class AccessTokenStore {
     }
 
     // Save Access token
-    public void save(TokenInfo tokenInfo, String userEmail, String userName) {
+    public void save(TokenInfo tokenInfo, String userEmail, String userName, String myIdOfFriend) {
         // Set login status, accessToken
         mEditor = mPref.edit();
         mEditor.putBoolean(IS_LOGIN, true);
@@ -71,6 +72,7 @@ public class AccessTokenStore {
         mEditor.putString(TOKEN_TYPE, tokenInfo.getTokenType());
         mEditor.putString(USER_EMAIL, userEmail);
         mEditor.putString(USER_NAME, userName);
+        mEditor.putString(MY_ID_OF_FRIEND, myIdOfFriend);
 
         // commit changes
         mEditor.apply();
@@ -81,6 +83,19 @@ public class AccessTokenStore {
     public void setLoggedInStatus() {
         mEditor = mPref.edit();
         mEditor.putBoolean(IS_LOGIN, true);
+        mEditor.apply();
+        mEditor = null;
+    }
+    // testing for adding ME to members in TaskHeadDetail
+    public void save_forTesting(String userEmail, String userName, String myIdOfFriend) {
+
+        mEditor = mPref.edit();
+
+        mEditor.putString(USER_EMAIL, userEmail);
+        mEditor.putString(USER_NAME, userName);
+        mEditor.putString(MY_ID_OF_FRIEND, myIdOfFriend);
+
+        // commit changes
         mEditor.apply();
         mEditor = null;
     }

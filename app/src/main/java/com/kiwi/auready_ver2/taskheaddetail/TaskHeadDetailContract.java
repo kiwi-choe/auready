@@ -25,6 +25,8 @@ public interface TaskHeadDetailContract {
         void showEmptyTaskHeadError();
 
         void cancelCreateTaskHead();
+
+        void initMembers();
     }
 
     interface Presenter extends BasePresenter {

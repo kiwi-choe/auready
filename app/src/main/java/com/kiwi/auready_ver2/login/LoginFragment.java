@@ -98,10 +98,10 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLoginSuccessUI(TokenInfo tokenInfo, String email, String name) {
+    public void setLoginSuccessUI(TokenInfo tokenInfo, String email, String name, String myIdOfFriend) {
 
         // 1. Save tokenInfo to SharedPreferences
-        mAccessTokenStore.save(tokenInfo, email, name);
+        mAccessTokenStore.save(tokenInfo, email, name, myIdOfFriend);
         // 2. popup message
         Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
         // 3. Send result OK and the logged in email to TasksView
