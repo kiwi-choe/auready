@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.util.NetworkUtils;
 
 
 public class SignupFragment extends Fragment implements
@@ -74,10 +75,15 @@ public class SignupFragment extends Fragment implements
                     imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
                 }
 
-                mSignupPresenter.attemptSignup(
-                        mEmail.getText().toString(),
-                        mPassword.getText().toString(),
-                        mName.getText().toString());
+                // Check Network connection
+                if(NetworkUtils.isOnline(getContext())) {
+                    mSignupPresenter.attemptSignup(
+                            mEmail.getText().toString(),
+                            mPassword.getText().toString(),
+                            mName.getText().toString());
+                } else {
+                    Snackbar.make(getView(), getString(R.string.network_error), Snackbar.LENGTH_SHORT).show();
+                }
             }
         });
     }

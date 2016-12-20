@@ -68,6 +68,7 @@
     <string name="empty_taskhead_message">TASKHEAD cannot be empty!</string>
     <string name="add_member">Add member</string>
     <string name="action_confirm">V</string>
+    <string name="network_error">Network connection error</string>
 
 
 </resources>

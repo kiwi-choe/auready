@@ -92,7 +92,6 @@ public class LoginActivity extends AppCompatActivity implements
         // pop LoginFragment in backStack
         getSupportFragmentManager().popBackStack();
 
-        // todo. Send email data to LoginFragment
         LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(LoginFragment.TAG_LOGINFRAGMENT);
         if (loginFragment == null) {
             loginFragment = LoginFragment.newInstance();
