@@ -48,7 +48,9 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void start() {
-
+        if(mTaskHeadId != null) {
+            populateTaskHead();
+        }
     }
 
     @Override

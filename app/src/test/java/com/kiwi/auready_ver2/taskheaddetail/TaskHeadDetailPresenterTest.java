@@ -5,6 +5,7 @@ import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -31,12 +33,15 @@ import static org.mockito.Mockito.verify;
  */
 public class TaskHeadDetailPresenterTest {
 
+    private static final String MY_ID_OF_FRIEND = "stubbedId";
     private static List<Friend> MEMBERS;
 
     @Mock
     private TaskHeadRepository mTaskHeadRepository;
     @Mock
     private TaskRepository mTasksRepository;
+    @Mock
+    private FriendRepository mFriendRepository;
 
     @Mock
     private TaskHeadDetailContract.View mTaskHeadDetailView;
@@ -101,6 +106,33 @@ public class TaskHeadDetailPresenterTest {
         // and update view
         verify(mTaskHeadDetailView).setTitle(taskHead.getTitle());
         verify(mTaskHeadDetailView).setMembers(taskHead.getMembers());
+    }
+
+    @Test
+    public void whenStart_populateTaskHead_withTaskHeadId() {
+
+        TaskHead taskHead = new TaskHead("title1", MEMBERS);
+        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(taskHead.getId());
+
+        mTaskHeadDetailPresenter.start();
+        verify(mTaskHeadRepository).getTaskHead(eq(taskHead.getId()), mGetTaskHeadCallbackCaptor.capture());
+    }
+    @Test
+    public void whenStart_cannotPopulateTaskHead_withNull() {
+
+        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
+        mTaskHeadDetailPresenter.start();
+        verify(mTaskHeadRepository, never()).getTaskHead(eq("taskHeadId"), mGetTaskHeadCallbackCaptor.capture());
+    }
+
+    @Test
+    public void getMeFromFriendRepo_whenStart() {
+        // when start taskHeadDetail with null taskheadId
+        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
+
+        mTaskHeadDetailPresenter.start();
+        // Verify that add ME to members
+
     }
 
     private TaskHeadDetailPresenter givenTaskHeadDetailPresenter(String taskHeadId) {
