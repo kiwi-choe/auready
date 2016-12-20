@@ -31,9 +31,6 @@ public class TaskHeadsActivity extends AppCompatActivity
     public static final int REQ_LOGINOUT = 1;
     public static final int REQ_ADD_TASK = 2;
 
-    public static final String EXTRA_TASKHEAD_ID = "TASKHEAD_ID";
-    public static final String EXTRA_TASKHEAD_TITLE = "TASKHEAD_TITLE";
-
     private DrawerLayout mDrawerLayout;
     private TextView mNavHeaderName;
     private TextView mNavHeaderEmail;

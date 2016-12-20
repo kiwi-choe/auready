@@ -153,6 +153,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     public void replaceMemberList(List<Friend> members) {
         setMemberList((ArrayList) members);
+        notifyDataSetChanged();
     }
 
     private void setMemberList(ArrayList<Friend> members) {

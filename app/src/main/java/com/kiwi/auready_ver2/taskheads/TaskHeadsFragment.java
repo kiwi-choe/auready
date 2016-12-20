@@ -139,7 +139,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void showTasksView(String taskHeadId) {
         Intent intent = new Intent(getContext(), TasksActivity.class);
-        intent.putExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
+        intent.putExtra(TasksActivity.ARG_TASKHEAD_ID, taskHeadId);
 
         startActivity(intent);
     }

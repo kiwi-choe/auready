@@ -63,7 +63,8 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @VisibleForTesting
-    public void addTasks(String taskHeadId, String memberId, List<Task> tasks) {
+    public void addTasks(@NonNull String taskHeadId, String memberId, List<Task> tasks) {
+        checkNotNull(taskHeadId);
         TASKS_OF_MEMBER_SERVICE_DATA.put(new TaskMapKey(taskHeadId, memberId), tasks);
     }
 }

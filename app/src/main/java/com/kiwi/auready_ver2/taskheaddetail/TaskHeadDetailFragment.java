@@ -39,7 +39,8 @@ public class TaskHeadDetailFragment extends Fragment implements
         TaskHeadDetailContract.View {
 
     public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFragment";
-    public static final String ARG_TASKHEAD_ID = "arg_taskhead_id";
+
+    public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
 
     private TaskHeadDetailContract.Presenter mPresenter;
 
@@ -157,13 +158,14 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void setMembers(List<Friend> members) {
-        mMemberListAdapter.replaceData(members);
+        mMembers.addAll(members);
+        mMemberListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void setResultToTaskHeadsView(String taskHeadId) {
         Intent intent = getActivity().getIntent();
-        intent.putExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID, taskHeadId);
+        intent.putExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID, taskHeadId);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }

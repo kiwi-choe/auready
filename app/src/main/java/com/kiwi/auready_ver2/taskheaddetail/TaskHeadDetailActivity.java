@@ -11,8 +11,7 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 public class TaskHeadDetailActivity extends AppCompatActivity {
 
     public static final int REQ_ADD_TASKHEAD = 1;
-
-    private TaskHeadDetailPresenter mPresenter;
+    public static final String ARG_TASKHEAD_ID = "arg_taskhead_id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +28,11 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
         if (taskHeadDetailFragment == null) {
             taskHeadDetailFragment = TaskHeadDetailFragment.newInstance();
 
-            if (getIntent().hasExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID)) {
-                taskHeadId = getIntent().getStringExtra(
-                        TaskHeadDetailFragment.ARG_TASKHEAD_ID);
+            if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
+                taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
 
                 Bundle bundle = new Bundle();
-                bundle.putString(TaskHeadDetailFragment.ARG_TASKHEAD_ID, taskHeadId);
+                bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
                 taskHeadDetailFragment.setArguments(bundle);
             }
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
@@ -42,7 +40,7 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
         }
 
         // Create the presenter
-        mPresenter = new TaskHeadDetailPresenter(
+        TaskHeadDetailPresenter presenter = new TaskHeadDetailPresenter(
                 Injection.provideUseCaseHandler(),
                 taskHeadId,
                 taskHeadDetailFragment,

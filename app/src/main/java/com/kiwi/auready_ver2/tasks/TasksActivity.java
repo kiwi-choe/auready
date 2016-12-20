@@ -11,8 +11,7 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
 
-    private TasksFragment mTasksFragment;
-    private TasksPresenter mPresenter;
+    public static final String ARG_TASKHEAD_ID = "TASKHEAD_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,29 +22,28 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
         setSupportActionBar(toolbar);
 
-        mTasksFragment =
-                (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        TasksFragment tasksFragment = (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
 
         String taskHeadId = null;
-        if (mTasksFragment == null) {
-            mTasksFragment = TasksFragment.newInstance();
+        if (tasksFragment == null) {
+            tasksFragment = TasksFragment.newInstance();
 
-            if(getIntent().hasExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID)) {
+            if(getIntent().hasExtra(ARG_TASKHEAD_ID)) {
 
-                taskHeadId = getIntent().getStringExtra(TaskHeadsActivity.EXTRA_TASKHEAD_ID);
+                taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
                 Bundle bundle = new Bundle();
-                bundle.putString(TaskHeadsActivity.EXTRA_TASKHEAD_ID, taskHeadId);
-                mTasksFragment.setArguments(bundle);
+                bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
+                tasksFragment.setArguments(bundle);
             }
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), mTasksFragment,
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), tasksFragment,
                     R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
         }
 
         // Create the presenter
-        mPresenter = new TasksPresenter(
+        TasksPresenter presenter = new TasksPresenter(
                 Injection.provideUseCaseHandler(),
                 taskHeadId,
-                mTasksFragment,
+                tasksFragment,
                 Injection.provideGetTaskHead(getApplicationContext()),
                 Injection.provideGetTasksOfMember(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),

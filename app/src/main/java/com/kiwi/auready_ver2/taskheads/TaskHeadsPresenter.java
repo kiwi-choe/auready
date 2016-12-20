@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -95,8 +96,8 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
         if(TaskHeadDetailActivity.REQ_ADD_TASKHEAD == requestCode
                 && Activity.RESULT_OK == resultCode) {
             // Created TaskHead, Open TasksView of this taskhead
-            if (data.hasExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID)) {
-                String taskHeadId = data.getStringExtra(TaskHeadDetailFragment.ARG_TASKHEAD_ID);
+            if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID)) {
+                String taskHeadId = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID);
                 mTaskHeadView.showTasksView(taskHeadId);
             }
             // Canceled create taskhead, Open TaskHeadsView
