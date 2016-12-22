@@ -1,11 +1,20 @@
 package com.kiwi.auready_ver2.login;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.api_model.SignupInfo;
+import com.kiwi.auready_ver2.data.api_model.SignupResponse;
+import com.kiwi.auready_ver2.rest_service.ISignupService;
+import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.regex.Matcher;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by kiwi on 7/12/16.
@@ -13,6 +22,8 @@ import java.util.regex.Matcher;
 public class SignupPresenter implements SignupContract.Presenter {
 
     private static final String TAG = "TAG_SignupPresenter";
+
+    private static final int SIGNUP_FAIL_404 = 404;
 
     private final SignupContract.View mSignupView;
 
@@ -63,35 +74,30 @@ public class SignupPresenter implements SignupContract.Presenter {
 
     @Override
     public void requestSignup(String email, String password, String name) {
-        // FIXME: 7/13/16 for test, this is the stub to success signup process.
-        onSignupSuccess(email, name);
 
-        // this stub is for signupFail process.
-//        onSignupFail(R.string.signup_fail_message_404);
+        SignupInfo signupInfo = new SignupInfo(email, password);
 
-//        SignupInfo signupInfo = new SignupInfo(email, password);
-//
-//        ISignupService signupService =
-//                ServiceGenerator.createService(ISignupService.class);
-//
-//        Call<SignupResponse> call = signupService.signupLocal(signupInfo);
-//        call.enqueue(new Callback<SignupResponse>() {
-//            @Override
-//            public void onResponse(Call<SignupResponse> call, Response<SignupResponse> response) {
-//
-//                if(response.isSuccessful()) {
-//                    onSignupSuccess(response.body().getEmail());
-//                } else if(response.code() == R.integer.signup_fail_code_404) {
-//                    onSignupFail(R.string.signup_fail_message_404);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<SignupResponse> call, Throwable t) {
-//                Log.d(TAG, "Signup is failed: " + t.getMessage());
-//                onSignupFail(R.string.signup_fail_message);
-//            }
-//        });
+        ISignupService signupService =
+                ServiceGenerator.createService(ISignupService.class);
+
+        Call<SignupResponse> call = signupService.signupLocal(signupInfo);
+        call.enqueue(new Callback<SignupResponse>() {
+            @Override
+            public void onResponse(Call<SignupResponse> call, Response<SignupResponse> response) {
+
+                if(response.isSuccessful()) {
+                    onSignupSuccess(response.body().getEmail(), response.body().getName());
+                } else if(response.code() == SIGNUP_FAIL_404) {
+                    onSignupFail(R.string.signup_fail_message_404);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SignupResponse> call, Throwable t) {
+                Log.d(TAG, "Signup is failed: " + t.getMessage());
+                onSignupFail(R.string.signup_fail_message);
+            }
+        });
     }
 
     @Override

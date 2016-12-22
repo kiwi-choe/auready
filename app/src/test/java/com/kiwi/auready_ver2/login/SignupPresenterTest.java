@@ -26,7 +26,11 @@ import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
 
+import static junit.framework.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -120,11 +124,39 @@ public class SignupPresenterTest {
 
             mSignupPresenter.onSignupSuccess(
                     signupResponse.body().getEmail(), signupResponse.body().getName());
-            verify(mSignupView, times(2)).setSignupSuccessUI(
+            verify(mSignupView).setSignupSuccessUI(
                     signupResponse.body().getEmail(), signupResponse.body().getName());
         }
     }
 
+    @Test
+    public void showSignupFailMessage_whenEmailAndPasswordIsInvalid() throws IOException {
+
+        // Request signup to server with invalid credentials
+        String email = "bbb@bbb.bbb";
+        String password = "123";
+        String name = "nameOfbbb";
+
+        mSignupPresenter.requestSignup(email, password, name);
+
+        Response<SignupResponse> signupResponse = null;
+        try {
+            signupResponse = executeMockFailedSignupService();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (signupResponse != null && signupResponse.code() == 404) {
+            // Failed to request signup
+            // error code is 404, reason: email is already registered.
+            mSignupPresenter.onSignupFail(R.string.signup_fail_message_404);
+            verify(mSignupView).showSignupFailMessage(R.string.signup_fail_message_404);
+        }
+    }
+
+    /*
+    * Mock Response
+    * */
     private Response<SignupResponse> executeMockSignupService() throws IOException {
 
         // Create the signupInfo stub
@@ -160,31 +192,4 @@ public class SignupPresenterTest {
 
         return signupResponse;
     }
-
-    @Test
-    public void showSignupFailMessage_whenEmailAndPasswordIsInvalid() throws IOException {
-
-        // Request signup to server with invalid credentials
-        String email = "bbb@bbb.bbb";
-        String password = "123";
-        String name = "nameOfbbb";
-
-        mSignupPresenter.requestSignup(email, password, name);
-
-        Response<SignupResponse> signupResponse = null;
-        try {
-            signupResponse = executeMockFailedSignupService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (signupResponse != null && signupResponse.code() != 404) {
-
-            // Failed to request signup
-            // error code is 404, reason: email is already registered.
-            mSignupPresenter.onSignupFail(R.string.signup_fail_message_404);
-            verify(mSignupView).showSignupFailMessage(R.string.signup_fail_message_404);
-        }
-    }
-
 }
