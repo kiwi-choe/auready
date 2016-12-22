@@ -11,6 +11,7 @@ import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,8 +23,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -69,8 +70,10 @@ public class TaskHeadsPresenterTest {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
         DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository, mTaskRepository);
+        GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mTaskHeadRepository);
 
-        return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView, getTaskHeads, deleteTaskHead);
+        return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView,
+                getTaskHeads, deleteTaskHead, getTaskHeadsCount);
     }
 
     @Test
@@ -98,9 +101,10 @@ public class TaskHeadsPresenterTest {
     }
 
     @Test
-    public void clickOnAddBt_ShowsAddTaskHeadUi() {
+    public void getTaskHeadsCountFromRepo_andShowsAddTaskHeadUi_whenCall_addNewTask() {
         mTaskHeadsPresenter.addNewTask();
 
-        verify(mTaskHeadView).showTaskHeadDetail();
+        verify(mTaskHeadRepository).getTaskHeadsCount();
+        verify(mTaskHeadView).showTaskHeadDetail(anyInt());
     }
 }

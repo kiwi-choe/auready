@@ -9,7 +9,6 @@ import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
@@ -20,7 +19,6 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
@@ -64,7 +62,7 @@ public class TaskHeadDetailPresenterTest {
         // taskheadId is null
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
         // When the presenter is asked to save a taskhead
-        mTaskHeadDetailPresenter.saveTaskHead("New Title", MEMBERS);
+        mTaskHeadDetailPresenter.createTaskHead("New Title", MEMBERS);
 
         // Then a taskhead is saved in the repository
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
@@ -76,7 +74,7 @@ public class TaskHeadDetailPresenterTest {
     @Test
     public void saveTaskHead_emptyTaskHeadShowsErrorUI() {
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
-        mTaskHeadDetailPresenter.saveTaskHead("", null);
+        mTaskHeadDetailPresenter.createTaskHead("", null);
 
         verify(mTaskHeadDetailView).showEmptyTaskHeadError();
     }
@@ -85,7 +83,7 @@ public class TaskHeadDetailPresenterTest {
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter("taskHeadId_mock");
 
         // Modify title and ask to save
-        mTaskHeadDetailPresenter.saveTaskHead("changed title", MEMBERS);
+        mTaskHeadDetailPresenter.createTaskHead("changed title", MEMBERS);
 
         // Then a taskhead is saved in the repo and the view updated
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
