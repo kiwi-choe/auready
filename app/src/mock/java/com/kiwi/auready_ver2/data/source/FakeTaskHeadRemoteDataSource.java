@@ -27,6 +27,11 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     }
 
     @Override
+    public int getTaskHeadsCount() {
+        return 0;
+    }
+
+    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
 
         if(TASKHEADS_SERVICE_DATA.size() == 0) {

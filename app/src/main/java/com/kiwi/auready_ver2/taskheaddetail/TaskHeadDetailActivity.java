@@ -13,10 +13,7 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
     public static final int REQ_ADD_TASKHEAD = 1;
 
     public static final String ARG_TASKHEAD_ID = "arg_taskhead_id";
-
-    public static final String ARG_USEREMAIL = "arg_userEmail";
-    public static final String ARG_USERNAME = "arg_userName";
-    public static final String ARG_MY_ID_OF_FRIEND = "arg_myIdOfFriend";
+    public static final String ARG_CNT_OF_TASKHEADS = "arg_countOfTaskHeads";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +30,21 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
         if (taskHeadDetailFragment == null) {
             taskHeadDetailFragment = TaskHeadDetailFragment.newInstance();
 
+            Bundle bundle = new Bundle();
+            // Edit
             if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
                 taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
-                Bundle bundle = new Bundle();
                 bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
-                taskHeadDetailFragment.setArguments(bundle);
             }
+            // New
+            else {
+                if(getIntent().hasExtra(ARG_CNT_OF_TASKHEADS)) {
+                    int cntOfTaskheads = getIntent().getIntExtra(ARG_CNT_OF_TASKHEADS, 0);
+                    bundle.putInt(ARG_CNT_OF_TASKHEADS, cntOfTaskheads);
+                }
+            }
+            taskHeadDetailFragment.setArguments(bundle);
+
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     taskHeadDetailFragment, R.id.content_frame, TaskHeadDetailFragment.TAG_TASKHEADDETAILFRAG);
         }

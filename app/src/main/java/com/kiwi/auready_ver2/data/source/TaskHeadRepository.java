@@ -38,6 +38,15 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mTaskHeadLocalDataSource = checkNotNull(taskHeadLocalDataSource);
     }
 
+    @Override
+    public int getTaskHeadsCount() {
+
+        if(mCachedTaskHeads != null) {
+            return mCachedTaskHeads.size();
+        }
+        return mTaskHeadLocalDataSource.getTaskHeadsCount();
+    }
+
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
 
         checkNotNull(callback);
@@ -137,7 +146,8 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     @Override
     public void saveTaskHead(@NonNull TaskHead taskHead) {
         checkNotNull(taskHead);
-//        mTaskHeadRemoteDataSource.saveTaskHead(taskHead);
+
+//        mTaskHeadRemoteDataSource.createTaskHead(taskHead);
         mTaskHeadLocalDataSource.saveTaskHead(taskHead);
 
         // Do in memory cache update to keep the app UI up to date

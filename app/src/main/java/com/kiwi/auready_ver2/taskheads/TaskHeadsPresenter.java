@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -11,6 +10,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 
 import java.util.List;
@@ -27,13 +27,17 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private UseCaseHandler mUseCaseHandler;
     private final GetTaskHeads mGetTaskHeads;
     private final DeleteTaskHead mDeleteTaskHead;
+    private final GetTaskHeadsCount mGetTaskHeadCount;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
-                              @NonNull GetTaskHeads getTaskHeads, DeleteTaskHead deleteTaskHead) {
+                              @NonNull GetTaskHeads getTaskHeads,
+                              @NonNull DeleteTaskHead deleteTaskHead,
+                              @NonNull GetTaskHeadsCount getTaskHeadCount) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
         mDeleteTaskHead = checkNotNull(deleteTaskHead, "deleteTaskHead cannot be null");
+        mGetTaskHeadCount = checkNotNull(getTaskHeadCount);
 
         mTaskHeadView.setPresenter(this);
     }
@@ -88,7 +92,24 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     @Override
     public void addNewTask() {
-        mTaskHeadView.showTaskHeadDetail();
+        // Get count of taskheads
+        final int[] tmpArr = new int[1];
+        mUseCaseHandler.execute(mGetTaskHeadCount, new GetTaskHeadsCount.RequestValues(),
+                new UseCase.UseCaseCallback<GetTaskHeadsCount.ResponseValue> () {
+
+                    @Override
+                    public void onSuccess(GetTaskHeadsCount.ResponseValue response) {
+                        tmpArr[0] = response.getTaskHeadsCount();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+
+        int cntOfTaskHeads = tmpArr[0];
+        mTaskHeadView.showTaskHeadDetail(cntOfTaskHeads);
     }
 
     @Override

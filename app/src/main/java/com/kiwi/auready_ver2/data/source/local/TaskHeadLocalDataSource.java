@@ -37,6 +37,21 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
     }
 
     @Override
+    public int getTaskHeadsCount() {
+        int countOfTaskHeads = 0;
+
+        SQLiteDatabase db = mDbHelper.getReadableDatabase();
+        String query = "SELECT (*) FROM " + TaskHeadEntry.TABLE_NAME;
+        Cursor c = db.rawQuery(query, null);
+        if(c != null) {
+            countOfTaskHeads = c.getCount();
+            c.close();
+        }
+        db.close();
+        return countOfTaskHeads;
+    }
+
+    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
         List<TaskHead> taskHeads = new ArrayList<>();
 

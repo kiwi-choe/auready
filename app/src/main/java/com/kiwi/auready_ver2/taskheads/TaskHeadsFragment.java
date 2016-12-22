@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 
@@ -132,9 +131,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     }
 
     @Override
-    public void showTaskHeadDetail() {
+    public void showTaskHeadDetail(int cntOfTaskHeads) {
 
         Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
+        intent.putExtra(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS, cntOfTaskHeads);
         startActivityForResult(intent, TaskHeadDetailActivity.REQ_ADD_TASKHEAD);
     }
 

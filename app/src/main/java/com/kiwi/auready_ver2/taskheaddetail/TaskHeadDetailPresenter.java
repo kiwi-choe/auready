@@ -49,19 +49,56 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void start() {
-        if(mTaskHeadId != null) {
+        if (mTaskHeadId != null) {
             populateTaskHead();
+            mView.setEditTaskHeadView();
+        } else {
+            mView.setNewTaskHeadView();
         }
     }
 
 
     @Override
-    public void saveTaskHead(String title, List<Friend> members) {
-        if (isNewTaskHead()) {
-            createTaskHead(title, members);
+    public void createTaskHead(String title, List<Friend> members) {
+        final TaskHead newTaskHead = new TaskHead(title, members);
+        if (newTaskHead.isEmpty()) {
+            mView.showEmptyTaskHeadError();
         } else {
-            updateTaskHead(title, members);
+            mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
+                    new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+
+                        @Override
+                        public void onSuccess(SaveTaskHead.ResponseValue response) {
+                            mView.setResultToTaskHeadsView(newTaskHead.getId());
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
         }
+    }
+
+    @Override
+    public void updateTaskHead(String title, List<Friend> members, int orderOfTaskHead) {
+        if (mTaskHeadId == null) {
+            throw new RuntimeException("updateTaskHead() was called but taskHead is new.");
+        }
+        final TaskHead taskHead = new TaskHead(mTaskHeadId, title, members, orderOfTaskHead);
+        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
+                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(SaveTaskHead.ResponseValue response) {
+                        mView.setResultToTaskHeadsView(taskHead.getId());
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     @Override
@@ -99,47 +136,6 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     private void showTaskHead(TaskHead taskHead) {
         mView.setTitle(taskHead.getTitle());
         mView.setMembers(taskHead.getMembers());
-    }
-
-    private void createTaskHead(String title, List<Friend> members) {
-        final TaskHead newTaskHead = new TaskHead(title, members);
-        if (newTaskHead.isEmpty()) {
-            mView.showEmptyTaskHeadError();
-        } else {
-            mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(newTaskHead),
-                    new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
-
-                        @Override
-                        public void onSuccess(SaveTaskHead.ResponseValue response) {
-                            mView.setResultToTaskHeadsView(newTaskHead.getId());
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-        }
-    }
-
-    private void updateTaskHead(String title, List<Friend> members) {
-        if (mTaskHeadId == null) {
-            throw new RuntimeException("updateTaskHead() was called but taskHead is new.");
-        }
-        final TaskHead taskHead = new TaskHead(mTaskHeadId, title, members);
-        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
-                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(SaveTaskHead.ResponseValue response) {
-                        mView.setResultToTaskHeadsView(taskHead.getId());
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
     }
 
     private boolean isNewTaskHead() {

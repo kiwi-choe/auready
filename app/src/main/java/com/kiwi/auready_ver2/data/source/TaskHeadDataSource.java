@@ -11,6 +11,8 @@ import java.util.List;
  */
 public interface TaskHeadDataSource {
 
+    int getTaskHeadsCount();   // for Local data source
+
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);

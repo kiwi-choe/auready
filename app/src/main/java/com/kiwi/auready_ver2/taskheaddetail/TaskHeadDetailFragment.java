@@ -1,7 +1,6 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,8 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -29,7 +26,6 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,11 +43,14 @@ public class TaskHeadDetailFragment extends Fragment implements
     // Items of CustomActionBar
     private TextView mCancelBt;
     private TextView mCreateBt;
+    private TextView mDoneBt;
+
+    private String mTaskHeadId;
+    private int mOrderOfTaskHead;
 
     private EditText mTitle;
     private MembersAdapter mMemberListAdapter;
     private List<Friend> mMembers;
-
     private ActionModeCallback mActionModeCallBack;
     private ActionMode mActionMode;
 
@@ -67,9 +66,14 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMembers = new ArrayList<>(0);
-        if(getArguments() == null) {
-            initMembers();
+        if(getArguments() != null) {
+            mTaskHeadId = getArguments().getString(TaskHeadDetailActivity.ARG_TASKHEAD_ID);
+            if(mTaskHeadId == null) {
+                initMembers();
+            }
+            mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS);
         }
+
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
         mActionModeCallBack = new ActionModeCallback();
     }
@@ -100,6 +104,8 @@ public class TaskHeadDetailFragment extends Fragment implements
                 R.layout.taskheaddetail_actionbar, null);
         mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
         mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
+        mDoneBt = (TextView) customView.findViewById(R.id.done_taskhead);
+
         ab.setCustomView(customView);
         ab.setDisplayShowCustomEnabled(true);
 
@@ -141,10 +147,15 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.saveTaskHead(mTitle.getText().toString(), mMembers);
+                mPresenter.createTaskHead(mTitle.getText().toString(), mMembers);
             }
         });
-
+        mDoneBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.updateTaskHead(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
+            }
+        });
     }
 
     @Override
@@ -193,6 +204,18 @@ public class TaskHeadDetailFragment extends Fragment implements
         mMembers.add(0, me);
 
 //        mMemberListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void setNewTaskHeadView() {
+        mCreateBt.setVisibility(View.GONE);
+        mDoneBt.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setEditTaskHeadView() {
+        mDoneBt.setVisibility(View.GONE);
+        mCreateBt.setVisibility(View.VISIBLE);
     }
 
     @Override

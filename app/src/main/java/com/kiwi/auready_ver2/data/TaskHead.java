@@ -22,6 +22,8 @@ public class TaskHead {
     private String mTitle;
     private List<Friend> mMembers;
     private int mMembersCnt;
+    private int mOrder;
+    private String mModifiedTime;
 
     /*
     * Use this constructor to create a new TaskHead.
@@ -54,11 +56,12 @@ public class TaskHead {
         * Use this constructor to create a Task if the TaskHead already has an id
         * (copy of another task)
         * */
-    public TaskHead(@NonNull String id, String title, List<Friend> members) {
+    public TaskHead(@NonNull String id, String title, List<Friend> members, int order) {
         mId = checkNotNull(id, "id cannot be null");
         mTitle = title;
         mMembers = members;
         setMembersCnt();
+        mOrder = order;
     }
     /*
     * Use this constructor to create a new TaskHead with no Title.

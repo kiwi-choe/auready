@@ -27,12 +27,18 @@ public interface TaskHeadDetailContract {
         void cancelCreateTaskHead();
 
         void initMembers();
+
+        void setNewTaskHeadView();
+
+        void setEditTaskHeadView();
     }
 
     interface Presenter extends BasePresenter {
 
-        // create or update
-        void saveTaskHead(String title, List<Friend> memberList);
+        // create
+        void createTaskHead(String title, List<Friend> members);
+
+        void updateTaskHead(String title, List<Friend> members, int orderOfTaskHead);
 
         // Get TaskHead if exists the taskHeadId
         void populateTaskHead();
