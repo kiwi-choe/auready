@@ -13,14 +13,14 @@ import java.lang.annotation.Annotation;
 
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
-import retrofit2.Response;
 import retrofit2.Call;
+import retrofit2.Converter;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
-import retrofit2.Converter;
 
 /**
  * Created by kiwi on 6/17/16.
@@ -49,9 +49,9 @@ public class SignupMockAdapterTest {
 
     //Q mockService로 테스트를 하면, 실제 서버에 요청하여 받는 부분은 tdd로 어떻게 구현하지?
     @Test
-    public void signupResponse() throws Exception {
+    public void signupSuccess() throws Exception {
         BehaviorDelegate<ISignupService> delegate = mockRetrofit.create(ISignupService.class);
-        ISignupService mockSignupService = new MockSignupService(delegate);
+        ISignupService mockSignupService = new MockSuccessSignupService(delegate);
 
         // Create the signupInfo stub
         String email = STUB_EMAIL;

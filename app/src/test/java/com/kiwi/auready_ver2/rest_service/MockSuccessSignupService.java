@@ -10,11 +10,11 @@ import retrofit2.mock.BehaviorDelegate;
 /**
  * Created by kiwi on 6/17/16.
  */
-public class MockSignupService implements ISignupService {
+public class MockSuccessSignupService implements ISignupService {
 
     private final BehaviorDelegate<ISignupService> delegate;
 
-    public MockSignupService(BehaviorDelegate<ISignupService> delegate) {
+    public MockSuccessSignupService(BehaviorDelegate<ISignupService> delegate) {
         this.delegate = delegate;
     }
 

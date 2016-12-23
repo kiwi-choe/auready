@@ -1,12 +1,6 @@
 package com.kiwi.auready_ver2.login;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.rest_service.ISignupService;
-import com.kiwi.auready_ver2.rest_service.MockFailedSignupService;
-import com.kiwi.auready_ver2.rest_service.MockSignupService;
-import com.kiwi.auready_ver2.data.api_model.SignupInfo;
-import com.kiwi.auready_ver2.data.api_model.SignupResponse;
 
 import junit.framework.Assert;
 
@@ -17,21 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
 
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.mock.BehaviorDelegate;
-import retrofit2.mock.MockRetrofit;
-import retrofit2.mock.NetworkBehavior;
-
-import static junit.framework.Assert.assertEquals;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -45,26 +25,12 @@ public class SignupPresenterTest {
     @Mock
     private SignupContract.View mSignupView;
 
-    private MockRetrofit mockRetrofit;
-    private Retrofit retrofit;
-
     @Before
     public void setUp() throws Exception {
 
         MockitoAnnotations.initMocks(this);
 
         mSignupPresenter = new SignupPresenter(mSignupView);
-
-        retrofit = new Retrofit.Builder().baseUrl(IBaseUrl.BASE_URL)
-                .client(new OkHttpClient())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        NetworkBehavior behavior = NetworkBehavior.create();
-
-        mockRetrofit = new MockRetrofit.Builder(retrofit)
-                .networkBehavior(behavior)
-                .build();
     }
 
     @Test
@@ -106,90 +72,20 @@ public class SignupPresenterTest {
 
         // Create the signupInfo stub
         String email = "dd@gmail.com";
-        String password = "123";
         String name = "nameOfdd";
 
         // Request signup to Server
-        mSignupPresenter.requestSignup(email, password, name);
-
-        Response<SignupResponse> signupResponse = null;
-        try {
-            signupResponse = executeMockSignupService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Succeed to request signup
-        if (signupResponse != null && signupResponse.isSuccessful()) {
-
-            mSignupPresenter.onSignupSuccess(
-                    signupResponse.body().getEmail(), signupResponse.body().getName());
-            verify(mSignupView).setSignupSuccessUI(
-                    signupResponse.body().getEmail(), signupResponse.body().getName());
-        }
+        mSignupPresenter.onSignupSuccess(email, name);
+        verify(mSignupView).setSignupSuccessUI(email, name);
     }
 
     @Test
     public void showSignupFailMessage_whenEmailAndPasswordIsInvalid() throws IOException {
 
-        // Request signup to server with invalid credentials
-        String email = "bbb@bbb.bbb";
-        String password = "123";
-        String name = "nameOfbbb";
-
-        mSignupPresenter.requestSignup(email, password, name);
-
-        Response<SignupResponse> signupResponse = null;
-        try {
-            signupResponse = executeMockFailedSignupService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if (signupResponse != null && signupResponse.code() == 404) {
-            // Failed to request signup
-            // error code is 404, reason: email is already registered.
-            mSignupPresenter.onSignupFail(R.string.signup_fail_message_404);
-            verify(mSignupView).showSignupFailMessage(R.string.signup_fail_message_404);
-        }
-    }
-
-    /*
-    * Mock Response
-    * */
-    private Response<SignupResponse> executeMockSignupService() throws IOException {
-
-        // Create the signupInfo stub
-        String email = "dd@gmail.com";
-        String password = "123";
-
-        /*------------------------------------------------------------------------------------*/
-        // q This is the mock webserver. how to separate it from here?
-        // Execute mock webserver
-        BehaviorDelegate<ISignupService> delegate = mockRetrofit.create(ISignupService.class);
-        ISignupService mockSignupService = new MockSignupService(delegate);
-
-        SignupInfo signupInfo = new SignupInfo(email, password);
-        Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
-        Response<SignupResponse> signupResponse = signupCall.execute();
-        /*------------------------------------------------------------------------------------*/
-
-        return signupResponse;
-    }
-
-    private Response<SignupResponse> executeMockFailedSignupService() throws IOException {
-        // Create the signupInfo stub
-        String email = "bbb@bbb.bbb";
-        String password = "123";
-
-        BehaviorDelegate<ISignupService> delegate = mockRetrofit.create(ISignupService.class);
-        MockFailedSignupService mockSignupService = new MockFailedSignupService(delegate);
-
-        SignupInfo signupInfo = new SignupInfo(email, password);
-
-        Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
-        Response<SignupResponse> signupResponse = signupCall.execute();
-
-        return signupResponse;
+        // When requests signup to server with invalid credentials
+        // Failed to request signup
+        // with error code 404, reason: email is already registered.
+        mSignupPresenter.onSignupFail(R.string.signup_fail_message_404);
+        verify(mSignupView).showSignupFailMessage(R.string.signup_fail_message_404);
     }
 }
