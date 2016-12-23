@@ -13,11 +13,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Updates or creates a new {@link Friend} in the {@link FriendRepository}.
  */
-public class SaveFriends extends UseCase<SaveFriends.RequestValues, SaveFriends.ResponseValue> {
+public class InitFriend extends UseCase<InitFriend.RequestValues, InitFriend.ResponseValue> {
 
     private final FriendRepository mFriendRepository;
 
-    public SaveFriends(@NonNull FriendRepository friendRepository) {
+    public InitFriend(@NonNull FriendRepository friendRepository) {
         mFriendRepository = checkNotNull(friendRepository, "friendRepository cannot be null!");
     }
 
@@ -28,7 +28,7 @@ public class SaveFriends extends UseCase<SaveFriends.RequestValues, SaveFriends.
         // * save friendList(save several friends on background,
         // and when completed to save callback(overhead? don't need to check if saving is success??)
         List<Friend> friendList = requestValues.getFriends();
-        mFriendRepository.saveFriends(friendList);
+        mFriendRepository.initFriend(friendList);
 
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
@@ -49,5 +49,6 @@ public class SaveFriends extends UseCase<SaveFriends.RequestValues, SaveFriends.
     public static final class ResponseValue implements UseCase.ResponseValue {
         // Response of save(success or not)
         // ex. boolean value || saved values
+
     }
 }

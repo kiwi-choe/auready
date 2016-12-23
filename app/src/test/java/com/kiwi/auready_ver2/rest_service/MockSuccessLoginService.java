@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.login;
+package com.kiwi.auready_ver2.rest_service;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Friend;
@@ -16,24 +16,23 @@ import retrofit2.mock.BehaviorDelegate;
 /**
  * Created by kiwi on 6/24/16.
  */
-public class MockLoginService implements ILoginService {
+public class MockSuccessLoginService implements ILoginService {
 
-    private static final String STUB_NAME = "loggedInName";
-    private static List<Friend> STUB_FRIENDS = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
+    public static final String STUB_NAME = "loggedInName";
+    private static final List<Friend> STUB_FRIENDS = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
+    public static final LoginResponse RESPONSE =
+            new LoginResponse(STUB_NAME, new TokenInfo("access token1", "token type1"), STUB_FRIENDS);
 
     private final BehaviorDelegate<ILoginService> delegate;
 
-    public MockLoginService(retrofit2.mock.BehaviorDelegate<ILoginService> delegate) {
+    public MockSuccessLoginService(retrofit2.mock.BehaviorDelegate<ILoginService> delegate) {
         this.delegate = delegate;
     }
 
     @Override
     public Call<LoginResponse> login(@Body ClientCredential clientCredential) {
 
-        // TokenInfo Stub
-        TokenInfo tokenInfo = new TokenInfo("access token1", "token type1");
-        LoginResponse loginResponse = new LoginResponse(STUB_NAME, tokenInfo, STUB_FRIENDS);
-        return delegate.returningResponse(loginResponse).login(clientCredential);
+        return delegate.returningResponse(RESPONSE).login(clientCredential);
     }
 
     @Override

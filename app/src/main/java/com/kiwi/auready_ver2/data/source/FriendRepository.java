@@ -95,12 +95,14 @@ mFriendsLocalDataSource.deleteFriend(id);
     }
 
     @Override
-    public void saveFriends(List<Friend> friends) {
+    public void initFriend(@NonNull List<Friend> friends) {
+        // Create ME friend object
 
         if(friends.size() != 0) {
-            mFriendsLocalDataSource.saveFriends(friends);
+            mFriendsLocalDataSource.initFriend(friends);
         }
     }
+
 
     @Override
     public void saveFriend(@NonNull Friend friend) {

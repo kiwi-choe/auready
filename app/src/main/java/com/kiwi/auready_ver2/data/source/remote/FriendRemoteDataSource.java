@@ -52,8 +52,8 @@ public class FriendRemoteDataSource implements FriendDataSource {
     }
 
     @Override
-    public void saveFriends(List<Friend> friends) {
-
+    public void initFriend(@NonNull List<Friend> friends) {
+        // implement in Local
     }
 
     @Override

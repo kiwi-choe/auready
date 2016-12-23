@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Friend;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -12,8 +11,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -68,16 +65,19 @@ public class FriendRepositoryTest {
     }
 
     @Test
-    public void saveFriends() {
+    public void saveMeToRepo_beforeInitFriend() {
         // Given a stub friend list
         List<Friend> friends = Lists.newArrayList(
                 new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
 
-        // When friends are saved to the friend repository
-        mFriendRepository.saveFriends(friends);
+        // Try to initialize Local FriendDB
+        String loggedInEmail = "loggedInEmail";
+        String loggedInName = "loggedInName";
+        mFriendRepository.initFriend(friends);
 
-        // Then the persistent repository are called
-        verify(mFriendLocalDataSource).saveFriends(friends);
+        // Create ME friend object and add friendList
+        // Save friendList to Local source
+        verify(mFriendLocalDataSource).initFriend(friends);
     }
 
     @Test

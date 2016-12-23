@@ -37,7 +37,8 @@ public interface FriendDataSource {
 
     void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback);
 
-    void saveFriends(@NonNull List<Friend> friends);
+    // only for Local
+    void initFriend(@NonNull List<Friend> friends);
 
     void saveFriend(@NonNull Friend friend);
 }

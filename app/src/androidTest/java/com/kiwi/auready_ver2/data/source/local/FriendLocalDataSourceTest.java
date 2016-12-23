@@ -47,7 +47,7 @@ public class FriendLocalDataSourceTest {
         final List<Friend> stubFriends = Lists.newArrayList(
                 new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
         // When saved into the persistent repository
-        mLocalDataSource.saveFriends(stubFriends);
+        mLocalDataSource.initFriend(stubFriends);
         // then the friends can be retrieved from the persistent repository
         mLocalDataSource.getFriends(new FriendDataSource.LoadFriendsCallback() {
             @Override

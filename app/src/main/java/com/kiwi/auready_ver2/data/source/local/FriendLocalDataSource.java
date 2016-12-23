@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
@@ -11,9 +10,8 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,7 +138,7 @@ public class FriendLocalDataSource implements FriendDataSource {
     }
 
     @Override
-    public void saveFriends(@NonNull List<Friend> friends) {
+    public void initFriend(@NonNull List<Friend> friends) {
         checkNotNull(friends);
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 

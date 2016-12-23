@@ -20,13 +20,15 @@ public interface LoginContract {
         void showEmailError(int resourceId);
         void showPasswordError(int resourceId);
 
-        void setLoginSuccessUI(TokenInfo tokenInfo, String userEmail, String userName, String myIdOfFriend);
+        void setLoginSuccessUI(String userEmail, String userName);
 
         void showLoginFailMessage(int stringResource);
 
         // Logout
         void setLogoutSuccessResult();
         void setLogoutFailResult();
+
+        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
     }
 
     interface Presenter extends BasePresenter {
@@ -44,7 +46,7 @@ public interface LoginContract {
 
         void onLoginFail(int stringResource);
 
-        void saveFriends(List<Friend> friends);
+        void initFriend(@NonNull Friend me, List<Friend> friends);
 
         // Logout
         void requestLogout(String accessToken);

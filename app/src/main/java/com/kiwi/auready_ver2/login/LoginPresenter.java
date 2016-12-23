@@ -10,7 +10,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
-import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
+import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.util.LoginUtils;
@@ -32,16 +32,16 @@ public class LoginPresenter implements LoginContract.Presenter {
     private static final String TAG = "TAG_LoginPresenter";
 
     private final LoginContract.View mLoginView;
-    private final SaveFriends mSaveFriends;
+    private final InitFriend mInitFriend;
 
     private final UseCaseHandler mUseCaseHandler;
 
     public LoginPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull LoginContract.View loginView,
-                          @NonNull SaveFriends saveFriends) {
+                          @NonNull InitFriend InitFriend) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mLoginView = checkNotNull(loginView, "loginView cannot be null");
-        mSaveFriends = checkNotNull(saveFriends, "saveFriends cannot be null");
+        mInitFriend = checkNotNull(InitFriend, "InitFriend cannot be null");
 
         mLoginView.setPresenter(this);
     }
@@ -128,14 +128,17 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail) {
 
-        List<Friend> friends = loginResponse.getFriends();
-        // Add loggedInUser to Friend DB
-        Friend me = new Friend(loggedInEmail, loginResponse.getName());
-        friends.add(me);
-        // Save friends of this logged in user
-        saveFriends(friends);
         // send logged in email to MainView
-        mLoginView.setLoginSuccessUI(loginResponse.getTokenInfo(), loggedInEmail, loginResponse.getName(), me.getId());
+        mLoginView.setLoginSuccessUI(loggedInEmail, loginResponse.getName());
+
+        // Initialize Friend Local data source
+        // Create ME friend object
+        Friend ME = new Friend(loggedInEmail, loginResponse.getName());
+        initFriend(ME, loginResponse.getFriends());
+
+        // Set LoggedInUser info to SharedPreferences
+        mLoginView.setLoggedInUserInfo(
+                loginResponse.getTokenInfo(), loggedInEmail, loginResponse.getName(), ME.getId());
     }
 
     @Override
@@ -144,13 +147,16 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void saveFriends(List<Friend> friends) {
+    public void initFriend(@NonNull Friend me, List<Friend> friends) {
+        checkNotNull(me);
+        // Add a friend ME
+        friends.add(me);
         // Save into FriendRepository
         if (friends.size() != 0) {
-            mUseCaseHandler.execute(mSaveFriends, new SaveFriends.RequestValues(friends),
-                    new UseCase.UseCaseCallback<SaveFriends.ResponseValue>() {
+            mUseCaseHandler.execute(mInitFriend, new InitFriend.RequestValues(friends),
+                    new UseCase.UseCaseCallback<InitFriend.ResponseValue>() {
                         @Override
-                        public void onSuccess(SaveFriends.ResponseValue response) {
+                        public void onSuccess(InitFriend.ResponseValue response) {
                             // finish this activity and open the main
                         }
 

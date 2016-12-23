@@ -16,7 +16,7 @@ import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
-import com.kiwi.auready_ver2.login.domain.usecase.SaveFriends;
+import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
@@ -58,8 +58,8 @@ public class Injection {
         return new SaveFriend(Injection.provideFriendRepository(context));
     }
 
-    public static SaveFriends provideSaveFriends(@NonNull Context context) {
-        return new SaveFriends(Injection.provideFriendRepository(context));
+    public static InitFriend provideSaveFriends(@NonNull Context context) {
+        return new InitFriend(Injection.provideFriendRepository(context));
     }
 
     public static DeleteFriend provideDeleteFriend(@NonNull Context context) {
