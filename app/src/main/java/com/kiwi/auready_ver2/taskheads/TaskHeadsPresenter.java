@@ -7,11 +7,11 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
+import com.kiwi.auready_ver2.login.LoginFragment;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 
 import java.util.List;
 
@@ -67,7 +67,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     }
 
     private void processTaskHeads(List<TaskHead> taskHeads) {
-        if(taskHeads.isEmpty()) {
+        if (taskHeads.isEmpty()) {
             mTaskHeadView.showNoTaskHeads();
         } else {
             mTaskHeadView.showTaskHeads(taskHeads);
@@ -91,11 +91,11 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     }
 
     @Override
-    public void addNewTask() {
+    public void addNewTaskHead() {
         // Get count of taskheads
         final int[] tmpArr = new int[1];
         mUseCaseHandler.execute(mGetTaskHeadCount, new GetTaskHeadsCount.RequestValues(),
-                new UseCase.UseCaseCallback<GetTaskHeadsCount.ResponseValue> () {
+                new UseCase.UseCaseCallback<GetTaskHeadsCount.ResponseValue>() {
 
                     @Override
                     public void onSuccess(GetTaskHeadsCount.ResponseValue response) {
@@ -114,14 +114,23 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
-        if(TaskHeadDetailActivity.REQ_ADD_TASKHEAD == requestCode
-                && Activity.RESULT_OK == resultCode) {
+        if (TaskHeadsActivity.REQ_ADD_TASKHEAD == requestCode && Activity.RESULT_OK == resultCode) {
             // Created TaskHead, Open TasksView of this taskhead
             if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID)) {
                 String taskHeadId = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID);
                 mTaskHeadView.showTasksView(taskHeadId);
             }
             // Canceled create taskhead, Open TaskHeadsView
+        }
+        if (TaskHeadsActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {
+
+            boolean login = data.getBooleanExtra(LoginFragment.LOGIN_LOGOUT, false);
+            boolean isSuccess = data.getBooleanExtra(LoginFragment.IS_SUCCESS, false);
+            if (login && isSuccess) {
+                mTaskHeadView.setLoginSuccessUI();
+            } else if(!login && isSuccess) {
+                mTaskHeadView.setLogoutSuccessUI();
+            }
         }
     }
 }

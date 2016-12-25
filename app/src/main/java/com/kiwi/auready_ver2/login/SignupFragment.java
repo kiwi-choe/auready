@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.NetworkUtils;
@@ -54,7 +53,7 @@ public class SignupFragment extends Fragment implements
         View root = inflater.inflate(R.layout.fragment_signup, container, false);
 
         mEmail = (EditText) root.findViewById(R.id.ed_signup_email);
-        mPassword = (EditText) root.findViewById(R.id.ed_password);
+        mPassword = (EditText) root.findViewById(R.id.ed_signup_password);
         mName = (EditText) root.findViewById(R.id.ed_name);
         mBtSignupComplete = (Button) root.findViewById(R.id.bt_signup_complete);
 

@@ -103,10 +103,10 @@ public class LoginFragment extends Fragment implements
         // Popup message
         Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
         // Send result OK and the logged in email to TasksView
-        sendResult(LoginUtils.LOGIN, true);
+        sendResult(LOGIN, true);
     }
 
-    private void sendResult(int loginOrOut, boolean isSuccess) {
+    private void sendResult(boolean loginOrOut, boolean isSuccess) {
 
         Intent intent = new Intent();
         if (loginOrOut == LOGIN) {

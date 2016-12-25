@@ -34,7 +34,7 @@
             android:hint="@string/login_hint_name" />
 
         <EditText
-            android:id="@+id/ed_password"
+            android:id="@+id/ed_signup_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

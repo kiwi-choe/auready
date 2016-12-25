@@ -15,8 +15,6 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 /**
@@ -45,7 +43,7 @@ public class SignupViewTest {
         String editWrongEmail = "wrong email";
         onView(withId(R.id.ed_signup_email))
                 .perform(replaceText(editWrongEmail), closeSoftKeyboard());
-        onView(withId(R.id.ed_password))
+        onView(withId(R.id.ed_signup_password))
                 .perform(replaceText("123"), closeSoftKeyboard());
         onView(withId(R.id.bt_signup_complete)).perform(click());
 

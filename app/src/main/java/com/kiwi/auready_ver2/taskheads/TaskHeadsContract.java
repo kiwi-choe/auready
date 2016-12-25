@@ -24,6 +24,8 @@ public interface TaskHeadsContract {
         void showTaskHeadDetail(int cntOfTaskHeads);
 
         void showTasksView(String taskHeadId);
+
+        void setLogoutSuccessUI();
     }
 
     interface Presenter extends BasePresenter {
@@ -32,7 +34,7 @@ public interface TaskHeadsContract {
 
         void deleteTaskHead(String taskHeadId);
 
-        void addNewTask();
+        void addNewTaskHead();
 
         void result(int requestCode, int resultCode, Intent data);
     }

@@ -29,8 +29,6 @@ import com.kiwi.auready_ver2.friend.FriendsActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 public class TaskHeadDetailFragment extends Fragment implements
         TaskHeadDetailContract.View {
 
@@ -208,14 +206,14 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void setNewTaskHeadView() {
-        mCreateBt.setVisibility(View.GONE);
-        mDoneBt.setVisibility(View.VISIBLE);
+        mCreateBt.setVisibility(View.VISIBLE);
+        mDoneBt.setVisibility(View.GONE);
     }
 
     @Override
     public void setEditTaskHeadView() {
-        mDoneBt.setVisibility(View.GONE);
-        mCreateBt.setVisibility(View.VISIBLE);
+        mDoneBt.setVisibility(View.VISIBLE);
+        mCreateBt.setVisibility(View.GONE);
     }
 
     @Override

@@ -10,7 +10,6 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TaskHeadDetailActivity extends AppCompatActivity {
 
-    public static final int REQ_ADD_TASKHEAD = 1;
 
     public static final String ARG_TASKHEAD_ID = "arg_taskhead_id";
     public static final String ARG_CNT_OF_TASKHEADS = "arg_countOfTaskHeads";

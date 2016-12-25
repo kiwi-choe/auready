@@ -41,6 +41,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 
 /**
  * Created by kiwi on 6/15/16.
@@ -154,6 +155,16 @@ public class TaskHeadsViewTest {
         onView(withId(R.id.fab_add_taskhead)).perform(click());
         // Check if the add taskHead screen is displayed
         onView(withId(R.id.taskheaddetail_title)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void clickAddTaskHeadBt_showCreateButton() {
+        // Click addTaskHead button
+        onView(withId(R.id.fab_add_taskhead)).perform(click());
+
+        // Display Create button and gone Done button
+        onView(withId(R.id.create_taskhead)).check(matches(isDisplayed()));
+        onView(withId(R.id.done_taskhead)).check(matches(not(isDisplayed())));
     }
     /*
     * Useful methods for test

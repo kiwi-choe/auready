@@ -41,7 +41,7 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
         int countOfTaskHeads = 0;
 
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
-        String query = "SELECT (*) FROM " + TaskHeadEntry.TABLE_NAME;
+        String query = "SELECT * FROM " + TaskHeadEntry.TABLE_NAME;
         Cursor c = db.rawQuery(query, null);
         if(c != null) {
             countOfTaskHeads = c.getCount();

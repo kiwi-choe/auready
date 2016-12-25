@@ -103,7 +103,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.addNewTask();
+                mPresenter.addNewTaskHead();
             }
         });
     }
@@ -135,7 +135,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
         intent.putExtra(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS, cntOfTaskHeads);
-        startActivityForResult(intent, TaskHeadDetailActivity.REQ_ADD_TASKHEAD);
+        startActivityForResult(intent, TaskHeadsActivity.REQ_ADD_TASKHEAD);
     }
 
     @Override
@@ -144,6 +144,11 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         intent.putExtra(TasksActivity.ARG_TASKHEAD_ID, taskHeadId);
 
         startActivity(intent);
+    }
+
+    @Override
+    public void setLogoutSuccessUI() {
+
     }
 
     @Override

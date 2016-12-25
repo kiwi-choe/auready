@@ -29,7 +29,7 @@ public class TaskHeadsActivity extends AppCompatActivity
     private static final String TAG = "Tag_MainActivity";
 
     public static final int REQ_LOGINOUT = 1;
-    public static final int REQ_ADD_TASK = 2;
+    public static final int REQ_ADD_TASKHEAD = 2;
 
     private DrawerLayout mDrawerLayout;
     private TextView mNavHeaderName;
@@ -98,7 +98,6 @@ public class TaskHeadsActivity extends AppCompatActivity
         checkNotNull(navigationView, "navigationView cannot be null");
         setupDrawerContent(navigationView);
         // Set Navigation header
-
         View navHeader = navigationView.getHeaderView(0);
         mNavHeaderName = (TextView) navHeader.findViewById(R.id.nav_name);
         mNavHeaderEmail = (TextView) navHeader.findViewById(R.id.nav_email);
@@ -196,7 +195,7 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     private void startLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, TaskHeadsActivity.REQ_LOGINOUT);
+        startActivityForResult(intent, REQ_LOGINOUT);
     }
 
     /*
@@ -206,9 +205,9 @@ public class TaskHeadsActivity extends AppCompatActivity
     public void onLoginSuccess() {
         String loggedInName = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name");
         String loggedInEmail = mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email");
-
         mNavHeaderName.setText(loggedInName);
         mNavHeaderEmail.setText(loggedInEmail);
+
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
 }

@@ -102,7 +102,7 @@ public class TaskHeadsPresenterTest {
 
     @Test
     public void getTaskHeadsCountFromRepo_andShowsAddTaskHeadUi_whenCall_addNewTask() {
-        mTaskHeadsPresenter.addNewTask();
+        mTaskHeadsPresenter.addNewTaskHead();
 
         verify(mTaskHeadRepository).getTaskHeadsCount();
         verify(mTaskHeadView).showTaskHeadDetail(anyInt());

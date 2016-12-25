@@ -79,11 +79,11 @@ public class TaskHeadDetailPresenterTest {
         verify(mTaskHeadDetailView).showEmptyTaskHeadError();
     }
     @Test
-    public void saveExistingTaskHead_editTitle() {
+    public void updateTaskHead_editTitle() {
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter("taskHeadId_mock");
 
-        // Modify title and ask to save
-        mTaskHeadDetailPresenter.createTaskHead("changed title", MEMBERS);
+        // Modify title and update(save with existing id)
+        mTaskHeadDetailPresenter.updateTaskHead("changed title", MEMBERS, 0);
 
         // Then a taskhead is saved in the repo and the view updated
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));

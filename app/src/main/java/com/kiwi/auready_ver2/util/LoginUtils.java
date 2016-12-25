@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.util;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -9,8 +8,8 @@ import java.util.regex.Pattern;
 public interface LoginUtils {
 
     String LOGIN_LOGOUT = "Login or Logout";
-    int LOGIN = 1;
-    int LOGOUT = 2;
+    boolean LOGIN = true;
+    boolean LOGOUT = false;
     String IS_SUCCESS = "isSuccess";
 
     String EMAIL_TOKEN = "@";

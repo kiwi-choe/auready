@@ -91,6 +91,9 @@ dependencies {
     androidTestCompile("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion")
     androidTestCompile("com.android.support.test.espresso:espresso-intents:$rootProject.ext.espressoVersion")
 
+    androidTestCompile "com.squareup.retrofit2:retrofit-mock:$rootProject.ext.retrofitMock"
+    androidTestCompile "com.squareup.okhttp3:mockwebserver:$rootProject.ext.mockwebserver"
+
     // Floating button
     compile 'com.android.support:support-v4:23.4.0'
 
