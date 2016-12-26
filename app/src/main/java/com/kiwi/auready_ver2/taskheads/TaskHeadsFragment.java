@@ -6,9 +6,15 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,7 +28,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View {
+public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View, AbsListView.MultiChoiceModeListener {
 
     public static final String TAG_TASKHEADSFRAGMENT = "TAG_TasksFragment";
 
@@ -88,6 +94,9 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         mNoTaskHeadTxt = (TextView) root.findViewById(R.id.no_taskhead_txt);
         mTaskHeadsView = (ListView) root.findViewById(R.id.taskheads);
+        mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mTaskHeadsView.setMultiChoiceModeListener(this);
+
         mTaskHeadsAdapter = new TaskHeadsAdapter(new ArrayList<TaskHead>(0), mItemListener);
         mTaskHeadsView.setAdapter(mTaskHeadsAdapter);
 
@@ -173,6 +182,15 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         }
 
         @Override
+        public boolean onTaskHeadItemLongClick(View view, int position) {
+            Log.d("MY_LOG", "onLongClick");
+            mTaskHeadsView.setItemChecked(position, true);
+            view.setSelected(true);
+
+            return true;
+        }
+
+        @Override
         public void onDeleteClick(TaskHead clickedTaskHead) {
             mPresenter.deleteTaskHead(clickedTaskHead.getId());
         }
@@ -180,6 +198,58 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     public interface TaskHeadItemListener {
         void onTaskHeadItemClick(String taskHeadId);
+
+        boolean onTaskHeadItemLongClick(View view, int position);
+
         void onDeleteClick(TaskHead clickedTaskHead);
+    }
+
+    // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
+    private int mCheckedCount = 0;
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
+        if (checked) {
+            mCheckedCount++;
+            mTaskHeadsAdapter.setNewSelection(position, checked);
+        } else {
+            mCheckedCount--;
+            mTaskHeadsAdapter.removeSelection(position);
+        }
+
+        actionMode.setTitle(mCheckedCount + " " + getContext().getResources().getString(R.string.item_selected));
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        MenuInflater inflater = actionMode.getMenuInflater();
+        inflater.inflate(R.menu.contextual_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.item_delete:
+                mCheckedCount = 0;
+                mTaskHeadsAdapter.clearSelection();
+                actionMode.finish();
+                return true;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode actionMode) {
+        mCheckedCount = 0;
+        mTaskHeadsAdapter.clearSelection();
     }
 }

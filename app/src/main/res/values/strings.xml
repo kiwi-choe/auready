@@ -70,5 +70,7 @@
     <string name="action_confirm">V</string>
     <string name="network_error">Network connection error</string>
 
+    <string name="delete">delete</string>
+    <string name="item_selected">selected</string>
 
 </resources>
