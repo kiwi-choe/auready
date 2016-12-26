@@ -1,7 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -196,9 +195,6 @@ public class TasksPresenter implements TasksContract.Presenter {
         mTasksView.setTitle(taskHead.getTitle());
 
         if(taskHead.getMembers() != null) {
-            if (taskHead.getMembers().size() != 0) {
-                Log.d("TEST_TAG", "members: " + taskHead.getMembers().get(0).getName());
-            }
             mTasksView.setMembers(taskHead.getMembers());
         }
     }

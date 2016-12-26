@@ -3,8 +3,9 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.SQLException;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
@@ -18,19 +19,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 8/25/16.
  */
-public class TaskHeadLocalDataSource implements TaskHeadDataSource {
+public class TaskHeadLocalDataSource extends BaseDBAdapter
+        implements TaskHeadDataSource {
 
     private static TaskHeadLocalDataSource INSTANCE;
 
-    private SQLiteDbHelper mDbHelper;
-
-    private TaskHeadLocalDataSource(@NonNull Context context) {
-        checkNotNull(context);
-        mDbHelper = new SQLiteDbHelper(context);
+    private TaskHeadLocalDataSource(Context context) {
+        open(context);
     }
 
     public static TaskHeadLocalDataSource getInstance(@NonNull Context context) {
-        if(INSTANCE == null) {
+        checkNotNull(context);
+        if (INSTANCE == null) {
             INSTANCE = new TaskHeadLocalDataSource(context);
         }
         return INSTANCE;
@@ -40,14 +40,12 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
     public int getTaskHeadsCount() {
         int countOfTaskHeads = 0;
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String query = "SELECT * FROM " + TaskHeadEntry.TABLE_NAME;
-        Cursor c = db.rawQuery(query, null);
-        if(c != null) {
+        Cursor c = sDb.rawQuery(query, null);
+        if (c != null) {
             countOfTaskHeads = c.getCount();
             c.close();
         }
-        db.close();
         return countOfTaskHeads;
     }
 
@@ -55,7 +53,6 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
         List<TaskHead> taskHeads = new ArrayList<>();
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] projection = {
                 TaskHeadEntry.COLUMN_ID,
                 TaskHeadEntry.COLUMN_TITLE,
@@ -63,11 +60,11 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
                 TaskHeadEntry.COLUMN_ORDER
         };
 
-        Cursor c = db.query(
+        Cursor c = sDb.query(
                 TaskHeadEntry.TABLE_NAME, projection, null, null, null, null, null);
 
-        if(c!=null && c.getCount()>0) {
-            while(c.moveToNext()) {
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
                 String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
                 String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
                 String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
@@ -77,12 +74,11 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
                 taskHeads.add(taskHead);
             }
         }
-        if(c!=null) {
+        if (c != null) {
             c.close();
         }
-        db.close();
 
-        if(taskHeads.isEmpty()) {
+        if (taskHeads.isEmpty()) {
             callback.onDataNotAvailable();
         } else {
             callback.onTaskHeadsLoaded(taskHeads);
@@ -91,7 +87,6 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
 
     @Override
     public void getTaskHead(@NonNull String taskHeadId, @NonNull GetTaskHeadCallback callback) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
                 TaskHeadEntry.COLUMN_ID,
@@ -101,9 +96,9 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
         };
 
         String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
-        String[] selectionArgs = { taskHeadId };
+        String[] selectionArgs = {taskHeadId};
 
-        Cursor c = db.query(
+        Cursor c = sDb.query(
                 TaskHeadEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
         TaskHead taskHead = null;
@@ -121,8 +116,6 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
             c.close();
         }
 
-        db.close();
-
         if (taskHead != null) {
             callback.onTaskHeadLoaded(taskHead);
         } else {
@@ -132,38 +125,52 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
 
     @Override
     public void deleteTaskHead(@NonNull String taskHeadId) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
-        String[] selectionArgs = { taskHeadId };
+        String[] selectionArgs = {taskHeadId};
 
-        db.delete(TaskHeadEntry.TABLE_NAME, selection, selectionArgs);
-
-        db.close();
+        sDb.beginTransaction();
+        try {
+            sDb.delete(TaskHeadEntry.TABLE_NAME, selection, selectionArgs);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
     }
 
     @Override
     public void deleteAllTaskHeads() {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        db.delete(TaskHeadEntry.TABLE_NAME, null, null);
-
-        db.close();
+        sDb.beginTransaction();
+        try {
+            sDb.delete(TaskHeadEntry.TABLE_NAME, null, null);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
     }
 
     @Override
     public void saveTaskHead(@NonNull TaskHead taskHead) {
         checkNotNull(taskHead);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
-        values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
-        values.put(TaskHeadEntry.COLUMN_MEMBERS, taskHead.getMembersString());
-        values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
+        sDb.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
+            values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
+            values.put(TaskHeadEntry.COLUMN_MEMBERS, taskHead.getMembersString());
+            values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
 
-        db.insert(TaskHeadEntry.TABLE_NAME, null, values);
-
-        db.close();
+            sDb.insert(TaskHeadEntry.TABLE_NAME, null, values);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " ). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
     }
 }

@@ -31,7 +31,8 @@ public class TaskHeadRepositoryTest {
             new Friend("email3", "name3"));
     private static final List<TaskHead> TASKHEADS =
             Lists.newArrayList(new TaskHead("title1", MEMBERS, 0),
-                    new TaskHead("title2", MEMBERS, 1), new TaskHead("title3", MEMBERS, 2));
+                    new TaskHead("title2", MEMBERS, 1), new TaskHead("title3", MEMBERS, 2),
+                    new TaskHead("title4", MEMBERS, 3));
     private static final String TASKHEAD_ID = "123";
 
     private TaskHeadRepository mTaskHeadsRepository;
@@ -187,6 +188,40 @@ public class TaskHeadRepositoryTest {
 
         // 3. Verify it's removed from repository
         assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(newTaskHead.getId()), is(false));
+    }
+
+    @Test
+    public void deleteTaskHeads_andDeleteTasks_fromLocal() {
+        // Save taskheads
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(0));
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(1));
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(2));
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(3));
+
+        // Delete taskHeads
+        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(0).getId());
+        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(1).getId());
+        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(2).getId());
+        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(3).getId());
+
+        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(0).getId()));
+        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(1).getId()));
+        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(2).getId()));
+        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(3).getId()));
+
+        // Verify that there is only TASKHEADS.get(2)
+        mTaskHeadsRepository.getTaskHeads(new TaskHeadDataSource.LoadTaskHeadsCallback() {
+            @Override
+            public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
+                assertThat(taskHeads.size(), is(0));
+//                assertThat(taskHeads.get(0).getTitle(), is(TASKHEADS.get(2).getTitle()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
     }
 
     @Test

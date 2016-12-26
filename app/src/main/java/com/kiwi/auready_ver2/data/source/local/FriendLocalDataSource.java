@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,16 +20,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 7/5/16.
  */
-public class FriendLocalDataSource implements FriendDataSource {
+public class FriendLocalDataSource extends BaseDBAdapter
+        implements FriendDataSource {
 
     private static FriendLocalDataSource INSTANCE;
 
-    private SQLiteDbHelper mDbHelper;
-
     private FriendLocalDataSource(@NonNull Context context) {
-        checkNotNull(context);
-        mDbHelper = new SQLiteDbHelper(context);
-
+        open(context);
     }
 
     public static FriendLocalDataSource getInstance(@NonNull Context context) {
@@ -42,27 +38,20 @@ public class FriendLocalDataSource implements FriendDataSource {
 
     @Override
     public void deleteAllFriends() {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.delete(FriendEntry.TABLE_NAME, null, null);
-        db.close();
+        sDb.delete(FriendEntry.TABLE_NAME, null, null);
     }
 
     @Override
     public void deleteFriend(@NonNull String id) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
         String selection = FriendEntry.COLUMN_ID + " LIKE?";
         String[] selectionArgs = {id};
 
-        db.delete(FriendEntry.TABLE_NAME, selection, selectionArgs);
-
-        db.close();
+        sDb.delete(FriendEntry.TABLE_NAME, selection, selectionArgs);
     }
 
     @Override
     public void getFriends(@NonNull LoadFriendsCallback callback) {
         List<Friend> friends = new ArrayList<>();
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
                 FriendEntry.COLUMN_ID,
@@ -70,7 +59,7 @@ public class FriendLocalDataSource implements FriendDataSource {
                 FriendEntry.COLUMN_NAME
         };
 
-        Cursor c = db.query(
+        Cursor c = sDb.query(
                 FriendEntry.TABLE_NAME, projection, null, null, null, null, null);
         if (c != null && c.getCount() > 0) {
             while(c.moveToNext()) {
@@ -86,7 +75,6 @@ public class FriendLocalDataSource implements FriendDataSource {
             c.close();
         }
 
-        db.close();
         if(friends.isEmpty()) {
             // This will be called if the table is new or just empty.
             callback.onDataNotAvailable();
@@ -101,7 +89,6 @@ public class FriendLocalDataSource implements FriendDataSource {
         * */
     @Override
     public void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback callback) {
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         String[] projection = {
                 FriendEntry.COLUMN_ID,
@@ -112,7 +99,7 @@ public class FriendLocalDataSource implements FriendDataSource {
         String selection = FriendEntry.COLUMN_ID + " LIKE?";
         String[] selectionArgs = {friendColumnId};
 
-        Cursor c = db.query(
+        Cursor c = sDb.query(
                 FriendEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
         Friend friend = null;
@@ -128,8 +115,6 @@ public class FriendLocalDataSource implements FriendDataSource {
             c.close();
         }
 
-        db.close();
-
         if (friend != null) {
             callback.onFriendLoaded(friend);
         } else {
@@ -140,9 +125,8 @@ public class FriendLocalDataSource implements FriendDataSource {
     @Override
     public void initFriend(@NonNull List<Friend> friends) {
         checkNotNull(friends);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        db.beginTransaction();
+        sDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
 
@@ -151,36 +135,32 @@ public class FriendLocalDataSource implements FriendDataSource {
                 values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
                 values.put(FriendEntry.COLUMN_NAME, friend.getName());
 
-                db.insert(FriendEntry.TABLE_NAME, null, values);
+                sDb.insert(FriendEntry.TABLE_NAME, null, values);
             }
-            db.setTransactionSuccessful();
+            sDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new list to (" + FriendEntry.TABLE_NAME + " ). ", e);
         } finally {
-            db.endTransaction();
+            sDb.endTransaction();
         }
-        db.close();
     }
 
     @Override
     public void saveFriend(@NonNull Friend friend) {
         checkNotNull(friend);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        db.beginTransaction();
+        sDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
             values.put(FriendEntry.COLUMN_ID, friend.getId());
             values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
             values.put(FriendEntry.COLUMN_NAME, friend.getName());
 
-            db.insert(FriendEntry.TABLE_NAME, null, values);
-            db.setTransactionSuccessful();
+            sDb.insert(FriendEntry.TABLE_NAME, null, values);
+            sDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new one to (" + FriendEntry.TABLE_NAME + "). ", e);
         } finally {
-            db.endTransaction();
+            sDb.endTransaction();
         }
-        db.close();
     }
 }

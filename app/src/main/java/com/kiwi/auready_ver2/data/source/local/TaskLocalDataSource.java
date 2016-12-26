@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,23 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.*;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.COLUMN_COMPLETED;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.COLUMN_DESCRIPTION;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.COLUMN_HEAD_ID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.COLUMN_ID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.COLUMN_MEMBER_ID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.COLUMN_ORDER;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry.TABLE_NAME;
 
 /**
  * Created by kiwi on 8/25/16.
  */
-public class TaskLocalDataSource implements TaskDataSource {
+public class TaskLocalDataSource extends BaseDBAdapter
+        implements TaskDataSource {
 
     private static TaskLocalDataSource INSTANCE;
 
-    private SQLiteDbHelper mDbHelper;
-
-    private TaskLocalDataSource(@NonNull Context context) {
-        checkNotNull(context);
-        mDbHelper = new SQLiteDbHelper(context);
+    private TaskLocalDataSource(Context context) {
+        open(context);
     }
 
     public static TaskLocalDataSource getInstance(@NonNull Context context) {
+        checkNotNull(context);
         if (INSTANCE == null) {
             INSTANCE = new TaskLocalDataSource(context);
         }
@@ -41,42 +46,35 @@ public class TaskLocalDataSource implements TaskDataSource {
 
     @Override
     public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String whereClause = COLUMN_HEAD_ID + " LIKE? AND " + COLUMN_MEMBER_ID + " LIKE?";
         String[] whereArgs = {taskHeadId, memberId};
-        db.delete(TABLE_NAME, whereClause, whereArgs);
 
-        db.close();
+        delete(whereClause, whereArgs);
     }
 
     @Override
     public void deleteTasks(@NonNull String taskHeadId) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String whereClause = COLUMN_HEAD_ID + " LIKE?";
         String[] whereArgs = {taskHeadId};
-        db.delete(TABLE_NAME, whereClause, whereArgs);
 
-        db.close();
+        delete(whereClause, whereArgs);
     }
 
     @Override
     public void deleteTask(@NonNull String id) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         String whereClause = COLUMN_ID + " LIKE?";
         String[] whereArgs = {id};
-        db.delete(TABLE_NAME, whereClause, whereArgs);
 
-        db.close();
+        delete(whereClause, whereArgs);
     }
 
     @Override
     public void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback) {
         List<Task> tasks = new ArrayList<>(0);
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] columns = {
                 COLUMN_ID,
                 COLUMN_DESCRIPTION,
@@ -86,7 +84,8 @@ public class TaskLocalDataSource implements TaskDataSource {
 
         String selection = COLUMN_HEAD_ID + " LIKE? AND " + COLUMN_MEMBER_ID + " LIKE?";
         String[] selectionArgs = {taskHeadId, memberId};
-        Cursor c = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+
+        Cursor c = sDb.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
         if (c != null && c.getCount() > 0) {
             while (c.moveToNext()) {
                 String id = c.getString(c.getColumnIndex(COLUMN_ID));
@@ -101,7 +100,6 @@ public class TaskLocalDataSource implements TaskDataSource {
         if (c != null) {
             c.close();
         }
-        db.close();
         if (tasks.isEmpty()) {
             // This will be called if the table is new or just empty.
             callback.onDataNotAvailable();
@@ -114,7 +112,6 @@ public class TaskLocalDataSource implements TaskDataSource {
     public void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback) {
         List<Task> tasks = new ArrayList<>(0);
 
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
         String[] columns = {
                 COLUMN_ID,
                 COLUMN_DESCRIPTION,
@@ -124,7 +121,8 @@ public class TaskLocalDataSource implements TaskDataSource {
 
         String selection = COLUMN_HEAD_ID + " LIKE?";
         String[] selectionArgs = {taskHeadId};
-        Cursor c = db.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
+
+        Cursor c = sDb.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
         if (c != null && c.getCount() > 0) {
             while (c.moveToNext()) {
                 String id = c.getString(c.getColumnIndex(COLUMN_ID));
@@ -140,7 +138,6 @@ public class TaskLocalDataSource implements TaskDataSource {
         if (c != null) {
             c.close();
         }
-        db.close();
         if (tasks.isEmpty()) {
             // This will be called if the table is new or just empty.
             callback.onDataNotAvailable();
@@ -153,8 +150,8 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void saveTask(@NonNull Task task) {
         checkNotNull(task);
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        db.beginTransaction();
+
+        sDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
             values.put(COLUMN_ID, task.getId());
@@ -163,13 +160,25 @@ public class TaskLocalDataSource implements TaskDataSource {
             values.put(COLUMN_DESCRIPTION, task.getDescription());
             values.put(COLUMN_COMPLETED, task.getCompleted());
             values.put(COLUMN_ORDER, task.getOrder());
+
+            sDb.insert(PersistenceContract.TaskEntry.TABLE_NAME, null, values);
+            sDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new one to (" + TABLE_NAME + "). ", e);
         } finally {
-            db.endTransaction();
+            sDb.endTransaction();
         }
-        db.close();
     }
 
-
+    private void delete(String whereClause, String[] whereArgs) {
+        sDb.beginTransaction();
+        try {
+            sDb.delete(TABLE_NAME, whereClause, whereArgs);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+    }
 }

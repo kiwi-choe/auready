@@ -80,9 +80,9 @@ public class TasksPresenterTest {
         verify(mTaskRepository).getTasks(eq(TASKHEAD.getId()), eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
-//        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
-//        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
-//        assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
+        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
+        assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
     }
 
     @Test
@@ -99,7 +99,7 @@ public class TasksPresenterTest {
         assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
     }
     @Test
-    public void createTask() {
+    public void createTask_andLoadIntoView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
         // Create a new taskTextView
         String memberId = TASKS.get(0).getMemberId();
@@ -108,6 +108,8 @@ public class TasksPresenterTest {
         mTasksPresenter.createTask(memberId, description, order);
         // Then a taskTextView is saved in the repository
         verify(mTaskRepository).saveTask(any(Task.class));
+        // And Update View
+//        verify(mTasksView).showTasks();
     }
 
     @Test
