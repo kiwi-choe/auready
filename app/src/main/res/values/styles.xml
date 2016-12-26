@@ -11,11 +11,12 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeBackground">@color/colorPrimaryDark</item>
     </style>
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:actionModeBackground">@color/colorPrimary</item>
+        <item name="android:actionModeBackground">@color/colorPrimary</item>"
     </style>
 
 </resources>

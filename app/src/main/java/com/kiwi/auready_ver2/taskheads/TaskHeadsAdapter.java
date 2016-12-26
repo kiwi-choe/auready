@@ -66,7 +66,8 @@ public class TaskHeadsAdapter extends BaseAdapter {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mItemListener.onTaskHeadItemClick(taskHead.getId());
+                mItemListener.onTaskHeadItemClick(taskHead.getId(), position);
+
             }
         });
 
