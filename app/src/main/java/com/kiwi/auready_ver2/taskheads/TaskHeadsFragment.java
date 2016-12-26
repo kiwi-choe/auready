@@ -177,15 +177,18 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     TaskHeadItemListener
             mItemListener = new TaskHeadItemListener() {
         @Override
-        public void onTaskHeadItemClick(String taskHeadId) {
-            showTasksView(taskHeadId);
+        public void onTaskHeadItemClick(String taskHeadId, int position) {
+            if (!mIsActionMode) {
+                showTasksView(taskHeadId);
+            } else{
+                mTaskHeadsView.setItemChecked(position, !mTaskHeadsView.isItemChecked(position));
+
+            }
         }
 
         @Override
         public boolean onTaskHeadItemLongClick(View view, int position) {
-            Log.d("MY_LOG", "onLongClick");
             mTaskHeadsView.setItemChecked(position, true);
-            view.setSelected(true);
 
             return true;
         }
@@ -197,7 +200,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     };
 
     public interface TaskHeadItemListener {
-        void onTaskHeadItemClick(String taskHeadId);
+        void onTaskHeadItemClick(String taskHeadId, int position);
 
         boolean onTaskHeadItemLongClick(View view, int position);
 
@@ -206,6 +209,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
     private int mCheckedCount = 0;
+
+    private boolean mIsActionMode = false;
 
     @Override
     public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
@@ -225,6 +230,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.contextual_menu, menu);
 
+        mIsActionMode = true;
+
         return true;
     }
 
@@ -237,6 +244,12 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.item_delete:
+                for (int i = mTaskHeadsAdapter.getCount() - 1 ; i >= 0 ; i--) {
+                    if (mTaskHeadsAdapter.isPositionChecked(i)) {
+                        mPresenter.deleteTaskHead(mTaskHeadsAdapter.getItem(i).getId());
+                    }
+                }
+
                 mCheckedCount = 0;
                 mTaskHeadsAdapter.clearSelection();
                 actionMode.finish();
@@ -251,5 +264,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public void onDestroyActionMode(ActionMode actionMode) {
         mCheckedCount = 0;
         mTaskHeadsAdapter.clearSelection();
+
+        mIsActionMode = false;
     }
 }
