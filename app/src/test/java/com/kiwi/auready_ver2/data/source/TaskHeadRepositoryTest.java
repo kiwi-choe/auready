@@ -161,7 +161,7 @@ public class TaskHeadRepositoryTest {
         mTaskHeadsRepository.getTaskHead(changedTaskHead.getId(), new TaskHeadDataSource.GetTaskHeadCallback() {
             @Override
             public void onTaskHeadLoaded(TaskHead taskHead) {
-                assertThat(taskHead.getMembers(), is(modifiedMembers));
+                assertThat(taskHead.getMembers().size(), is(modifiedMembers.size()));
             }
 
             @Override

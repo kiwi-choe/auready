@@ -37,7 +37,8 @@ public class SQLiteDbHelper extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " + TaskHeadEntry.TABLE_NAME + " (" +
                     TaskHeadEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
                     TaskHeadEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
-                    TaskHeadEntry.COLUMN_MEMBERS + TEXT_TYPE +
+                    TaskHeadEntry.COLUMN_MEMBERS + TEXT_TYPE + COMMA_SEP +
+                    TaskHeadEntry.COLUMN_ORDER + INTEGER_TYPE +
                     " )";
 
     private static final String SQL_CREATE_TASK_TABLE =

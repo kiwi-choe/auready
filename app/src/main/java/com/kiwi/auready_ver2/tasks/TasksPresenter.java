@@ -65,7 +65,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void start() {
-        if(mTaskHeadId != null) {
+        if (mTaskHeadId != null) {
             populateTaskHead();
         }
     }
@@ -77,7 +77,12 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(GetTaskHead.ResponseValue response) {
-                        showTaskHead(response.getTaskHead());
+                        TaskHead taskHead = response.getTaskHead();
+                        if (taskHead == null) {
+                            throw new RuntimeException("taskHead cannot be null");
+                        } else {
+                            showTaskHead(taskHead);
+                        }
                     }
 
                     @Override
@@ -188,11 +193,13 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     private void showTaskHead(TaskHead taskHead) {
 
-        if(taskHead.getMembers().size() == 0) {
-
-            Log.d("TEST_TAG", "there is no member");
-        }
         mTasksView.setTitle(taskHead.getTitle());
-        mTasksView.setMembers(taskHead.getMembers());
+
+        if(taskHead.getMembers() != null) {
+            if (taskHead.getMembers().size() != 0) {
+                Log.d("TEST_TAG", "members: " + taskHead.getMembers().get(0).getName());
+            }
+            mTasksView.setMembers(taskHead.getMembers());
+        }
     }
 }
