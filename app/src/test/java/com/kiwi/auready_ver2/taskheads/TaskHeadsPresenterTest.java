@@ -23,8 +23,10 @@ import org.mockito.MockitoAnnotations;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -100,6 +102,15 @@ public class TaskHeadsPresenterTest {
         verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
     }
 
+    @Test
+    public void deleteTaskHeads() {
+        mTaskHeadsPresenter.deleteTaskHeads(TASKHEADS);
+
+        // Verify that deleteTasks is called count of taskHeads times
+        verify(mTaskRepository, times(TASKHEADS.size())).deleteTasks(any(String.class));
+        // Verify that deleteTaskHead is called count of taskHeads times
+        verify(mTaskHeadRepository, times(TASKHEADS.size())).deleteTaskHead(any(String.class));
+    }
     @Test
     public void getTaskHeadsCountFromRepo_andShowsAddTaskHeadUi_whenCall_addNewTask() {
         mTaskHeadsPresenter.addNewTaskHead();
