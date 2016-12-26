@@ -277,12 +277,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.item_delete:
-                for (int i = mTaskHeadsAdapter.getCount() - 1; i >= 0; i--) {
-                    if (mTaskHeadsAdapter.isPositionChecked(i)) {
-                        mPresenter.deleteTaskHead(mTaskHeadsAdapter.getItem(i).getId());
-                    }
-                }
-
+                mPresenter.deleteTaskHeads(mTaskHeadsAdapter.getCurrentCheckedTaskHeads());
                 mCheckedCount = 0;
                 mTaskHeadsAdapter.clearSelection();
                 actionMode.finish();

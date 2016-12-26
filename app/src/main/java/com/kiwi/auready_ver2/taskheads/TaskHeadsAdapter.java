@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -128,8 +130,17 @@ public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListene
         return result == null ? false : result;
     }
 
-    public Set<Integer> getCurrentCheckedPosition() {
-        return mSelection.keySet();
+    public List<TaskHead> getCurrentCheckedTaskHeads() {
+        ArrayList<TaskHead> taskHeads = new ArrayList<>();
+
+        for (int i = 0; i < mSelection.size(); i++) {
+            if (isPositionChecked(i)) {
+                taskHeads.add(getItem(i));
+                Log.d("MY_LOG", "i : " + i);
+            }
+        }
+
+        return taskHeads;
     }
 
     // for drag and drop (reorder)
