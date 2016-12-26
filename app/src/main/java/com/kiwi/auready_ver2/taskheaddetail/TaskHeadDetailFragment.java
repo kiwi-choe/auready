@@ -36,6 +36,9 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
 
+    // when getArguments().getInt()
+    private static final int DEFAULT_INT = 0;
+
     private TaskHeadDetailContract.Presenter mPresenter;
 
     // Items of CustomActionBar
@@ -68,8 +71,11 @@ public class TaskHeadDetailFragment extends Fragment implements
             mTaskHeadId = getArguments().getString(TaskHeadDetailActivity.ARG_TASKHEAD_ID);
             if(mTaskHeadId == null) {
                 initMembers();
+                // set order for new taskHead
+                mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS);
             }
-            mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS);
+            // Set order to edit taskhead
+            mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_TASKHEAD_ORDER, DEFAULT_INT);
         }
 
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
@@ -145,7 +151,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.createTaskHead(mTitle.getText().toString(), mMembers);
+                mPresenter.createTaskHead(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
             }
         });
         mDoneBt.setOnClickListener(new View.OnClickListener() {
@@ -187,8 +193,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         getActivity().finish();
     }
 
-    @Override
-    public void initMembers() {
+    private void initMembers() {
         // Add the current user to members
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(getActivity().getApplicationContext());
         // testing

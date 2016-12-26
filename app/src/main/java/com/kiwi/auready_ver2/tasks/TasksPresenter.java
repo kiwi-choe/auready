@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
@@ -14,7 +13,6 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -189,6 +187,11 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     private void showTaskHead(TaskHead taskHead) {
+
+        if(taskHead.getMembers().size() == 0) {
+
+            Log.d("TEST_TAG", "there is no member");
+        }
         mTasksView.setTitle(taskHead.getTitle());
         mTasksView.setMembers(taskHead.getMembers());
     }

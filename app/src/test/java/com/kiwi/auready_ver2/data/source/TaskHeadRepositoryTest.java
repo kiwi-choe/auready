@@ -19,7 +19,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -31,8 +30,8 @@ public class TaskHeadRepositoryTest {
     private static List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
             new Friend("email3", "name3"));
     private static final List<TaskHead> TASKHEADS =
-            Lists.newArrayList(new TaskHead("title1", MEMBERS),
-                    new TaskHead("title2", MEMBERS), new TaskHead("title3", MEMBERS));
+            Lists.newArrayList(new TaskHead("title1", MEMBERS, 0),
+                    new TaskHead("title2", MEMBERS, 1), new TaskHead("title3", MEMBERS, 2));
     private static final String TASKHEAD_ID = "123";
 
     private TaskHeadRepository mTaskHeadsRepository;
@@ -68,18 +67,6 @@ public class TaskHeadRepositoryTest {
     * Get taskHeads
     * */
     @Test
-    public void getTaskHeadsWithDirtyCache_taskHeadsAreRetrievedFromRemote() {
-        // When calling getTaskHeads in the repo with dirty cache
-        mTaskHeadsRepository.refreshTaskHeads();
-        mTaskHeadsRepository.getTaskHeads(mLoadTaskHeadsCallback);
-
-        // And the remote data source has data available
-        setTaskHeadsAvailable(mTaskHeadRemoteDataSource, TASKHEADS);
-
-        verify(mLoadTaskHeadsCallback).onTaskHeadsLoaded(TASKHEADS);
-    }
-
-    @Test
     public void getTaskHeadsWithLocalUnavailable_taskHeadsAreRetrievedFromRemote() {
         mTaskHeadsRepository.getTaskHeads(mLoadTaskHeadsCallback);
         // Local data source has no data available
@@ -109,18 +96,6 @@ public class TaskHeadRepositoryTest {
         verify(mLoadTaskHeadsCallback).onDataNotAvailable();
     }
 
-    @Test
-    public void getTaskHeads_refreshesLocal() {
-        mTaskHeadsRepository.refreshTaskHeads();
-        mTaskHeadsRepository.getTaskHeads(mLoadTaskHeadsCallback);
-
-        // Make Remote returns data
-        setTaskHeadsAvailable(mTaskHeadRemoteDataSource, TASKHEADS);
-
-        // verify that the data fetched from Remote was saved in Local
-        verify(mTaskHeadLocalDataSource, times(TASKHEADS.size())).saveTaskHead(any(TaskHead.class));
-    }
-
     /*
     * Get a TaskHead
     * */
@@ -130,7 +105,6 @@ public class TaskHeadRepositoryTest {
 
         verify(mTaskHeadLocalDataSource).getTaskHead(eq(TASKHEAD_ID), any(
                 TaskHeadDataSource.GetTaskHeadCallback.class));
-
     }
 
     @Test
@@ -168,34 +142,34 @@ public class TaskHeadRepositoryTest {
         });
     }
 
-//    @Test
-//    public void updateMemberOfTaskHead_retrieveTaskHead() {
-//        // Save a new taskHead
-//        String TITLE = "title_test";
-//        TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
-//        mTaskHeadsRepository.saveTaskHead(taskHead);
-//
-//        // Modify the value of member column
-//        final List<Friend> modifiedMembers = MEMBERS;
-//        modifiedMembers.add(new Friend("new member email", "new member name"));
-//        TaskHead changedTaskHead = new TaskHead(taskHead.getId(), TITLE, modifiedMembers, );
-//        // Save the changed taskHead
-//        mTaskHeadsRepository.saveTaskHead(changedTaskHead);
-//        verify(mTaskHeadLocalDataSource).saveTaskHead(changedTaskHead);
-//
-//        // Retrieve the taskhead
-//        mTaskHeadsRepository.getTaskHead(changedTaskHead.getId(), new TaskHeadDataSource.GetTaskHeadCallback() {
-//            @Override
-//            public void onTaskHeadLoaded(TaskHead taskHead) {
-//                assertThat(taskHead.getMembers(), is(modifiedMembers));
-//            }
-//
-//            @Override
-//            public void onDataNotAvailable() {
-//                fail();
-//            }
-//        });
-//    }
+    @Test
+    public void updateMemberOfTaskHead_retrieveTaskHead() {
+        // Save a new taskHead
+        String TITLE = "title_test";
+        TaskHead taskHead = new TaskHead(TITLE, MEMBERS, 0);
+        mTaskHeadsRepository.saveTaskHead(taskHead);
+
+        // Modify the value of member column
+        final List<Friend> modifiedMembers = MEMBERS;
+        modifiedMembers.add(new Friend("new member email", "new member name"));
+        TaskHead changedTaskHead = new TaskHead(taskHead.getId(), TITLE, modifiedMembers, taskHead.getOrder());
+        // Save the changed taskHead
+        mTaskHeadsRepository.saveTaskHead(changedTaskHead);
+        verify(mTaskHeadLocalDataSource).saveTaskHead(changedTaskHead);
+
+        // Retrieve the taskhead
+        mTaskHeadsRepository.getTaskHead(changedTaskHead.getId(), new TaskHeadDataSource.GetTaskHeadCallback() {
+            @Override
+            public void onTaskHeadLoaded(TaskHead taskHead) {
+                assertThat(taskHead.getMembers(), is(modifiedMembers));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+    }
 
     @Test
     public void deleteTaskHead_deleteTaskHeadToServiceApiRemovedFromCache() {
@@ -220,11 +194,11 @@ public class TaskHeadRepositoryTest {
         // Save 3 stub taskheads in the repository
         List<Friend> memebers = MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
                 new Friend("email3", "name3"));
-        TaskHead newTaskHead = new TaskHead("title1", memebers);
+        TaskHead newTaskHead = new TaskHead("title1", memebers, 0);
         mTaskHeadsRepository.saveTaskHead(newTaskHead);
-        TaskHead newTaskHead2 = new TaskHead("title2", memebers);
+        TaskHead newTaskHead2 = new TaskHead("title2", memebers, 1);
         mTaskHeadsRepository.saveTaskHead(newTaskHead2);
-        TaskHead newTaskHead3 = new TaskHead("title3", memebers);
+        TaskHead newTaskHead3 = new TaskHead("title3", memebers, 2);
         mTaskHeadsRepository.saveTaskHead(newTaskHead3);
 
         mTaskHeadsRepository.deleteAllTaskHeads();

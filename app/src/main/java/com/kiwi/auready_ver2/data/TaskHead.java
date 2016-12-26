@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.kiwi.auready_ver2.data.source.local.SQLiteDbHelper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,12 +27,14 @@ public class TaskHead {
     /*
     * Use this constructor to create a new TaskHead.
     * */
-    public TaskHead(String title, List<Friend> members) {
+    public TaskHead(String title, List<Friend> members, int order) {
         mId = UUID.randomUUID().toString();
         mTitle = title;
         mMembers = members;
         setMembersCnt();
+        mOrder = order;
     }
+
     /*
     * Use the constructor when get values from DB only
     * */
@@ -53,7 +54,7 @@ public class TaskHead {
     }
 
     /*
-        * Use this constructor to create a Task if the TaskHead already has an id
+        * Use this constructor to create a TaskHead if the TaskHead already has an id
         * (copy of another task)
         * */
     public TaskHead(@NonNull String id, String title, List<Friend> members, int order) {
@@ -63,16 +64,18 @@ public class TaskHead {
         setMembersCnt();
         mOrder = order;
     }
+
     /*
-    * Use this constructor to create a new TaskHead with no Title.
+    * Use this constructor to create a TaskHead if the TaskHead already has an id
+    * when get values from DB only
     * */
-    public TaskHead(@NonNull String id, String title, String strMembers) {
+    public TaskHead(@NonNull String id, String title, String strMembers, int order) {
         mId = checkNotNull(id, "id cannot be null");
         mTitle = title;
         convertStrToMemberList(strMembers);
         setMembersCnt();
+        mOrder = order;
     }
-
 
     public String getTitle() {
         return mTitle;
@@ -90,6 +93,7 @@ public class TaskHead {
         String strMembers = null;
         try {
             strMembers = SQLiteDbHelper.OBJECT_MAPPER.writeValueAsString(mMembers);
+
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -107,15 +111,20 @@ public class TaskHead {
             mMembersCnt = 0;
         }
     }
+
     private void convertStrToMemberList(String strMembers) {
-        mMembers = new ArrayList<>(0);
-        if(strMembers.length() != 0) {
+
+        if (strMembers.length() != 0) {
             try {
                 mMembers =
-                        SQLiteDbHelper.OBJECT_MAPPER.readValue(strMembers, new TypeReference<List<Friend>>(){});
+                        SQLiteDbHelper.OBJECT_MAPPER.readValue(strMembers, new TypeReference<List<Friend>>() {});
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    public int getOrder() {
+        return mOrder;
     }
 }

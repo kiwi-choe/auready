@@ -61,8 +61,8 @@ public class TaskHeadsPresenterTest {
         mTaskHeadsPresenter = givenTaskHeadsPresenter();
 
         // Start 3 taskHeads with title and only a member.
-        TASKHEADS = Lists.newArrayList(new TaskHead("title1", MEMBERS),
-                new TaskHead("title2", MEMBERS), new TaskHead("title3", MEMBERS));
+        TASKHEADS = Lists.newArrayList(new TaskHead("title1", MEMBERS, 0),
+                new TaskHead("title2", MEMBERS, 1), new TaskHead("title3", MEMBERS, 2));
     }
 
     private TaskHeadsPresenter givenTaskHeadsPresenter() {
@@ -91,7 +91,7 @@ public class TaskHeadsPresenterTest {
     @Test
     public void deleteTaskHead_andLoadIntoView() {
         // Given an stubbed taskHead
-        TaskHead taskHead = new TaskHead(TITLE, MEMBERS);
+        TaskHead taskHead = new TaskHead(TITLE, MEMBERS, 0);
         mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
 
         // Verify deleteTasks is called

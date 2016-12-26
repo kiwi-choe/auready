@@ -70,8 +70,9 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
                 String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
                 String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
                 String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
+                int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
 
-                TaskHead taskHead = new TaskHead(id, title, members);
+                TaskHead taskHead = new TaskHead(id, title, members, order);
                 taskHeads.add(taskHead);
             }
         }
@@ -110,8 +111,9 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
             String itemId = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
             String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
             String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
+            int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
 
-            taskHead = new TaskHead(itemId, title, members);
+            taskHead = new TaskHead(itemId, title, members, order);
         }
         if (c != null) {
             c.close();
