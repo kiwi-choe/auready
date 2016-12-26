@@ -133,4 +133,11 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
             }
         }
     }
+
+    @Override
+    public void deleteTaskHeads(List<TaskHead> taskheads) {
+        for(TaskHead taskHead: taskheads) {
+            deleteTaskHead(taskHead.getId());
+        }
+    }
 }
