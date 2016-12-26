@@ -2,12 +2,14 @@ package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ActionMode;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -97,6 +99,20 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mTaskHeadsView.setMultiChoiceModeListener(this);
 
+        mTaskHeadsView.setOnDragListener(new View.OnDragListener() {
+            @Override
+            public boolean onDrag(View view, DragEvent dragEvent) {
+                final int action = dragEvent.getAction();
+                switch (action){
+                    case DragEvent.ACTION_DROP:
+                        
+                        return true;
+                }
+
+                return false;
+            }
+        });
+
         mTaskHeadsAdapter = new TaskHeadsAdapter(new ArrayList<TaskHead>(0), mItemListener);
         mTaskHeadsView.setAdapter(mTaskHeadsAdapter);
 
@@ -180,7 +196,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         public void onTaskHeadItemClick(String taskHeadId, int position) {
             if (!mIsActionMode) {
                 showTasksView(taskHeadId);
-            } else{
+            } else {
                 mTaskHeadsView.setItemChecked(position, !mTaskHeadsView.isItemChecked(position));
 
             }
@@ -194,8 +210,25 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         }
 
         @Override
-        public void onDeleteClick(TaskHead clickedTaskHead) {
-            mPresenter.deleteTaskHead(clickedTaskHead.getId());
+        public void onReorder(View view, TaskHead clickedTaskHead) {
+//            mPresenter.deleteTaskHead(clickedTaskHead.getId());
+            final int touchedX = 0;
+            final int touchedY = 0;
+
+            view.startDrag(null, new View.DragShadowBuilder(view) {
+                @Override
+                public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
+                    super.onProvideShadowMetrics(shadowSize, shadowTouchPoint);
+                    shadowTouchPoint.set(touchedX, touchedY);
+                }
+
+                @Override
+                public void onDrawShadow(Canvas canvas) {
+                    super.onDrawShadow(canvas);
+                }
+            }, view, 0);
+
+            view.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -204,7 +237,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         boolean onTaskHeadItemLongClick(View view, int position);
 
-        void onDeleteClick(TaskHead clickedTaskHead);
+        void onReorder(View view, TaskHead clickedTaskHead);
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
@@ -244,7 +277,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.item_delete:
-                for (int i = mTaskHeadsAdapter.getCount() - 1 ; i >= 0 ; i--) {
+                for (int i = mTaskHeadsAdapter.getCount() - 1; i >= 0; i--) {
                     if (mTaskHeadsAdapter.isPositionChecked(i)) {
                         mPresenter.deleteTaskHead(mTaskHeadsAdapter.getItem(i).getId());
                     }

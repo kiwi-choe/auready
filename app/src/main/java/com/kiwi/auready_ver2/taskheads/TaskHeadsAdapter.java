@@ -81,11 +81,11 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
         TextView titleTV = (TextView) rowView.findViewById(R.id.taskhead_title);
         titleTV.setText(taskHead.getTitle());
-        Button deleteBt = (Button) rowView.findViewById(R.id.delete_bt);
-        deleteBt.setOnClickListener(new View.OnClickListener() {
+        Button reorderBtn = (Button) rowView.findViewById(R.id.reorder);
+        reorderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onDeleteClick(taskHead);
+                mItemListener.onReorder(v, taskHead);
             }
         });
 

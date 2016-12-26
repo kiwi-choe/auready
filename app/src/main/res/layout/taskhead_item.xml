@@ -14,10 +14,10 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
     <Button
-        android:id="@+id/delete_bt"
+        android:id="@+id/reorder"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
-        android:text="DEL" />
+        android:background="@android:drawable/ic_dialog_dialer" />
 
 </RelativeLayout>

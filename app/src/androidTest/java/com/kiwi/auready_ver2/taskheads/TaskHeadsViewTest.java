@@ -145,9 +145,9 @@ public class TaskHeadsViewTest {
         onView(withItemText(TITLE1)).check(matches(isDisplayed()));
 
         // click delete button
-        onView(withId(R.id.delete_bt)).perform(click());
+        onView(withId(R.id.reorder)).perform(click());
         // no taskheads in the listview
-        onView(withId(R.id.no_taskhead_txt)).check(matches(isDisplayed()));
+//        onView(withId(R.id.no_taskhead_txt)).check(matches(isDisplayed()));
     }
 
     @Test

@@ -6,7 +6,7 @@
     tools:context=".taskheads.TaskHeadsFragment"
     android:orientation="vertical">
 
-    <ListView
+    <com.kiwi.auready_ver2.util.DndListView
         android:id="@+id/taskheads"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

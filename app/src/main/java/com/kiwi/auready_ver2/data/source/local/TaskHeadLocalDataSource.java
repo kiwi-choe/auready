@@ -59,7 +59,8 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
         String[] projection = {
                 TaskHeadEntry.COLUMN_ID,
                 TaskHeadEntry.COLUMN_TITLE,
-                TaskHeadEntry.COLUMN_MEMBERS
+                TaskHeadEntry.COLUMN_MEMBERS,
+                TaskHeadEntry.COLUMN_ORDER
         };
 
         Cursor c = db.query(
