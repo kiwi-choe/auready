@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
@@ -102,10 +103,11 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mTaskHeadsView.setOnDragListener(new View.OnDragListener() {
             @Override
             public boolean onDrag(View view, DragEvent dragEvent) {
+                Log.d("MY_LOG", "onDrag");
                 final int action = dragEvent.getAction();
-                switch (action){
+                switch (action) {
                     case DragEvent.ACTION_DROP:
-                        
+
                         return true;
                 }
 
@@ -210,16 +212,14 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         }
 
         @Override
-        public void onReorder(View view, TaskHead clickedTaskHead) {
-//            mPresenter.deleteTaskHead(clickedTaskHead.getId());
-            final int touchedX = 0;
-            final int touchedY = 0;
+        public void onReorder(View view, final float touchedX, final float touchedY) {
+            Log.d("MY_LOG", "onReorder : " + view);
 
             view.startDrag(null, new View.DragShadowBuilder(view) {
                 @Override
                 public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
                     super.onProvideShadowMetrics(shadowSize, shadowTouchPoint);
-                    shadowTouchPoint.set(touchedX, touchedY);
+                    shadowTouchPoint.set((int) (touchedY + 0.5f), (int) (touchedX + 0.5f));
                 }
 
                 @Override
@@ -228,7 +228,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                 }
             }, view, 0);
 
-            view.setVisibility(View.INVISIBLE);
+//            view.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -237,7 +237,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         boolean onTaskHeadItemLongClick(View view, int position);
 
-        void onReorder(View view, TaskHead clickedTaskHead);
+        void onReorder(View view, float touchedX, float touchedY);
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
