@@ -16,39 +16,43 @@ import java.util.UUID;
 public class Friend implements Parcelable {
 
     public static final String KEY = "friendList";
-    private String mId;         // column id of Friend table
+    private String id;         // column id of Friend table
 
-    private String mEmail;
-    private String mName;
+    private String email;
+    private String name;
 
+    public Friend() {
+        // default constructor
+        super();
+    }
     /*
     * Use this constructor to create a new Friend.
     * */
     public Friend(String email, String name) {
-        mId = UUID.randomUUID().toString();
-        mEmail = email;
-        mName = name;
+        id = UUID.randomUUID().toString();
+        this.email = email;
+        this.name = name;
     }
 
     public String getEmail() {
-        return mEmail;
+        return this.email;
     }
 
     public String getName() {
-        return mName;
+        return this.name;
     }
 
     /*
     * Use this constructor to create a friend if the Friend already has an id.
     * */
     public Friend(String id, String email, String name) {
-        mId = id;
-        mEmail = email;
-        mName = name;
+        this.id = id;
+        this.email = email;
+        this.name = name;
     }
 
     public String getId() {
-        return mId;
+        return id;
     }
 
     @Override
@@ -56,8 +60,8 @@ public class Friend implements Parcelable {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Friend friend = (Friend)o;
-        return Objects.equal(mId, friend.mId) &&
-                Objects.equal(mEmail, friend.getEmail());
+        return Objects.equal(this.id, friend.id) &&
+                Objects.equal(this.email, friend.getEmail());
     }
 
     @Override
@@ -72,9 +76,9 @@ public class Friend implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mId);
-        dest.writeString(mEmail);
-        dest.writeString(mName);
+        dest.writeString(id);
+        dest.writeString(email);
+        dest.writeString(name);
     }
 
     public static final Creator<Friend> CREATOR = new Creator<Friend>() {
@@ -90,8 +94,8 @@ public class Friend implements Parcelable {
     };
 
     protected Friend(Parcel in) {
-        mId = in.readString();
-        mEmail = in.readString();
-        mName = in.readString();
+        id = in.readString();
+        email = in.readString();
+        name = in.readString();
     }
 }

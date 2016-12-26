@@ -96,7 +96,8 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
         String[] projection = {
                 TaskHeadEntry.COLUMN_ID,
                 TaskHeadEntry.COLUMN_TITLE,
-                TaskHeadEntry.COLUMN_MEMBERS
+                TaskHeadEntry.COLUMN_MEMBERS,
+                TaskHeadEntry.COLUMN_ORDER
         };
 
         String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
@@ -159,6 +160,7 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
         values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
         values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
         values.put(TaskHeadEntry.COLUMN_MEMBERS, taskHead.getMembersString());
+        values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
 
         db.insert(TaskHeadEntry.TABLE_NAME, null, values);
 
