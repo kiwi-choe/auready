@@ -2,7 +2,6 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 
@@ -26,9 +25,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     /*
     * This variable has package local visibility so it can be accessed from tests.
     * */
-    public Map<String, TaskHead> mCachedTaskHeads;
-
-    private boolean mCacheIsDirty;
+    public Map<String, TaskHead> mCachedTaskHeads = null;
 
     // Prevent direct instantiation
     private TaskHeadRepository(@NonNull TaskHeadDataSource taskHeadRemoteDataSource,
@@ -41,24 +38,20 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     @Override
     public int getTaskHeadsCount() {
 
-        if(mCachedTaskHeads != null) {
+        if (mCachedTaskHeads != null) {
             return mCachedTaskHeads.size();
         }
         return mTaskHeadLocalDataSource.getTaskHeadsCount();
     }
 
+    @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
 
         checkNotNull(callback);
-        // Respond immediately with cache if available and not dirty
-        if (mCachedTaskHeads != null && !mCacheIsDirty) {
+        // Respond immediately with cache if available
+        if (mCachedTaskHeads != null) {
             callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
             return;
-        }
-
-        if (mCacheIsDirty) {
-            // If the cache is dirty we need to fetch new data from the network.
-            getTaskHeadsFromRemoteDataSource(callback);
         } else {
             // Query the local storage if available, if not, query the network.
             mTaskHeadLocalDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
@@ -82,12 +75,11 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         checkNotNull(callback);
 
         TaskHead cachedTaskHead = getTaskHeadWithId(taskHeadId);
-
-        // Respond immediately with cache if available
-        if(cachedTaskHead != null) {
-            callback.onTaskHeadLoaded(cachedTaskHead);
-            return;
-        }
+        // Respond immediately with cache if available and not dirty
+//        if (cachedTaskHead != null) {
+//            callback.onTaskHeadLoaded(cachedTaskHead);
+//            return;
+//        }
 
         // Is the taskhead in the local? if not, query the network.
         mTaskHeadLocalDataSource.getTaskHead(taskHeadId, new GetTaskHeadCallback() {
@@ -116,7 +108,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     @Nullable
     private TaskHead getTaskHeadWithId(@NonNull String taskHeadId) {
         checkNotNull(taskHeadId);
-        if(mCachedTaskHeads == null || mCachedTaskHeads.isEmpty()) {
+        if (mCachedTaskHeads == null || mCachedTaskHeads.isEmpty()) {
             return null;
         } else {
             return mCachedTaskHeads.get(taskHeadId);
@@ -137,7 +129,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 //        mTaskHeadRemoteDataSource.deleteAllTaskHeads();
         mTaskHeadLocalDataSource.deleteAllTaskHeads();
 
-        if(mCachedTaskHeads == null) {
+        if (mCachedTaskHeads == null) {
             mCachedTaskHeads = new LinkedHashMap<>();
         }
         mCachedTaskHeads.clear();
@@ -175,7 +167,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 
     private void refreshLocalDataSource(List<TaskHead> taskHeads) {
         mTaskHeadLocalDataSource.deleteAllTaskHeads();
-        for(TaskHead taskHead: taskHeads) {
+        for (TaskHead taskHead : taskHeads) {
             mTaskHeadLocalDataSource.saveTaskHead(taskHead);
         }
     }
@@ -188,7 +180,6 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         for (TaskHead taskHead : taskHeads) {
             mCachedTaskHeads.put(taskHead.getId(), taskHead);
         }
-        mCacheIsDirty = false;
     }
 
     public static TaskHeadRepository getInstance(TaskHeadDataSource taskHeadRemoteDataSource,
@@ -197,10 +188,6 @@ public class TaskHeadRepository implements TaskHeadDataSource {
             INSTANCE = new TaskHeadRepository(taskHeadRemoteDataSource, taskHeadLocalDataSource);
         }
         return INSTANCE;
-    }
-
-    public void refreshTaskHeads() {
-        mCacheIsDirty = true;
     }
 
     public static void destroyInstance() {

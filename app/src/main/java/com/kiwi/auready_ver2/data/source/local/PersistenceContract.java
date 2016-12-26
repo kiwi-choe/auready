@@ -27,6 +27,7 @@ final class PersistenceContract {
         static final String COLUMN_ID = "_id";
         static final String COLUMN_TITLE = "title";
         static final String COLUMN_MEMBERS = "members";
+        static final String COLUMN_ORDER = "order";
     }
 
     static abstract class TaskEntry {

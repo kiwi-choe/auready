@@ -9,7 +9,6 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
@@ -59,8 +58,8 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
 
     @Override
-    public void createTaskHead(String title, List<Friend> members) {
-        final TaskHead newTaskHead = new TaskHead(title, members);
+    public void createTaskHead(String title, List<Friend> members, int order) {
+        final TaskHead newTaskHead = new TaskHead(title, members, order);
         if (newTaskHead.isEmpty()) {
             mView.showEmptyTaskHeadError();
         } else {
@@ -81,11 +80,11 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     @Override
-    public void updateTaskHead(String title, List<Friend> members, int orderOfTaskHead) {
+    public void updateTaskHead(String title, List<Friend> members, int order) {
         if (mTaskHeadId == null) {
             throw new RuntimeException("updateTaskHead() was called but taskHead is new.");
         }
-        final TaskHead taskHead = new TaskHead(mTaskHeadId, title, members, orderOfTaskHead);
+        final TaskHead taskHead = new TaskHead(mTaskHeadId, title, members, order);
         mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
                 new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
 
@@ -136,9 +135,5 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     private void showTaskHead(TaskHead taskHead) {
         mView.setTitle(taskHead.getTitle());
         mView.setMembers(taskHead.getMembers());
-    }
-
-    private boolean isNewTaskHead() {
-        return mTaskHeadId == null;
     }
 }

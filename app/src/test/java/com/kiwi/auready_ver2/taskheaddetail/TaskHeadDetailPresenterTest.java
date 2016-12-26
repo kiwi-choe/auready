@@ -62,7 +62,7 @@ public class TaskHeadDetailPresenterTest {
         // taskheadId is null
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
         // When the presenter is asked to save a taskhead
-        mTaskHeadDetailPresenter.createTaskHead("New Title", MEMBERS);
+        mTaskHeadDetailPresenter.createTaskHead("New Title", MEMBERS, 0);
 
         // Then a taskhead is saved in the repository
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
@@ -74,7 +74,7 @@ public class TaskHeadDetailPresenterTest {
     @Test
     public void saveTaskHead_emptyTaskHeadShowsErrorUI() {
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
-        mTaskHeadDetailPresenter.createTaskHead("", null);
+        mTaskHeadDetailPresenter.createTaskHead("", null, 0);
 
         verify(mTaskHeadDetailView).showEmptyTaskHeadError();
     }
@@ -93,7 +93,7 @@ public class TaskHeadDetailPresenterTest {
     @Test
     public void getTaskHeadFromRepo_callsRepoAndUpdatesView() {
 
-        TaskHead taskHead = new TaskHead("title1", MEMBERS);
+        TaskHead taskHead = new TaskHead("title1", MEMBERS, 0);
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(taskHead.getId());
 
         // When the presenter is asked to populate an existing taskhead
@@ -109,7 +109,7 @@ public class TaskHeadDetailPresenterTest {
     @Test
     public void whenStart_populateTaskHead_withTaskHeadId() {
 
-        TaskHead taskHead = new TaskHead("title1", MEMBERS);
+        TaskHead taskHead = new TaskHead("title1", MEMBERS, 0);
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(taskHead.getId());
 
         mTaskHeadDetailPresenter.start();
