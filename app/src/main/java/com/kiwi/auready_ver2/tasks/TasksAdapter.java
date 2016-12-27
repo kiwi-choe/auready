@@ -125,7 +125,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTaskItemListener.onAddTaskClick(mMemberList.get(memberPosition).getId(), "empty", getChildrenCount(memberPosition));
+                    mTaskItemListener.onAddTaskClick(mMemberList.get(memberPosition).getId(), "empty", getChildrenCount(memberPosition) - 1);
                 }
             });
 
@@ -162,7 +162,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     public void replaceTasksList(List<Task> tasksList) {
         for (int i = 0; i < mMemberList.size(); i++) {
-            ArrayList<Task> taskOfMember = new ArrayList<>(0);
+            ArrayList<Task> taskOfMember = new ArrayList<>();
             for (Task task : tasksList) {
                 if (task.getMemberId().equals(mMemberList.get(i).getId())) {
                     taskOfMember.add(task.getOrder(), task);
@@ -170,6 +170,8 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             }
             mTasksList.add(taskOfMember);
         }
+
+        notifyDataSetChanged();
     }
 
     private class GroupViewHolder {
