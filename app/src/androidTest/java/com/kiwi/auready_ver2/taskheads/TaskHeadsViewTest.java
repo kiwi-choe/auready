@@ -60,8 +60,8 @@ public class TaskHeadsViewTest {
     /*
     * {@link TaskHead} stub that is added to the fake service API layer.
     * */
-    private static List<TaskHead> TASKHEADS = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS),
-            new TaskHead(TITLE2, MEMBERS), new TaskHead(TITLE3, MEMBERS));
+    private static List<TaskHead> TASKHEADS = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS, 0),
+            new TaskHead(TITLE2, MEMBERS, 1), new TaskHead(TITLE3, MEMBERS, 2));
 
 
     private TaskHeadsActivity mActivity;
@@ -190,7 +190,7 @@ public class TaskHeadsViewTest {
         startActivityWithStubbedTasks(TASKHEADS);
     }
     private void loadATaskHead() {
-        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS));
+        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS, 0));
         startActivityWithStubbedTasks(taskheads);
     }
     private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {
@@ -201,6 +201,5 @@ public class TaskHeadsViewTest {
         // Lazily start Activity from the ActivityTestRule this time to inject the start Intent.
         Intent startIntent = new Intent();
         mActivityTestRule.launchActivity(startIntent);
-
     }
 }
