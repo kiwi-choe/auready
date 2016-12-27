@@ -45,6 +45,15 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     }
 
     @Override
+    public void deleteTaskHeads(List<String> taskHeadIds) {
+        mTaskHeadLocalDataSource.deleteTaskHeads(taskHeadIds);
+
+        for(String taskHeadId:taskHeadIds) {
+            mCachedTaskHeads.remove(taskHeadId);
+        }
+    }
+
+    @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
 
         checkNotNull(callback);
@@ -113,15 +122,6 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         } else {
             return mCachedTaskHeads.get(taskHeadId);
         }
-    }
-
-    @Override
-    public void deleteTaskHead(@NonNull String taskHeadId) {
-        checkNotNull(taskHeadId);
-        mTaskHeadRemoteDataSource.deleteTaskHead(taskHeadId);
-        mTaskHeadLocalDataSource.deleteTaskHead(taskHeadId);
-
-        mCachedTaskHeads.remove(taskHeadId);
     }
 
     @Override

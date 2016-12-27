@@ -9,7 +9,7 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallback;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 
@@ -20,13 +20,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -71,11 +69,11 @@ public class TaskHeadsPresenterTest {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
-        DeleteTaskHead deleteTaskHead = new DeleteTaskHead(mTaskHeadRepository, mTaskRepository);
+        DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mTaskHeadRepository, mTaskRepository);
         GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mTaskHeadRepository);
 
         return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView,
-                getTaskHeads, deleteTaskHead, getTaskHeadsCount);
+                getTaskHeads, deleteTaskHeads, getTaskHeadsCount);
     }
 
     @Test
@@ -91,26 +89,18 @@ public class TaskHeadsPresenterTest {
     }
 
     @Test
-    public void deleteTaskHead_andLoadIntoView() {
-        // Given an stubbed taskHead
-        TaskHead taskHead = new TaskHead(TITLE, MEMBERS, 0);
-        mTaskHeadsPresenter.deleteTaskHead(taskHead.getId());
+    public void deleteTaskHeads_andDeleteTasks() {
+        List<String> taskHeadIds = new ArrayList<>();
+        taskHeadIds.add(TASKHEADS.get(0).getId());
+        taskHeadIds.add(TASKHEADS.get(1).getId());
+        taskHeadIds.add(TASKHEADS.get(2).getId());
 
-        // Verify deleteTasks is called
-        verify(mTaskRepository).deleteTasks(eq(taskHead.getId()));
-        // and deleteTaskHead is called
-        verify(mTaskHeadRepository).deleteTaskHead(taskHead.getId());
-    }
-
-    @Test
-    public void deleteTaskHeads() {
         mTaskHeadsPresenter.deleteTaskHeads(TASKHEADS);
 
-        // Verify that deleteTasks is called count of taskHeads times
-        verify(mTaskRepository, times(TASKHEADS.size())).deleteTasks(any(String.class));
-        // Verify that deleteTaskHead is called count of taskHeads times
-        verify(mTaskHeadRepository, times(TASKHEADS.size())).deleteTaskHead(any(String.class));
+        verify(mTaskHeadRepository).deleteTaskHeads(taskHeadIds);
+        verify(mTaskRepository).deleteTasks(taskHeadIds);
     }
+
     @Test
     public void getTaskHeadsCountFromRepo_andShowsAddTaskHeadUi_whenCall_addNewTask() {
         mTaskHeadsPresenter.addNewTaskHead();

@@ -10,10 +10,11 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.login.LoginFragment;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHead;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -27,17 +28,17 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     private UseCaseHandler mUseCaseHandler;
     private final GetTaskHeads mGetTaskHeads;
-    private final DeleteTaskHead mDeleteTaskHead;
+    private final DeleteTaskHeads mDeleteTaskHeads;
     private final GetTaskHeadsCount mGetTaskHeadCount;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
                               @NonNull GetTaskHeads getTaskHeads,
-                              @NonNull DeleteTaskHead deleteTaskHead,
+                              @NonNull DeleteTaskHeads deleteTaskHeads,
                               @NonNull GetTaskHeadsCount getTaskHeadCount) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
-        mDeleteTaskHead = checkNotNull(deleteTaskHead, "deleteTaskHead cannot be null");
+        mDeleteTaskHeads = checkNotNull(deleteTaskHeads, "deleteTaskHeads cannot be null");
         mGetTaskHeadCount = checkNotNull(getTaskHeadCount);
 
         mTaskHeadView.setPresenter(this);
@@ -71,27 +72,8 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
         if (taskHeads.isEmpty()) {
             mTaskHeadView.showNoTaskHeads();
         } else {
-            for(TaskHead taskHead: taskHeads) {
-                Log.d("TEST_TAG", "in processTaskHeads: " + taskHead.getTitle());
-            }
             mTaskHeadView.showTaskHeads(taskHeads);
         }
-    }
-
-    @Override
-    public void deleteTaskHead(String taskHeadId) {
-        mUseCaseHandler.execute(mDeleteTaskHead, new DeleteTaskHead.RequestValues(taskHeadId),
-                new UseCase.UseCaseCallback<DeleteTaskHead.ResponseValue>() {
-                    @Override
-                    public void onSuccess(DeleteTaskHead.ResponseValue response) {
-                        loadTaskHeads();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
     }
 
     @Override
@@ -132,7 +114,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
             boolean isSuccess = data.getBooleanExtra(LoginFragment.IS_SUCCESS, false);
             if (login && isSuccess) {
                 mTaskHeadView.setLoginSuccessUI();
-            } else if(!login && isSuccess) {
+            } else if (!login && isSuccess) {
                 mTaskHeadView.setLogoutSuccessUI();
             }
         }
@@ -140,9 +122,26 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     @Override
     public void deleteTaskHeads(List<TaskHead> taskheads) {
-        for(TaskHead taskHead: taskheads) {
-            Log.d("TEST_TAG", "in deleteTaskHeads: " + taskHead.getTitle());
-            deleteTaskHead(taskHead.getId());
+        checkNotNull(taskheads);
+        Log.d("TEST_TAG", "entered into TaskHeadsPresenter ---------------");
+        Log.d("TEST_TAG", "taskheads size: " + taskheads.size());
+        final List<String> taskHeadIds = new ArrayList<>();
+        for (TaskHead taskHead : taskheads) {
+            Log.d("TEST_TAG", taskHead.getTitle());
+            taskHeadIds.add(taskHead.getId());
         }
+        mUseCaseHandler.execute(mDeleteTaskHeads, new DeleteTaskHeads.RequestValues(taskHeadIds),
+                new UseCase.UseCaseCallback<DeleteTaskHeads.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteTaskHeads.ResponseValue response) {
+                        loadTaskHeads();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 }

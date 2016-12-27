@@ -50,6 +50,36 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     }
 
     @Override
+    public void deleteTaskHeads(List<String> taskHeadIds) {
+
+        String args = "";
+        String TOKEN = ", ";
+        int size = taskHeadIds.size();
+        for(int i = 0; i<size; i++) {
+            args = "\"" + taskHeadIds.get(i);
+            args = args + "\"";
+            if(i == size-1) {
+                break;
+            }
+            args = args + TOKEN;
+        }
+
+        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
+                TaskHeadEntry.TABLE_NAME,
+                TaskHeadEntry.COLUMN_ID,
+                args);
+        sDb.beginTransaction();
+        try {
+            sDb.execSQL(sql);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Could not delete taskheads by taskHeadIds in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+    }
+
+    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
         List<TaskHead> taskHeads = new ArrayList<>();
 
@@ -120,23 +150,6 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
             callback.onTaskHeadLoaded(taskHead);
         } else {
             callback.onDataNotAvailable();
-        }
-    }
-
-    @Override
-    public void deleteTaskHead(@NonNull String taskHeadId) {
-
-        String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
-        String[] selectionArgs = {taskHeadId};
-
-        sDb.beginTransaction();
-        try {
-            sDb.delete(TaskHeadEntry.TABLE_NAME, selection, selectionArgs);
-            sDb.setTransactionSuccessful();
-        } catch (SQLException e) {
-            Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
-        } finally {
-            sDb.endTransaction();
         }
     }
 

@@ -32,7 +32,7 @@ public interface TaskHeadDataSource {
 
     void saveTaskHead(@NonNull TaskHead taskHead);
 
-    void deleteTaskHead(@NonNull String taskHeadId);
+    void deleteTaskHeads(List<String> taskHeadIds);
 
     void deleteAllTaskHeads();
 }

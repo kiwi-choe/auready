@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Task;
 
@@ -57,11 +58,14 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull String taskHeadId) {
-        mTaskLocalDataSource.deleteTasks(taskHeadId);
+    public void deleteTasks(@NonNull List<String> taskHeadIds) {
+        checkNotNull(taskHeadIds);
+        mTaskLocalDataSource.deleteTasks(taskHeadIds);
 
         if(mCachedTasksByTaskHeadId != null) {
-            mCachedTasksByTaskHeadId.remove(taskHeadId);
+            for(String taskHeadId:taskHeadIds) {
+                mCachedTasksByTaskHeadId.remove(taskHeadId);
+            }
         }
     }
 
