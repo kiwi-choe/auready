@@ -98,6 +98,19 @@ public class TasksPresenterTest {
         verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
         assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
     }
+
+    @Test
+    public void getTasks_whenStart() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+        mTasksPresenter.start();
+
+        verify(mTaskRepository).getTasks(eq(TASKHEAD.getId()), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        ArgumentCaptor<List> showTasksArgumentCaptor = ArgumentCaptor.forClass(List.class);
+        verify(mTasksView).showTasks(showTasksArgumentCaptor.capture());
+        assertTrue(showTasksArgumentCaptor.getValue().size() == TASKS.size());
+    }
     @Test
     public void createTask_andLoadIntoView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());

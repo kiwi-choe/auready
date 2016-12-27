@@ -66,6 +66,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void start() {
         if (mTaskHeadId != null) {
             populateTaskHead();
+            getTasks();
         }
     }
 
