@@ -56,7 +56,7 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
         String TOKEN = ", ";
         int size = taskHeadIds.size();
         for(int i = 0; i<size; i++) {
-            args = "\"" + taskHeadIds.get(i);
+            args = args +"\"" + taskHeadIds.get(i);
             args = args + "\"";
             if(i == size-1) {
                 break;
