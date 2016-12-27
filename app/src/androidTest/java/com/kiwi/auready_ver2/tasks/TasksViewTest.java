@@ -58,6 +58,7 @@ public class TasksViewTest {
     * the service API. This is a great way to make the tests more reliable and faster at the same
     * time, since they are isolated from any outside dependencies.
     * */
+
     private void startActivityWithStubbedTasks(String memberId, List<Task> tasks) {
         // Add taskheads stub to the fake service api layer.
         TaskHeadRepository.destroyInstance();

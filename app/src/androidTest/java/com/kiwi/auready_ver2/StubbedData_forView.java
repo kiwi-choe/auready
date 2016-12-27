@@ -24,7 +24,7 @@ public final class StubbedData_forView {
 
         public static final List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
                 new Friend("email3", "name3"));
-        public static TaskHead TASKHEAD = new TaskHead("title1", MEMBERS);
+        public static TaskHead TASKHEAD = new TaskHead("title1", MEMBERS, 0);
         // 3 tasks, one active and two completed of MEMBER the index 0
         public static List<Task> TASKS = Lists.newArrayList(
                 new Task(TASKHEAD.getId(), MEMBERS.get(0).getId(), "description", 0),
