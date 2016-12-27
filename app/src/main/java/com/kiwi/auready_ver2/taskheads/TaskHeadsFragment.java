@@ -94,6 +94,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskheads, container, false);
+        setHasOptionsMenu(true);
 
         mNoTaskHeadTxt = (TextView) root.findViewById(R.id.no_taskhead_txt);
         mTaskHeadsView = (DragSortListView) root.findViewById(R.id.taskheads);
@@ -146,6 +147,24 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         });
 
         mTaskHeadsView.setDropListener(mDropListener);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.taskhead_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.delete_menu:
+                // start Action mode to delete items
+                mTaskHeadsView.setItemChecked(-1, true);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -203,21 +222,19 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
-    private int mCheckedCount = 0;
-
     private boolean mIsActionMode = false;
 
     @Override
     public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
-        if (checked) {
-            mCheckedCount++;
-            mTaskHeadsAdapter.setNewSelection(position, checked);
-        } else {
-            mCheckedCount--;
-            mTaskHeadsAdapter.removeSelection(position);
+        if (position >= 0 && position < mTaskHeadsAdapter.getCount()) {
+            if (checked) {
+                mTaskHeadsAdapter.setNewSelection(position, checked);
+            } else {
+                mTaskHeadsAdapter.removeSelection(position);
+            }
         }
 
-        actionMode.setTitle(mCheckedCount + " " + getContext().getResources().getString(R.string.item_selected));
+        actionMode.setTitle(mTaskHeadsAdapter.getSelectedCount() + " " + getContext().getResources().getString(R.string.item_selected));
     }
 
     @Override
@@ -240,7 +257,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         switch (menuItem.getItemId()) {
             case R.id.item_delete:
                 mPresenter.deleteTaskHeads(mTaskHeadsAdapter.getCurrentCheckedTaskHeads());
-                mCheckedCount = 0;
                 mTaskHeadsAdapter.clearSelection();
                 actionMode.finish();
                 return true;
@@ -252,7 +268,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
-        mCheckedCount = 0;
         mTaskHeadsAdapter.clearSelection();
 
         mIsActionMode = false;

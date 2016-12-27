@@ -94,6 +94,10 @@ public class TaskHeadsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public int getSelectedCount() {
+        return mSelection.size();
+    }
+
     public boolean isPositionChecked(int position) {
         Boolean result = mSelection.get(position);
         return result == null ? false : result;
