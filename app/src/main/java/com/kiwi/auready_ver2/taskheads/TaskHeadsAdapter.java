@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,8 +106,8 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
     public List<TaskHead> getCurrentCheckedTaskHeads() {
         ArrayList<TaskHead> taskHeads = new ArrayList<>();
-
-        for (int i = 0; i < mSelection.size(); i++) {
+        int count = getCount();
+        for (int i = 0; i < count; i++) {
             if (isPositionChecked(i)) {
                 taskHeads.add(getItem(i));
             }
