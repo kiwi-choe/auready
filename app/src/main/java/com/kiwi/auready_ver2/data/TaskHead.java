@@ -118,7 +118,8 @@ public class TaskHead {
             try {
                 mMembers =
                         BaseDBAdapter.OBJECT_MAPPER.reader()
-                                .forType(new TypeReference<List<Friend>>() {})
+                                .forType(new TypeReference<List<Friend>>() {
+                                })
                                 .readValue(strMembers);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -128,5 +129,10 @@ public class TaskHead {
 
     public int getOrder() {
         return mOrder;
+    }
+
+
+    public void setOrder(int i) {
+        mOrder = i;
     }
 }

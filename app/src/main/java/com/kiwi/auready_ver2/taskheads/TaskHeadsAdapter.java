@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,6 +115,10 @@ public class TaskHeadsAdapter extends BaseAdapter {
         return taskHeads;
     }
 
+    public List<TaskHead> getTaskHeads() {
+        return mTaskHeads;
+    }
+
     private class ViewHolder {
         TextView titleTV;
         ImageView reorderImage;
@@ -124,6 +127,9 @@ public class TaskHeadsAdapter extends BaseAdapter {
     public void reorder(int from, int to) {
         TaskHead fromTaskHead = mTaskHeads.remove(from);
         mTaskHeads.add(to, fromTaskHead);
+
         notifyDataSetChanged();
     }
+
+
 }

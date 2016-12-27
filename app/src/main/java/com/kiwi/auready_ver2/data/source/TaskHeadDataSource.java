@@ -13,6 +13,8 @@ public interface TaskHeadDataSource {
 
     int getTaskHeadsCount();   // for Local data source
 
+    void updateTaskHeads(List<TaskHead> taskHeads);
+
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);

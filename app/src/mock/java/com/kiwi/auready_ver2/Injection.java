@@ -22,6 +22,7 @@ import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadsOrder;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
@@ -94,6 +95,10 @@ public class Injection {
 
     public static GetTaskHeadsCount provideGetTaskHeadsCount(@NonNull Context context) {
         return new GetTaskHeadsCount(Injection.provideTaskHeadRepository(context));
+    }
+
+    public static UpdateTaskHeadsOrder provideUpdateTaskHeadsOrder(@NonNull Context context) {
+        return new UpdateTaskHeadsOrder(Injection.provideTaskHeadRepository(context));
     }
 
     /*

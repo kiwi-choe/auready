@@ -283,6 +283,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                 @Override
                 public void drop(int from, int to) {
                     mTaskHeadsAdapter.reorder(from, to);
+                    mPresenter.updateOrders(mTaskHeadsAdapter.getTaskHeads());
                 }
 
                 @Override

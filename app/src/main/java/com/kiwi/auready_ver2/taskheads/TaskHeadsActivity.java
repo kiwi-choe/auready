@@ -59,7 +59,8 @@ public class TaskHeadsActivity extends AppCompatActivity
                 taskHeadsFragment,
                 Injection.provideGetTaskHeads(getApplicationContext()),
                 Injection.provideDeleteTaskHeads(getApplicationContext()),
-                Injection.provideGetTaskHeadsCount(getApplicationContext()));
+                Injection.provideGetTaskHeadsCount(getApplicationContext()),
+                Injection.provideUpdateTaskHeadsOrder(getApplicationContext()));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

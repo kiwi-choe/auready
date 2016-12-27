@@ -12,6 +12,7 @@ import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadsOrder;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -71,9 +72,10 @@ public class TaskHeadsPresenterTest {
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
         DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mTaskHeadRepository, mTaskRepository);
         GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mTaskHeadRepository);
+        UpdateTaskHeadsOrder updateTaskHeadsOrder = new UpdateTaskHeadsOrder(mTaskHeadRepository);
 
         return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView,
-                getTaskHeads, deleteTaskHeads, getTaskHeadsCount);
+                getTaskHeads, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadsOrder);
     }
 
     @Test

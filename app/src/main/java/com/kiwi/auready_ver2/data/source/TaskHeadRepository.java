@@ -45,6 +45,13 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     }
 
     @Override
+    public void updateTaskHeads(List<TaskHead> taskHeads) {
+        mTaskHeadLocalDataSource.updateTaskHeads(taskHeads);
+
+        refreshCache(taskHeads);
+    }
+
+    @Override
     public void deleteTaskHeads(List<String> taskHeadIds) {
         mTaskHeadLocalDataSource.deleteTaskHeads(taskHeadIds);
 

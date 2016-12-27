@@ -37,5 +37,7 @@ public interface TaskHeadsContract {
         void result(int requestCode, int resultCode, Intent data);
 
         void deleteTaskHeads(List<TaskHead> taskheads);
+
+        void updateOrders(List<TaskHead> taskheads);
     }
 }
