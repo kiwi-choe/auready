@@ -1,12 +1,10 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -18,18 +16,13 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- *
- */
-public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListener {
+public class TaskHeadsAdapter extends BaseAdapter {
 
-    private final TaskHeadsFragment.TaskHeadItemListener mItemListener;
     private List<TaskHead> mTaskHeads;
     private HashMap<Integer, Boolean> mSelection = new HashMap<>();
 
-    public TaskHeadsAdapter(List<TaskHead> taskHeads, TaskHeadsFragment.TaskHeadItemListener itemListener) {
+    public TaskHeadsAdapter(List<TaskHead> taskHeads) {
         setList(taskHeads);
-        mItemListener = itemListener;
     }
 
     public void replaceData(List<TaskHead> taskHeads) {
@@ -65,7 +58,7 @@ public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListene
             rowView = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
             viewHolder = new ViewHolder();
             viewHolder.titleTV = (TextView) rowView.findViewById(R.id.taskhead_title);
-            viewHolder.reorderBtn = (Button) rowView.findViewById(R.id.reorder);
+            viewHolder.reorderImage = (ImageView) rowView.findViewById(R.id.reorder);
 
             rowView.setTag(viewHolder);
         } else {
@@ -73,32 +66,8 @@ public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListene
         }
 
         final TaskHead taskHead = getItem(position);
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mItemListener.onTaskHeadItemClick(taskHead.getId(), position);
-
-            }
-        });
-
-        rowView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                mItemListener.onTaskHeadItemLongClick(view, position);
-                return true;
-            }
-        });
 
         viewHolder.titleTV.setText(taskHead.getTitle());
-
-        final View finalRowView = rowView;
-        viewHolder.reorderBtn.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                mItemListener.onReorder(finalRowView, viewHolder.lastTouchedX, viewHolder.lastTouchedY);
-                return true;
-            }
-        });
 
         if (mSelection.get(position) != null) {
             rowView.setBackgroundColor(rowView.getResources().getColor(android.R.color.darker_gray));
@@ -142,22 +111,14 @@ public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListene
         return taskHeads;
     }
 
-    // for drag and drop (reorder)
-    @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-
-        ViewHolder viewHolder = (ViewHolder) view.getTag();
-        viewHolder.lastTouchedX = motionEvent.getX();
-        viewHolder.lastTouchedY = motionEvent.getY();
-
-        return false;
-    }
-
     private class ViewHolder {
         TextView titleTV;
-        Button reorderBtn;
+        ImageView reorderImage;
+    }
 
-        float lastTouchedX;
-        float lastTouchedY;
+    public void reorder(int from, int to) {
+        TaskHead fromTaskHead = mTaskHeads.remove(from);
+        mTaskHeads.add(to, fromTaskHead);
+        notifyDataSetChanged();
     }
 }

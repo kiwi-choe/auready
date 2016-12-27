@@ -2,26 +2,19 @@ package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.ActionMode;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -29,6 +22,8 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
+import com.kiwi.auready_ver2.util.view.DragSortController;
+import com.kiwi.auready_ver2.util.view.DragSortListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +41,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     private TaskHeadsAdapter mTaskHeadsAdapter;
 
     private TextView mNoTaskHeadTxt;
-    private ListView mTaskHeadsView;
+    private DragSortListView mTaskHeadsView;
 
     public TaskHeadsFragment() {
         // Required empty public constructor
@@ -96,16 +91,42 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskheads, container, false);
 
         mNoTaskHeadTxt = (TextView) root.findViewById(R.id.no_taskhead_txt);
-        mTaskHeadsView = (ListView) root.findViewById(R.id.taskheads);
+        mTaskHeadsView = (DragSortListView) root.findViewById(R.id.taskheads);
         mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mTaskHeadsView.setMultiChoiceModeListener(this);
-        mTaskHeadsView.setOnDragListener(mListDragEventListener);
 
-        mTaskHeadsAdapter = new TaskHeadsAdapter(new ArrayList<TaskHead>(0), mItemListener);
+        mTaskHeadsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                final TaskHead taskHead = mTaskHeadsAdapter.getItem(position);
+                if (!mIsActionMode) {
+                    showTasksView(taskHead.getId());
+                } else {
+                    mTaskHeadsView.setItemChecked(position, !mTaskHeadsView.isItemChecked(position));
+                }
+
+            }
+        });
+
+        mTaskHeadsView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                mTaskHeadsView.setItemChecked(position, true);
+                return true;
+            }
+        });
+
+        mController = buildController(mTaskHeadsView);
+        mTaskHeadsView.setFloatViewManager(mController);
+        mTaskHeadsView.setOnTouchListener(mController);
+        mTaskHeadsView.setDragEnabled(true);
+
+        mTaskHeadsAdapter = new TaskHeadsAdapter(new ArrayList<TaskHead>(0));
         mTaskHeadsView.setAdapter(mTaskHeadsAdapter);
 
         return root;
@@ -123,6 +144,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                 mPresenter.addNewTaskHead();
             }
         });
+
+        mTaskHeadsView.setDropListener(mDropListener);
     }
 
     @Override
@@ -177,42 +200,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     // Interface with TaskHeadsActivity
     public interface TaskHeadsFragmentListener {
         void onLoginSuccess();
-    }
-
-    /*
-    * Listener for clicks on taskHeads in the ListView
-    * */
-    TaskHeadItemListener
-            mItemListener = new TaskHeadItemListener() {
-        @Override
-        public void onTaskHeadItemClick(String taskHeadId, int position) {
-            if (!mIsActionMode) {
-                showTasksView(taskHeadId);
-            } else {
-                mTaskHeadsView.setItemChecked(position, !mTaskHeadsView.isItemChecked(position));
-
-            }
-        }
-
-        @Override
-        public boolean onTaskHeadItemLongClick(View view, int position) {
-            mTaskHeadsView.setItemChecked(position, true);
-            return true;
-        }
-
-        @Override
-        public void onReorder(View view, final float touchedX, final float touchedY) {
-            view.startDrag(null, new ListDragShadowBuilder(view), view, 0);
-            view.setVisibility(View.INVISIBLE);
-        }
-    };
-
-    public interface TaskHeadItemListener {
-        void onTaskHeadItemClick(String taskHeadId, int position);
-
-        boolean onTaskHeadItemLongClick(View view, int position);
-
-        void onReorder(View view, float touchedX, float touchedY);
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
@@ -271,72 +258,31 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mIsActionMode = false;
     }
 
-    // For Drag and Drop (reorder)
-    private static class ListDragShadowBuilder extends View.DragShadowBuilder {
-        public ListDragShadowBuilder(View view) {
-            super(view);
-        }
 
-        @Override
-        public void onProvideShadowMetrics(Point shadowSize, Point shadowTouchPoint) {
-            int width = getView().getWidth();
-            int height = getView().getHeight();
+    private DragSortListView.DropListener mDropListener =
+            new DragSortListView.DragSortListener() {
+                @Override
+                public void drag(int from, int to) {
+                }
 
-            shadowSize.set(width, height);
-            shadowTouchPoint.set(width, height);
-        }
+                @Override
+                public void drop(int from, int to) {
+                    mTaskHeadsAdapter.reorder(from, to);
+                }
 
-        @Override
-        public void onDrawShadow(Canvas canvas) {
-            super.onDrawShadow(canvas);
+                @Override
+                public void remove(int which) {
+                }
+            };
 
-            getView().setBackgroundColor(getView().getContext().getResources().getColor(android.R.color.darker_gray));
-            getView().draw(canvas);
-        }
-    }
+    private DragSortController mController;
 
-    private ListDragEventListener mListDragEventListener = new ListDragEventListener();
+    public DragSortController buildController(DragSortListView list) {
+        DragSortController controller = new DragSortController(list);
+        controller.setDragHandleId(R.id.reorder);
+        controller.setSortEnabled(true);
+        controller.setDragInitMode(DragSortController.ON_DOWN);
 
-    private class ListDragEventListener implements View.OnDragListener {
-
-        @Override
-        public boolean onDrag(View view, DragEvent dragEvent) {
-            final int action = dragEvent.getAction();
-            switch (action) {
-                case DragEvent.ACTION_DRAG_STARTED:
-                    return true;
-
-                case DragEvent.ACTION_DRAG_LOCATION:
-                    return true;
-
-                case DragEvent.ACTION_DROP:
-                    View dragView = (View) dragEvent.getLocalState();
-                    if (dragView != null && dragView != view) {
-                        int startPosition = mTaskHeadsView.getPositionForView(dragView);
-                        int targetPosition = mTaskHeadsView.pointToPosition((int) dragEvent.getX(), (int) dragEvent.getY());
-
-                        Log.d("MY_LOG", "ACTION_DROP : " + startPosition + ", " + targetPosition);
-                        Log.d("MY_LOG", "ACTION_DROP : " + dragEvent.getX() + ", " + dragEvent.getY());
-
-                    }
-
-                    dragView.setBackgroundColor(dragView.getResources().getColor(android.R.color.background_light));
-                    dragView.setVisibility(View.VISIBLE);
-                    return true;
-
-
-                case DragEvent.ACTION_DRAG_ENDED:
-                    return true;
-
-                case DragEvent.ACTION_DRAG_ENTERED:
-                    return true;
-
-                case DragEvent.ACTION_DRAG_EXITED:
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
+        return controller;
     }
 }
