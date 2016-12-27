@@ -100,7 +100,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
-
+                        processTasks(response.getTasks());
                     }
 
                     @Override
@@ -129,14 +129,14 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void createTask(@NonNull String memberId, @NonNull String description, @NonNull int order) {
+    public void createTask(@NonNull final String memberId, @NonNull String description, @NonNull int order) {
         Task newTask = new Task(mTaskHeadId, memberId, description, order);
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-
+                        getTasks(memberId);
                     }
 
                     @Override
