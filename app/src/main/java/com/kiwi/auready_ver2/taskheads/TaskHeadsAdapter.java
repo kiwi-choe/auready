@@ -15,7 +15,6 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -93,10 +92,11 @@ public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListene
         viewHolder.titleTV.setText(taskHead.getTitle());
 
         final View finalRowView = rowView;
-        viewHolder.reorderBtn.setOnClickListener(new View.OnClickListener() {
+        viewHolder.reorderBtn.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View view) {
                 mItemListener.onReorder(finalRowView, viewHolder.lastTouchedX, viewHolder.lastTouchedY);
+                return true;
             }
         });
 
@@ -136,7 +136,6 @@ public class TaskHeadsAdapter extends BaseAdapter implements View.OnTouchListene
         for (int i = 0; i < mSelection.size(); i++) {
             if (isPositionChecked(i)) {
                 taskHeads.add(getItem(i));
-                Log.d("MY_LOG", "i : " + i);
             }
         }
 
