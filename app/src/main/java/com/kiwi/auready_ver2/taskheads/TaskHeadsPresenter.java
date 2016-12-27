@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -70,6 +71,9 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
         if (taskHeads.isEmpty()) {
             mTaskHeadView.showNoTaskHeads();
         } else {
+            for(TaskHead taskHead: taskHeads) {
+                Log.d("TEST_TAG", "in processTaskHeads: " + taskHead.getTitle());
+            }
             mTaskHeadView.showTaskHeads(taskHeads);
         }
     }
@@ -137,6 +141,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void deleteTaskHeads(List<TaskHead> taskheads) {
         for(TaskHead taskHead: taskheads) {
+            Log.d("TEST_TAG", "in deleteTaskHeads: " + taskHead.getTitle());
             deleteTaskHead(taskHead.getId());
         }
     }

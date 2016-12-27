@@ -1,11 +1,10 @@
 package com.kiwi.auready_ver2.data;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.kiwi.auready_ver2.data.source.local.SQLiteDbHelper;
+import com.kiwi.auready_ver2.data.source.local.BaseDBAdapter;
 
 import java.io.IOException;
 import java.util.List;
@@ -93,7 +92,7 @@ public class TaskHead {
     public String getMembersString() {
         String strMembers = null;
         try {
-            strMembers = SQLiteDbHelper.OBJECT_MAPPER.writeValueAsString(mMembers);
+            strMembers = BaseDBAdapter.OBJECT_MAPPER.writeValueAsString(mMembers);
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();
@@ -118,17 +117,9 @@ public class TaskHead {
         if (strMembers.length() != 0) {
             try {
                 mMembers =
-                        SQLiteDbHelper.OBJECT_MAPPER.reader()
+                        BaseDBAdapter.OBJECT_MAPPER.reader()
                                 .forType(new TypeReference<List<Friend>>() {})
                                 .readValue(strMembers);
-
-                if (mMembers != null) {
-
-                    Log.d("TEST_TAG", mMembers.get(0).getName());
-                } else {
-                    Log.d("TEST_TAG", "mMembers is null");
-                }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

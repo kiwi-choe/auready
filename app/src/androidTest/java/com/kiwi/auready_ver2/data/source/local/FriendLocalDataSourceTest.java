@@ -20,7 +20,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 /**
- * Integration test for the {@link FriendDataSource}, which uses the {@link SQLiteDbHelper}.
+ * Integration test for the {@link FriendDataSource}, which uses the {@link BaseDBAdapter}.
  */
 public class FriendLocalDataSourceTest {
 
