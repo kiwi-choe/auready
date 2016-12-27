@@ -101,7 +101,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int memberPosition, int taskPosition, boolean isLastTask, View convertView, ViewGroup parent) {
+    public View getChildView(final int memberPosition, int taskPosition, boolean isLastTask, View convertView, ViewGroup parent) {
         View view = convertView;
         ChildViewHolder viewHolder;
 
@@ -125,7 +125,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTaskItemListener.onAddTaskClick();
+                    mTaskItemListener.onAddTaskClick(mMemberList.get(memberPosition).getId(), "empty", getChildrenCount(memberPosition));
                 }
             });
 

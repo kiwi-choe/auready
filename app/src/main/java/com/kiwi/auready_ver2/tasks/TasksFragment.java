@@ -114,7 +114,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onAddTaskClick() {
+        public void onAddTaskClick(String memberId, String description, int order) {
+            mPresenter.createTask(memberId, description, order);
 
         }
     };
@@ -124,6 +125,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onDeleteClick(TaskHead clickedTaskHead);
 
-        void onAddTaskClick();
+        void onAddTaskClick(String memberId, String description, int order);
     }
 }
