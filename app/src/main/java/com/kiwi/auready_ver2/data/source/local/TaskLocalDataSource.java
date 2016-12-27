@@ -54,12 +54,31 @@ public class TaskLocalDataSource extends BaseDBAdapter
     }
 
     @Override
-    public void deleteTasks(@NonNull String taskHeadId) {
+    public void deleteTasks(@NonNull List<String> taskHeadIds) {
 
-        String whereClause = COLUMN_HEAD_ID + " LIKE?";
-        String[] whereArgs = {taskHeadId};
+        String args = "";
+        String TOKEN = ", ";
+        int size = taskHeadIds.size();
+        for(int i = 0; i<size; i++) {
+            args = "\"" + taskHeadIds.get(i);
+            args = args + "\"";
+            if(i == size-1) {
+                break;
+            }
+            args = args + TOKEN;
+        }
 
-        delete(whereClause, whereArgs);
+        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
+                TABLE_NAME, COLUMN_ID, args);
+        sDb.beginTransaction();
+        try {
+            sDb.execSQL(sql);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Could not delete tasks by taskHeadIds in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
     }
 
     @Override

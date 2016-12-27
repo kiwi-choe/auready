@@ -4,17 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry.*;
 
 /**
  * Created by kiwi on 8/25/16.
@@ -40,7 +41,7 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     public int getTaskHeadsCount() {
         int countOfTaskHeads = 0;
 
-        String query = "SELECT * FROM " + TaskHeadEntry.TABLE_NAME;
+        String query = "SELECT * FROM " + TABLE_NAME;
         Cursor c = sDb.rawQuery(query, null);
         if (c != null) {
             countOfTaskHeads = c.getCount();
@@ -50,25 +51,97 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     }
 
     @Override
+    public void updateTaskHeads(List<TaskHead> taskHeads) {
+
+        String whenThenArgs = "";
+        String whereArgs = "";
+
+        for (TaskHead taskHead : taskHeads) {
+            whenThenArgs = whenThenArgs + " WHEN \"" + taskHead.getId() + "\" THEN " + taskHead.getOrder();
+        }
+
+        String TOKEN = ", ";
+        int size = taskHeads.size();
+        for (int i = 0; i < size; i++) {
+            whereArgs = whereArgs + "\"" + taskHeads.get(i).getId() + "\"";
+            if (i == size - 1) {
+                break;
+            }
+            whereArgs = whereArgs + TOKEN;
+        }
+
+        String sql = String.format(
+                "UPDATE %s" +
+                        " SET %s = CASE %s" +
+                        "%s END" +
+                        " WHERE %s IN (%s)",
+                TABLE_NAME,
+                COLUMN_ORDER, COLUMN_ID,
+                whenThenArgs,
+                COLUMN_ID, whereArgs);
+
+
+        sDb.beginTransaction();
+        try {
+            sDb.execSQL(sql);
+            sDb.setTransactionSuccessful();
+        } catch (SQLiteException e) {
+            Log.e(BaseDBAdapter.TAG, "Error updateTaskHeads to ( " + TABLE_NAME + " ).", e);
+        } finally {
+            sDb.endTransaction();
+        }
+    }
+
+    @Override
+    public void deleteTaskHeads(List<String> taskHeadIds) {
+
+        String args = "";
+        String TOKEN = ", ";
+        int size = taskHeadIds.size();
+        for (int i = 0; i < size; i++) {
+            args = args + "\"" + taskHeadIds.get(i);
+            args = args + "\"";
+            if (i == size - 1) {
+                break;
+            }
+            args = args + TOKEN;
+        }
+
+        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
+                TABLE_NAME,
+                COLUMN_ID,
+                args);
+        sDb.beginTransaction();
+        try {
+            sDb.execSQL(sql);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(BaseDBAdapter.TAG, "Could not delete taskheads by taskHeadIds in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+    }
+
+    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
         List<TaskHead> taskHeads = new ArrayList<>();
 
         String[] projection = {
-                TaskHeadEntry.COLUMN_ID,
-                TaskHeadEntry.COLUMN_TITLE,
-                TaskHeadEntry.COLUMN_MEMBERS,
-                TaskHeadEntry.COLUMN_ORDER
+                COLUMN_ID,
+                COLUMN_TITLE,
+                COLUMN_MEMBERS,
+                COLUMN_ORDER
         };
+        String orderBy = COLUMN_ORDER + " asc";
 
         Cursor c = sDb.query(
-                TaskHeadEntry.TABLE_NAME, projection, null, null, null, null, null);
-
+                TABLE_NAME, projection, null, null, null, null, orderBy);
         if (c != null && c.getCount() > 0) {
             while (c.moveToNext()) {
-                String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
-                String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
-                String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
-                int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+                String id = c.getString(c.getColumnIndexOrThrow(COLUMN_ID));
+                String title = c.getString(c.getColumnIndexOrThrow(COLUMN_TITLE));
+                String members = c.getString(c.getColumnIndexOrThrow(COLUMN_MEMBERS));
+                int order = c.getInt(c.getColumnIndexOrThrow(COLUMN_ORDER));
 
                 TaskHead taskHead = new TaskHead(id, title, members, order);
                 taskHeads.add(taskHead);
@@ -89,26 +162,26 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     public void getTaskHead(@NonNull String taskHeadId, @NonNull GetTaskHeadCallback callback) {
 
         String[] projection = {
-                TaskHeadEntry.COLUMN_ID,
-                TaskHeadEntry.COLUMN_TITLE,
-                TaskHeadEntry.COLUMN_MEMBERS,
-                TaskHeadEntry.COLUMN_ORDER
+                COLUMN_ID,
+                COLUMN_TITLE,
+                COLUMN_MEMBERS,
+                COLUMN_ORDER
         };
 
-        String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
+        String selection = COLUMN_ID + " LIKE ?";
         String[] selectionArgs = {taskHeadId};
 
         Cursor c = sDb.query(
-                TaskHeadEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+                TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
         TaskHead taskHead = null;
 
         if (c != null && c.getCount() > 0) {
             c.moveToFirst();
-            String itemId = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
-            String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
-            String members = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_MEMBERS));
-            int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+            String itemId = c.getString(c.getColumnIndexOrThrow(COLUMN_ID));
+            String title = c.getString(c.getColumnIndexOrThrow(COLUMN_TITLE));
+            String members = c.getString(c.getColumnIndexOrThrow(COLUMN_MEMBERS));
+            int order = c.getInt(c.getColumnIndexOrThrow(COLUMN_ORDER));
 
             taskHead = new TaskHead(itemId, title, members, order);
         }
@@ -124,27 +197,10 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     }
 
     @Override
-    public void deleteTaskHead(@NonNull String taskHeadId) {
-
-        String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
-        String[] selectionArgs = {taskHeadId};
-
-        sDb.beginTransaction();
-        try {
-            sDb.delete(TaskHeadEntry.TABLE_NAME, selection, selectionArgs);
-            sDb.setTransactionSuccessful();
-        } catch (SQLException e) {
-            Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
-        } finally {
-            sDb.endTransaction();
-        }
-    }
-
-    @Override
     public void deleteAllTaskHeads() {
         sDb.beginTransaction();
         try {
-            sDb.delete(TaskHeadEntry.TABLE_NAME, null, null);
+            sDb.delete(TABLE_NAME, null, null);
             sDb.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
@@ -160,15 +216,15 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
         sDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
-            values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
-            values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
-            values.put(TaskHeadEntry.COLUMN_MEMBERS, taskHead.getMembersString());
-            values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
+            values.put(COLUMN_ID, taskHead.getId());
+            values.put(COLUMN_TITLE, taskHead.getTitle());
+            values.put(COLUMN_MEMBERS, taskHead.getMembersString());
+            values.put(COLUMN_ORDER, taskHead.getOrder());
 
-            sDb.insert(TaskHeadEntry.TABLE_NAME, null, values);
+            sDb.insert(TABLE_NAME, null, values);
             sDb.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(BaseDBAdapter.TAG, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " ). ", e);
+            Log.e(BaseDBAdapter.TAG, "Error insert new one to ( " + TABLE_NAME + " ). ", e);
         } finally {
             sDb.endTransaction();
         }

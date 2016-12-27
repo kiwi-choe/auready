@@ -32,12 +32,12 @@ public interface TaskHeadsContract {
 
         void loadTaskHeads();
 
-        void deleteTaskHead(String taskHeadId);
-
         void addNewTaskHead();
 
         void result(int requestCode, int resultCode, Intent data);
 
         void deleteTaskHeads(List<TaskHead> taskheads);
+
+        void updateOrders(List<TaskHead> taskheads);
     }
 }

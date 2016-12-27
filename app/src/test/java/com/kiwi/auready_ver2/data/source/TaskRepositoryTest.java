@@ -1,6 +1,8 @@
 package com.kiwi.auready_ver2.data.source;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.TaskHead;
 
 import org.junit.After;
 import org.junit.Before;
@@ -10,12 +12,16 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -120,14 +126,58 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void deleteTasks_byTaskHeadId() {
+    public void deleteTasks_byTaskHeadIds_fromCache() {
+        // save tasks of taskhead1 and taskhead2
+        TaskHead TASKHEAD2 = new TaskHead("title2", MEMBERS, 1);
+        List<Task> TASKS2 = Lists.newArrayList(
+                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description", 0),
+                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
+                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
         saveStubbedTasks(TASKS);
+        saveStubbedTasks(TASKS2);
 
-        String taskHeadId = TASKS.get(0).getTaskHeadId();
-        mTaskRepository.deleteTasks(taskHeadId);
-        verify(mTaskLocalDataSource).deleteTasks(taskHeadId);
+        // Delete a taskHead with taskHeadId of TASKS
+        List<String> taskHeadIds = new ArrayList<>();
+        taskHeadIds.add(TASKS.get(0).getTaskHeadId());
 
-        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(taskHeadId), is(false));
+        mTaskRepository.deleteTasks(taskHeadIds);
+
+        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(TASKS.get(0).getTaskHeadId()), is(false));
+        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(TASKS2.get(0).getTaskHeadId()), is(true));
+    }
+
+    @Test
+    public void deleteTasks_fromLocal_andRetrieveTasks() {
+        // save tasks of taskhead1 and taskhead2
+        final TaskHead TASKHEAD2 = new TaskHead("title2", MEMBERS, 1);
+        List<Task> TASKS2 = Lists.newArrayList(
+                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description", 0),
+                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
+                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
+        saveStubbedTasks(TASKS);
+        saveStubbedTasks(TASKS2);
+
+        // Delete tasks of TASKHEAD
+        List<String> taskHeadIds = new ArrayList<>();
+        taskHeadIds.add(TASKS.get(0).getTaskHeadId());
+
+        mTaskRepository.deleteTasks(taskHeadIds);
+        verify(mTaskLocalDataSource).deleteTasks(taskHeadIds);
+
+        // Verify that there is only TASKS2 of TASKHEAD2
+        String taskHeadIdOfExistTasks = TASKHEAD.getId();
+        mTaskRepository.getTasks(taskHeadIdOfExistTasks, new TaskDataSource.LoadTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+                fail();
+//                assertThat(tasks.get(0).getTaskHeadId(), is(TASKHEAD2.getId()));
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
     }
 
     @Test

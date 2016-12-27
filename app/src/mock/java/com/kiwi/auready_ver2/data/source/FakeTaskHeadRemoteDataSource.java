@@ -32,6 +32,16 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     }
 
     @Override
+    public void updateTaskHeads(List<TaskHead> taskHeads) {
+
+    }
+
+    @Override
+    public void deleteTaskHeads(List<String> taskHeadIds) {
+
+    }
+
+    @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
 
         if(TASKHEADS_SERVICE_DATA.size() == 0) {
@@ -44,12 +54,6 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     @Override
     public void getTaskHead(@NonNull String taskHeadId, @NonNull GetTaskHeadCallback callback) {
 
-    }
-
-    @Override
-    public void deleteTaskHead(@NonNull String id) {
-
-        TASKHEADS_SERVICE_DATA.remove(id);
     }
 
     @Override

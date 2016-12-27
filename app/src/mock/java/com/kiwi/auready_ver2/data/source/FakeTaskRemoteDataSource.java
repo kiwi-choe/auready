@@ -38,7 +38,7 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull String taskHeadId) {
+    public void deleteTasks(@NonNull List<String> taskHeadIds) {
 
     }
 

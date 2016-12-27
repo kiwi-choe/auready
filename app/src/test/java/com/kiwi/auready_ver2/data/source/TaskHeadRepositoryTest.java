@@ -12,6 +12,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -31,8 +32,7 @@ public class TaskHeadRepositoryTest {
             new Friend("email3", "name3"));
     private static final List<TaskHead> TASKHEADS =
             Lists.newArrayList(new TaskHead("title1", MEMBERS, 0),
-                    new TaskHead("title2", MEMBERS, 1), new TaskHead("title3", MEMBERS, 2),
-                    new TaskHead("title4", MEMBERS, 3));
+                    new TaskHead("title2", MEMBERS, 1), new TaskHead("title3", MEMBERS, 2));
     private static final String TASKHEAD_ID = "123";
 
     private TaskHeadRepository mTaskHeadsRepository;
@@ -173,48 +173,41 @@ public class TaskHeadRepositoryTest {
     }
 
     @Test
-    public void deleteTaskHead_deleteTaskHeadToServiceApiRemovedFromCache() {
-        // Save taskHeads
-        TaskHead newTaskHead = new TaskHead();
-        mTaskHeadsRepository.saveTaskHead(newTaskHead);
-        assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(newTaskHead.getId()), is(true));
-
-        // Delete a taskHead is asked to TaskHeadRepository
-        mTaskHeadsRepository.deleteTaskHead(newTaskHead.getId());
-
-        // Verify the data sources were called
-        verify(mTaskHeadRemoteDataSource).deleteTaskHead(newTaskHead.getId());
-        verify(mTaskHeadLocalDataSource).deleteTaskHead(newTaskHead.getId());
-
-        // 3. Verify it's removed from repository
-        assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(newTaskHead.getId()), is(false));
-    }
-
-    @Test
-    public void deleteTaskHeads_andDeleteTasks_fromLocal() {
-        // Save taskheads
+    public void deleteTaskHeads_fromCache() {
+        // Save the stubbed taskheads
         mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(0));
         mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(1));
         mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(2));
-        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(3));
 
-        // Delete taskHeads
-        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(0).getId());
-        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(1).getId());
-        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(2).getId());
-        mTaskHeadsRepository.deleteTaskHead(TASKHEADS.get(3).getId());
+        // Delete taskHeads TASKHEADS index 1, 2nd
+        List<String> taskheadIds = new ArrayList<>(0);
+        taskheadIds.add(TASKHEADS.get(1).getId());
+        taskheadIds.add(TASKHEADS.get(2).getId());
+        mTaskHeadsRepository.deleteTaskHeads(taskheadIds);
 
-        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(0).getId()));
-        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(1).getId()));
-        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(2).getId()));
-        verify(mTaskHeadLocalDataSource).deleteTaskHead(eq(TASKHEADS.get(3).getId()));
+        assertThat(mTaskHeadsRepository.mCachedTaskHeads.size(), is(1));
+        assertThat(mTaskHeadsRepository.mCachedTaskHeads.containsKey(TASKHEADS.get(0).getId()), is(true));
+    }
+
+    @Test
+    public void deleteTaskHeads_fromLocal_andRetrieveTaskHeads() {
+        // Save the stubbed taskheads
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(0));
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(1));
+        mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(2));
+
+        // Delete taskHeads index 0, 1st
+        List<String> taskheadIds = new ArrayList<>(0);
+        taskheadIds.add(TASKHEADS.get(0).getId());
+        taskheadIds.add(TASKHEADS.get(1).getId());
+        mTaskHeadsRepository.deleteTaskHeads(taskheadIds);
+        verify(mTaskHeadLocalDataSource).deleteTaskHeads(taskheadIds);
 
         // Verify that there is only TASKHEADS.get(2)
         mTaskHeadsRepository.getTaskHeads(new TaskHeadDataSource.LoadTaskHeadsCallback() {
             @Override
             public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                assertThat(taskHeads.size(), is(0));
-//                assertThat(taskHeads.get(0).getTitle(), is(TASKHEADS.get(2).getTitle()));
+                assertThat(taskHeads.get(0).getTitle(), is(TASKHEADS.get(2).getTitle()));
             }
 
             @Override

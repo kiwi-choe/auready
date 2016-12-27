@@ -36,7 +36,7 @@ public interface TaskDataSource {
     void saveTask(@NonNull Task task);
 
     // When delete a taskhead
-    void deleteTasks(@NonNull String taskHeadId);
+    void deleteTasks(@NonNull List<String> taskHeadIds);
     // When delete a member of taskHeadDetail(update taskhead)
     void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
 

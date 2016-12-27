@@ -13,6 +13,8 @@ public interface TaskHeadDataSource {
 
     int getTaskHeadsCount();   // for Local data source
 
+    void updateTaskHeads(List<TaskHead> taskHeads);
+
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
@@ -32,7 +34,7 @@ public interface TaskHeadDataSource {
 
     void saveTaskHead(@NonNull TaskHead taskHead);
 
-    void deleteTaskHead(@NonNull String taskHeadId);
+    void deleteTaskHeads(List<String> taskHeadIds);
 
     void deleteAllTaskHeads();
 }
