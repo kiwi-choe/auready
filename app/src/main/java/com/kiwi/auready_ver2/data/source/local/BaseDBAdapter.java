@@ -53,6 +53,7 @@ public class BaseDBAdapter {
             "CREATE TABLE IF NOT EXISTS " + TaskEntry.TABLE_NAME + " (" +
                     TaskEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
                     TaskEntry.COLUMN_HEAD_ID + TEXT_TYPE + COMMA_SEP +
+                    TaskEntry.COLUMN_MEMBER_ID + TEXT_TYPE + COMMA_SEP +
                     TaskEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     TaskEntry.COLUMN_COMPLETED + INTEGER_TYPE + COMMA_SEP +
                     TaskEntry.COLUMN_ORDER + INTEGER_TYPE +
