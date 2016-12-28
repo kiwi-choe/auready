@@ -167,7 +167,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void setMembers(List<Friend> members) {
-        mMembers.addAll(members);
+        mMembers = members;
         mMemberListAdapter.notifyDataSetChanged();
     }
 
@@ -223,6 +223,12 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void showEditedTaskHead() {
         getActivity().setResult(Activity.RESULT_OK);
         getActivity().finish();
+    }
+
+    @Override
+    public void addMembers(List<Friend> friends) {
+        mMembers.addAll(friends);
+        mMemberListAdapter.notifyDataSetChanged();
     }
 
     @Override
