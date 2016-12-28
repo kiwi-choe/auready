@@ -28,6 +28,8 @@ public class TasksContract {
         * */
         void showTasks(List<Task> tasks);
 
+        void showTasks(String memberId, List<Task> tasks);
+
         void showNoTasks();
     }
 
@@ -37,6 +39,7 @@ public class TasksContract {
 
         // Get tasks by taskHeadId and memberId
         void getTasks(@NonNull String memberId);
+
         // Get tasks by taskHeadId
         void getTasks();
 

@@ -93,7 +93,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void getTasks(@NonNull String memberId) {
+    public void getTasks(@NonNull final String memberId) {
         checkNotNull(memberId);
 
         mUseCaseHandler.execute(mGetTasksOfMember, new GetTasksOfMember.RequestValues(mTaskHeadId, memberId),
@@ -101,7 +101,8 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
-                        processTasks(response.getTasks());
+                        processTasksOfMember(memberId, response.getTasks());
+                        //processTasks(response.getTasks());
                     }
 
                     @Override
@@ -188,6 +189,14 @@ public class TasksPresenter implements TasksContract.Presenter {
             mTasksView.showNoTasks();
         } else {
             mTasksView.showTasks(tasks);
+        }
+    }
+
+    private void processTasksOfMember(String memberId, List<Task> tasks) {
+        if(tasks.isEmpty()) {
+
+        } else {
+            mTasksView.showTasks(memberId, tasks);
         }
     }
 
