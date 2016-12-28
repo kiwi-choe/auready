@@ -11,11 +11,24 @@
         android:layout_alignParentLeft="true" />
 
     <EditText
-        android:id="@+id/task"
+        android:id="@+id/task_edittext"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/checkbox"
-        android:paddingStart="20dp" />
+        android:paddingStart="20dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">
+        <requestFocus/>
+    </EditText>
+
+
+
+    <TextView
+        android:id="@+id/task_textview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@id/checkbox"
+        android:paddingStart="20dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
     <ImageView
         android:id="@+id/reorder_btn"
@@ -26,7 +39,7 @@
 
     <Button
         android:id="@+id/add_task_btn"
-        android:text="Add Task"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:text="Add Task" />
 </RelativeLayout>
