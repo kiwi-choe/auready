@@ -5,7 +5,11 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
@@ -73,6 +77,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+        setHasOptionsMenu(true);
 
 //        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 //            @Override
@@ -83,6 +88,23 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 //        });
 
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.taskhead_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.delete_menu:
+                mActionMode = getActivity().startActionMode(mActionModeCallback);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void showMessage(String message) {
@@ -141,4 +163,36 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onAddTaskClick(String memberId, String description, int order);
     }
+
+    ActionMode mActionMode = null;
+    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.contextual_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.item_delete:
+                    actionMode.finish();
+                    return true;
+                default:
+                    break;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+
+        }
+    };
 }

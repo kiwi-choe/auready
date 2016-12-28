@@ -10,19 +10,19 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true" />
 
-    <TextView
+    <EditText
         android:id="@+id/task"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/checkbox"
         android:paddingStart="20dp" />
 
-    <Button
-        android:id="@+id/delete_task_btn"
+    <ImageView
+        android:id="@+id/reorder_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text="Delete" />
+        android:background="@android:drawable/ic_dialog_dialer" />
 
     <Button
         android:id="@+id/add_task_btn"

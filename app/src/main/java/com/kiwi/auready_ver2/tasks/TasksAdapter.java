@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -23,6 +24,10 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private ArrayList<Friend> mMemberList = null;
     private HashMap<String, ArrayList<Task>> mTasksList = null;
     private LayoutInflater mInflater = null;
+    int mMode = 0;
+
+    static final int NON_ACTION_MODE = 0;
+    static final int ACTION_MODE = 1;
 
     public TasksAdapter(Context context, ArrayList<Friend> memberList, HashMap<String, ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
         super();
@@ -108,7 +113,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = new ChildViewHolder();
             viewHolder.taskTextView = (TextView) view.findViewById(R.id.task);
             viewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-            viewHolder.deleteTaskBtn = (Button) view.findViewById(R.id.delete_task_btn);
+            viewHolder.reorderBtn = (ImageView) view.findViewById(R.id.reorder_btn);
 
             viewHolder.addTaskBtn = (Button) view.findViewById(R.id.add_task_btn);
 
@@ -128,24 +133,32 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
             viewHolder.taskTextView.setVisibility(View.GONE);
             viewHolder.checkBox.setVisibility(View.GONE);
-            viewHolder.deleteTaskBtn.setVisibility(View.GONE);
-        } else {
-            viewHolder.addTaskBtn.setVisibility(View.GONE);
+            viewHolder.reorderBtn.setVisibility(View.GONE);
+
+            return view;
+        }
+
+        viewHolder.addTaskBtn.setVisibility(View.GONE);
+
+        if (mMode == NON_ACTION_MODE) {
             viewHolder.taskTextView.setVisibility(View.VISIBLE);
             viewHolder.checkBox.setVisibility(View.VISIBLE);
-            viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
-
-
-            final ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
-            viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
-            viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
-            viewHolder.deleteTaskBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
-                }
-            });
+            viewHolder.reorderBtn.setVisibility(View.GONE);
+        } else if (mMode == ACTION_MODE) {
+            viewHolder.taskTextView.setVisibility(View.VISIBLE);
+            viewHolder.checkBox.setVisibility(View.GONE);
+            viewHolder.reorderBtn.setVisibility(View.VISIBLE);
         }
+
+        final ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
+        viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
+        viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
+        viewHolder.reorderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
+            }
+        });
 
         return view;
     }
@@ -167,6 +180,10 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     private void setMemberList(ArrayList<Friend> members) {
         mMemberList = members;
+    }
+
+    public void setMode(int mode) {
+        mMode = mode;
     }
 
     public void replaceTasksList(List<Task> tasks) {
@@ -205,7 +222,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private class ChildViewHolder {
         TextView taskTextView;
         CheckBox checkBox;
-        Button deleteTaskBtn;
+        ImageView reorderBtn;
         Button addTaskBtn;
     }
 }

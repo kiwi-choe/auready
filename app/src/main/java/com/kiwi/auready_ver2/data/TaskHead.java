@@ -131,7 +131,6 @@ public class TaskHead {
         return mOrder;
     }
 
-
     public void setOrder(int i) {
         mOrder = i;
     }
