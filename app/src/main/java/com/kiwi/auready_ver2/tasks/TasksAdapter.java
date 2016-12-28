@@ -135,9 +135,16 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
             viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
 
-            ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
+
+            final ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
             viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
             viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
+            viewHolder.deleteTaskBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
+                }
+            });
         }
 
         return view;
@@ -164,15 +171,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     public void replaceTasksList(List<Task> tasks) {
 
-        // all tasks : need to clear the mTaskList
-        // specific member task : keep current mTaskList, only clear
-        String startMemberId = tasks.get(0).getMemberId();
-        for (Task task : tasks) {
-            if (!task.getMemberId().equals(startMemberId)) {
-                mTasksList.clear();
-                break;
-            }
-        }
+        mTasksList.clear();
 
         for (Task task : tasks) {
             if (mTasksList.get(task.getMemberId()) == null) {
@@ -186,6 +185,14 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     }
 
     public void replaceTasksList(String memberId, List<Task> tasks) {
+
+        mTasksList.get(memberId).clear();
+
+        for (Task task : tasks) {
+            mTasksList.get(memberId).add(task);
+        }
+
+        notifyDataSetChanged();
 
     }
 
