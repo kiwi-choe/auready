@@ -15,19 +15,17 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-/**
- *
- */
 public class TasksAdapter extends BaseExpandableListAdapter {
 
     final private TasksFragment.TaskItemListener mTaskItemListener;
     private ArrayList<Friend> mMemberList = null;
-    private ArrayList<ArrayList<Task>> mTasksList = null;
+    private HashMap<String, ArrayList<Task>> mTasksList = null;
     private LayoutInflater mInflater = null;
 
-    public TasksAdapter(Context context, ArrayList<Friend> memberList, ArrayList<ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
+    public TasksAdapter(Context context, ArrayList<Friend> memberList, HashMap<String, ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
         super();
 
         mInflater = LayoutInflater.from(context);
@@ -44,12 +42,13 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int memberPosition) {
 
-        // + 1 : footer view for each member list
-        if (mTasksList.isEmpty()) {
+        ArrayList<Task> tasks = mTasksList.get(getMemberId(memberPosition));
+        if (tasks == null) {
             return 1;
-        } else {
-            return mTasksList.get(memberPosition).size() + 1;
         }
+
+        // + 1 : footer view for each member list
+        return tasks.size() + 1;
     }
 
     @Override
@@ -59,7 +58,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int memberPosition, int taskPosition) {
-        return mTasksList.get(memberPosition).get(taskPosition);
+        return mTasksList.get(getMemberId(memberPosition)).get(taskPosition);
     }
 
     @Override
@@ -95,13 +94,12 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = (GroupViewHolder) view.getTag();
         }
 
-
         viewHolder.memberName.setText(mMemberList.get(memberPosition).getName());
         return view;
     }
 
     @Override
-    public View getChildView(final int memberPosition, int taskPosition, boolean isLastTask, View convertView, ViewGroup parent) {
+    public View getChildView(final int memberPosition, final int taskPosition, boolean isLastTask, View convertView, ViewGroup parent) {
         View view = convertView;
         ChildViewHolder viewHolder;
 
@@ -125,7 +123,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mTaskItemListener.onAddTaskClick(mMemberList.get(memberPosition).getId(), "empty", getChildrenCount(memberPosition) - 1);
+                    mTaskItemListener.onAddTaskClick(getMemberId(memberPosition), "empty : " + taskPosition, getChildrenCount(memberPosition) - 1);
                 }
             });
 
@@ -138,7 +136,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
             viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
 
-            ArrayList<Task> tasksList = mTasksList.get(memberPosition);
+            ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
             viewHolder.taskTextView.setText(tasksList.get(taskPosition).getDescription());
             viewHolder.checkBox.setChecked(tasksList.get(taskPosition).getCompleted());
         }
@@ -156,19 +154,33 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         notifyDataSetChanged();
     }
 
+    private String getMemberId(int position) {
+        return mMemberList.get(position).getId();
+    }
+
+
     private void setMemberList(ArrayList<Friend> members) {
         mMemberList = members;
     }
 
-    public void replaceTasksList(List<Task> tasksList) {
-        for (int i = 0; i < mMemberList.size(); i++) {
-            ArrayList<Task> taskOfMember = new ArrayList<>();
-            for (Task task : tasksList) {
-                if (task.getMemberId().equals(mMemberList.get(i).getId())) {
-                    taskOfMember.add(task.getOrder(), task);
-                }
+    public void replaceTasksList(List<Task> tasks) {
+
+        // all tasks : need to clear the mTaskList
+        // specific member task : keep current mTaskList, only clear
+        String startMemberId = tasks.get(0).getMemberId();
+        for (Task task : tasks) {
+            if (!task.getMemberId().equals(startMemberId)) {
+                mTasksList.clear();
+                break;
             }
-            mTasksList.add(taskOfMember);
+        }
+
+        for (Task task : tasks) {
+            if (mTasksList.get(task.getMemberId()) == null) {
+                mTasksList.put(task.getMemberId(), new ArrayList<Task>());
+            }
+
+            mTasksList.get(task.getMemberId()).add(task);
         }
 
         notifyDataSetChanged();

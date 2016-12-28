@@ -17,6 +17,7 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -49,7 +50,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             mTaskHeadId = getArguments().getString(TasksActivity.ARG_TASKHEAD_ID);
         }
 
-        mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Friend>(), new ArrayList<ArrayList<Task>>(), mTaskItemListener);
+        mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Friend>(), new HashMap<String, ArrayList<Task>>(), mTaskItemListener);
     }
 
 
@@ -72,6 +73,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+
+//        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//            @Override
+//            public boolean onGroupClick(ExpandableListView expandableListView, View view, int memberPosition, long l) {
+//                mTasksAdapter.notifyDataSetChanged();
+//                return false;
+//            }
+//        });
 
         return root;
     }

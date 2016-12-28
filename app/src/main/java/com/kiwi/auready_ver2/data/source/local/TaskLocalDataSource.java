@@ -133,6 +133,7 @@ public class TaskLocalDataSource extends BaseDBAdapter
 
         String[] columns = {
                 COLUMN_ID,
+                COLUMN_MEMBER_ID,
                 COLUMN_DESCRIPTION,
                 COLUMN_COMPLETED,
                 COLUMN_ORDER
