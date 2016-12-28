@@ -264,6 +264,10 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     public void replaceTasksList(String memberId, List<Task> tasks) {
 
+        if (mTasksList.get(memberId) == null) {
+            mTasksList.put(memberId, new ArrayList<Task>());
+        }
+
         mTasksList.get(memberId).clear();
 
         for (Task task : tasks) {
