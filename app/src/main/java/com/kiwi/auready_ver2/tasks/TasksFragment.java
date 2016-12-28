@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -18,7 +19,7 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -101,10 +102,16 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         switch (item.getItemId()) {
             case R.id.delete_menu:
-                mActionMode = getActivity().startActionMode(mActionModeCallback);
+                showTaskHeadDetail();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showTaskHeadDetail() {
+        Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
+        intent.putExtra(TaskHeadDetailActivity.ARG_TASKHEAD_ID, mTaskHeadId);
+        startActivity(intent);
     }
 
     private void showMessage(String message) {

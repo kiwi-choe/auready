@@ -144,32 +144,22 @@ public class TaskHeadRepositoryTest {
     }
 
     @Test
-    public void updateMemberOfTaskHead_retrieveTaskHead() {
+    public void editTaskHead_fromLocal_andUpdateCache() {
         // Save a new taskHead
         String TITLE = "title_test";
         TaskHead taskHead = new TaskHead(TITLE, MEMBERS, 0);
         mTaskHeadsRepository.saveTaskHead(taskHead);
 
-        // Modify the value of member column
+        // Modify the value of title and members
+        String modifiedTitle = "editTitle";
         final List<Friend> modifiedMembers = MEMBERS;
         modifiedMembers.add(new Friend("new member email", "new member name"));
-        TaskHead changedTaskHead = new TaskHead(taskHead.getId(), TITLE, modifiedMembers, taskHead.getOrder());
-        // Save the changed taskHead
-        mTaskHeadsRepository.saveTaskHead(changedTaskHead);
-        verify(mTaskHeadLocalDataSource).saveTaskHead(changedTaskHead);
+        // Update the changed members
+        mTaskHeadsRepository.editTaskHead(taskHead.getId(), modifiedTitle, modifiedMembers);
+        verify(mTaskHeadLocalDataSource).editTaskHead(eq(taskHead.getId()), eq(modifiedTitle), eq(modifiedMembers));
 
-        // Retrieve the taskhead
-        mTaskHeadsRepository.getTaskHead(changedTaskHead.getId(), new TaskHeadDataSource.GetTaskHeadCallback() {
-            @Override
-            public void onTaskHeadLoaded(TaskHead taskHead) {
-                assertThat(taskHead.getMembers().size(), is(modifiedMembers.size()));
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                fail();
-            }
-        });
+        // Update cache
+        assertThat(mTaskHeadsRepository.mCachedTaskHeads.get(taskHead.getId()).getTitle(), is(modifiedTitle));
     }
 
     @Test

@@ -19,7 +19,7 @@ public interface TaskHeadDetailContract {
 
         void setMembers(List<Friend> members);
 
-        void setResultToTaskHeadsView(String taskHeadId);
+        void showAddedTaskHead(String taskHeadId);
 
         void showEmptyTaskHeadError();
 
@@ -28,13 +28,15 @@ public interface TaskHeadDetailContract {
         void setNewTaskHeadView();
 
         void setEditTaskHeadView();
+
+        void showEditedTaskHead();
     }
 
     interface Presenter extends BasePresenter {
 
         void createTaskHead(String title, List<Friend> members, int order);
 
-        void updateTaskHead(String title, List<Friend> members, int order);
+        void editTaskHead(String title, List<Friend> members);
 
         // Get TaskHead if exists the taskHeadId
         void populateTaskHead();

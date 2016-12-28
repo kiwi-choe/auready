@@ -11,6 +11,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
@@ -32,15 +33,19 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     private final SaveTaskHead mSaveTaskHead;
     @NonNull
     private final GetTaskHead mGetTaskHead;
+    private final EditTaskHead mEditTaskHead;
 
     public TaskHeadDetailPresenter(@NonNull UseCaseHandler useCaseHandler, @Nullable String taskHeadId,
-                                   @NonNull TaskHeadDetailContract.View view, @NonNull SaveTaskHead saveTaskHead,
-                                   @NonNull GetTaskHead getTaskHead) {
+                                   @NonNull TaskHeadDetailContract.View view,
+                                   @NonNull SaveTaskHead saveTaskHead,
+                                   @NonNull GetTaskHead getTaskHead,
+                                   @NonNull EditTaskHead editTaskHead) {
         mUseCaseHandler = useCaseHandler;
         mTaskHeadId = taskHeadId;
         mView = view;
         mSaveTaskHead = saveTaskHead;
         mGetTaskHead = getTaskHead;
+        mEditTaskHead = editTaskHead;
 
         mView.setPresenter(this);
     }
@@ -68,7 +73,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onSuccess(SaveTaskHead.ResponseValue response) {
-                            mView.setResultToTaskHeadsView(newTaskHead.getId());
+                            mView.showAddedTaskHead(newTaskHead.getId());
                         }
 
                         @Override
@@ -80,17 +85,17 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     @Override
-    public void updateTaskHead(String title, List<Friend> members, int order) {
+    public void editTaskHead(String title, List<Friend> members) {
         if (mTaskHeadId == null) {
-            throw new RuntimeException("updateTaskHead() was called but taskHead is new.");
+            throw new RuntimeException("editTaskHead() was called but taskHead is new.");
         }
-        final TaskHead taskHead = new TaskHead(mTaskHeadId, title, members, order);
-        mUseCaseHandler.execute(mSaveTaskHead, new SaveTaskHead.RequestValues(taskHead),
-                new UseCase.UseCaseCallback<SaveTaskHead.ResponseValue>() {
+
+        mUseCaseHandler.execute(mEditTaskHead, new EditTaskHead.RequestValues(mTaskHeadId, title, members),
+                new UseCase.UseCaseCallback<EditTaskHead.ResponseValue>() {
 
                     @Override
-                    public void onSuccess(SaveTaskHead.ResponseValue response) {
-                        mView.setResultToTaskHeadsView(taskHead.getId());
+                    public void onSuccess(EditTaskHead.ResponseValue response) {
+                        mView.showEditedTaskHead();
                     }
 
                     @Override

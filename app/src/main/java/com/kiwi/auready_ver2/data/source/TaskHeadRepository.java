@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.ArrayList;
@@ -45,10 +46,24 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     }
 
     @Override
-    public void updateTaskHeads(List<TaskHead> taskHeads) {
-        mTaskHeadLocalDataSource.updateTaskHeads(taskHeads);
+    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
+        mTaskHeadLocalDataSource.updateTaskHeadsOrder(taskHeads);
 
         refreshCache(taskHeads);
+    }
+
+    @Override
+    public void editTaskHead(@NonNull String id, String title, List<Friend> members) {
+        checkNotNull(id);
+        mTaskHeadLocalDataSource.editTaskHead(id, title, members);
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTaskHeads == null) {
+            mCachedTaskHeads = new LinkedHashMap<>();
+        }
+        TaskHead taskHead = mCachedTaskHeads.get(id);
+        TaskHead editedTaskHead = new TaskHead(id, title, members, taskHead.getOrder());
+        mCachedTaskHeads.put(id, editedTaskHead);
     }
 
     @Override

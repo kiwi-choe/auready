@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.google.common.collect.Lists;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.LinkedHashMap;
@@ -32,7 +33,12 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     }
 
     @Override
-    public void updateTaskHeads(List<TaskHead> taskHeads) {
+    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
+
+    }
+
+    @Override
+    public void editTaskHead(String id, String title, List<Friend> members) {
 
     }
 

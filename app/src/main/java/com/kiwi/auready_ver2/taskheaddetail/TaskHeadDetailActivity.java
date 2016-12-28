@@ -13,7 +13,6 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
 
     public static final String ARG_TASKHEAD_ID = "arg_taskhead_id";
     public static final String ARG_CNT_OF_TASKHEADS = "arg_countOfTaskHeads";
-    public static final String ARG_TASKHEAD_ORDER = "arg_taskhead_order";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +54,8 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
                 taskHeadId,
                 taskHeadDetailFragment,
                 Injection.provideSaveTaskHead(getApplicationContext()),
-                Injection.provideGetTaskHead(getApplicationContext()));
+                Injection.provideGetTaskHead(getApplicationContext()),
+                Injection.provideEditTaskHead(getApplicationContext()));
 
     }
 }
