@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
 
@@ -80,13 +81,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView.setAdapter(mTasksAdapter);
         setHasOptionsMenu(true);
 
-//        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//            @Override
-//            public boolean onGroupClick(ExpandableListView expandableListView, View view, int memberPosition, long l) {
-//                mTasksAdapter.notifyDataSetChanged();
-//                return false;
-//            }
-//        });
+        mTasksView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                return startActionMode(position);
+            }
+        });
 
         return root;
     }
@@ -161,7 +161,32 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             mPresenter.createTask(memberId, description, order);
 
         }
+
+        @Override
+        public void onDeleteTasksClick(int memberPosition) {
+            startActionMode(memberPosition);
+        }
+
+        @Override
+        public void onTaskChecked(String taskId) {
+
+        }
+
+        @Override
+        public void onTaskDescEdited(String taskId) {
+
+        }
     };
+
+    private boolean startActionMode(int memberPosition) {
+        if (mActionMode != null) {
+            return false;
+        }
+
+        mActionMode = getActivity().startActionMode(mActionModeCallback);
+        mTasksAdapter.setActionModeMember(memberPosition);
+        return true;
+    }
 
     public interface TaskItemListener {
         void onTaskItemClick(String taskHeadId);
@@ -169,6 +194,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         void onDeleteClick(String taskId);
 
         void onAddTaskClick(String memberId, String description, int order);
+
+        void onDeleteTasksClick(int memberPosition);
+
+        void onTaskChecked(String taskId);
+
+        void onTaskDescEdited(String taskId);
     }
 
     ActionMode mActionMode = null;
@@ -177,6 +208,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             MenuInflater inflater = actionMode.getMenuInflater();
             inflater.inflate(R.menu.contextual_menu, menu);
+
             return true;
         }
 
@@ -199,7 +231,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         @Override
         public void onDestroyActionMode(ActionMode actionMode) {
-
+            mTasksAdapter.setActionModeMember(-1);
+            mActionMode = null;
         }
     };
 }
