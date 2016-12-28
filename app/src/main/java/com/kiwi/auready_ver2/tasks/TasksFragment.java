@@ -107,6 +107,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
+    public void showTasks(String memberId, List<Task> tasks) {
+        mTasksAdapter.replaceTasksList(memberId, tasks);
+    }
+
+    @Override
     public void showNoTasks() {
 
     }

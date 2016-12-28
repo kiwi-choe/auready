@@ -1,7 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -184,6 +183,10 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         }
 
         notifyDataSetChanged();
+    }
+
+    public void replaceTasksList(String memberId, List<Task> tasks) {
+
     }
 
     private class GroupViewHolder {
