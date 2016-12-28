@@ -105,13 +105,26 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         }
 
         viewHolder.memberName.setText(mMemberList.get(memberPosition).getName());
+        if (memberPosition == mCurrentActionModeMember) {
+            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_dark));
+            viewHolder.delete_tasks_btn.setText("Delete");
+            viewHolder.delete_tasks_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTaskItemListener.onDeleteTasksClick(memberPosition);
+                }
+            });
+        } else {
+            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
+            viewHolder.delete_tasks_btn.setText("Edit tasks");
+            viewHolder.delete_tasks_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mTaskItemListener.onStartActionMode(memberPosition);
+                }
+            });
+        }
 
-        viewHolder.delete_tasks_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mTaskItemListener.onDeleteTasksClick(memberPosition);
-            }
-        });
         return view;
     }
 
@@ -153,12 +166,15 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             return view;
         }
 
+        // set action mode
         if (memberPosition == mCurrentActionModeMember) {
             viewHolder.reorderBtn.setVisibility(View.VISIBLE);
             viewHolder.textView.setVisibility(View.VISIBLE);
+            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_light));
         } else {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
             viewHolder.editText.setVisibility(View.VISIBLE);
+            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
         }
 
         final ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
@@ -168,8 +184,8 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         viewHolder.textView.setText(task.getDescription());
         viewHolder.editText.setText(task.getDescription());
         if (task.getCompleted()) {
-            viewHolder.textView.setTextColor(view.getResources().getColor(android.R.color.holo_red_dark));
-            viewHolder.editText.setTextColor(view.getResources().getColor(android.R.color.holo_red_dark));
+            viewHolder.textView.setTextColor(view.getResources().getColor(android.R.color.holo_blue_dark));
+            viewHolder.editText.setTextColor(view.getResources().getColor(android.R.color.holo_blue_dark));
         } else {
             viewHolder.textView.setTextColor(view.getResources().getColor(android.R.color.black));
             viewHolder.editText.setTextColor(view.getResources().getColor(android.R.color.black));

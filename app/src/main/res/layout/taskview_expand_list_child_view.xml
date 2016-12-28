@@ -13,19 +13,17 @@
     <EditText
         android:id="@+id/task_edittext"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="40dp"
         android:layout_toRightOf="@id/checkbox"
         android:paddingStart="20dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">
         <requestFocus/>
     </EditText>
 
-
-
     <TextView
         android:id="@+id/task_textview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="40dp"
         android:layout_toRightOf="@id/checkbox"
         android:paddingStart="20dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />

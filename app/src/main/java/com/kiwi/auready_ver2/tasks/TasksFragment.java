@@ -80,13 +80,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView.setAdapter(mTasksAdapter);
         setHasOptionsMenu(true);
 
-        mTasksView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-                return startActionMode(position);
-            }
-        });
-
         return root;
     }
 
@@ -139,11 +132,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     TaskItemListener mTaskItemListener = new TaskItemListener() {
         @Override
-        public void onTaskItemClick(String taskHeadId) {
-
-        }
-
-        @Override
         public void onDeleteClick(String taskId) {
             mPresenter.deleteTask(taskId);
         }
@@ -155,27 +143,33 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
+        public void onStartActionMode(int memberPosition) {
+            mTasksView.expandGroup(memberPosition);
+            mTasksAdapter.setActionModeMember(memberPosition);
+        }
+
+        @Override
         public void onDeleteTasksClick(int memberPosition) {
-            startActionMode(memberPosition);
+            mTasksAdapter.setActionModeMember(-1);
+        }
+
+        @Override
+        public void onTaskChecked(String taskId) {
+
+        }
+
+        @Override
+        public void onTaskDescEdited(String taskId) {
+
         }
     };
 
-    private boolean startActionMode(int memberPosition) {
-        if (mActionMode != null) {
-            return false;
-        }
-
-        mActionMode = getActivity().startActionMode(mActionModeCallback);
-        mTasksAdapter.setActionModeMember(memberPosition);
-        return true;
-    }
-
     public interface TaskItemListener {
-        void onTaskItemClick(String taskHeadId);
-
         void onDeleteClick(String taskId);
 
         void onAddTaskClick(String memberId, String description, int order);
+
+        void onStartActionMode(int memberPosition);
 
         void onDeleteTasksClick(int memberPosition);
 
@@ -183,38 +177,4 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onTaskDescEdited(String taskId);
     }
-
-    ActionMode mActionMode = null;
-    private ActionMode.Callback mActionModeCallback = new ActionMode.Callback() {
-        @Override
-        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-            MenuInflater inflater = actionMode.getMenuInflater();
-            inflater.inflate(R.menu.contextual_menu, menu);
-
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.item_delete:
-                    actionMode.finish();
-                    return true;
-                default:
-                    break;
-            }
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode actionMode) {
-            mTasksAdapter.setActionModeMember(-1);
-            mActionMode = null;
-        }
-    };
 }
