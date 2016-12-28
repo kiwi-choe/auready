@@ -30,6 +30,8 @@ public interface TaskHeadDetailContract {
         void setEditTaskHeadView();
 
         void showEditedTaskHead();
+
+        void addMembers(List<Friend> friends);
     }
 
     interface Presenter extends BasePresenter {

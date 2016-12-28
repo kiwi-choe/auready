@@ -132,7 +132,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
             if (data.hasExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS)) {
                 ArrayList<Friend> friends =
                         data.getParcelableArrayListExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS);
-                mView.setMembers(friends);
+                mView.addMembers(friends);
             }
         }
     }
