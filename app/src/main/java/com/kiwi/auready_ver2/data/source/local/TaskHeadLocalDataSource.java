@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 
@@ -51,7 +53,7 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     }
 
     @Override
-    public void updateTaskHeads(List<TaskHead> taskHeads) {
+    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
 
         String whenThenArgs = "";
         String whereArgs = "";
@@ -86,7 +88,36 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
             sDb.execSQL(sql);
             sDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
-            Log.e(BaseDBAdapter.TAG, "Error updateTaskHeads to ( " + TABLE_NAME + " ).", e);
+            Log.e(BaseDBAdapter.TAG, "Error updateTaskHeadsOrder to ( " + TABLE_NAME + " ).", e);
+        } finally {
+            sDb.endTransaction();
+        }
+    }
+
+    @Override
+    public void editTaskHead(@NonNull String id, String title, List<Friend> members) {
+        checkNotNull(id);
+        // Converting members to Local DB
+        String strMembers = null;
+        try {
+            strMembers = BaseDBAdapter.OBJECT_MAPPER.writeValueAsString(members);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_TITLE, title);
+        values.put(COLUMN_MEMBERS, strMembers);
+
+        String whereClause = COLUMN_ID + " LIKE ?";
+        String[] whereArgs = { id };
+
+        sDb.beginTransaction();
+        try {
+            sDb.update(TABLE_NAME, values, whereClause, whereArgs);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e){
+            Log.e(TAG, "Could not update in ( " + DATABASE_NAME + "). ", e);
         } finally {
             sDb.endTransaction();
         }

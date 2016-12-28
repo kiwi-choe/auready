@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.List;
@@ -13,7 +14,9 @@ public interface TaskHeadDataSource {
 
     int getTaskHeadsCount();   // for Local data source
 
-    void updateTaskHeads(List<TaskHead> taskHeads);
+    void updateTaskHeadsOrder(List<TaskHead> taskHeads);
+
+    void editTaskHead(@NonNull String id, String title, List<Friend> members);
 
     interface LoadTaskHeadsCallback {
 

@@ -24,7 +24,7 @@ public class UpdateTaskHeadsOrder extends UseCase<UpdateTaskHeadsOrder.RequestVa
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         List<TaskHead> taskHeads = requestValues.getTaskHeads();
-        mTaskHeadRepository.updateTaskHeads(taskHeads);
+        mTaskHeadRepository.updateTaskHeadsOrder(taskHeads);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

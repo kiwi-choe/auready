@@ -9,6 +9,7 @@ import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
 
@@ -68,7 +69,7 @@ public class TaskHeadDetailPresenterTest {
         verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
         // and the view updated.
         // TODO: 12/9/16 need a TaskHeadId instead of any(String)
-        verify(mTaskHeadDetailView).setResultToTaskHeadsView(any(String.class));
+        verify(mTaskHeadDetailView).showAddedTaskHead(any(String.class));
     }
 
     @Test
@@ -79,15 +80,17 @@ public class TaskHeadDetailPresenterTest {
         verify(mTaskHeadDetailView).showEmptyTaskHeadError();
     }
     @Test
-    public void updateTaskHead_editTitle() {
-        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter("taskHeadId_mock");
+    public void editTaskHead_editTitle() {
+        TaskHead taskHead = new TaskHead("title", MEMBERS, 0);
+        mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(taskHead.getId());
 
-        // Modify title and update(save with existing id)
-        mTaskHeadDetailPresenter.updateTaskHead("changed title", MEMBERS, 0);
+        // Modify title and update
+        String editTitle = "changed title";
+        mTaskHeadDetailPresenter.editTaskHead(editTitle, MEMBERS);
 
-        // Then a taskhead is saved in the repo and the view updated
-        verify(mTaskHeadRepository).saveTaskHead(any(TaskHead.class));
-        verify(mTaskHeadDetailView).setResultToTaskHeadsView(any(String.class));
+        // Then a taskhead is updated from repo and the view updated
+        verify(mTaskHeadRepository).editTaskHead(eq(taskHead.getId()), eq(editTitle), eq(MEMBERS));
+        verify(mTaskHeadDetailView).showEditedTaskHead();
     }
 
     @Test
@@ -127,8 +130,9 @@ public class TaskHeadDetailPresenterTest {
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);
         GetTaskHead getTaskHead = new GetTaskHead(mTaskHeadRepository);
+        EditTaskHead editTaskHead = new EditTaskHead(mTaskHeadRepository);
 
-        return new TaskHeadDetailPresenter(useCaseHandler, taskHeadId, mTaskHeadDetailView, saveTaskHead, getTaskHead);
+        return new TaskHeadDetailPresenter(useCaseHandler, taskHeadId, mTaskHeadDetailView, saveTaskHead, getTaskHead, editTaskHead);
 
     }
 }

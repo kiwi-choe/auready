@@ -74,8 +74,6 @@ public class TaskHeadDetailFragment extends Fragment implements
                 // set order for new taskHead
                 mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS);
             }
-            // Set order to edit taskhead
-            mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_TASKHEAD_ORDER, DEFAULT_INT);
         }
 
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
@@ -157,7 +155,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         mDoneBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.updateTaskHead(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
+                mPresenter.editTaskHead(mTitle.getText().toString(), mMembers);
             }
         });
     }
@@ -174,7 +172,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void setResultToTaskHeadsView(String taskHeadId) {
+    public void showAddedTaskHead(String taskHeadId) {
         Intent intent = getActivity().getIntent();
         intent.putExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID, taskHeadId);
         getActivity().setResult(Activity.RESULT_OK, intent);
@@ -219,6 +217,12 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setEditTaskHeadView() {
         mDoneBt.setVisibility(View.VISIBLE);
         mCreateBt.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEditedTaskHead() {
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().finish();
     }
 
     @Override
