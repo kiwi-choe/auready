@@ -67,6 +67,19 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     }
 
     @Override
+    public void addMembers(@NonNull String id, List<Friend> members) {
+        mTaskHeadLocalDataSource.addMembers(id, members);
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTaskHeads == null) {
+            mCachedTaskHeads = new LinkedHashMap<>();
+        }
+        TaskHead taskHead = mCachedTaskHeads.get(id);
+        TaskHead editedTaskHead = new TaskHead(id, taskHead.getTitle(), members, taskHead.getOrder());
+        mCachedTaskHeads.put(id, editedTaskHead);
+    }
+
+    @Override
     public void deleteTaskHeads(List<String> taskHeadIds) {
         mTaskHeadLocalDataSource.deleteTaskHeads(taskHeadIds);
 

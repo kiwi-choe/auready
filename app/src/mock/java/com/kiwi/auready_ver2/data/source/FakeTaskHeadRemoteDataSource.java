@@ -43,6 +43,11 @@ public class FakeTaskHeadRemoteDataSource implements TaskHeadDataSource {
     }
 
     @Override
+    public void addMembers(@NonNull String id, List<Friend> members) {
+
+    }
+
+    @Override
     public void deleteTaskHeads(List<String> taskHeadIds) {
 
     }

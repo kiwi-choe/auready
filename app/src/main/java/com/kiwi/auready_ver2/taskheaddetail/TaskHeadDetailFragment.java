@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +18,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
@@ -33,6 +32,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         TaskHeadDetailContract.View {
 
     public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFragment";
+    private static final String TAG_TASKHEADDETAILFRAG_DEBUG = "TaskHeadDetailView";
 
     public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
 
@@ -40,11 +40,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     private static final int DEFAULT_INT = 0;
 
     private TaskHeadDetailContract.Presenter mPresenter;
-
-    // Items of CustomActionBar
-    private TextView mCancelBt;
-    private TextView mCreateBt;
-    private TextView mDoneBt;
 
     private String mTaskHeadId;
     private int mOrderOfTaskHead;
@@ -67,9 +62,9 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMembers = new ArrayList<>(0);
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TaskHeadDetailActivity.ARG_TASKHEAD_ID);
-            if(mTaskHeadId == null) {
+            if (mTaskHeadId == null) {
                 initMembers();
                 // set order for new taskHead
                 mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS);
@@ -97,19 +92,6 @@ public class TaskHeadDetailFragment extends Fragment implements
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskhead_detail, container, false);
-
-        // Set custom actionbar views
-        ActionBar ab = ((TaskHeadDetailActivity) getActivity()).getSupportActionBar();
-        ab.setDisplayShowHomeEnabled(false);
-        ab.setDisplayShowTitleEnabled(false);
-        View customView = inflater.inflate(
-                R.layout.taskheaddetail_actionbar, null);
-        mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
-        mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
-        mDoneBt = (TextView) customView.findViewById(R.id.done_taskhead);
-
-        ab.setCustomView(customView);
-        ab.setDisplayShowCustomEnabled(true);
 
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
 
@@ -140,24 +122,11 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCancelBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cancelCreateTaskHead();
-            }
-        });
-        mCreateBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.createTaskHead(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
-            }
-        });
-        mDoneBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.editTaskHead(mTitle.getText().toString(), mMembers);
-            }
-        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode, resultCode, data);
     }
 
     @Override
@@ -167,7 +136,8 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void setMembers(List<Friend> members) {
-        mMembers = members;
+        mMembers.clear();
+        mMembers.addAll(members);
         mMemberListAdapter.notifyDataSetChanged();
     }
 
@@ -175,20 +145,13 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void showAddedTaskHead(String taskHeadId) {
         Intent intent = getActivity().getIntent();
         intent.putExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID, taskHeadId);
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
+        sendResult(Activity.RESULT_OK, intent);
     }
 
     @Override
     public void showEmptyTaskHeadError() {
         Snackbar.make(mTitle, getString(R.string.empty_taskhead_message), Snackbar.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void cancelCreateTaskHead() {
-        Intent intent = getActivity().getIntent();
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
+        sendResult(Activity.RESULT_OK, null);
     }
 
     private void initMembers() {
@@ -208,32 +171,41 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void setNewTaskHeadView() {
-        mCreateBt.setVisibility(View.VISIBLE);
-        mDoneBt.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void setEditTaskHeadView() {
-        mDoneBt.setVisibility(View.VISIBLE);
-        mCreateBt.setVisibility(View.GONE);
-    }
-
-    @Override
     public void showEditedTaskHead() {
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().finish();
+        sendResult(Activity.RESULT_OK, null);
     }
 
     @Override
-    public void addMembers(List<Friend> friends) {
+    public void showSaveError() {
+        Log.d(TAG_TASKHEADDETAILFRAG_DEBUG, "taskhead cannot saved.");
+        sendResult(Activity.RESULT_CANCELED, null);
+    }
+
+    @Override
+    public void addMembers(ArrayList<Friend> friends) {
         mMembers.addAll(friends);
         mMemberListAdapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        mPresenter.result(requestCode, resultCode, data);
+    public void onBackPressed() {
+        if (isNewTaskHead()) {
+            mPresenter.createTaskHead(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
+        } else {
+            mPresenter.editTaskHead(mTitle.getText().toString(), mMembers);
+        }
+    }
+
+    private boolean isNewTaskHead() {
+        return mTaskHeadId == null;
+    }
+
+    private void sendResult(int resultCode, @Nullable Intent intent) {
+        if(intent != null) {
+            getActivity().setResult(resultCode, intent);
+        } else {
+            getActivity().setResult(resultCode);
+        }
+        getActivity().finish();
     }
 
     private class ActionModeCallback implements ActionMode.Callback {

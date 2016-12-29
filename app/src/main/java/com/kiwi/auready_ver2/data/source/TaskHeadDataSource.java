@@ -18,6 +18,8 @@ public interface TaskHeadDataSource {
 
     void editTaskHead(@NonNull String id, String title, List<Friend> members);
 
+    void addMembers(@NonNull String id, List<Friend> members);
+
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);

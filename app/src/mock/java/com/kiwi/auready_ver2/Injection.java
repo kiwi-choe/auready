@@ -17,6 +17,7 @@ import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.AddMembers;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
@@ -102,6 +103,14 @@ public class Injection {
         return new UpdateTaskHeadsOrder(Injection.provideTaskHeadRepository(context));
     }
 
+    public static EditTaskHead provideEditTaskHead(@NonNull Context context) {
+        return new EditTaskHead(Injection.provideTaskHeadRepository(context));
+    }
+
+    public static AddMembers provideAddMembers(@NonNull Context context) {
+        return new AddMembers(Injection.provideTaskHeadRepository(context));
+    }
+
     /*
     * Task
     * */
@@ -129,9 +138,5 @@ public class Injection {
 
     public static GetTasksOfTaskHead provideGetTasksOfTaskHead(@NonNull Context context) {
         return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
-    }
-
-    public static EditTaskHead provideEditTaskHead(@NonNull Context context) {
-        return new EditTaskHead(Injection.provideTaskHeadRepository(context));
     }
 }

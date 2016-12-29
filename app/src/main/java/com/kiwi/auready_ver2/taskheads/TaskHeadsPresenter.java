@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -127,11 +126,8 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void deleteTaskHeads(List<TaskHead> taskheads) {
         checkNotNull(taskheads);
-        Log.d("TEST_TAG", "entered into TaskHeadsPresenter ---------------");
-        Log.d("TEST_TAG", "taskheads size: " + taskheads.size());
         final List<String> taskHeadIds = new ArrayList<>();
         for (TaskHead taskHead : taskheads) {
-            Log.d("TEST_TAG", taskHead.getTitle());
             taskHeadIds.add(taskHead.getId());
         }
         mUseCaseHandler.execute(mDeleteTaskHeads, new DeleteTaskHeads.RequestValues(taskHeadIds),

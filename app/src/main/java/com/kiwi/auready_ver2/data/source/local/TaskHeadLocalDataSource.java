@@ -9,10 +9,12 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,16 +99,10 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
     @Override
     public void editTaskHead(@NonNull String id, String title, List<Friend> members) {
         checkNotNull(id);
-        // Converting members to Local DB
-        String strMembers = null;
-        try {
-            strMembers = BaseDBAdapter.OBJECT_MAPPER.writeValueAsString(members);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_TITLE, title);
+        String strMembers = getStrMembersByConverting(members);
         values.put(COLUMN_MEMBERS, strMembers);
 
         String whereClause = COLUMN_ID + " LIKE ?";
@@ -121,6 +117,80 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
         } finally {
             sDb.endTransaction();
         }
+    }
+
+    @Override
+    public void addMembers(@NonNull String id, List<Friend> members) {
+
+        // Get members by id
+        List<Friend> originalMembers = getMembersBy(id);
+
+        // and Add this new members to original members
+        originalMembers.addAll(members);
+
+        // Update added members
+        ContentValues values = new ContentValues();
+        String strMembers = getStrMembersByConverting(originalMembers);
+        values.put(COLUMN_MEMBERS, strMembers);
+
+        String whereClause = COLUMN_ID + " LIKE ?";
+        String[] whereArgs = {id};
+
+        sDb.beginTransaction();
+        try {
+            sDb.update(TABLE_NAME, values, whereClause, whereArgs);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e){
+            Log.e(TAG, "Could not update in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+    }
+
+    private List<Friend> getMembersBy(String id) {
+        String[] projection = {COLUMN_MEMBERS};
+        String selection = COLUMN_ID + " LIKE ?";
+        String[] selectionArgs = {id};
+
+        Cursor c = sDb.query(
+                TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        String strMembers = "";
+        if (c != null && c.getCount() > 0) {
+            c.moveToFirst();
+            strMembers = c.getString(c.getColumnIndexOrThrow(COLUMN_MEMBERS));
+        }
+        if (c != null) {
+            c.close();
+        }
+        List<Friend> members = getMemberListByConverting(strMembers);
+        return members;
+    }
+
+    private List<Friend> getMemberListByConverting(String strMembers) {
+
+        List<Friend> members = new ArrayList<>();
+        if (strMembers.length() != 0) {
+            try {
+                members =
+                        BaseDBAdapter.OBJECT_MAPPER.reader()
+                                .forType(new TypeReference<List<Friend>>() {})
+                                .readValue(strMembers);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return members;
+    }
+
+    private String getStrMembersByConverting(List<Friend> members) {
+        // Converting members to Local DB
+        String strMembers = null;
+        try {
+            strMembers = BaseDBAdapter.OBJECT_MAPPER.writeValueAsString(members);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return strMembers;
     }
 
     @Override

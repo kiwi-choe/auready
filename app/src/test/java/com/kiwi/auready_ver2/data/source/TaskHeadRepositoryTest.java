@@ -163,6 +163,23 @@ public class TaskHeadRepositoryTest {
     }
 
     @Test
+    public void addMembers_toLocal_andUpdateCache() {
+        // Save a new taskHead
+        TaskHead taskHead = new TaskHead("title", MEMBERS, 0);
+        mTaskHeadsRepository.saveTaskHead(taskHead);
+
+        // Add members
+        final List<Friend> addedMembers = MEMBERS;
+        addedMembers.add(new Friend("new member email", "new member name"));
+        // Update the added members to repo
+        mTaskHeadsRepository.addMembers(taskHead.getId(), addedMembers);
+        verify(mTaskHeadLocalDataSource).addMembers(eq(taskHead.getId()), eq(addedMembers));
+
+        // update cache
+        assertThat(mTaskHeadsRepository.mCachedTaskHeads.get(taskHead.getId()).getMembers().size(), is(addedMembers.size()));
+    }
+
+    @Test
     public void deleteTaskHeads_fromCache() {
         // Save the stubbed taskheads
         mTaskHeadsRepository.saveTaskHead(TASKHEADS.get(0));

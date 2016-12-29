@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.data.Friend;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,15 +24,11 @@ public interface TaskHeadDetailContract {
 
         void showEmptyTaskHeadError();
 
-        void cancelCreateTaskHead();
-
-        void setNewTaskHeadView();
-
-        void setEditTaskHeadView();
-
         void showEditedTaskHead();
 
-        void addMembers(List<Friend> friends);
+        void showSaveError();
+
+        void addMembers(ArrayList<Friend> friends);
     }
 
     interface Presenter extends BasePresenter {

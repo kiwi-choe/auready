@@ -11,6 +11,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.AddMembers;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
@@ -34,18 +35,21 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     @NonNull
     private final GetTaskHead mGetTaskHead;
     private final EditTaskHead mEditTaskHead;
+    private final AddMembers mAddMembers;
 
     public TaskHeadDetailPresenter(@NonNull UseCaseHandler useCaseHandler, @Nullable String taskHeadId,
                                    @NonNull TaskHeadDetailContract.View view,
                                    @NonNull SaveTaskHead saveTaskHead,
                                    @NonNull GetTaskHead getTaskHead,
-                                   @NonNull EditTaskHead editTaskHead) {
+                                   @NonNull EditTaskHead editTaskHead,
+                                   @NonNull AddMembers addMembers) {
         mUseCaseHandler = useCaseHandler;
         mTaskHeadId = taskHeadId;
         mView = view;
         mSaveTaskHead = saveTaskHead;
         mGetTaskHead = getTaskHead;
         mEditTaskHead = editTaskHead;
+        mAddMembers = addMembers;
 
         mView.setPresenter(this);
     }
@@ -55,12 +59,8 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     public void start() {
         if (mTaskHeadId != null) {
             populateTaskHead();
-            mView.setEditTaskHeadView();
-        } else {
-            mView.setNewTaskHeadView();
         }
     }
-
 
     @Override
     public void createTaskHead(String title, List<Friend> members, int order) {
@@ -78,7 +78,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onError() {
-
+                            mView.showSaveError();
                         }
                     });
         }
@@ -100,7 +100,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                     @Override
                     public void onError() {
-
+                        mView.showSaveError();
                     }
                 });
     }
@@ -127,13 +127,33 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
-        if (FriendsActivity.REQ_FRIENDS == requestCode
-                && Activity.RESULT_OK == resultCode) {
+        if (FriendsActivity.REQ_FRIENDS == requestCode && Activity.RESULT_OK == resultCode) {
             if (data.hasExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS)) {
                 ArrayList<Friend> friends =
                         data.getParcelableArrayListExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS);
-                mView.addMembers(friends);
+
+                addMembers(friends);
             }
+        }
+    }
+
+    private void addMembers(ArrayList<Friend> friends) {
+        if (mTaskHeadId != null) {
+            mUseCaseHandler.execute(mAddMembers, new AddMembers.RequestValues(mTaskHeadId, friends),
+                    new UseCase.UseCaseCallback<AddMembers.ResponseValue>() {
+
+                        @Override
+                        public void onSuccess(AddMembers.ResponseValue response) {
+                            populateTaskHead();
+                        }
+
+                        @Override
+                        public void onError() {
+
+                        }
+                    });
+        } else {
+            mView.addMembers(friends);
         }
     }
 

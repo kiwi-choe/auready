@@ -9,6 +9,7 @@ import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.AddMembers;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
@@ -59,10 +60,10 @@ public class TaskHeadDetailPresenterTest {
     }
 
     @Test
-    public void saveNewTaskHeadToRepo() {
+    public void createTaskHead_toRepo() {
         // taskheadId is null
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
-        // When the presenter is asked to save a taskhead
+        // When the presenter is asked to create a new taskHead coz of no taskheadId
         mTaskHeadDetailPresenter.createTaskHead("New Title", MEMBERS, 0);
 
         // Then a taskhead is saved in the repository
@@ -73,12 +74,13 @@ public class TaskHeadDetailPresenterTest {
     }
 
     @Test
-    public void saveTaskHead_emptyTaskHeadShowsErrorUI() {
+    public void createTaskHead_emptyTaskHeadShowsErrorUI() {
         mTaskHeadDetailPresenter = givenTaskHeadDetailPresenter(null);
         mTaskHeadDetailPresenter.createTaskHead("", null, 0);
 
         verify(mTaskHeadDetailView).showEmptyTaskHeadError();
     }
+
     @Test
     public void editTaskHead_editTitle() {
         TaskHead taskHead = new TaskHead("title", MEMBERS, 0);
@@ -131,8 +133,10 @@ public class TaskHeadDetailPresenterTest {
         SaveTaskHead saveTaskHead = new SaveTaskHead(mTaskHeadRepository);
         GetTaskHead getTaskHead = new GetTaskHead(mTaskHeadRepository);
         EditTaskHead editTaskHead = new EditTaskHead(mTaskHeadRepository);
+        AddMembers addMembers = new AddMembers(mTaskHeadRepository);
 
-        return new TaskHeadDetailPresenter(useCaseHandler, taskHeadId, mTaskHeadDetailView, saveTaskHead, getTaskHead, editTaskHead);
+        return new TaskHeadDetailPresenter(useCaseHandler, taskHeadId, mTaskHeadDetailView,
+                saveTaskHead, getTaskHead, editTaskHead, addMembers);
 
     }
 }

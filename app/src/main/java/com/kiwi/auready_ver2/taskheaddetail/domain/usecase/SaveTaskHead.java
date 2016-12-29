@@ -38,6 +38,7 @@ public class SaveTaskHead extends UseCase<SaveTaskHead.RequestValues, SaveTaskHe
         }
     }
 
-    public static class ResponseValue implements UseCase.ResponseValue {    }
+    public static class ResponseValue implements UseCase.ResponseValue {
+    }
 
 }
