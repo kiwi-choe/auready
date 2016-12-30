@@ -228,4 +228,26 @@ public class TaskHeadRepository implements TaskHeadDataSource {
     public static void destroyInstance() {
         INSTANCE = null;
     }
+
+    // Compare members of TaskHeadDetailView to members of cache
+    public List<String> getDeletingMemberIdsAfterComparingMembers(String taskHeadId, List<Friend> editedMembers) {
+
+        List<String> deletingMemberIds = new ArrayList<>(0);
+        // todo. If cache is null, compare with Local data
+        List<Friend> membersOfCache;
+        if (mCachedTaskHeads != null) {
+            TaskHead cacheTaskHead = mCachedTaskHeads.get(taskHeadId);
+            if (cacheTaskHead != null) {
+                membersOfCache = cacheTaskHead.getMembers();
+
+                for (Friend cacheMember : membersOfCache) {
+                    if(!editedMembers.contains(cacheMember)) {
+                        deletingMemberIds.add(cacheMember.getId());
+                    }
+                }
+            }
+        }
+
+        return deletingMemberIds;
+    }
 }

@@ -8,7 +8,6 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource.LoadTaskHeadsCallback;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
-import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
@@ -45,9 +44,6 @@ public class TaskHeadsPresenterTest {
     @Mock
     private TaskHeadRepository mTaskHeadRepository;
     @Mock
-    private TaskRepository mTaskRepository;
-
-    @Mock
     private TaskHeadsContract.View mTaskHeadView;
 
     @Captor
@@ -70,7 +66,7 @@ public class TaskHeadsPresenterTest {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetTaskHeads getTaskHeads = new GetTaskHeads(mTaskHeadRepository);
-        DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mTaskHeadRepository, mTaskRepository);
+        DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mTaskHeadRepository);
         GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mTaskHeadRepository);
         UpdateTaskHeadsOrder updateTaskHeadsOrder = new UpdateTaskHeadsOrder(mTaskHeadRepository);
 
@@ -100,7 +96,6 @@ public class TaskHeadsPresenterTest {
         mTaskHeadsPresenter.deleteTaskHeads(TASKHEADS);
 
         verify(mTaskHeadRepository).deleteTaskHeads(taskHeadIds);
-        verify(mTaskRepository).deleteTasks(taskHeadIds);
     }
 
     @Test

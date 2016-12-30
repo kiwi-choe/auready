@@ -87,8 +87,7 @@ public class Injection {
     }
 
     public static DeleteTaskHeads provideDeleteTaskHeads(@NonNull Context context) {
-        return new DeleteTaskHeads(Injection.provideTaskHeadRepository(context),
-                Injection.provideTaskRepository(context));
+        return new DeleteTaskHeads(Injection.provideTaskHeadRepository(context));
     }
 
     public static SaveTaskHead provideSaveTaskHead(@NonNull Context context) {

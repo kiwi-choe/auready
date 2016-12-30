@@ -193,6 +193,9 @@ public class TaskHeadLocalDataSource extends BaseDBAdapter
         return strMembers;
     }
 
+    /*
+    * Delete tasks of taskHead first and then delete taskHead
+    * */
     @Override
     public void deleteTaskHeads(List<String> taskHeadIds) {
 
