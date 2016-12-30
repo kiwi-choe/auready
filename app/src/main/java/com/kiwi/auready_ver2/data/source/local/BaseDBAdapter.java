@@ -29,21 +29,21 @@ public class BaseDBAdapter {
 
     private static final String TEXT_TYPE = " TEXT";
     private static final String INTEGER_TYPE = " INTEGER";
-    private static final String COMMA_SEP = ",";
+    private static final String COMMA_SEP = ", ";
 
     private static SQLiteDBHelper sDbHelper = null;
     protected static SQLiteDatabase sDb;
 
     private static final String SQL_CREATE_FRIEND_TABLE =
             "CREATE TABLE IF NOT EXISTS " + FriendEntry.TABLE_NAME + " (" +
-                    FriendEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
+                    FriendEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY, " +
                     FriendEntry.COLUMN_EMAIL + TEXT_TYPE + COMMA_SEP +
                     FriendEntry.COLUMN_NAME + TEXT_TYPE +
                     " )";
 
     private static final String SQL_CREATE_TASKHEAD_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TaskHeadEntry.TABLE_NAME + " (" +
-                    TaskHeadEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
+                    TaskHeadEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY, " +
                     TaskHeadEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
                     TaskHeadEntry.COLUMN_MEMBERS + TEXT_TYPE + COMMA_SEP +
                     TaskHeadEntry.COLUMN_ORDER + INTEGER_TYPE +
@@ -51,12 +51,16 @@ public class BaseDBAdapter {
 
     private static final String SQL_CREATE_TASK_TABLE =
             "CREATE TABLE IF NOT EXISTS " + TaskEntry.TABLE_NAME + " (" +
-                    TaskEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY," +
+                    TaskEntry.COLUMN_ID + TEXT_TYPE + " PRIMARY KEY, " +
                     TaskEntry.COLUMN_HEAD_ID + TEXT_TYPE + COMMA_SEP +
                     TaskEntry.COLUMN_MEMBER_ID + TEXT_TYPE + COMMA_SEP +
                     TaskEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
                     TaskEntry.COLUMN_COMPLETED + INTEGER_TYPE + COMMA_SEP +
-                    TaskEntry.COLUMN_ORDER + INTEGER_TYPE +
+                    TaskEntry.COLUMN_ORDER + INTEGER_TYPE + COMMA_SEP +
+                    "FOREIGN KEY(" + TaskEntry.COLUMN_HEAD_ID +
+                    ") REFERENCES " + TaskHeadEntry.TABLE_NAME + "(" + TaskHeadEntry.COLUMN_ID + ")" + COMMA_SEP +
+                    "FOREIGN KEY(" + TaskEntry.COLUMN_MEMBER_ID +
+                    ") REFERENCES " + FriendEntry.TABLE_NAME + "(" + FriendEntry.COLUMN_ID + ")" +
                     " )";
 
     /*
