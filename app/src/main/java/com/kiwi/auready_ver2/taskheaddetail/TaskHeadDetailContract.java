@@ -24,6 +24,12 @@ public interface TaskHeadDetailContract {
 
         void showEmptyTaskHeadError();
 
+        void cancelCreateTaskHead();
+
+        void setNewTaskHeadView();
+
+        void setEditTaskHeadView();
+
         void showEditedTaskHead();
 
         void showSaveError();

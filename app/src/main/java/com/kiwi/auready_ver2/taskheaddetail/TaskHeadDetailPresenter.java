@@ -59,6 +59,9 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     public void start() {
         if (mTaskHeadId != null) {
             populateTaskHead();
+            mView.setEditTaskHeadView();
+        } else {
+            mView.setNewTaskHeadView();
         }
     }
 
@@ -132,28 +135,8 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 ArrayList<Friend> friends =
                         data.getParcelableArrayListExtra(FriendsFragment.EXTRA_KEY_SELECTED_FRIENDS);
 
-                addMembers(friends);
+                mView.addMembers(friends);
             }
-        }
-    }
-
-    private void addMembers(ArrayList<Friend> friends) {
-        if (mTaskHeadId != null) {
-            mUseCaseHandler.execute(mAddMembers, new AddMembers.RequestValues(mTaskHeadId, friends),
-                    new UseCase.UseCaseCallback<AddMembers.ResponseValue>() {
-
-                        @Override
-                        public void onSuccess(AddMembers.ResponseValue response) {
-                            populateTaskHead();
-                        }
-
-                        @Override
-                        public void onError() {
-
-                        }
-                    });
-        } else {
-            mView.addMembers(friends);
         }
     }
 
