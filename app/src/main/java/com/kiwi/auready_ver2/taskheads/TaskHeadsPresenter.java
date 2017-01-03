@@ -66,7 +66,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     @Override
                     public void onError() {
-
+                        mTaskHeadView.showNoTaskHeads();
                     }
                 });
     }
@@ -145,31 +145,31 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                 });
     }
 
-    @Override
-    public void updateOrders(List<TaskHead> taskheads) {
-
-        List<TaskHead> updatingTaskHeads = new ArrayList<>(0);
-        int size = taskheads.size();
-        for(int i = 0; i<size; i++) {
-            TaskHead taskHead = taskheads.get(i);
-            TaskHead newTaskHead = new TaskHead(
-                    taskHead.getId(), taskHead.getTitle(), taskHead.getMembers(), i);
-            updatingTaskHeads.add(newTaskHead);
-        }
-
-        mUseCaseHandler.execute(mUpdateTaskHeadsOrder, new UpdateTaskHeadsOrder.RequestValues(updatingTaskHeads),
-                new UseCase.UseCaseCallback<UpdateTaskHeadsOrder.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(UpdateTaskHeadsOrder.ResponseValue response) {
-                        loadTaskHeads();
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
+//    @Override
+//    public void updateOrders(List<TaskHead> taskheads) {
+//
+//        List<TaskHead> updatingTaskHeads = new ArrayList<>(0);
+//        int size = taskheads.size();
+//        for(int i = 0; i<size; i++) {
+//            TaskHead taskHead = taskheads.get(i);
+//            TaskHead newTaskHead = new TaskHead(
+//                    taskHead.getTaskHeadId(), taskHead.getTitle(), taskHead.getMembers(), i);
+//            updatingTaskHeads.add(newTaskHead);
+//        }
+//
+//        mUseCaseHandler.execute(mUpdateTaskHeadsOrder, new UpdateTaskHeadsOrder.RequestValues(updatingTaskHeads),
+//                new UseCase.UseCaseCallback<UpdateTaskHeadsOrder.ResponseValue>() {
+//
+//                    @Override
+//                    public void onSuccess(UpdateTaskHeadsOrder.ResponseValue response) {
+//                        loadTaskHeads();
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
+//    }
 
 }

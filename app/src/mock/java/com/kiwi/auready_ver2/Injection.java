@@ -4,23 +4,24 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.source.FakeFriendRemoteDataSource;
+import com.kiwi.auready_ver2.data.source.FakeTaskHeadDetailRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FakeTaskRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.data.source.TaskHeadDetailRepository;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
+import com.kiwi.auready_ver2.data.source.local.TaskHeadDetailLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskHeadLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
-import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.AddMembers;
-import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHead;
-import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
-import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHead;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
@@ -82,16 +83,8 @@ public class Injection {
         return new GetTaskHeads(Injection.provideTaskHeadRepository(context));
     }
 
-    public static GetTaskHead provideGetTaskHead(@NonNull Context context) {
-        return new GetTaskHead(Injection.provideTaskHeadRepository(context));
-    }
-
     public static DeleteTaskHeads provideDeleteTaskHeads(@NonNull Context context) {
         return new DeleteTaskHeads(Injection.provideTaskHeadRepository(context));
-    }
-
-    public static SaveTaskHead provideSaveTaskHead(@NonNull Context context) {
-        return new SaveTaskHead(Injection.provideTaskHeadRepository(context));
     }
 
     public static GetTaskHeadsCount provideGetTaskHeadsCount(@NonNull Context context) {
@@ -102,12 +95,22 @@ public class Injection {
         return new UpdateTaskHeadsOrder(Injection.provideTaskHeadRepository(context));
     }
 
-    public static EditTaskHead provideEditTaskHead(@NonNull Context context) {
-        return new EditTaskHead(Injection.provideTaskHeadRepository(context));
+    /*
+    * TaskHeadDetail
+    * */
+    private static TaskHeadDetailRepository provideTaskHeadDetailRepository(@NonNull Context context) {
+        checkNotNull(context);
+        return TaskHeadDetailRepository.getInstance(FakeTaskHeadDetailRemoteDataSource.getInstance(),
+                TaskHeadDetailLocalDataSource.getInstance(context));
     }
 
-    public static AddMembers provideAddMembers(@NonNull Context context) {
-        return new AddMembers(Injection.provideTaskHeadRepository(context));
+    public static GetTaskHeadDetail provideGetTaskHeadDetail(@NonNull Context context) {
+        return new GetTaskHeadDetail(Injection.provideTaskHeadDetailRepository(context));
+    }
+
+
+    public static SaveTaskHeadDetail provideSaveTaskHeadDetail(@NonNull Context context) {
+        return new SaveTaskHeadDetail(Injection.provideTaskHeadDetailRepository(context));
     }
 
     /*

@@ -23,14 +23,14 @@ public class EditTaskHead extends UseCase<EditTaskHead.RequestValues, EditTaskHe
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mTaskHeadRepository.editTaskHead(requestValues.getId(), requestValues.getTitle(), requestValues.getMembers());
+//        mTaskHeadRepository.editTaskHead(requestValues.getTaskHeadId(), requestValues.getTitle(), requestValues.getMembers());
 
         // If members are deleted,
 //        List<String> deletingMemberIds =
-//                mTaskHeadRepository.getDeletingMemberIdsAfterComparingMembers(requestValues.getId(), requestValues.getMembers());
+//                mTaskHeadRepository.getDeletingMemberIdsAfterComparingMembers(requestValues.getTaskHeadId(), requestValues.getMembers());
 //        if(deletingMemberIds.size() != 0) {
 //            // Delete tasks of the deleting members
-//            mTaskRepository.deleteTasksOfMembers(requestValues.getId(), deletingMemberIds);
+//            mTaskRepository.deleteTasksOfMembers(requestValues.getTaskHeadId(), deletingMemberIds);
 //        }
 
         getUseCaseCallback().onSuccess(new ResponseValue());

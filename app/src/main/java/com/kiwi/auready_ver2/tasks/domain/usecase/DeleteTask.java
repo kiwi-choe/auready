@@ -20,7 +20,7 @@ public class DeleteTask extends UseCase<DeleteTask.RequestValues, DeleteTask.Res
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.deleteTask(values.getId());
+//        mTaskRepository.deleteTask(values.getTaskHeadId());
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

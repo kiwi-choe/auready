@@ -1,11 +1,5 @@
 package com.kiwi.auready_ver2.data.source;
 
-import android.support.annotation.NonNull;
-
-import com.kiwi.auready_ver2.data.Task;
-
-import java.util.List;
-
 /**
  * Main entry point for accessing tasks data.
  * <p>
@@ -16,29 +10,29 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
-    interface LoadTasksCallback {
-        void onTasksLoaded(List<Task> tasks);
-
-        void onDataNotAvailable();
-    }
-
-    interface DeleteTasksCallback {
-        void onDeleteSuccess();
-
-        void onDeleteFail();
-    }
+//    interface LoadTasksCallback {
+//        void onTasksLoaded(List<Task> tasks);
+//
+//        void onDataNotAvailable();
+//    }
+//
+//    interface DeleteTasksCallback {
+//        void onDeleteSuccess();
+//
+//        void onDeleteFail();
+//    }
 
     // Get tasks by taskHeadId and memberId
-    void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback);
+//    void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback);
     // Get tasks by taskHeadId
-    void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback);
+//    void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback);
 
-    void saveTask(@NonNull Task task);
+//    void saveTask(@NonNull Task task);
 
     // When delete a taskhead
-    void deleteTasks(@NonNull List<String> taskHeadIds);
+//    void deleteTasks(@NonNull List<String> taskHeadIds);
     // When delete a member of taskHeadDetail(update taskhead)
-    void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
+//    void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
 
-    void deleteTask(@NonNull String id);
+//    void deleteTask(@NonNull String id);
 }

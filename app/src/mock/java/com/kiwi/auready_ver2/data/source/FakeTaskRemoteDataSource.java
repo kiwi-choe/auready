@@ -32,35 +32,35 @@ public class FakeTaskRemoteDataSource implements TaskDataSource {
         return INSTANCE;
     }
 
-    @Override
-    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
-
-    }
-
-    @Override
-    public void deleteTasks(@NonNull List<String> taskHeadIds) {
-
-    }
-
-    @Override
-    public void deleteTask(@NonNull String id) {
-
-    }
-
-    @Override
-    public void getTasks(String taskHeadId, String memberId, @NonNull LoadTasksCallback callback) {
-
-    }
-
-    @Override
-    public void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback) {
-
-    }
-
-    @Override
-    public void saveTask(@NonNull Task task) {
-
-    }
+//    @Override
+//    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
+//
+//    }
+//
+//    @Override
+//    public void deleteTasks(@NonNull List<String> taskHeadIds) {
+//
+//    }
+//
+//    @Override
+//    public void deleteTask(@NonNull String id) {
+//
+//    }
+//
+//    @Override
+//    public void getTasks(String taskHeadId, String memberId, @NonNull LoadTasksCallback callback) {
+//
+//    }
+//
+//    @Override
+//    public void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback) {
+//
+//    }
+//
+//    @Override
+//    public void saveTask(@NonNull Task task) {
+//
+//    }
 
     @VisibleForTesting
     public void addTasks(@NonNull String taskHeadId, String memberId, List<Task> tasks) {

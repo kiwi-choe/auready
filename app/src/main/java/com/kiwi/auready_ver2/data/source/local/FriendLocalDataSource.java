@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -20,13 +21,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 7/5/16.
  */
-public class FriendLocalDataSource extends BaseDBAdapter
-        implements FriendDataSource {
+public class FriendLocalDataSource implements FriendDataSource {
 
     private static FriendLocalDataSource INSTANCE;
+    private SQLiteDBHelper mDbHelper;
+    private SQLiteDatabase mDb;
 
     private FriendLocalDataSource(@NonNull Context context) {
-        open(context);
+        mDbHelper = SQLiteDBHelper.getInstance(context);
     }
 
     public static FriendLocalDataSource getInstance(@NonNull Context context) {
@@ -38,19 +40,25 @@ public class FriendLocalDataSource extends BaseDBAdapter
 
     @Override
     public void deleteAllFriends() {
-        sDb.delete(FriendEntry.TABLE_NAME, null, null);
+        mDb = mDbHelper.getWritableDatabase();
+
+        mDb.delete(FriendEntry.TABLE_NAME, null, null);
     }
 
     @Override
     public void deleteFriend(@NonNull String id) {
+        mDb = mDbHelper.getWritableDatabase();
+
         String selection = FriendEntry.COLUMN_ID + " LIKE?";
         String[] selectionArgs = {id};
 
-        sDb.delete(FriendEntry.TABLE_NAME, selection, selectionArgs);
+        mDb.delete(FriendEntry.TABLE_NAME, selection, selectionArgs);
     }
 
     @Override
     public void getFriends(@NonNull LoadFriendsCallback callback) {
+        mDb = mDbHelper.getReadableDatabase();
+
         List<Friend> friends = new ArrayList<>();
 
         String[] projection = {
@@ -59,7 +67,7 @@ public class FriendLocalDataSource extends BaseDBAdapter
                 FriendEntry.COLUMN_NAME
         };
 
-        Cursor c = sDb.query(
+        Cursor c = mDb.query(
                 FriendEntry.TABLE_NAME, projection, null, null, null, null, null);
         if (c != null && c.getCount() > 0) {
             while(c.moveToNext()) {
@@ -89,6 +97,7 @@ public class FriendLocalDataSource extends BaseDBAdapter
         * */
     @Override
     public void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback callback) {
+        mDb = mDbHelper.getReadableDatabase();
 
         String[] projection = {
                 FriendEntry.COLUMN_ID,
@@ -99,7 +108,7 @@ public class FriendLocalDataSource extends BaseDBAdapter
         String selection = FriendEntry.COLUMN_ID + " LIKE?";
         String[] selectionArgs = {friendColumnId};
 
-        Cursor c = sDb.query(
+        Cursor c = mDb.query(
                 FriendEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
         Friend friend = null;
@@ -125,8 +134,9 @@ public class FriendLocalDataSource extends BaseDBAdapter
     @Override
     public void initFriend(@NonNull List<Friend> friends) {
         checkNotNull(friends);
+        mDb = mDbHelper.getWritableDatabase();
 
-        sDb.beginTransaction();
+        mDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
 
@@ -135,32 +145,34 @@ public class FriendLocalDataSource extends BaseDBAdapter
                 values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
                 values.put(FriendEntry.COLUMN_NAME, friend.getName());
 
-                sDb.insert(FriendEntry.TABLE_NAME, null, values);
+                mDb.insert(FriendEntry.TABLE_NAME, null, values);
             }
-            sDb.setTransactionSuccessful();
+            mDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new list to (" + FriendEntry.TABLE_NAME + " ). ", e);
         } finally {
-            sDb.endTransaction();
+            mDb.endTransaction();
         }
     }
 
     @Override
     public void saveFriend(@NonNull Friend friend) {
         checkNotNull(friend);
-        sDb.beginTransaction();
+        mDb = mDbHelper.getWritableDatabase();
+
+        mDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
             values.put(FriendEntry.COLUMN_ID, friend.getId());
             values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
             values.put(FriendEntry.COLUMN_NAME, friend.getName());
 
-            sDb.insert(FriendEntry.TABLE_NAME, null, values);
-            sDb.setTransactionSuccessful();
+            mDb.insert(FriendEntry.TABLE_NAME, null, values);
+            mDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new one to (" + FriendEntry.TABLE_NAME + "). ", e);
         } finally {
-            sDb.endTransaction();
+            mDb.endTransaction();
         }
     }
 }

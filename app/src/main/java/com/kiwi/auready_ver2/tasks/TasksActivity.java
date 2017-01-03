@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class TasksActivity extends AppCompatActivity {
@@ -44,7 +43,6 @@ public class TasksActivity extends AppCompatActivity {
                 Injection.provideUseCaseHandler(),
                 taskHeadId,
                 tasksFragment,
-                Injection.provideGetTaskHead(getApplicationContext()),
                 Injection.provideGetTasksOfMember(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTask(getApplicationContext()),

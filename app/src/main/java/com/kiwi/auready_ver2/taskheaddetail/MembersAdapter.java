@@ -8,21 +8,20 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.Member;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by kiwi on 12/19/16.
  */
 
-public class MembersAdapter extends ArrayAdapter<Friend> {
+public class MembersAdapter extends ArrayAdapter<Member> {
 
-    private List<Friend> mMembers;
+    private List<Member> mMembers;
 
-    public MembersAdapter(Context context, int resource, List<Friend> friends) {
-        super(context, resource, friends);
+    public MembersAdapter(Context context, int resource, List<Member> members) {
+        super(context, resource, members);
     }
 
     @Override
@@ -31,7 +30,7 @@ public class MembersAdapter extends ArrayAdapter<Friend> {
     }
 
     @Override
-    public Friend getItem(int position) {
+    public Member getItem(int position) {
         return super.getItem(position);
     }
 
@@ -47,7 +46,7 @@ public class MembersAdapter extends ArrayAdapter<Friend> {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             rowView = inflater.inflate(R.layout.member_item, parent, false);
         }
-        final Friend member = getItem(position);
+        final Member member = getItem(position);
 
         TextView memberNameTV = (TextView) rowView.findViewById(R.id.member_name);
         if (member != null) {

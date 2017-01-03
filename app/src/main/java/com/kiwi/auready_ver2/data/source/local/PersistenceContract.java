@@ -10,34 +10,38 @@ final class PersistenceContract {
     public PersistenceContract() {}
 
     /* TAG */
-    static abstract class DBExceptionTag {
+    static class DBExceptionTag {
         static final String TAG_SQLITE = "SQLiteException: ";
-
     }
     /* Inner class that defines the table contents */
-    static abstract class FriendEntry {
+    static class FriendEntry {
         static final String TABLE_NAME = "friend";
         static final String COLUMN_ID = "_id";
         static final String COLUMN_EMAIL = "email";
         static final String COLUMN_NAME = "name";
     }
 
-    static abstract class TaskHeadEntry {
+    static class MemberEntry {
+        static final String TABLE_NAME = "member";
+        static final String COLUMN_ID = "_id";
+        static final String COLUMN_HEAD_ID_FK = "taskheadid";
+        static final String COLUMN_FRIEND_ID_FK = "friendid";
+        static final String COLUMN_NAME = "name";
+    }
+
+    static class TaskHeadEntry {
         static final String TABLE_NAME = "taskhead";
         static final String COLUMN_ID = "_id";
         static final String COLUMN_TITLE = "title";
-        static final String COLUMN_MEMBERS = "members";
         static final String COLUMN_ORDER = "sequence";
     }
 
-    static abstract class TaskEntry {
+    static class TaskEntry {
         static final String TABLE_NAME = "task";
         static final String COLUMN_ID = "_id";
-        static final String COLUMN_HEAD_ID = "taskheadid";
-        static final String COLUMN_MEMBER_ID = "memberid";
+        static final String COLUMN_MEMBER_ID_FK = "memberid";
         static final String COLUMN_DESCRIPTION = "description";
         static final String COLUMN_COMPLETED = "completed";
         static final String COLUMN_ORDER = "sequence";
     }
-
 }

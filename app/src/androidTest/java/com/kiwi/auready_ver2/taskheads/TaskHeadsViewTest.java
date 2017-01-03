@@ -12,11 +12,10 @@ import android.widget.ListView;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
-import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -40,6 +39,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.kiwi.auready_ver2.StubbedData_forView.TASKHEADS;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 
@@ -52,17 +52,8 @@ public class TaskHeadsViewTest {
     private static final String TITLE1 = "Don't be hurry";
     private static final String TITLE2 = "just";
     private static final String TITLE3 = "keep going";
-    private static final List<Friend> MEMBERS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"),
-            new Friend("email3", "name3"));
     private static final String USER_NAME = "KIWIYA";
     private static final String USER_EMAIL = "KIWIYA@gmail.com";
-
-    /*
-    * {@link TaskHead} stub that is added to the fake service API layer.
-    * */
-    private static List<TaskHead> TASKHEADS = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS, 0),
-            new TaskHead(TITLE2, MEMBERS, 1), new TaskHead(TITLE3, MEMBERS, 2));
-
 
     private TaskHeadsActivity mActivity;
 
@@ -190,7 +181,7 @@ public class TaskHeadsViewTest {
         startActivityWithStubbedTasks(TASKHEADS);
     }
     private void loadATaskHead() {
-        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, MEMBERS, 0));
+        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, 0));
         startActivityWithStubbedTasks(taskheads);
     }
     private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {

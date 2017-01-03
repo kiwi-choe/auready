@@ -12,7 +12,6 @@ import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FakeTaskRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
-import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -25,9 +24,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.kiwi.auready_ver2.StubbedData_forView.TaskStub.MEMBERS;
-import static com.kiwi.auready_ver2.StubbedData_forView.TaskStub.TASKHEAD;
-import static com.kiwi.auready_ver2.StubbedData_forView.TaskStub.TASKS;
+import static com.kiwi.auready_ver2.StubbedData_forView.*;
 
 /**
  * Tasks view test

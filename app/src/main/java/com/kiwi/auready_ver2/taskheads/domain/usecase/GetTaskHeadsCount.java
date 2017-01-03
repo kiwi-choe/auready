@@ -22,9 +22,9 @@ public class GetTaskHeadsCount extends UseCase<GetTaskHeadsCount.RequestValues, 
     @Override
     protected void executeUseCase(RequestValues values) {
 
-        int taskHeadsCount = mTaskHeadRepository.getTaskHeadsCount();
-        ResponseValue responseValue = new ResponseValue(taskHeadsCount);
-        getUseCaseCallback().onSuccess(responseValue);
+//        int taskHeadsCount = mTaskHeadRepository.getTaskHeadsCount();
+//        ResponseValue responseValue = new ResponseValue(taskHeadsCount);
+//        getUseCaseCallback().onSuccess(responseValue);
     }
 
     public static class RequestValues implements UseCase.RequestValues { }

@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
@@ -25,7 +23,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final UseCaseHandler mUseCaseHandler;
     private final TasksContract.View mTasksView;
 
-    private final GetTaskHead mGetTaskHead;
     private final GetTasksOfMember mGetTasksOfMember;
     private final GetTasksOfTaskHead mGetTasksOfTaskHead;
     private final SaveTask mSaveTask;
@@ -42,7 +39,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
-                          @NonNull GetTaskHead getTaskHead,
                           @NonNull GetTasksOfMember getTasksOfMember,
                           @NonNull SaveTask saveTask,
                           @NonNull DeleteTask deleteTask,
@@ -51,7 +47,6 @@ public class TasksPresenter implements TasksContract.Presenter {
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
 
-        mGetTaskHead = checkNotNull(getTaskHead, "getTaskHead cannot be null");
         mGetTasksOfMember = checkNotNull(getTasksOfMember, "getTasksOfMember cannot be null");
         mSaveTask = checkNotNull(saveTask, "createTask cannot be null");
         mDeleteTask = checkNotNull(deleteTask, "deleteTask cannot be null");
@@ -72,24 +67,24 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void populateTaskHead() {
-        mUseCaseHandler.execute(mGetTaskHead, new GetTaskHead.RequestValues(mTaskHeadId),
-                new UseCase.UseCaseCallback<GetTaskHead.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(GetTaskHead.ResponseValue response) {
-                        TaskHead taskHead = response.getTaskHead();
-                        if (taskHead == null) {
-                            throw new RuntimeException("taskHead cannot be null");
-                        } else {
-                            showTaskHead(taskHead);
-                        }
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
+//        mUseCaseHandler.execute(mGetTaskHeadDetail, new GetTaskHeadDetail.RequestValues(mTaskHeadId),
+//                new UseCase.UseCaseCallback<GetTaskHeadDetail.ResponseValue>() {
+//
+//                    @Override
+//                    public void onSuccess(GetTaskHeadDetail.ResponseValue response) {
+//                        TaskHeadDetail taskHeadDetail = response.getTaskHeadDetail();
+//                        if (taskHeadDetail == null) {
+//                            throw new RuntimeException("taskHead cannot be null");
+//                        } else {
+////                            showTaskHead(taskHead);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
     }
 
     @Override
@@ -200,12 +195,12 @@ public class TasksPresenter implements TasksContract.Presenter {
         }
     }
 
-    private void showTaskHead(TaskHead taskHead) {
-
-        mTasksView.setTitle(taskHead.getTitle());
-
-        if(taskHead.getMembers() != null) {
-            mTasksView.setMembers(taskHead.getMembers());
-        }
-    }
+//    private void showTaskHead(TaskHead taskHead) {
+//
+//        mTasksView.setTitle(taskHead.getTitle());
+//
+//        if(taskHead.getMembers() != null) {
+//            mTasksView.setMembers(taskHead.getMembers());
+//        }
+//    }
 }

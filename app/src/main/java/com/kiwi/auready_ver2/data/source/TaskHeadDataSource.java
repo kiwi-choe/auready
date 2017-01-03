@@ -2,7 +2,6 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.List;
@@ -12,13 +11,13 @@ import java.util.List;
  */
 public interface TaskHeadDataSource {
 
-    int getTaskHeadsCount();   // for Local data source
-
-    void updateTaskHeadsOrder(List<TaskHead> taskHeads);
-
-    void editTaskHead(@NonNull String id, String title, List<Friend> members);
-
-    void addMembers(@NonNull String id, List<Friend> members);
+//    int getTaskHeadsCount();   // for Local data source
+//
+//    void updateTaskHeadsOrder(List<TaskHead> taskHeads);
+//
+//    void editTaskHead(@NonNull String id, String title, List<Friend> members);
+//
+//    void addMembers(@NonNull String id, List<Friend> members);
 
     interface LoadTaskHeadsCallback {
 
@@ -26,20 +25,12 @@ public interface TaskHeadDataSource {
 
         void onDataNotAvailable();
     }
-    interface GetTaskHeadCallback {
-
-        void onTaskHeadLoaded(TaskHead taskHead);
-
-        void onDataNotAvailable();
-    }
 
     void getTaskHeads(@NonNull LoadTaskHeadsCallback callback);
 
-    void getTaskHead(@NonNull String taskHeadId, @NonNull GetTaskHeadCallback callback);
-
     void saveTaskHead(@NonNull TaskHead taskHead);
 
-    void deleteTaskHeads(List<String> taskHeadIds);
+//    void deleteTaskHeads(List<String> taskHeadIds);
 
     void deleteAllTaskHeads();
 }

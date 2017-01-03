@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.data.source;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.TaskHead;
 
 import java.util.ArrayList;
@@ -36,58 +35,58 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mTaskHeadLocalDataSource = checkNotNull(taskHeadLocalDataSource);
     }
 
-    @Override
-    public int getTaskHeadsCount() {
-
-        if (mCachedTaskHeads != null) {
-            return mCachedTaskHeads.size();
-        }
-        return mTaskHeadLocalDataSource.getTaskHeadsCount();
-    }
-
-    @Override
-    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
-        mTaskHeadLocalDataSource.updateTaskHeadsOrder(taskHeads);
-
-        refreshCache(taskHeads);
-    }
-
-    @Override
-    public void editTaskHead(@NonNull String id, String title, List<Friend> members) {
-        checkNotNull(id);
-        mTaskHeadLocalDataSource.editTaskHead(id, title, members);
-
-        // Do in memory cache update to keep the app UI up to date
-        if (mCachedTaskHeads == null) {
-            mCachedTaskHeads = new LinkedHashMap<>();
-        }
-        TaskHead taskHead = mCachedTaskHeads.get(id);
-        TaskHead editedTaskHead = new TaskHead(id, title, members, taskHead.getOrder());
-        mCachedTaskHeads.put(id, editedTaskHead);
-    }
-
-    @Override
-    public void addMembers(@NonNull String id, List<Friend> members) {
-        mTaskHeadLocalDataSource.addMembers(id, members);
-
-        // Do in memory cache update to keep the app UI up to date
-        if (mCachedTaskHeads == null) {
-            mCachedTaskHeads = new LinkedHashMap<>();
-        }
-        TaskHead taskHead = mCachedTaskHeads.get(id);
-        TaskHead editedTaskHead = new TaskHead(id, taskHead.getTitle(), members, taskHead.getOrder());
-        mCachedTaskHeads.put(id, editedTaskHead);
-    }
-
-    @Override
-    public void deleteTaskHeads(List<String> taskHeadIds) {
-        mTaskHeadLocalDataSource.deleteTaskHeads(taskHeadIds);
-
-        for(String taskHeadId:taskHeadIds) {
-            mCachedTaskHeads.remove(taskHeadId);
-        }
-    }
-
+//    @Override
+//    public int getTaskHeadsCount() {
+//
+//        if (mCachedTaskHeads != null) {
+//            return mCachedTaskHeads.size();
+//        }
+//        return mTaskHeadLocalDataSource.getTaskHeadsCount();
+//    }
+//
+//    @Override
+//    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
+//        mTaskHeadLocalDataSource.updateTaskHeadsOrder(taskHeads);
+//
+//        refreshTaskHeadCache(taskHeads);
+//    }
+//
+//    @Override
+//    public void editTaskHead(@NonNull String id, String title, List<Friend> members) {
+//        checkNotNull(id);
+//        mTaskHeadLocalDataSource.editTaskHead(id, title, members);
+//
+//        // Do in memory cache update to keep the app UI up to date
+//        if (mCachedTaskHeads == null) {
+//            mCachedTaskHeads = new LinkedHashMap<>();
+//        }
+//        TaskHead taskHead = mCachedTaskHeads.get(id);
+//        TaskHead editedTaskHead = new TaskHead(id, title, members, taskHead.getOrder());
+//        mCachedTaskHeads.put(id, editedTaskHead);
+//    }
+//
+//    @Override
+//    public void addMembers(@NonNull String id, List<Friend> members) {
+//        mTaskHeadLocalDataSource.addMembers(id, members);
+//
+//        // Do in memory cache update to keep the app UI up to date
+//        if (mCachedTaskHeads == null) {
+//            mCachedTaskHeads = new LinkedHashMap<>();
+//        }
+//        TaskHead taskHead = mCachedTaskHeads.get(id);
+//        TaskHead editedTaskHead = new TaskHead(id, taskHead.getTitle(), members, taskHead.getOrder());
+//        mCachedTaskHeads.put(id, editedTaskHead);
+//    }
+//
+//    @Override
+//    public void deleteTaskHeads(List<String> taskHeadIds) {
+//        mTaskHeadLocalDataSource.deleteTaskHeads(taskHeadIds);
+//
+//        for(String taskHeadId:taskHeadIds) {
+//            mCachedTaskHeads.remove(taskHeadId);
+//        }
+//    }
+//
     @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
 
@@ -95,13 +94,12 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         // Respond immediately with cache if available
         if (mCachedTaskHeads != null) {
             callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
-            return;
         } else {
             // Query the local storage if available, if not, query the network.
             mTaskHeadLocalDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
                 @Override
                 public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                    refreshCache(taskHeads);
+                    refreshTaskHeadCache(taskHeads);
                     callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
                 }
 
@@ -113,40 +111,12 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         }
     }
 
+
     @Override
-    public void getTaskHead(@NonNull final String taskHeadId, @NonNull final GetTaskHeadCallback callback) {
-        checkNotNull(taskHeadId);
-        checkNotNull(callback);
+    public void saveTaskHead(@NonNull TaskHead taskHead) {
+        // Save a taskHead
 
-        TaskHead cachedTaskHead = getTaskHeadWithId(taskHeadId);
-        // Respond immediately with cache if available and not dirty
-//        if (cachedTaskHead != null) {
-//            callback.onTaskHeadLoaded(cachedTaskHead);
-//            return;
-//        }
-
-        // Is the taskhead in the local? if not, query the network.
-        mTaskHeadLocalDataSource.getTaskHead(taskHeadId, new GetTaskHeadCallback() {
-            @Override
-            public void onTaskHeadLoaded(TaskHead taskHead) {
-                callback.onTaskHeadLoaded(taskHead);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                mTaskHeadRemoteDataSource.getTaskHead(taskHeadId, new GetTaskHeadCallback() {
-                    @Override
-                    public void onTaskHeadLoaded(TaskHead taskHead) {
-                        callback.onTaskHeadLoaded(taskHead);
-                    }
-
-                    @Override
-                    public void onDataNotAvailable() {
-                        callback.onDataNotAvailable();
-                    }
-                });
-            }
-        });
+        // And save members of saving taskHead
     }
 
     @Nullable
@@ -170,25 +140,25 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mCachedTaskHeads.clear();
     }
 
-    @Override
-    public void saveTaskHead(@NonNull TaskHead taskHead) {
-        checkNotNull(taskHead);
-
-//        mTaskHeadRemoteDataSource.createTaskHead(taskHead);
-        mTaskHeadLocalDataSource.saveTaskHead(taskHead);
-
-        // Do in memory cache update to keep the app UI up to date
-        if (mCachedTaskHeads == null) {
-            mCachedTaskHeads = new LinkedHashMap<>();
-        }
-        mCachedTaskHeads.put(taskHead.getId(), taskHead);
-    }
-
+//    @Override
+//    public void saveTaskHead(@NonNull TaskHead taskHead) {
+//        checkNotNull(taskHead);
+//
+////        mTaskHeadRemoteDataSource.createTaskHeadDetail(taskHead);
+//        mTaskHeadLocalDataSource.saveTaskHead(taskHead);
+//
+//        // Do in memory cache update to keep the app UI up to date
+//        if (mCachedTaskHeads == null) {
+//            mCachedTaskHeads = new LinkedHashMap<>();
+//        }
+//        mCachedTaskHeads.put(taskHead.getTaskHeadId(), taskHead);
+//    }
+//
     private void getTaskHeadsFromRemoteDataSource(@NonNull final LoadTaskHeadsCallback callback) {
         mTaskHeadRemoteDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
             @Override
             public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                refreshCache(taskHeads);
+                refreshTaskHeadCache(taskHeads);
                 refreshLocalDataSource(taskHeads);
                 callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
             }
@@ -207,7 +177,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         }
     }
 
-    private void refreshCache(List<TaskHead> taskHeads) {
+    private void refreshTaskHeadCache(List<TaskHead> taskHeads) {
         if (mCachedTaskHeads == null) {
             mCachedTaskHeads = new LinkedHashMap<>();
         }
@@ -229,25 +199,26 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         INSTANCE = null;
     }
 
-    // Compare members of TaskHeadDetailView to members of cache
-    public List<String> getDeletingMemberIdsAfterComparingMembers(String taskHeadId, List<Friend> editedMembers) {
 
-        List<String> deletingMemberIds = new ArrayList<>(0);
-        // todo. If cache is null, compare with Local data
-        List<Friend> membersOfCache;
-        if (mCachedTaskHeads != null) {
-            TaskHead cacheTaskHead = mCachedTaskHeads.get(taskHeadId);
-            if (cacheTaskHead != null) {
-                membersOfCache = cacheTaskHead.getMembers();
-
-                for (Friend cacheMember : membersOfCache) {
-                    if(!editedMembers.contains(cacheMember)) {
-                        deletingMemberIds.add(cacheMember.getId());
-                    }
-                }
-            }
-        }
-
-        return deletingMemberIds;
-    }
+//    // Compare members of TaskHeadDetailView to members of cache
+//    public List<String> getDeletingMemberIdsAfterComparingMembers(String taskHeadId, List<Friend> editedMembers) {
+//
+//        List<String> deletingMemberIds = new ArrayList<>(0);
+//        // todo. If cache is null, compare with Local data
+//        List<Friend> membersOfCache;
+//        if (mCachedTaskHeads != null) {
+//            TaskHead cacheTaskHead = mCachedTaskHeads.get(taskHeadId);
+//            if (cacheTaskHead != null) {
+//                membersOfCache = cacheTaskHead.getMembers();
+//
+//                for (Friend cacheMember : membersOfCache) {
+//                    if(!editedMembers.contains(cacheMember)) {
+//                        deletingMemberIds.add(cacheMember.getTaskHeadId());
+//                    }
+//                }
+//            }
+//        }
+//
+//        return deletingMemberIds;
+//    }
 }

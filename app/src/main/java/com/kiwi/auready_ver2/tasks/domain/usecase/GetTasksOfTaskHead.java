@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import java.util.List;
@@ -26,19 +25,19 @@ public class GetTasksOfTaskHead extends UseCase<GetTasksOfTaskHead.RequestValues
     @Override
     protected void executeUseCase(final RequestValues values) {
 
-        mTaskRepository.getTasks(values.getTaskHeadId(), new TaskDataSource.LoadTasksCallback() {
-
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                ResponseValue responseValue = new ResponseValue(tasks);
-                getUseCaseCallback().onSuccess(responseValue);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getUseCaseCallback().onError();
-            }
-        });
+//        mTaskRepository.getTasks(values.getTaskHeadId(), new TaskDataSource.LoadTasksCallback() {
+//
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+//                ResponseValue responseValue = new ResponseValue(tasks);
+//                getUseCaseCallback().onSuccess(responseValue);
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                getUseCaseCallback().onError();
+//            }
+//        });
 
     }
 

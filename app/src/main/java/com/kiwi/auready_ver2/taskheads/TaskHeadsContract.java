@@ -38,6 +38,6 @@ public interface TaskHeadsContract {
 
         void deleteTaskHeads(List<TaskHead> taskheads);
 
-        void updateOrders(List<TaskHead> taskheads);
+//        void updateOrders(List<TaskHead> taskheads);
     }
 }

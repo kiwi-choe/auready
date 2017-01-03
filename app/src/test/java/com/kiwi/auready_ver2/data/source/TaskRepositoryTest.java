@@ -1,32 +1,9 @@
 package com.kiwi.auready_ver2.data.source;
 
-import com.google.common.collect.Lists;
-import com.kiwi.auready_ver2.data.Task;
-import com.kiwi.auready_ver2.data.TaskHead;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
-import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
-import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for the implementation of the in-memory repository with cache.
@@ -43,13 +20,13 @@ public class TaskRepositoryTest {
     private TaskDataSource mTaskLocalDataSource;
     @Mock
     private TaskDataSource mTaskRemoteDataSource;
-    @Mock
-    private TaskDataSource.LoadTasksCallback mLoadTasksCallback;
-    @Mock
-    private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
+//    @Mock
+//    private TaskDataSource.LoadTasksCallback mLoadTasksCallback;
+//    @Mock
+//    private TaskDataSource.DeleteTasksCallback mDeleteTasksCallback;
 
-    @Captor
-    private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
+//    @Captor
+//    private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
 
     @Before
     public void setup() {
@@ -59,220 +36,220 @@ public class TaskRepositoryTest {
                 mTaskRemoteDataSource, mTaskLocalDataSource);
     }
 
-    @Test
-    public void saveTask_savesTaskToServiceApi() {
-        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
-        mTaskRepository.saveTask(newTask);
-
-        // Then the service API are called and cache is updated.
-        verify(mTaskRemoteDataSource).saveTask(eq(newTask));
-
-        assertThat(mTaskRepository.mCachedTasksById.size(), is(1));
-    }
-
-    @Test
-    public void saveTask_ToLocalDataSource() {
-        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
-        mTaskRepository.saveTask(newTask);
-
-        verify(mTaskLocalDataSource).saveTask(eq(newTask));
-        assertThat(mTaskRepository.mCachedTasksById.size(), is(1));
-    }
-
-    @Test
-    public void saveTask_checkOrderIsCorrect() {
-        // Given 1 stub task
-        int initial_order = 0;
-        Task task1 = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, initial_order);
-        mTaskRepository.saveTask(task1);
-
-        // Create new task
-        // get the size of tasks
-        int order = mTaskRepository.mCachedTasksByTaskMapKey.get(new TaskMapKey(TASKHEAD_ID, MEMBER_ID)).size();
-        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, "new description", order);
-        mTaskRepository.saveTask(newTask);
-
-        assertThat(mTaskRepository.mCachedTasksById.size(), is(2));
-        assertTrue(mTaskRepository.mCachedTasksById.get(newTask.getId()).getOrder() == newTask.getOrder());
-    }
-
-    @Test
-    public void deleteTask_deleteTaskToLocalAndRemote() {
-        // Save task
-        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
-        mTaskRepository.saveTask(newTask);
-        assertThat(mTaskRepository.mCachedTasksById.containsKey(newTask.getId()), is(true));
-
-        // Delete the task
-        mTaskRepository.deleteTask(newTask.getId());
-        // Verify the data sources were called
-        verify(mTaskRemoteDataSource).deleteTask(newTask.getId());
-        verify(mTaskLocalDataSource).deleteTask(newTask.getId());
-        // Verify cache is removed
-        assertThat(mTaskRepository.mCachedTasksById.containsKey(newTask.getId()), is(false));
-    }
-
-    @Test
-    public void deleteTasks_byTaskHeadIds_fromCache() {
-        // save tasks of taskhead1 and taskhead2
-        TaskHead TASKHEAD2 = new TaskHead("title2", MEMBERS, 1);
-        List<Task> TASKS2 = Lists.newArrayList(
-                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description", 0),
-                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
-                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
-        saveStubbedTasks(TASKS);
-        saveStubbedTasks(TASKS2);
-
-        // Delete a taskHead with taskHeadId of TASKS
-        List<String> taskHeadIds = new ArrayList<>();
-        taskHeadIds.add(TASKS.get(0).getTaskHeadId());
-
-        mTaskRepository.deleteTasks(taskHeadIds);
-
-        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(TASKS.get(0).getTaskHeadId()), is(false));
-        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(TASKS2.get(0).getTaskHeadId()), is(true));
-    }
-
-    @Test
-    public void deleteTasks_fromLocal_andRetrieveTasks() {
-        // save tasks of taskhead1 and taskhead2
-        final TaskHead TASKHEAD2 = new TaskHead("title2", MEMBERS, 1);
-        List<Task> TASKS2 = Lists.newArrayList(
-                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description", 0),
-                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
-                new Task(TASKHEAD2.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
-        saveStubbedTasks(TASKS);
-        saveStubbedTasks(TASKS2);
-
-        // Delete tasks of TASKHEAD
-        List<String> taskHeadIds = new ArrayList<>();
-        taskHeadIds.add(TASKS.get(0).getTaskHeadId());
-
-        mTaskRepository.deleteTasks(taskHeadIds);
-        verify(mTaskLocalDataSource).deleteTasks(taskHeadIds);
-
-        // Verify that there is only TASKS2 of TASKHEAD2
-        String taskHeadIdOfExistTasks = TASKHEAD.getId();
-        mTaskRepository.getTasks(taskHeadIdOfExistTasks, new TaskDataSource.LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                fail();
-//                assertThat(tasks.get(0).getTaskHeadId(), is(TASKHEAD2.getId()));
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                fail();
-            }
-        });
-    }
-
-    @Test
-    public void deleteTasks_OfMember() {
-        saveStubbedTasks(TASKS);
-
-        String taskHeadId = TASKS.get(0).getTaskHeadId();
-        String memberId = TASKS.get(0).getMemberId();
-        mTaskRepository.deleteTasks(taskHeadId, memberId);
-        verify(mTaskLocalDataSource).deleteTasks(taskHeadId, memberId);
-
-        assertThat(mTaskRepository.mCachedTasksByTaskMapKey.containsKey(
-                new TaskMapKey(taskHeadId, memberId)), is(false));
-    }
-
-    @Test
-    public void getTasksOfMember_fromLocal() {
-        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
-
-        setTasksAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource, TASKS);
-
-        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
-    }
-
-    @Test
-    public void getTasksOfMember_fromRemote() {
-        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
-
-        // Local source has no data available,
-        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource);
-        // and call to Remote has data available
-        setTasksAvailable(TASKHEAD_ID, MEMBER_ID, mTaskRemoteDataSource, TASKS);
-
-        // Verify the tasks from Remote are returned, not Local
-        verify(mTaskLocalDataSource, never()).
-                getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
-        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
-    }
-
-    @Test
-    public void getTasks_refreshesLocal() {
-        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
-
-        // Make Local cannot return data
-        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource);
-        // Make Remote return data
-        setTasksAvailable(TASKHEAD_ID, MEMBER_ID, mTaskRemoteDataSource, TASKS);
-
-        // Verify that data fetched from Remote was saved in Local
-        verify(mTaskLocalDataSource, times(TASKS.size())).saveTask(any(Task.class));
-    }
-
-    @Test
-    public void getTasksOfTaskHead_fromLocal() {
-        mTaskRepository.getTasks(TASKHEAD_ID, mLoadTasksCallback);
-
-        // Set tasks available from local
-        verify(mTaskLocalDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
-
-        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
-    }
-
-    @Test
-    public void getTasksOfTaskHead_fromRemote() {
-        mTaskRepository.getTasks(TASKHEAD_ID, mLoadTasksCallback);
-
-        // Local has no data available,
-        verify(mTaskLocalDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
-        // and call to Remote has data available
-        verify(mTaskRemoteDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
-
-        // Verify the tasks from Remote are returned, not local
-        verify(mTaskLocalDataSource, never()).getTasks(TASKHEAD_ID, mLoadTasksCallback);
-        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
-    }
-
-    @Test
-    public void getTaskWithBothDataSourceUnavailable_firesOnDataUnavailable() {
-        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
-
-        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource);
-        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskRemoteDataSource);
-
-        verify(mLoadTasksCallback).onDataNotAvailable();
-    }
-
-    /*
-    * convenience methods
-    * */
-    private void setTasksAvailable(String taskHeadId, String memberId, TaskDataSource dataSource, List<Task> tasks) {
-        verify(dataSource).getTasks(eq(taskHeadId), eq(memberId), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(tasks);
-    }
-
-    private void setTasksNotAvailable(String taskHeadId, String memberId, TaskDataSource dataSource) {
-        verify(dataSource).getTasks(eq(taskHeadId), eq(memberId), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
-    }
-
-    private void saveStubbedTasks(List<Task> tasks) {
-        mTaskRepository.saveTask(tasks.get(0));
-        mTaskRepository.saveTask(tasks.get(1));
-        mTaskRepository.saveTask(tasks.get(2));
-    }
-
+//    @Test
+//    public void saveTask_savesTaskToServiceApi() {
+//        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
+//        mTaskRepository.saveTask(newTask);
+//
+//        // Then the service API are called and cache is updated.
+//        verify(mTaskRemoteDataSource).saveTask(eq(newTask));
+//
+//        assertThat(mTaskRepository.mCachedTasksById.size(), is(1));
+//    }
+//
+//    @Test
+//    public void saveTask_ToLocalDataSource() {
+//        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
+//        mTaskRepository.saveTask(newTask);
+//
+//        verify(mTaskLocalDataSource).saveTask(eq(newTask));
+//        assertThat(mTaskRepository.mCachedTasksById.size(), is(1));
+//    }
+//
+//    @Test
+//    public void saveTask_checkOrderIsCorrect() {
+//        // Given 1 stub task
+//        int initial_order = 0;
+//        Task task1 = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, initial_order);
+//        mTaskRepository.saveTask(task1);
+//
+//        // Create new task
+//        // get the size of tasks
+//        int order = mTaskRepository.mCachedTasksByTaskMapKey.get(new TaskMapKey(TASKHEAD_ID, MEMBER_ID)).size();
+//        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, "new description", order);
+//        mTaskRepository.saveTask(newTask);
+//
+//        assertThat(mTaskRepository.mCachedTasksById.size(), is(2));
+//        assertTrue(mTaskRepository.mCachedTasksById.get(newTask.getTaskHeadId()).getOrder() == newTask.getOrder());
+//    }
+//
+//    @Test
+//    public void deleteTask_deleteTaskToLocalAndRemote() {
+//        // Save task
+//        Task newTask = new Task(TASKHEAD_ID, MEMBER_ID, DESCRIPTION, 0);
+//        mTaskRepository.saveTask(newTask);
+//        assertThat(mTaskRepository.mCachedTasksById.containsKey(newTask.getTaskHeadId()), is(true));
+//
+//        // Delete the task
+//        mTaskRepository.deleteTask(newTask.getTaskHeadId());
+//        // Verify the data sources were called
+//        verify(mTaskRemoteDataSource).deleteTask(newTask.getTaskHeadId());
+//        verify(mTaskLocalDataSource).deleteTask(newTask.getTaskHeadId());
+//        // Verify cache is removed
+//        assertThat(mTaskRepository.mCachedTasksById.containsKey(newTask.getTaskHeadId()), is(false));
+//    }
+//
+//    @Test
+//    public void deleteTasks_byTaskHeadIds_fromCache() {
+//        // save tasks of taskhead1 and taskhead2
+//        TaskHead TASKHEAD2 = new TaskHead("title2", MEMBERS, 1);
+//        List<Task> TASKS2 = Lists.newArrayList(
+//                new Task(TASKHEAD2.getTaskHeadId(), MEMBERS.get(0).getTaskHeadId(), "description", 0),
+//                new Task(TASKHEAD2.getTaskHeadId(), MEMBERS.get(0).getTaskHeadId(), "description2", true, 0),
+//                new Task(TASKHEAD2.getTaskHeadId(), MEMBERS.get(0).getTaskHeadId(), "description3", true, 0));
+//        saveStubbedTasks(TASKS);
+//        saveStubbedTasks(TASKS2);
+//
+//        // Delete a taskHead with taskHeadId of TASKS
+//        List<String> taskHeadIds = new ArrayList<>();
+//        taskHeadIds.add(TASKS.get(0).getTaskHeadId());
+//
+//        mTaskRepository.deleteTasks(taskHeadIds);
+//
+//        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(TASKS.get(0).getTaskHeadId()), is(false));
+//        assertThat(mTaskRepository.mCachedTasksByTaskHeadId.containsKey(TASKS2.get(0).getTaskHeadId()), is(true));
+//    }
+//
+//    @Test
+//    public void deleteTasks_fromLocal_andRetrieveTasks() {
+//        // save tasks of taskhead1 and taskhead2
+//        final TaskHead TASKHEAD2 = new TaskHead("title2", MEMBERS, 1);
+//        List<Task> TASKS2 = Lists.newArrayList(
+//                new Task(TASKHEAD2.getTaskHeadId(), MEMBERS.get(0).getTaskHeadId(), "description", 0),
+//                new Task(TASKHEAD2.getTaskHeadId(), MEMBERS.get(0).getTaskHeadId(), "description2", true, 0),
+//                new Task(TASKHEAD2.getTaskHeadId(), MEMBERS.get(0).getTaskHeadId(), "description3", true, 0));
+//        saveStubbedTasks(TASKS);
+//        saveStubbedTasks(TASKS2);
+//
+//        // Delete tasks of TASKHEAD
+//        List<String> taskHeadIds = new ArrayList<>();
+//        taskHeadIds.add(TASKS.get(0).getTaskHeadId());
+//
+//        mTaskRepository.deleteTasks(taskHeadIds);
+//        verify(mTaskLocalDataSource).deleteTasks(taskHeadIds);
+//
+//        // Verify that there is only TASKS2 of TASKHEAD2
+//        String taskHeadIdOfExistTasks = TASKHEAD.getTaskHeadId();
+//        mTaskRepository.getTasks(taskHeadIdOfExistTasks, new TaskDataSource.LoadTasksCallback() {
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+//                fail();
+////                assertThat(tasks.get(0).getTaskHeadId(), is(TASKHEAD2.getTaskHeadId()));
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                fail();
+//            }
+//        });
+//    }
+//
+//    @Test
+//    public void deleteTasks_OfMember() {
+//        saveStubbedTasks(TASKS);
+//
+//        String taskHeadId = TASKS.get(0).getTaskHeadId();
+//        String memberId = TASKS.get(0).getMemberId();
+//        mTaskRepository.deleteTasks(taskHeadId, memberId);
+//        verify(mTaskLocalDataSource).deleteTasks(taskHeadId, memberId);
+//
+//        assertThat(mTaskRepository.mCachedTasksByTaskMapKey.containsKey(
+//                new TaskMapKey(taskHeadId, memberId)), is(false));
+//    }
+//
+//    @Test
+//    public void getTasksOfMember_fromLocal() {
+//        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
+//
+//        setTasksAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource, TASKS);
+//
+//        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
+//    }
+//
+//    @Test
+//    public void getTasksOfMember_fromRemote() {
+//        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
+//
+//        // Local source has no data available,
+//        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource);
+//        // and call to Remote has data available
+//        setTasksAvailable(TASKHEAD_ID, MEMBER_ID, mTaskRemoteDataSource, TASKS);
+//
+//        // Verify the tasks from Remote are returned, not Local
+//        verify(mTaskLocalDataSource, never()).
+//                getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
+//        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
+//    }
+//
+//    @Test
+//    public void getTasks_refreshesLocal() {
+//        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
+//
+//        // Make Local cannot return data
+//        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource);
+//        // Make Remote return data
+//        setTasksAvailable(TASKHEAD_ID, MEMBER_ID, mTaskRemoteDataSource, TASKS);
+//
+//        // Verify that data fetched from Remote was saved in Local
+//        verify(mTaskLocalDataSource, times(TASKS.size())).saveTask(any(Task.class));
+//    }
+//
+//    @Test
+//    public void getTasksOfTaskHead_fromLocal() {
+//        mTaskRepository.getTasks(TASKHEAD_ID, mLoadTasksCallback);
+//
+//        // Set tasks available from local
+//        verify(mTaskLocalDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+//        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+//
+//        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
+//    }
+//
+//    @Test
+//    public void getTasksOfTaskHead_fromRemote() {
+//        mTaskRepository.getTasks(TASKHEAD_ID, mLoadTasksCallback);
+//
+//        // Local has no data available,
+//        verify(mTaskLocalDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+//        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
+//        // and call to Remote has data available
+//        verify(mTaskRemoteDataSource).getTasks(eq(TASKHEAD_ID), mLoadTasksCallbackCaptor.capture());
+//        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+//
+//        // Verify the tasks from Remote are returned, not local
+//        verify(mTaskLocalDataSource, never()).getTasks(TASKHEAD_ID, mLoadTasksCallback);
+//        verify(mLoadTasksCallback).onTasksLoaded(TASKS);
+//    }
+//
+//    @Test
+//    public void getTaskWithBothDataSourceUnavailable_firesOnDataUnavailable() {
+//        mTaskRepository.getTasks(TASKHEAD_ID, MEMBER_ID, mLoadTasksCallback);
+//
+//        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskLocalDataSource);
+//        setTasksNotAvailable(TASKHEAD_ID, MEMBER_ID, mTaskRemoteDataSource);
+//
+//        verify(mLoadTasksCallback).onDataNotAvailable();
+//    }
+//
+//    /*
+//    * convenience methods
+//    * */
+//    private void setTasksAvailable(String taskHeadId, String memberId, TaskDataSource dataSource, List<Task> tasks) {
+//        verify(dataSource).getTasks(eq(taskHeadId), eq(memberId), mLoadTasksCallbackCaptor.capture());
+//        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(tasks);
+//    }
+//
+//    private void setTasksNotAvailable(String taskHeadId, String memberId, TaskDataSource dataSource) {
+//        verify(dataSource).getTasks(eq(taskHeadId), eq(memberId), mLoadTasksCallbackCaptor.capture());
+//        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
+//    }
+//
+//    private void saveStubbedTasks(List<Task> tasks) {
+//        mTaskRepository.saveTask(tasks.get(0));
+//        mTaskRepository.saveTask(tasks.get(1));
+//        mTaskRepository.saveTask(tasks.get(2));
+//    }
+//
     @After
     public void destroyRepositoryInstance() {
         TaskRepository.destroyInstance();

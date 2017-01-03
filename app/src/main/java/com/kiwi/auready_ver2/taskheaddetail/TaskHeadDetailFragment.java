@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 
@@ -53,7 +54,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     private EditText mTitle;
     private MembersAdapter mMemberListAdapter;
-    private List<Friend> mMembers;
+    private List<Member> mMembers;
     private ActionModeCallback mActionModeCallBack;
     private ActionMode mActionMode;
 
@@ -151,13 +152,13 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.createTaskHead(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
+//                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
             }
         });
         mDoneBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.editTaskHead(mTitle.getText().toString(), mMembers);
+//                mPresenter.editTaskHead(mTitle.getText().toString(), mMembers);
             }
         });
     }
@@ -168,14 +169,14 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void setMembers(List<Friend> members) {
+    public void setMembers(List<Member> members) {
         mMembers.clear();
         mMembers.addAll(members);
         mMemberListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void showAddedTaskHead(String taskHeadId) {
+    public void showAddedTaskHead(String taskHeadId, String title) {
         Intent intent = getActivity().getIntent();
         intent.putExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID, taskHeadId);
         sendResult(Activity.RESULT_OK, intent);
@@ -204,7 +205,8 @@ public class TaskHeadDetailFragment extends Fragment implements
         String myEmail = accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "");
         String myName = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
 
-        Friend me = new Friend(myIdOfFriend, myEmail, myName);
+        Friend meOfFriend = new Friend(myIdOfFriend, myEmail, myName);
+        Member me = new Member(mTaskHeadId, meOfFriend.getId(), meOfFriend.getName());
         mMembers.add(0, me);
     }
 
@@ -232,8 +234,8 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void addMembers(ArrayList<Friend> friends) {
-        mMembers.addAll(friends);
+    public void addMembers(ArrayList<Member> members) {
+        mMembers.addAll(members);
         mMemberListAdapter.notifyDataSetChanged();
     }
 

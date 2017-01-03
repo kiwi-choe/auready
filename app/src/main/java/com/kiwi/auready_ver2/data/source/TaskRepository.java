@@ -1,12 +1,9 @@
 package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Task;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -50,145 +47,145 @@ public class TaskRepository implements TaskDataSource {
     }
 
 
-    @Override
-    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
-        mTaskLocalDataSource.deleteTasks(taskHeadId, memberId);
-
-        mCachedTasksByTaskMapKey.remove(new TaskMapKey(taskHeadId, memberId));
-    }
-
-    @Override
-    public void deleteTasks(@NonNull List<String> taskHeadIds) {
-        checkNotNull(taskHeadIds);
-        mTaskLocalDataSource.deleteTasks(taskHeadIds);
-
-        if(mCachedTasksByTaskHeadId != null) {
-            for(String taskHeadId:taskHeadIds) {
-                mCachedTasksByTaskHeadId.remove(taskHeadId);
-            }
-        }
-    }
-
-    @Override
-    public void deleteTask(@NonNull String id) {
-        mTaskRemoteDataSource.deleteTask(id);
-        mTaskLocalDataSource.deleteTask(id);
-
-        // cache
-        mCachedTasksById.remove(id);
-    }
-
-    /*
-    * Gets tasks from local data source by taskHeadId and memberId
-    * unless the table is new or empty. In that case it uses the network data source.
-    * This is done to simplify the sample.
-    * */
-    @Override
-    public void getTasks(@NonNull final String taskHeadId, @NonNull final String memberId, @NonNull final LoadTasksCallback callback) {
-        checkNotNull(taskHeadId);
-        checkNotNull(memberId);
-
-        // Is the taskhead in the local? if not, query the network.
-        mTaskLocalDataSource.getTasks(taskHeadId, memberId, new LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                callback.onTasksLoaded(tasks);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getTasksFromRemote(taskHeadId, memberId, callback);
-
-            }
-        });
-    }
-
-    @Override
-    public void getTasks(@NonNull final String taskHeadId, @NonNull final LoadTasksCallback callback) {
-        checkNotNull(taskHeadId);
-
-        mTaskLocalDataSource.getTasks(taskHeadId, new LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                callback.onTasksLoaded(tasks);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getTasksFromRemote(taskHeadId, callback);
-            }
-        });
-    }
-
-    private void getTasksFromRemote(final String taskHeadId, final LoadTasksCallback callback) {
-        mTaskRemoteDataSource.getTasks(taskHeadId, new LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-//                refreshLocalDataSource(taskHeadId, tasks);
-                callback.onTasksLoaded(tasks);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
-            }
-        });
-    }
-
-    private void getTasksFromRemote(final String taskHeadId, final String memberId, final LoadTasksCallback callback) {
-        mTaskRemoteDataSource.getTasks(taskHeadId, memberId, new LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                refreshLocalDataSource(taskHeadId, memberId, tasks);
-                callback.onTasksLoaded(tasks);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
-            }
-        });
-    }
-
-    private void refreshLocalDataSource(String taskHeadId, String memberId, List<Task> tasks) {
-        mTaskLocalDataSource.deleteTasks(taskHeadId, memberId);
-        for (Task task : tasks) {
-            mTaskLocalDataSource.saveTask(task);
-        }
-    }
-
-    @Override
-    public void saveTask(@NonNull Task task) {
-        checkNotNull(task);
-        mTaskRemoteDataSource.saveTask(task);
-        mTaskLocalDataSource.saveTask(task);
-
-        // Save to cache
-        if (mCachedTasksById == null) {
-            mCachedTasksById = new LinkedHashMap<>();
-        }
-        mCachedTasksById.put(task.getId(), task);
-
-        if (mCachedTasksByTaskMapKey == null) {
-            mCachedTasksByTaskMapKey = new LinkedHashMap<>();
-        }
-        List<Task> tasks = mCachedTasksByTaskMapKey.get(new TaskMapKey(task.getTaskHeadId(), task.getMemberId()));
-        if (tasks == null) {
-            tasks = new ArrayList<>();
-        }
-        tasks.add(task);
-        mCachedTasksByTaskMapKey.put(new TaskMapKey(task.getTaskHeadId(), task.getMemberId()), tasks);
-
-        if (mCachedTasksByTaskHeadId == null) {
-            mCachedTasksByTaskHeadId = new LinkedHashMap<>();
-        }
-        List<Task> tasksOfTaskHead = mCachedTasksByTaskHeadId.get(task.getTaskHeadId());
-        if (tasksOfTaskHead == null) {
-            tasksOfTaskHead = new ArrayList<>();
-        }
-        tasksOfTaskHead.add(task);
-        mCachedTasksByTaskHeadId.put(task.getTaskHeadId(), tasks);
-    }
+//    @Override
+//    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
+//        mTaskLocalDataSource.deleteTasks(taskHeadId, memberId);
+//
+//        mCachedTasksByTaskMapKey.remove(new TaskMapKey(taskHeadId, memberId));
+//    }
+//
+//    @Override
+//    public void deleteTasks(@NonNull List<String> taskHeadIds) {
+//        checkNotNull(taskHeadIds);
+//        mTaskLocalDataSource.deleteTasks(taskHeadIds);
+//
+//        if(mCachedTasksByTaskHeadId != null) {
+//            for(String taskHeadId:taskHeadIds) {
+//                mCachedTasksByTaskHeadId.remove(taskHeadId);
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void deleteTask(@NonNull String id) {
+//        mTaskRemoteDataSource.deleteTask(id);
+//        mTaskLocalDataSource.deleteTask(id);
+//
+//        // cache
+//        mCachedTasksById.remove(id);
+//    }
+//
+//    /*
+//    * Gets tasks from local data source by taskHeadId and memberId
+//    * unless the table is new or empty. In that case it uses the network data source.
+//    * This is done to simplify the sample.
+//    * */
+//    @Override
+//    public void getTasks(@NonNull final String taskHeadId, @NonNull final String memberId, @NonNull final LoadTasksCallback callback) {
+//        checkNotNull(taskHeadId);
+//        checkNotNull(memberId);
+//
+//        // Is the taskhead in the local? if not, query the network.
+//        mTaskLocalDataSource.getTasks(taskHeadId, memberId, new LoadTasksCallback() {
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+//                callback.onTasksLoaded(tasks);
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                getTasksFromRemote(taskHeadId, memberId, callback);
+//
+//            }
+//        });
+//    }
+//
+//    @Override
+//    public void getTasks(@NonNull final String taskHeadId, @NonNull final LoadTasksCallback callback) {
+//        checkNotNull(taskHeadId);
+//
+//        mTaskLocalDataSource.getTasks(taskHeadId, new LoadTasksCallback() {
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+//                callback.onTasksLoaded(tasks);
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                getTasksFromRemote(taskHeadId, callback);
+//            }
+//        });
+//    }
+//
+//    private void getTasksFromRemote(final String taskHeadId, final LoadTasksCallback callback) {
+//        mTaskRemoteDataSource.getTasks(taskHeadId, new LoadTasksCallback() {
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+////                refreshLocalDataSource(taskHeadId, tasks);
+//                callback.onTasksLoaded(tasks);
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                callback.onDataNotAvailable();
+//            }
+//        });
+//    }
+//
+//    private void getTasksFromRemote(final String taskHeadId, final String memberId, final LoadTasksCallback callback) {
+//        mTaskRemoteDataSource.getTasks(taskHeadId, memberId, new LoadTasksCallback() {
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+//                refreshLocalDataSource(taskHeadId, memberId, tasks);
+//                callback.onTasksLoaded(tasks);
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                callback.onDataNotAvailable();
+//            }
+//        });
+//    }
+//
+//    private void refreshLocalDataSource(String taskHeadId, String memberId, List<Task> tasks) {
+//        mTaskLocalDataSource.deleteTasks(taskHeadId, memberId);
+//        for (Task task : tasks) {
+//            mTaskLocalDataSource.saveTask(task);
+//        }
+//    }
+//
+//    @Override
+//    public void saveTask(@NonNull Task task) {
+//        checkNotNull(task);
+//        mTaskRemoteDataSource.saveTask(task);
+//        mTaskLocalDataSource.saveTask(task);
+//
+//        // Save to cache
+//        if (mCachedTasksById == null) {
+//            mCachedTasksById = new LinkedHashMap<>();
+//        }
+//        mCachedTasksById.put(task.getTaskHeadId(), task);
+//
+//        if (mCachedTasksByTaskMapKey == null) {
+//            mCachedTasksByTaskMapKey = new LinkedHashMap<>();
+//        }
+//        List<Task> tasks = mCachedTasksByTaskMapKey.get(new TaskMapKey(task.getTaskHeadId(), task.getMemberId()));
+//        if (tasks == null) {
+//            tasks = new ArrayList<>();
+//        }
+//        tasks.add(task);
+//        mCachedTasksByTaskMapKey.put(new TaskMapKey(task.getTaskHeadId(), task.getMemberId()), tasks);
+//
+//        if (mCachedTasksByTaskHeadId == null) {
+//            mCachedTasksByTaskHeadId = new LinkedHashMap<>();
+//        }
+//        List<Task> tasksOfTaskHead = mCachedTasksByTaskHeadId.get(task.getTaskHeadId());
+//        if (tasksOfTaskHead == null) {
+//            tasksOfTaskHead = new ArrayList<>();
+//        }
+//        tasksOfTaskHead.add(task);
+//        mCachedTasksByTaskHeadId.put(task.getTaskHeadId(), tasks);
+//    }
 
 
     public static TaskRepository getInstance(TaskDataSource taskRemoteDataSource,

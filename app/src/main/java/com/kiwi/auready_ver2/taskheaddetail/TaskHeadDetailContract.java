@@ -4,7 +4,7 @@ import android.content.Intent;
 
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
-import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.Member;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +18,9 @@ public interface TaskHeadDetailContract {
 
         void setTitle(String title);
 
-        void setMembers(List<Friend> members);
+        void setMembers(List<Member> members);
 
-        void showAddedTaskHead(String taskHeadId);
+        void showAddedTaskHead(String taskHeadId, String title);
 
         void showEmptyTaskHeadError();
 
@@ -34,17 +34,17 @@ public interface TaskHeadDetailContract {
 
         void showSaveError();
 
-        void addMembers(ArrayList<Friend> friends);
+        void addMembers(ArrayList<Member> members);
     }
 
     interface Presenter extends BasePresenter {
 
-        void createTaskHead(String title, List<Friend> members, int order);
+        void createTaskHeadDetail(String title, List<Member> members, int order);
 
-        void editTaskHead(String title, List<Friend> members);
+//        void editTaskHead(String title, List<Friend> members);
 
         // Get TaskHead if exists the taskHeadId
-        void populateTaskHead();
+        void populateTaskHeadDetail();
 
         void result(int requestCode, int resultCode, Intent data);
     }
