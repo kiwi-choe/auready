@@ -61,7 +61,7 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
 
         // and save members of taskHeadId
         List<Member> members = taskHeadDetail.getMembers();
-        for(Member member:members) {
+        for (Member member : members) {
             values = new ContentValues();
             values.put(MemberEntry.COLUMN_ID, member.getId());
             values.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
@@ -70,7 +70,7 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
             isSuccess = mDbHelper.insert(MemberEntry.TABLE_NAME, null, values);
         }
 
-        if(isSuccess != SQLiteDBHelper.INSERT_ERROR) {
+        if (isSuccess != SQLiteDBHelper.INSERT_ERROR) {
             callback.onSaveSuccess();
         } else {
             callback.onSaveFailed();
@@ -82,35 +82,31 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
 
         // Get 2 objects - get a TaskHead and get Members
         // Get a taskHead
-        String selection = TaskHeadEntry.COLUMN_ID + " LIKE ?";
-        String[] selectionArgs = {taskHeadId};
+        String sql = String.format(
+                "SELECT * FROM %s, %s WHERE %s.%s = %s.%s AND %s.%s = %s",
+                TaskHeadEntry.TABLE_NAME, MemberEntry.TABLE_NAME,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID,
+                MemberEntry.TABLE_NAME, MemberEntry.COLUMN_HEAD_ID_FK,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, taskHeadId);
 
-        Cursor cursor = mDbHelper.query(
-                TaskHeadEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        Cursor cursor = mDbHelper.rawQuery(sql, null);
 
         TaskHead taskHead = null;
-        if (cursor != null && cursor.getCount() > 0) {
-            cursor.moveToFirst();
-            String itemId = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
-            String title = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
-            int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
-
-            taskHead = new TaskHead(itemId, title, order);
-        }
-
-        // Get members
         List<Member> members = new ArrayList<>();
-        selection = MemberEntry.COLUMN_HEAD_ID_FK + " LIKE ?";
-        cursor = mDbHelper.query(
-                MemberEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
-
         if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
+                // Set TaskHead
+                taskHeadId = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
+                int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+                if (taskHead == null) {
+                    taskHead = new TaskHead(taskHeadId, title, order);
+                }
+                // Set members
                 String memberId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_ID));
                 String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_HEAD_ID_FK));
                 String friendId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_FRIEND_ID_FK));
                 String name = cursor.getColumnName(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_NAME));
-
                 Member member = new Member(memberId, taskHeadId_fk, friendId, name);
                 members.add(member);
             }

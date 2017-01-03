@@ -166,5 +166,10 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             sDb.endTransaction();
         }
     }
+
+    Cursor rawQuery(String sql, String[] selectionArgs) {
+        sDb = sDbHelper.getReadableDatabase();
+        return sDb.rawQuery(sql, selectionArgs);
+    }
 }
 
