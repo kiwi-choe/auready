@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
 
 import java.util.LinkedHashMap;
@@ -25,11 +26,11 @@ public class TaskHeadDetailRepository implements TaskHeadDetailDataSource {
     /*
     * Cache for testing
     * */
-    public TaskHeadDetail mCachedTaskHeadDetail = null;
+    TaskHeadDetail mCachedTaskHeadDetail = null;
     /*
     * Key: memberId, Value: members => of one taskHead
     * */
-    public Map<String, Member> mCachedMembers = null;
+    Map<String, Member> mCachedMembers = null;
 
     private TaskHeadDetailRepository(@NonNull TaskHeadDetailDataSource remoteDataSource,
                                      @NonNull TaskHeadDetailDataSource localDataSource) {
@@ -51,11 +52,39 @@ public class TaskHeadDetailRepository implements TaskHeadDetailDataSource {
         }
     }
 
-    @Override
-    public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull final SaveCallback callback) {
+    public void saveTaskHeadDetail(@NonNull final TaskHeadDetail taskHeadDetail, @NonNull final SaveCallback callback) {
         checkNotNull(taskHeadDetail);
 
-        mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+        saveTaskHead(taskHeadDetail.getTaskHead(), new SaveCallback() {
+            @Override
+            public void onSaveSuccess() {
+
+                saveMembers(taskHeadDetail.getMembers(), new SaveCallback() {
+                    @Override
+                    public void onSaveSuccess() {
+                        refreshCache(taskHeadDetail);
+                        callback.onSaveSuccess();
+                    }
+
+                    @Override
+                    public void onSaveFailed() {
+                        callback.onSaveFailed();
+                    }
+                });
+            }
+
+            @Override
+            public void onSaveFailed() {
+
+            }
+        });
+    }
+
+    @Override
+    public void saveTaskHead(@NonNull final TaskHead taskHead, @NonNull final SaveCallback callback) {
+        checkNotNull(taskHead);
+        checkNotNull(callback);
+        mLocalDataSource.saveTaskHead(taskHead, new SaveCallback() {
             @Override
             public void onSaveSuccess() {
                 callback.onSaveSuccess();
@@ -66,13 +95,24 @@ public class TaskHeadDetailRepository implements TaskHeadDetailDataSource {
                 callback.onSaveFailed();
             }
         });
+    }
 
-        // Do in memory cache update
-        mCachedTaskHeadDetail = taskHeadDetail;
-        if (mCachedMembers == null) {
-            mCachedMembers = new LinkedHashMap<>();
-        }
-        refreshCacheMembers(taskHeadDetail.getMembers());
+    @Override
+    public void saveMembers(@NonNull List<Member> members, @NonNull final SaveCallback callback) {
+        checkNotNull(members);
+        checkNotNull(callback);
+
+        mLocalDataSource.saveMembers(members, new SaveCallback() {
+            @Override
+            public void onSaveSuccess() {
+                callback.onSaveSuccess();
+            }
+
+            @Override
+            public void onSaveFailed() {
+                callback.onSaveFailed();
+            }
+        });
     }
 
     @Override
@@ -119,22 +159,33 @@ public class TaskHeadDetailRepository implements TaskHeadDetailDataSource {
         });
     }
 
-    private void refreshLocalDataSource(TaskHeadDetail taskHeadDetail) {
+    private void refreshLocalDataSource(final TaskHeadDetail taskHeadDetail) {
         mLocalDataSource.deleteTaskHeadDetail(taskHeadDetail.getTaskHead().getId());
-        mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+        mLocalDataSource.saveTaskHead(taskHeadDetail.getTaskHead(), new SaveCallback() {
             @Override
             public void onSaveSuccess() {
+                mLocalDataSource.saveMembers(taskHeadDetail.getMembers(), new SaveCallback() {
+                    @Override
+                    public void onSaveSuccess() {
 
+                    }
+
+                    @Override
+                    public void onSaveFailed() {
+
+                    }
+                });
             }
 
             @Override
             public void onSaveFailed() {
-                // requery?
+
             }
         });
     }
 
     private void refreshCache(TaskHeadDetail taskHeadDetail) {
+        // Do in memory cache update
         mCachedTaskHeadDetail = taskHeadDetail;
         refreshCacheMembers(taskHeadDetail.getMembers());
     }

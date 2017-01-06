@@ -2,7 +2,10 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.data.TaskHeadDetail;
+import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.TaskHead;
+
+import java.util.List;
 
 /**
  * Fake RemoteDataSource of TaskHeadDetail
@@ -12,7 +15,7 @@ public class FakeTaskHeadDetailRemoteDataSource implements TaskHeadDetailDataSou
     private static FakeTaskHeadDetailRemoteDataSource INSTANCE;
 
     public static FakeTaskHeadDetailRemoteDataSource getInstance() {
-        if(INSTANCE == null) {
+        if (INSTANCE == null) {
             INSTANCE = new FakeTaskHeadDetailRemoteDataSource();
         }
         return INSTANCE;
@@ -24,12 +27,17 @@ public class FakeTaskHeadDetailRemoteDataSource implements TaskHeadDetailDataSou
     }
 
     @Override
-    public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull SaveCallback callback) {
+    public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback) {
 
     }
 
     @Override
-    public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback) {
+    public void saveTaskHead(@NonNull TaskHead taskHead, @NonNull SaveCallback callback) {
+
+    }
+
+    @Override
+    public void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback) {
 
     }
 }

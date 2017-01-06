@@ -2,7 +2,11 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
+
+import java.util.List;
 
 /**
  * Main entry point for accessing taskHeadDetail data.
@@ -19,14 +23,16 @@ public interface TaskHeadDetailDataSource {
         void onDataNotAvailable();
     }
 
-    void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull SaveCallback callback);
-
-    void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback);
-
     interface SaveCallback {
 
         void onSaveSuccess();
 
         void onSaveFailed();
     }
+
+    void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback);
+
+    void saveTaskHead(@NonNull TaskHead taskHead, @NonNull SaveCallback callback);
+
+    void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback);
 }

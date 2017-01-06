@@ -62,6 +62,41 @@ public class TaskHeadDetailRepositoryTest {
         assertThat(mRepository.mCachedMembers.size(), is(TASKHEAD_DETAIL.getMembers().size()));
         assertThat(mRepository.mCachedTaskHeadDetail.getMembers().size(), is(mRepository.mCachedMembers.size()));
     }
+    @Test
+    public void saveTaskHead_toLocal() {
+        // Save a taskHead with members
+        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
+
+        verify(mLocalDataSource).saveTaskHead(eq(TASKHEAD_DETAIL.getTaskHead()), mSaveCallbackCaptor.capture());
+    }
+
+    @Test
+    public void saveMembers_toLocal_whenSaveTaskHeadSuccess() {
+        // Save a taskHead with members
+        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
+
+        verify(mLocalDataSource).saveTaskHead(eq(TASKHEAD_DETAIL.getTaskHead()), mSaveCallbackCaptor.capture());
+        mSaveCallbackCaptor.getValue().onSaveSuccess();
+        verify(mLocalDataSource).saveMembers(eq(TASKHEAD_DETAIL.getMembers()), mSaveCallbackCaptor.capture());
+    }
+
+    @Test
+    public void saveTaskHeadDetail_checkCache() {
+        // Save taskHeadDetail
+        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
+
+        // Success to save TaskHead and Members
+        verify(mLocalDataSource).saveTaskHead(eq(TASKHEAD_DETAIL.getTaskHead()), mSaveCallbackCaptor.capture());
+        mSaveCallbackCaptor.getValue().onSaveSuccess();
+        verify(mLocalDataSource).saveMembers(eq(TASKHEAD_DETAIL.getMembers()), mSaveCallbackCaptor.capture());
+        mSaveCallbackCaptor.getValue().onSaveSuccess();
+        // check cachedTaskHead and cachedMembers to saved successfully
+        assertThat(mRepository.mCachedTaskHeadDetail.getTaskHead(), is(TASKHEAD_DETAIL.getTaskHead()));
+        assertThat(mRepository.mCachedMembers.size(), is(TASKHEAD_DETAIL.getMembers().size()));
+    }
+    /*
+    * Update taskHeadDetail
+    * */
 
     /*
     * Get a TaskHeadDetail

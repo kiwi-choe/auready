@@ -31,9 +31,9 @@ public class TaskHeadRepositoryTest {
     private TaskHeadDataSource mTaskHeadLocalDataSource;
     @Mock
     private TaskHeadDataSource.LoadTaskHeadsCallback mLoadTaskHeadsCallback;
-
     @Captor
-    private ArgumentCaptor<TaskHeadDataSource.LoadTaskHeadsCallback> mTaskHeadsCallbackCaptor;
+    private ArgumentCaptor<TaskHeadDataSource.LoadTaskHeadsCallback> mLoadCallbackCaptor;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -86,7 +86,7 @@ public class TaskHeadRepositoryTest {
 //        String TITLE = "title_test";
 //        TaskHead taskHead = new TaskHead(TITLE, MEMBERS, 0);
 //        mTaskHeadsRepository.saveTaskHead(taskHead);
-//
+//x
 //        // Modify the value of title and members
 //        String modifiedTitle = "editTitle";
 //        final List<Friend> modifiedMembers = MEMBERS;
@@ -184,12 +184,12 @@ public class TaskHeadRepositoryTest {
     * convenience methods
     * */
     private void setTaskHeadsNotAvailable(TaskHeadDataSource dataSource) {
-        verify(dataSource).getTaskHeads(mTaskHeadsCallbackCaptor.capture());
-        mTaskHeadsCallbackCaptor.getValue().onDataNotAvailable();
+        verify(dataSource).getTaskHeads(mLoadCallbackCaptor.capture());
+        mLoadCallbackCaptor.getValue().onDataNotAvailable();
     }
 
     private void setTaskHeadsAvailable(TaskHeadDataSource dataSource, List<TaskHead> taskHeads) {
-        verify(dataSource).getTaskHeads(mTaskHeadsCallbackCaptor.capture());
-        mTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(taskHeads);
+        verify(dataSource).getTaskHeads(mLoadCallbackCaptor.capture());
+        mLoadCallbackCaptor.getValue().onTaskHeadsLoaded(taskHeads);
     }
 }

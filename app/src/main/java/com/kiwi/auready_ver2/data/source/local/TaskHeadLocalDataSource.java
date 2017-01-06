@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
@@ -237,7 +238,7 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
 
-        List<TaskHead> taskHeads = new ArrayList<>();
+        List<TaskHead> taskHeads = new ArrayList<>(0);
 
         String[] projection = {
                 COLUMN_ID,
@@ -262,6 +263,7 @@ public class TaskHeadLocalDataSource implements TaskHeadDataSource {
             c.close();
         }
 
+        Log.d("TEST2", "entered into getTaskHeads local");
         if (taskHeads.isEmpty()) {
             callback.onDataNotAvailable();
         } else {

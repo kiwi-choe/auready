@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -73,8 +74,12 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     private void processTaskHeads(List<TaskHead> taskHeads) {
         if (taskHeads.isEmpty()) {
+            Log.d("TEST!!", "taskHeads is empty");
             mTaskHeadView.showNoTaskHeads();
         } else {
+            for(TaskHead taskHead: taskHeads) {
+                Log.d("TEST!!", taskHead.getTitle());
+            }
             mTaskHeadView.showTaskHeads(taskHeads);
         }
     }

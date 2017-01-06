@@ -135,7 +135,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         long isSuccess = INSERT_ERROR;
         sDb.beginTransaction();
         try {
-            isSuccess = sDb.insert(table, nullColumnHack, values);
+            isSuccess = sDb.insertOrThrow(table, nullColumnHack, values);
             sDb.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(TAG_SQLITE, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " ). ", e);

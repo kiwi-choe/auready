@@ -47,37 +47,6 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
     }
 
     @Override
-    public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull SaveCallback callback) {
-        checkNotNull(taskHeadDetail);
-
-        // Save a taskhead
-        TaskHead taskHead = taskHeadDetail.getTaskHead();
-
-        ContentValues values = new ContentValues();
-        values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
-        values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
-        values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
-        long isSuccess = mDbHelper.insert(TaskHeadEntry.TABLE_NAME, null, values);
-
-        // and save members of taskHeadId
-        List<Member> members = taskHeadDetail.getMembers();
-        for (Member member : members) {
-            values = new ContentValues();
-            values.put(MemberEntry.COLUMN_ID, member.getId());
-            values.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-            values.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
-            values.put(MemberEntry.COLUMN_NAME, member.getName());
-            isSuccess = mDbHelper.insert(MemberEntry.TABLE_NAME, null, values);
-        }
-
-        if (isSuccess != SQLiteDBHelper.INSERT_ERROR) {
-            callback.onSaveSuccess();
-        } else {
-            callback.onSaveFailed();
-        }
-    }
-
-    @Override
     public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback) {
 
         // Get 2 objects - get a TaskHead and get Members
@@ -121,6 +90,43 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
             callback.onTaskHeadDetailLoaded(taskHeadDetail);
         } else {
             callback.onDataNotAvailable();
+        }
+    }
+
+    @Override
+    public void saveTaskHead(@NonNull TaskHead taskHead, @NonNull SaveCallback callback) {
+        checkNotNull(taskHead);
+
+        ContentValues values = new ContentValues();
+        values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
+        values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
+        values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
+        long isSuccess = mDbHelper.insert(TaskHeadEntry.TABLE_NAME, null, values);
+        if (isSuccess != SQLiteDBHelper.INSERT_ERROR) {
+            callback.onSaveSuccess();
+        } else {
+            callback.onSaveFailed();
+        }
+    }
+
+    @Override
+    public void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback) {
+        checkNotNull(members);
+
+        long isSuccess = SQLiteDBHelper.INSERT_ERROR;
+        for (Member member : members) {
+            ContentValues values = new ContentValues();
+            values.put(MemberEntry.COLUMN_ID, member.getId());
+            values.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
+            values.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            values.put(MemberEntry.COLUMN_NAME, member.getName());
+            isSuccess = mDbHelper.insert(MemberEntry.TABLE_NAME, null, values);
+        }
+
+        if (isSuccess != SQLiteDBHelper.INSERT_ERROR) {
+            callback.onSaveSuccess();
+        } else {
+            callback.onSaveFailed();
         }
     }
 }

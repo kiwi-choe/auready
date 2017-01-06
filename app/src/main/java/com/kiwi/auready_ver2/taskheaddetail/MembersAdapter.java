@@ -18,8 +18,6 @@ import java.util.List;
 
 public class MembersAdapter extends ArrayAdapter<Member> {
 
-    private List<Member> mMembers;
-
     public MembersAdapter(Context context, int resource, List<Member> members) {
         super(context, resource, members);
     }

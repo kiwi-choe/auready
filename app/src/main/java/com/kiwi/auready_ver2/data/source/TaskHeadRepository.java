@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.TaskHead;
 
@@ -35,7 +36,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mTaskHeadLocalDataSource = checkNotNull(taskHeadLocalDataSource);
     }
 
-//    @Override
+    //    @Override
 //    public int getTaskHeadsCount() {
 //
 //        if (mCachedTaskHeads != null) {
@@ -92,15 +93,15 @@ public class TaskHeadRepository implements TaskHeadDataSource {
 
         checkNotNull(callback);
         // Respond immediately with cache if available
-        if (mCachedTaskHeads != null) {
-            callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
-        } else {
+//        if (mCachedTaskHeads != null) {
+//            callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
+//        } else {
             // Query the local storage if available, if not, query the network.
             mTaskHeadLocalDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
                 @Override
                 public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
                     refreshTaskHeadCache(taskHeads);
-                    callback.onTaskHeadsLoaded(new ArrayList<>(mCachedTaskHeads.values()));
+                    callback.onTaskHeadsLoaded(taskHeads);
                 }
 
                 @Override
@@ -108,15 +109,7 @@ public class TaskHeadRepository implements TaskHeadDataSource {
                     getTaskHeadsFromRemoteDataSource(callback);
                 }
             });
-        }
-    }
-
-
-    @Override
-    public void saveTaskHead(@NonNull TaskHead taskHead) {
-        // Save a taskHead
-
-        // And save members of saving taskHead
+//        }
     }
 
     @Nullable
@@ -140,20 +133,20 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mCachedTaskHeads.clear();
     }
 
-//    @Override
-//    public void saveTaskHead(@NonNull TaskHead taskHead) {
-//        checkNotNull(taskHead);
-//
-////        mTaskHeadRemoteDataSource.createTaskHeadDetail(taskHead);
-//        mTaskHeadLocalDataSource.saveTaskHead(taskHead);
-//
-//        // Do in memory cache update to keep the app UI up to date
-//        if (mCachedTaskHeads == null) {
-//            mCachedTaskHeads = new LinkedHashMap<>();
-//        }
-//        mCachedTaskHeads.put(taskHead.getTaskHeadId(), taskHead);
-//    }
-//
+    @Override
+    public void saveTaskHead(@NonNull TaskHead taskHead) {
+        checkNotNull(taskHead);
+
+//        mTaskHeadRemoteDataSource.createTaskHeadDetail(taskHead);
+        mTaskHeadLocalDataSource.saveTaskHead(taskHead);
+
+        // Do in memory cache update to keep the app UI up to date
+        if (mCachedTaskHeads == null) {
+            mCachedTaskHeads = new LinkedHashMap<>();
+        }
+        mCachedTaskHeads.put(taskHead.getId(), taskHead);
+    }
+
     private void getTaskHeadsFromRemoteDataSource(@NonNull final LoadTaskHeadsCallback callback) {
         mTaskHeadRemoteDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
             @Override
@@ -182,8 +175,14 @@ public class TaskHeadRepository implements TaskHeadDataSource {
             mCachedTaskHeads = new LinkedHashMap<>();
         }
         mCachedTaskHeads.clear();
-        for (TaskHead taskHead : taskHeads) {
-            mCachedTaskHeads.put(taskHead.getId(), taskHead);
+        if (taskHeads == null) {
+
+            Log.d("TEST2", "taskHeads is null");
+        } else {
+            Log.d("TEST2", "taskHeads size" + taskHeads.size());
+            for (TaskHead taskHead : taskHeads) {
+                mCachedTaskHeads.put(taskHead.getId(), taskHead);
+            }
         }
     }
 

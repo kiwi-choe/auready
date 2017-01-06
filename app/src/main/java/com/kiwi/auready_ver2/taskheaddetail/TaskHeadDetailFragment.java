@@ -58,6 +58,9 @@ public class TaskHeadDetailFragment extends Fragment implements
     private ActionModeCallback mActionModeCallBack;
     private ActionMode mActionMode;
 
+    // q find the better way
+    private List<Member> mAddedMembers = new ArrayList<>();
+
     public TaskHeadDetailFragment() {
         // Required empty public constructor
     }
@@ -152,7 +155,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
+                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
             }
         });
         mDoneBt.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +175,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setMembers(List<Member> members) {
         mMembers.clear();
         mMembers.addAll(members);
+        mMembers.addAll(mAddedMembers);
         mMemberListAdapter.notifyDataSetChanged();
     }
 
@@ -235,6 +239,10 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void addMembers(ArrayList<Member> members) {
+        for (Member member:members) {
+            Log.d("TEST!", member.getName());
+        }
+        mAddedMembers.addAll(members);
         mMembers.addAll(members);
         mMemberListAdapter.notifyDataSetChanged();
     }
