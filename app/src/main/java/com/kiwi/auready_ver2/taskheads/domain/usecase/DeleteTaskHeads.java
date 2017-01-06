@@ -3,26 +3,26 @@ package com.kiwi.auready_ver2.taskheads.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Deletes taskHeads from the TaskHeadRepository.
+ * Deletes taskHeads from the TaskRepository.
  */
 public class DeleteTaskHeads extends UseCase<DeleteTaskHeads.RequestValues, DeleteTaskHeads.ResponseValue> {
 
-    private final TaskHeadRepository mTaskHeadRepository;
+    private final TaskRepository mRepository;
 
-    public DeleteTaskHeads(@NonNull TaskHeadRepository taskHeadRepository) {
-        mTaskHeadRepository = checkNotNull(taskHeadRepository);
+    public DeleteTaskHeads(@NonNull TaskRepository taskRepository) {
+        mRepository = checkNotNull(taskRepository);
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-//        mTaskHeadRepository.deleteTaskHeads(requestValues.getTaskHeadIds());
+//        mRepository.deleteTaskHeads(requestValues.getTaskHeadIds());
 
         getUseCaseCallback().onSuccess(new ResponseValue());
     }

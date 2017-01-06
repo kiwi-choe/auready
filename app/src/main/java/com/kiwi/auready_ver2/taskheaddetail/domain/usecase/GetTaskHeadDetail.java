@@ -6,8 +6,8 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
-import com.kiwi.auready_ver2.data.source.TaskHeadDetailDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadDetailRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,26 +16,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 
 public class GetTaskHeadDetail extends UseCase<GetTaskHeadDetail.RequestValues, GetTaskHeadDetail.ResponseValue> {
-    private final TaskHeadDetailRepository mTaskHeadDetailRepository;
+    private final TaskRepository mRepository;
 
-    public GetTaskHeadDetail(TaskHeadDetailRepository taskHeadDetailRepository) {
-        mTaskHeadDetailRepository = checkNotNull(taskHeadDetailRepository, "taskHeadDetailRepository cannot be null");
+    public GetTaskHeadDetail(TaskRepository taskRepository) {
+        mRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mTaskHeadDetailRepository.getTaskHeadDetail(requestValues.getTaskHeadId(), new TaskHeadDetailDataSource.GetTaskHeadDetailCallback() {
-            @Override
-            public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
-                ResponseValue responseValue = new ResponseValue(taskHeadDetail);
-                getUseCaseCallback().onSuccess(responseValue);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getUseCaseCallback().onError();
-            }
-        });
+//        mRepository.getTaskHeadDetail(requestValues.getTaskHeadId(), new TaskHeadDetailDataSource.GetTaskHeadDetailCallback() {
+//            @Override
+//            public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
+//                ResponseValue responseValue = new ResponseValue(taskHeadDetail);
+//                getUseCaseCallback().onSuccess(responseValue);
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                getUseCaseCallback().onError();
+//            }
+//        });
     }
 
     public static class RequestValues implements UseCase.RequestValues {

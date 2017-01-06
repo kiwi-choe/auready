@@ -1,5 +1,12 @@
 package com.kiwi.auready_ver2.data.source;
 
+import android.support.annotation.NonNull;
+
+import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.TaskHead;
+
+import java.util.List;
+
 /**
  * Main entry point for accessing tasks data.
  * <p>
@@ -9,6 +16,37 @@ package com.kiwi.auready_ver2.data.source;
  * operation on database or network should be executed in a different thread.
  */
 public interface TaskDataSource {
+
+    /*
+        * TaskHeadsView
+        * */
+    interface LoadTaskHeadsCallback {
+
+        void onTaskHeadsLoaded(List<TaskHead> taskHeads);
+
+        void onDataNotAvailable();
+    }
+
+    void getTaskHeads(@NonNull LoadTaskHeadsCallback callback);
+
+    void deleteTaskHeads(List<String> taskheadIds);
+
+    /*
+    * TaskHeadDetailView
+    * */
+    interface SaveCallback {
+
+        void onSaveSuccess();
+
+        void onSaveFailed();
+    }
+
+    void saveTaskHead(@NonNull TaskHead taskHead, @NonNull SaveCallback callback);
+    void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback);
+
+    /*
+    * TasksView
+    * */
 
 //    interface LoadTasksCallback {
 //        void onTasksLoaded(List<Task> tasks);

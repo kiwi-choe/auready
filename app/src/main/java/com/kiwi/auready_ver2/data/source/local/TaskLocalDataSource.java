@@ -1,12 +1,19 @@
 package com.kiwi.auready_ver2.data.source.local;
 
+import android.content.ContentValues;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
 
 /**
  * Created by kiwi on 8/25/16.
@@ -15,7 +22,6 @@ public class TaskLocalDataSource implements TaskDataSource {
 
     private static TaskLocalDataSource INSTANCE;
     private SQLiteDBHelper mDbHelper;
-    private SQLiteDatabase mDb;
 
     private TaskLocalDataSource(Context context) {
         mDbHelper = SQLiteDBHelper.getInstance(context);
@@ -29,161 +35,100 @@ public class TaskLocalDataSource implements TaskDataSource {
         return INSTANCE;
     }
 
-//    @Override
-//    public void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId) {
-//
-//        String whereClause = COLUMN_HEAD_ID_FK + " LIKE? AND " + COLUMN_MEMBER_ID_FK + " LIKE?";
-//        String[] whereArgs = {taskHeadId, memberId};
-//
-//        delete(whereClause, whereArgs);
-//    }
-//
-//    @Override
-//    public void deleteTasks(@NonNull List<String> taskHeadIds) {
-//
-//        String args = "";
-//        String TOKEN = ", ";
-//        int size = taskHeadIds.size();
-//        for(int i = 0; i<size; i++) {
-//            args = "\"" + taskHeadIds.get(i);
-//            args = args + "\"";
-//            if(i == size-1) {
-//                break;
-//            }
-//            args = args + TOKEN;
-//        }
-//
-//        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
-//                TABLE_NAME, COLUMN_ID, args);
-//        sDb.beginTransaction();
-//        try {
-//            sDb.execSQL(sql);
-//            sDb.setTransactionSuccessful();
-//        } catch (SQLException e) {
-//            Log.e(BaseDBAdapter.TAG, "Could not delete tasks by taskHeadIds in ( " + DATABASE_NAME + "). ", e);
-//        } finally {
-//            sDb.endTransaction();
-//        }
-//    }
-//
-//    @Override
-//    public void deleteTask(@NonNull String id) {
-//
-//        String whereClause = COLUMN_ID + " LIKE?";
-//        String[] whereArgs = {id};
-//
-//        delete(whereClause, whereArgs);
-//    }
-//
-//    @Override
-//    public void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback) {
-//        List<Task> tasks = new ArrayList<>(0);
-//
-//        String[] columns = {
-//                COLUMN_ID,
-//                COLUMN_DESCRIPTION,
-//                COLUMN_COMPLETED,
-//                COLUMN_ORDER
-//        };
-//
-//        String selection = COLUMN_HEAD_ID_FK + " LIKE? AND " + COLUMN_MEMBER_ID_FK + " LIKE?";
-//        String[] selectionArgs = {taskHeadId, memberId};
-//
-//        Cursor c = sDb.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-//        if (c != null && c.getCount() > 0) {
-//            while (c.moveToNext()) {
-//                String id = c.getString(c.getColumnIndex(COLUMN_ID));
-//                String description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
-//                boolean completed = (c.getInt(c.getColumnIndex(COLUMN_COMPLETED))) != 0;
-//                int order = c.getInt(c.getColumnIndex(COLUMN_ORDER));
-//
-//                Task task = new Task(id, taskHeadId, memberId, description, completed, order);
-//                tasks.add(task);
-//            }
-//        }
-//        if (c != null) {
-//            c.close();
-//        }
-//        if (tasks.isEmpty()) {
-//            // This will be called if the table is new or just empty.
-//            callback.onDataNotAvailable();
-//        } else {
-//            callback.onTasksLoaded(tasks);
-//        }
-//    }
-//
-//    @Override
-//    public void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback) {
-//        List<Task> tasks = new ArrayList<>(0);
-//
-//        String[] columns = {
-//                COLUMN_ID,
-//                COLUMN_MEMBER_ID_FK,
-//                COLUMN_DESCRIPTION,
-//                COLUMN_COMPLETED,
-//                COLUMN_ORDER
-//        };
-//
-//        String selection = COLUMN_HEAD_ID_FK + " LIKE?";
-//        String[] selectionArgs = {taskHeadId};
-//
-//        Cursor c = sDb.query(TABLE_NAME, columns, selection, selectionArgs, null, null, null);
-//        if (c != null && c.getCount() > 0) {
-//            while (c.moveToNext()) {
-//                String id = c.getString(c.getColumnIndex(COLUMN_ID));
-//                String memberId = c.getString(c.getColumnIndex(COLUMN_MEMBER_ID_FK));
-//                String description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
-//                boolean completed = (c.getInt(c.getColumnIndex(COLUMN_COMPLETED))) != 0;
-//                int order = c.getInt(c.getColumnIndex(COLUMN_ORDER));
-//
-//                Task task = new Task(id, taskHeadId, memberId, description, completed, order);
-//                tasks.add(task);
-//            }
-//        }
-//        if (c != null) {
-//            c.close();
-//        }
-//        if (tasks.isEmpty()) {
-//            // This will be called if the table is new or just empty.
-//            callback.onDataNotAvailable();
-//        } else {
-//            callback.onTasksLoaded(tasks);
-//        }
-//
-//    }
-//
-//    @Override
-//    public void saveTask(@NonNull Task task) {
-//        checkNotNull(task);
-//
-//        sDb.beginTransaction();
-//        try {
-//            ContentValues values = new ContentValues();
-//            values.put(COLUMN_ID, task.getTaskHeadId());
-//            values.put(COLUMN_HEAD_ID_FK, task.getTaskHeadId());
-//            values.put(COLUMN_MEMBER_ID_FK, task.getMemberId());
-//            values.put(COLUMN_DESCRIPTION, task.getDescription());
-//            values.put(COLUMN_COMPLETED, task.getCompleted());
-//            values.put(COLUMN_ORDER, task.getOrder());
-//
-//            sDb.insert(PersistenceContract.TaskEntry.TABLE_NAME, null, values);
-//            sDb.setTransactionSuccessful();
-//        } catch (SQLiteException e) {
-//            Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new one to (" + TABLE_NAME + "). ", e);
-//        } finally {
-//            sDb.endTransaction();
-//        }
-//    }
-//
-//    private void delete(String whereClause, String[] whereArgs) {
-//        sDb.beginTransaction();
-//        try {
-//            sDb.delete(TABLE_NAME, whereClause, whereArgs);
-//            sDb.setTransactionSuccessful();
-//        } catch (SQLException e) {
-//            Log.e(BaseDBAdapter.TAG, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
-//        } finally {
-//            sDb.endTransaction();
-//        }
-//    }
+    @Override
+    public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
+
+        List<TaskHead> taskHeads = new ArrayList<>(0);
+
+        String[] projection = {
+                TaskHeadEntry.COLUMN_ID,
+                TaskHeadEntry.COLUMN_TITLE,
+                TaskHeadEntry.COLUMN_ORDER
+        };
+        String orderBy = TaskHeadEntry.COLUMN_ORDER + " asc";
+
+        Cursor c = mDbHelper.query(
+                TaskHeadEntry.TABLE_NAME, projection, null, null, null, null, orderBy);
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+                String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
+                String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
+                int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+
+                TaskHead taskHead = new TaskHead(id, title, order);
+                taskHeads.add(taskHead);
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+
+        if (taskHeads.isEmpty()) {
+            callback.onDataNotAvailable();
+        } else {
+            callback.onTaskHeadsLoaded(taskHeads);
+        }
+    }
+
+    @Override
+    public void deleteTaskHeads(List<String> taskHeadIds) {
+
+        String args = "";
+        String TOKEN = ", ";
+        int size = taskHeadIds.size();
+        for (int i = 0; i < size; i++) {
+            args = args + "\"" + taskHeadIds.get(i);
+            args = args + "\"";
+            if (i == size - 1) {
+                break;
+            }
+            args = args + TOKEN;
+        }
+
+        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
+                TaskHeadEntry.TABLE_NAME,
+                TaskHeadEntry.COLUMN_ID,
+                args);
+
+        mDbHelper.execSQL(sql);
+    }
+
+    @Override
+    public void saveTaskHead(@NonNull TaskHead taskHead, @NonNull SaveCallback callback) {
+        checkNotNull(taskHead);
+
+        ContentValues values = new ContentValues();
+        values.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
+        values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
+        values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
+        long isSuccess = mDbHelper.insert(TaskHeadEntry.TABLE_NAME, null, values);
+        if (isSuccess != PersistenceContract.DBExceptionTag.INSERT_ERROR) {
+            callback.onSaveSuccess();
+        } else {
+            callback.onSaveFailed();
+        }
+    }
+
+    @Override
+    public void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback) {
+        checkNotNull(members);
+
+        long isSuccess = PersistenceContract.DBExceptionTag.INSERT_ERROR;
+        for (Member member : members) {
+            ContentValues values = new ContentValues();
+            values.put(PersistenceContract.MemberEntry.COLUMN_ID, member.getId());
+            values.put(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
+            values.put(PersistenceContract.MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            values.put(PersistenceContract.MemberEntry.COLUMN_NAME, member.getName());
+            isSuccess = mDbHelper.insert(PersistenceContract.MemberEntry.TABLE_NAME, null, values);
+        }
+
+        if (isSuccess != PersistenceContract.DBExceptionTag.INSERT_ERROR) {
+            callback.onSaveSuccess();
+        } else {
+            callback.onSaveFailed();
+        }
+    }
+
+
 }

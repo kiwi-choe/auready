@@ -137,8 +137,7 @@ public class TasksPresenterTest {
         DeleteTask deleteTask = new DeleteTask(mTaskRepository);
         GetTasksOfTaskHead getTasksOfTaskHead = new GetTasksOfTaskHead(mTaskRepository);
 
-        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getTasksOfMember, saveTask, deleteTask, getTasksOfTaskHead);
+        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView);
     }
 
 }

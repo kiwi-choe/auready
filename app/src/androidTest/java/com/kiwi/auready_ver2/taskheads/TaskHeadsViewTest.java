@@ -1,7 +1,6 @@
 package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Intent;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.core.deps.guava.collect.Lists;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -10,7 +9,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ListView;
 
-import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
@@ -73,8 +71,8 @@ public class TaskHeadsViewTest {
     @After
     public void cleanup() {
         // Doing this in @Before avoid a race condition(duplicate data).
-        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
-                .deleteAllTaskHeads();
+//        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
+//                .deleteAllTaskHeads();
 
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
         accessTokenStore.logoutUser();
@@ -127,8 +125,8 @@ public class TaskHeadsViewTest {
     @Test
     public void deleteTaskHead() {
         // Doing this in @Before avoid a race condition(duplicate data).
-        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
-                .deleteAllTaskHeads();
+//        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
+//                .deleteAllTaskHeads();
 
         // Load 1 taskhead
         loadATaskHead();

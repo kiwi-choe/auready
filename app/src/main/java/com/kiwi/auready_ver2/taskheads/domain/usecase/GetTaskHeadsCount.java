@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.taskheads.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -13,16 +13,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GetTaskHeadsCount extends UseCase<GetTaskHeadsCount.RequestValues, GetTaskHeadsCount.ResponseValue> {
 
 
-    private final TaskHeadRepository mTaskHeadRepository;
+    private final TaskRepository mRepository;
 
-    public GetTaskHeadsCount(@NonNull TaskHeadRepository taskHeadRepository) {
-        mTaskHeadRepository = checkNotNull(taskHeadRepository, "taskHeadRepository cannot be null");
+    public GetTaskHeadsCount(@NonNull TaskRepository taskRepository) {
+        mRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues values) {
 
-//        int taskHeadsCount = mTaskHeadRepository.getTaskHeadsCount();
+//        int taskHeadsCount = mRepository.getTaskHeadsCount();
 //        ResponseValue responseValue = new ResponseValue(taskHeadsCount);
 //        getUseCaseCallback().onSuccess(responseValue);
     }

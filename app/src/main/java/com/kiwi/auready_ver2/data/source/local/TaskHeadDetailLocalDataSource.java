@@ -16,6 +16,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.MemberEntry;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 
 /**
  * Created by kiwi on 1/2/17.
@@ -102,7 +103,7 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
         values.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
         values.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
         long isSuccess = mDbHelper.insert(TaskHeadEntry.TABLE_NAME, null, values);
-        if (isSuccess != SQLiteDBHelper.INSERT_ERROR) {
+        if (isSuccess != DBExceptionTag.INSERT_ERROR) {
             callback.onSaveSuccess();
         } else {
             callback.onSaveFailed();
@@ -113,7 +114,7 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
     public void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback) {
         checkNotNull(members);
 
-        long isSuccess = SQLiteDBHelper.INSERT_ERROR;
+        long isSuccess = DBExceptionTag.INSERT_ERROR;
         for (Member member : members) {
             ContentValues values = new ContentValues();
             values.put(MemberEntry.COLUMN_ID, member.getId());
@@ -123,7 +124,7 @@ public class TaskHeadDetailLocalDataSource implements TaskHeadDetailDataSource {
             isSuccess = mDbHelper.insert(MemberEntry.TABLE_NAME, null, values);
         }
 
-        if (isSuccess != SQLiteDBHelper.INSERT_ERROR) {
+        if (isSuccess != DBExceptionTag.INSERT_ERROR) {
             callback.onSaveSuccess();
         } else {
             callback.onSaveFailed();

@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.TaskHeadDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import java.util.List;
 
@@ -17,17 +17,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class GetTaskHeads extends UseCase<GetTaskHeads.RequestValues, GetTaskHeads.ResponseValue> {
 
 
-    private final TaskHeadRepository mTaskHeadRepository;
+    private final TaskRepository mTaskRepository;
 
-    public GetTaskHeads(@NonNull TaskHeadRepository taskHeadRepository) {
-        mTaskHeadRepository = checkNotNull(taskHeadRepository, "taskHeadRepository cannot be null");
+    public GetTaskHeads(@NonNull TaskRepository taskRepository) {
+        mTaskRepository = checkNotNull(taskRepository, "taskHeadRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues values) {
 
-        mTaskHeadRepository.getTaskHeads(new TaskHeadDataSource.LoadTaskHeadsCallback() {
-
+        mTaskRepository.getTaskHeads(new TaskDataSource.LoadTaskHeadsCallback() {
             @Override
             public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
                 ResponseValue responseValue = new ResponseValue(taskHeads);
@@ -39,7 +38,6 @@ public class GetTaskHeads extends UseCase<GetTaskHeads.RequestValues, GetTaskHea
                 getUseCaseCallback().onError();
             }
         });
-
     }
 
     public static class RequestValues implements UseCase.RequestValues {    }

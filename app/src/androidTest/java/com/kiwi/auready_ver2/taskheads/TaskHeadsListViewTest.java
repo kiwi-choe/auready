@@ -1,10 +1,8 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 
 import org.junit.After;
@@ -34,8 +32,8 @@ public class TaskHeadsListViewTest {
 
     @After
     public void cleanup() {
-        Injection.provideTaskHeadRepository(InstrumentationRegistry.getTargetContext())
-                .deleteAllTaskHeads();
+//        Injection.provideTaskRepository(InstrumentationRegistry.getTargetContext())
+//                .deleteAllTaskHeads();
 
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(mActivity.getApplicationContext());
         accessTokenStore.logoutUser();

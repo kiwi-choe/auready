@@ -6,8 +6,8 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
-import com.kiwi.auready_ver2.data.source.TaskHeadDetailDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadDetailRepository;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -16,15 +16,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SaveTaskHeadDetail extends UseCase<SaveTaskHeadDetail.RequestValues, SaveTaskHeadDetail.ResponseValue> {
 
-    private final TaskHeadDetailRepository mRepository;
+    private final TaskRepository mRepository;
 
-    public SaveTaskHeadDetail(@NonNull TaskHeadDetailRepository taskHeadDetailRepository) {
-        mRepository = checkNotNull(taskHeadDetailRepository, "taskHeadDetailRepository cannot be null");
+    public SaveTaskHeadDetail(@NonNull TaskRepository taskRepository) {
+        mRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mRepository.saveTaskHeadDetail(requestValues.getTaskHeadDetail(), new TaskHeadDetailDataSource.SaveCallback() {
+        mRepository.saveTaskHeadDetail(requestValues.getTaskHeadDetail(), new TaskDataSource.SaveCallback() {
 
             @Override
             public void onSaveSuccess() {

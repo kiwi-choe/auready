@@ -9,7 +9,6 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
-import com.kiwi.auready_ver2.data.source.FakeTaskRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
@@ -64,7 +63,7 @@ public class TasksViewTest {
 
         // Add tasks stub to the fake service api layer.
         TaskRepository.destroyInstance();
-        FakeTaskRemoteDataSource.getInstance().addTasks(TASKHEAD.getId(), memberId, tasks);
+//        FakeTaskRemoteDataSource.getInstance().addTasks(TASKHEAD.getId(), memberId, tasks);
 
         // Lazily start Activity from the ActivityTestRule this time to inject the start Intent
         Intent startIntent = new Intent();

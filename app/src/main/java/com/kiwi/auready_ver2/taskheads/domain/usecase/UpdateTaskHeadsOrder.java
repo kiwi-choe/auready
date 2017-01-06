@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import java.util.List;
 
@@ -15,16 +15,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class UpdateTaskHeadsOrder extends UseCase<UpdateTaskHeadsOrder.RequestValues, UpdateTaskHeadsOrder.ResponseValue> {
 
-    private final TaskHeadRepository mTaskHeadRepository;
+    private final TaskRepository mRepository;
 
-    public UpdateTaskHeadsOrder(@NonNull TaskHeadRepository taskHeadRepository) {
-        mTaskHeadRepository = checkNotNull(taskHeadRepository, "taskHeadRepository cannot be null");
+    public UpdateTaskHeadsOrder(@NonNull TaskRepository taskRepository) {
+        mRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         List<TaskHead> taskHeads = requestValues.getTaskHeads();
-//        mTaskHeadRepository.updateTaskHeadsOrder(taskHeads);
+//        mRepository.updateTaskHeadsOrder(taskHeads);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

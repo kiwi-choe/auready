@@ -27,7 +27,7 @@ public class TasksActivity extends AppCompatActivity {
         if (tasksFragment == null) {
             tasksFragment = TasksFragment.newInstance();
 
-            if(getIntent().hasExtra(ARG_TASKHEAD_ID)) {
+            if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
 
                 taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
                 Bundle bundle = new Bundle();
@@ -42,11 +42,7 @@ public class TasksActivity extends AppCompatActivity {
         TasksPresenter presenter = new TasksPresenter(
                 Injection.provideUseCaseHandler(),
                 taskHeadId,
-                tasksFragment,
-                Injection.provideGetTasksOfMember(getApplicationContext()),
-                Injection.provideSaveTask(getApplicationContext()),
-                Injection.provideDeleteTask(getApplicationContext()),
-                Injection.provideGetTasksOfTaskHead(getApplicationContext()));
+                tasksFragment);
     }
 }
 
