@@ -39,13 +39,13 @@ public interface TaskHeadDetailContract {
 
     interface Presenter extends BasePresenter {
 
-        void createTaskHeadDetail(String title, List<Member> members, int order);
-
-//        void editTaskHead(String title, List<Friend> members);
+        void createTaskHeadDetail(String title, int order,  List<Member> members);
 
         // Get TaskHead if exists the taskHeadId
         void populateTaskHeadDetail();
 
         void result(int requestCode, int resultCode, Intent data);
+
+        void editTaskHeadDetail(String editTitle, int order, List<Member> editMembers);
     }
 }

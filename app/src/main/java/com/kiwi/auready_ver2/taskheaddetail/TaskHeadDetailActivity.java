@@ -54,7 +54,8 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
                 taskHeadId,
                 taskHeadDetailFragment,
                 Injection.provideSaveTaskHeadDetail(getApplicationContext()),
-                Injection.provideGetTaskHeadDetail(getApplicationContext()));
+                Injection.provideGetTaskHeadDetail(getApplicationContext()),
+                Injection.provideEditTaskHeadDetail(getApplicationContext()));
 
     }
 }

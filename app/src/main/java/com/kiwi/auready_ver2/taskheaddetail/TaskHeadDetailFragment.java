@@ -155,13 +155,13 @@ public class TaskHeadDetailFragment extends Fragment implements
         mCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mMembers, mOrderOfTaskHead);
+                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
             }
         });
         mDoneBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mPresenter.editTaskHead(mTitle.getText().toString(), mMembers);
+                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
             }
         });
     }

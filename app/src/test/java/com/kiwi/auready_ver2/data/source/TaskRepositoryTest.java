@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -48,6 +47,14 @@ public class TaskRepositoryTest {
     private TaskDataSource.SaveCallback mSaveCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.SaveCallback> mSaveCallbackCaptor;
+    @Mock
+    private TaskDataSource.EditTaskHeadDetailCallback mEditCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.EditTaskHeadDetailCallback> mEditCallbackCaptor;
+    @Mock
+    private TaskDataSource.GetTaskHeadDetailCallback mGetTaskHeadDetailCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.GetTaskHeadDetailCallback> mGetTaskHeadDetailCallbackCaptor;
 
     @Before
     public void setup() {
@@ -55,7 +62,8 @@ public class TaskRepositoryTest {
 
         mRepository = TaskRepository.getInstance(mLocalDataSource);
     }
-   @After
+
+    @After
     public void destroyRepositoryInstance() {
         TaskRepository.destroyInstance();
     }
@@ -88,44 +96,36 @@ public class TaskRepositoryTest {
     * save taskhead and members
     * */
     @Test
-    public void whenSaveTaskHeadAndMembersSucceed_toLocal_firesOnSaveSuccess() {
+    public void saveTaskHeadDetail_toLocal() {
         mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
 
-        saveTaskHeadAndMembersAreSucceed(mLocalDataSource, TASKHEAD_DETAIL);
+        verify(mLocalDataSource).saveTaskHeadDetail(eq(TASKHEAD_DETAIL), mSaveCallbackCaptor.capture());
+    }
+
+    @Test
+    public void whenSaveTaskHeadDetailSucceed_toLocal_firesOnSaveSuccess() {
+        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
+
+        saveTaskHeadDetailSucceed(mLocalDataSource, TASKHEAD_DETAIL);
 
         verify(mSaveCallback).onSaveSuccess();
     }
+
     @Test
-    public void saveTaskHeadDetail_Failed_firesOnSaveFailed() {
+    public void saveTaskHeadDetailFailed_toLocal_firesOnSaveFailed() {
         mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
 
         // Failed saving to Local data source
-        saveTaskHeadIsSucceed_membersIsFailed(mLocalDataSource);
+        saveTaskHeadDetailFailed(mLocalDataSource);
 
         verify(mSaveCallback).onSaveFailed();
-    }
-
-    @Test
-    public void saveTaskHead_toLocal() {
-        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
-        TaskHead taskHead = TASKHEAD_DETAIL.getTaskHead();
-        verify(mLocalDataSource).saveTaskHead(eq(taskHead), mSaveCallbackCaptor.capture());
-    }
-
-    @Test
-    public void saveMembers_toLocal_whenSaveTaskHeadSuccess() {
-        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
-
-        verify(mLocalDataSource).saveTaskHead(eq(TASKHEAD_DETAIL.getTaskHead()), mSaveCallbackCaptor.capture());
-        mSaveCallbackCaptor.getValue().onSaveSuccess();
-        verify(mLocalDataSource).saveMembers(eq(TASKHEAD_DETAIL.getMembers()), mSaveCallbackCaptor.capture());
     }
 
     @Test
     public void saveTaskHeadDetail_toCache_whenSaveTaskHeadAndMembersSucceed() {
         mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
 
-        saveTaskHeadAndMembersAreSucceed(mLocalDataSource, TASKHEAD_DETAIL);
+        saveTaskHeadDetailSucceed(mLocalDataSource, TASKHEAD_DETAIL);
 
         TaskHead savedTaskHead = TASKHEAD_DETAIL.getTaskHead();
         // verify that cachedTaskHead and cachedMembers to saved successfully
@@ -135,7 +135,7 @@ public class TaskRepositoryTest {
         assertThat(mRepository.mCachedMembersOfTaskHead.containsKey(savedTaskHead.getId()), is(true));
         // and check members by member id
         List<Member> members = TASKHEAD_DETAIL.getMembers();
-        for(Member member:members) {
+        for (Member member : members) {
             assertThat(mRepository.mCachedMembers.containsKey(member.getId()), is(true));
         }
     }
@@ -156,8 +156,7 @@ public class TaskRepositoryTest {
     @Test
     public void deleteTaskHeads_fromCache() {
         // Save the stubbed taskheadDetails
-        List<TaskHeadDetail> taskHeadDetails = new ArrayList<>();
-        saveStubbedTaskHeadDetails_toLocal(taskHeadDetails);
+        List<TaskHeadDetail> taskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
         assertThat(mRepository.mCachedTaskHeads.size(), is(2));
 
         // Delete taskHeads TASKHEADS index 1, 2nd
@@ -173,13 +172,146 @@ public class TaskRepositoryTest {
     /*
     * Edit TaskHeadDetail
     * update TaskHead
-    * and update Member - add or delete
+    * and add or delete members
     * */
+    @Test
+    public void editTaskHeadDetail_saveEditedTaskHead_addMembers() {
+        // Save stubbed taskHeadDetails
+        List<TaskHeadDetail> savedTaskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
+        TaskHeadDetail original = savedTaskHeadDetails.get(0);
+        // Verify that saved cachedMembersOfTaskHead
+        assertThat(mRepository.mCachedMembersOfTaskHead.get(original.getTaskHead().getId()).size(), is(3));
+
+        // Edit taskHead
+        TaskHead taskHead = original.getTaskHead();
+        String newTitle = "newTaskHeadTitle";
+        TaskHead editTaskHead = new TaskHead(taskHead.getId(), newTitle, taskHead.getOrder());
+        // and Add 2 members
+        List<Member> editMembers = new ArrayList<>();
+        editMembers.addAll(MEMBERS);
+        Member newMember1 = new Member(taskHead.getId(), "friendid", "newMember1");
+        editMembers.add(newMember1);
+        Member newMember2 = new Member(taskHead.getId(), "friendid", "newMember2");
+        editMembers.add(newMember2);
+
+        TaskHeadDetail editTaskHeadDetail = new TaskHeadDetail(editTaskHead, editMembers);
+        mRepository.editTaskHeadDetail(editTaskHeadDetail, mEditCallback);
+
+        // Compare members
+        // and the result that members are added
+        List<Member> addingMembers = getAddingMembers(taskHead.getId(), editMembers);
+        verify(mLocalDataSource).editTaskHeadDetail(
+                eq(editTaskHead), eq(addingMembers), any(List.class), mEditCallbackCaptor.capture());
+        // Verify that getAddingMembers function
+        assertThat(addingMembers.size(), is(2));
+
+        mEditCallbackCaptor.getValue().onEditSuccess();
+        assertThat(mRepository.mCachedMembers.containsKey(newMember1.getId()), is(true));
+        assertThat(mRepository.mCachedMembers.containsKey(newMember2.getId()), is(true));
+    }
+
+    @Test
+    public void editTaskHeadDetail_saveEditedTaskHead_deleteMembers() {
+        // Save stubbed taskHeadDetails
+        List<TaskHeadDetail> savedTaskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
+        TaskHeadDetail original = savedTaskHeadDetails.get(0);
+
+        TaskHead taskHead = original.getTaskHead();
+        // Delete 1 members
+        List<Member> editMembers = new ArrayList<>();
+        editMembers.addAll(MEMBERS);
+        Member deletingMember = MEMBERS.get(0);
+        editMembers.remove(deletingMember);
+
+        TaskHeadDetail editTaskHeadDetail = new TaskHeadDetail(taskHead, editMembers);
+        mRepository.editTaskHeadDetail(editTaskHeadDetail, mEditCallback);
+
+        // Compare members
+        // and the result that members are deleted
+        List<String> deletingMemberIds = getDeletingMemberIds(taskHead.getId(), editMembers);
+        // Verify that getAddingMembers function
+        assertThat(deletingMemberIds.size(), is(1));
+
+        verify(mLocalDataSource).editTaskHeadDetail(
+                eq(taskHead), any(List.class), eq(deletingMemberIds), mEditCallbackCaptor.capture());
+        mEditCallbackCaptor.getValue().onEditSuccess();
+        assertThat(mRepository.mCachedMembers.containsKey(deletingMember.getId()), is(false));
+    }
+
+    @Test
+    public void whenEditTaskHeadDetailSucceed_toLocal_firesOnEditSuccess() {
+        mRepository.editTaskHeadDetail(TASKHEAD_DETAIL, mEditCallback);
+
+        verify(mLocalDataSource).editTaskHeadDetail(
+                eq(TASKHEAD_DETAIL.getTaskHead()), any(List.class), any(List.class), mEditCallbackCaptor.capture());
+        mEditCallbackCaptor.getValue().onEditSuccess();
+
+        verify(mEditCallback).onEditSuccess();
+    }
+
+    /*
+    * Get a TaskHeadDetail
+    * */
+    @Test
+    public void getTaskHeadDetail_fromLocal() {
+        String taskHeadId = TASKHEAD_DETAIL.getTaskHead().getId();
+        mRepository.getTaskHeadDetail(taskHeadId, mGetTaskHeadDetailCallback);
+
+        verify(mLocalDataSource).getTaskHeadDetail(eq(taskHeadId),
+                any(TaskDataSource.GetTaskHeadDetailCallback.class));
+    }
+
+    @Test
+    public void getTaskHeadDetailWithBothDataSourceUnavailable_firesOnDataUnavailable() {
+        String taskHeadId = TASKHEAD_DETAIL.getTaskHead().getId();
+        mRepository.getTaskHeadDetail(taskHeadId, mGetTaskHeadDetailCallback);
+
+        setTaskHeadDetailNotAvailable(mLocalDataSource, taskHeadId);
+
+        verify(mGetTaskHeadDetailCallback).onDataNotAvailable();
+    }
 
     /*
     * convenience methods
     * */
-    private void saveStubbedTaskHeadDetails_toLocal(List<TaskHeadDetail> taskHeadDetails) {
+
+    private void setTaskHeadDetailNotAvailable(TaskDataSource dataSource, String taskHeadId) {
+        verify(dataSource).getTaskHeadDetail(eq(taskHeadId), mGetTaskHeadDetailCallbackCaptor.capture());
+        mGetTaskHeadDetailCallbackCaptor.getValue().onDataNotAvailable();
+    }
+
+    private List<String> getDeletingMemberIds(String taskHeadId, List<Member> editMembers) {
+        // Compare cachedMembersOfTaskHead to editMembers
+        List<String> deletingMemberIds = new ArrayList<>();
+
+        if (mRepository.mCachedMembersOfTaskHead != null) {
+            List<Member> cachedMembers = mRepository.mCachedMembersOfTaskHead.get(taskHeadId);
+            for (Member member : cachedMembers) {
+                if (!editMembers.contains(member)) {
+                    deletingMemberIds.add(member.getId());
+                }
+            }
+        }
+        return deletingMemberIds;
+    }
+
+    private List<Member> getAddingMembers(String taskHeadId, List<Member> editMembers) {
+        // Compare cachedMembersOfTaskHead to editMembers
+        List<Member> addingMembers = new ArrayList<>();
+
+        if (mRepository.mCachedMembersOfTaskHead != null) {
+            List<Member> cachedMembers = mRepository.mCachedMembersOfTaskHead.get(taskHeadId);
+            for (Member member : editMembers) {
+                if (!cachedMembers.contains(member)) {
+                    addingMembers.add(member);
+                }
+            }
+        }
+        return addingMembers;
+    }
+
+    private List<TaskHeadDetail> saveStubbedTaskHeadDetails_toLocal() {
+        List<TaskHeadDetail> taskHeadDetails = new ArrayList<>();
         TaskHeadDetail taskHeadDetail0 = new TaskHeadDetail(TASKHEADS.get(0), MEMBERS);
         taskHeadDetails.add(taskHeadDetail0);
         TaskHeadDetail taskHeadDetail1 = new TaskHeadDetail(TASKHEADS.get(1), MEMBERS);
@@ -188,11 +320,10 @@ public class TaskRepositoryTest {
         mRepository.saveTaskHeadDetail(taskHeadDetails.get(0), mSaveCallback);
         mRepository.saveTaskHeadDetail(taskHeadDetails.get(1), mSaveCallback);
 
-        saveTaskHeadAndMembersAreSucceed(mLocalDataSource, taskHeadDetail0);
-        verify(mLocalDataSource).saveTaskHead(eq(taskHeadDetail1.getTaskHead()), mSaveCallbackCaptor.capture());
-        mSaveCallbackCaptor.getValue().onSaveSuccess();
-        verify(mLocalDataSource, times(2)).saveMembers(eq(taskHeadDetail1.getMembers()), mSaveCallbackCaptor.capture());
-        mSaveCallbackCaptor.getValue().onSaveSuccess();
+        saveTaskHeadDetailSucceed(mLocalDataSource, taskHeadDetail0);
+        saveTaskHeadDetailSucceed(mLocalDataSource, taskHeadDetail1);
+
+        return taskHeadDetails;
     }
 
     private void setTaskHeadsNotAvailable(TaskDataSource dataSource) {
@@ -205,20 +336,14 @@ public class TaskRepositoryTest {
         mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(taskHeads);
     }
 
-    private void saveTaskHeadAndMembersAreSucceed(TaskDataSource dataSource, TaskHeadDetail taskHeadDetail) {
+    private void saveTaskHeadDetailSucceed(TaskDataSource dataSource, TaskHeadDetail taskHeadDetail) {
         // Success to save TaskHead and Members
-        verify(dataSource).saveTaskHead(eq(taskHeadDetail.getTaskHead()), mSaveCallbackCaptor.capture());
-        mSaveCallbackCaptor.getValue().onSaveSuccess();
-        verify(dataSource).saveMembers(eq(taskHeadDetail.getMembers()), mSaveCallbackCaptor.capture());
+        verify(dataSource).saveTaskHeadDetail(eq(taskHeadDetail), mSaveCallbackCaptor.capture());
         mSaveCallbackCaptor.getValue().onSaveSuccess();
     }
 
-    private void saveTaskHeadIsSucceed_membersIsFailed(TaskDataSource dataSource) {
-        // Succeed to save taskhead
-        verify(dataSource).saveTaskHead(eq(TASKHEAD_DETAIL.getTaskHead()), mSaveCallbackCaptor.capture());
-        mSaveCallbackCaptor.getValue().onSaveSuccess();
-        // Failed to save members
-        verify(dataSource).saveMembers(eq(TASKHEAD_DETAIL.getMembers()), mSaveCallbackCaptor.capture());
+    private void saveTaskHeadDetailFailed(TaskDataSource dataSource) {
+        verify(dataSource).saveTaskHeadDetail(eq(TASKHEAD_DETAIL), mSaveCallbackCaptor.capture());
         mSaveCallbackCaptor.getValue().onSaveFailed();
     }
 }

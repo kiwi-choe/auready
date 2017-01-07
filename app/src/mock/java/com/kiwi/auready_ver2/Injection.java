@@ -13,6 +13,7 @@ import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
@@ -89,5 +90,9 @@ public class Injection {
 
     public static GetTaskHeadDetail provideGetTaskHeadDetail(@NonNull Context context) {
         return new GetTaskHeadDetail(Injection.provideTaskRepository(context));
+    }
+
+    public static EditTaskHeadDetail provideEditTaskHeadDetail(@NonNull Context context) {
+        return new EditTaskHeadDetail(Injection.provideTaskRepository(context));
     }
 }

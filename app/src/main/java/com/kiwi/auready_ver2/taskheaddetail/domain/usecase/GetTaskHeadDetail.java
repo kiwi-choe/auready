@@ -6,13 +6,13 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
-import com.kiwi.auready_ver2.data.source.TaskHeadDetailRepository;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Retrieves taskHeadDetail(a {@link TaskHead} and a {@link Member}) from the {@link TaskHeadDetailRepository}.
+ * Retrieves taskHeadDetail(a {@link TaskHead} and a {@link Member}) from the {@link TaskRepository}.
  */
 
 public class GetTaskHeadDetail extends UseCase<GetTaskHeadDetail.RequestValues, GetTaskHeadDetail.ResponseValue> {
@@ -24,18 +24,18 @@ public class GetTaskHeadDetail extends UseCase<GetTaskHeadDetail.RequestValues, 
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-//        mRepository.getTaskHeadDetail(requestValues.getTaskHeadId(), new TaskHeadDetailDataSource.GetTaskHeadDetailCallback() {
-//            @Override
-//            public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
-//                ResponseValue responseValue = new ResponseValue(taskHeadDetail);
-//                getUseCaseCallback().onSuccess(responseValue);
-//            }
-//
-//            @Override
-//            public void onDataNotAvailable() {
-//                getUseCaseCallback().onError();
-//            }
-//        });
+        mRepository.getTaskHeadDetail(requestValues.getTaskHeadId(), new TaskDataSource.GetTaskHeadDetailCallback() {
+            @Override
+            public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
+                ResponseValue responseValue = new ResponseValue(taskHeadDetail);
+                getUseCaseCallback().onSuccess(responseValue);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                getUseCaseCallback().onError();
+            }
+        });
     }
 
     public static class RequestValues implements UseCase.RequestValues {

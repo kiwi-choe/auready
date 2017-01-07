@@ -22,7 +22,7 @@ public class DeleteTaskHeads extends UseCase<DeleteTaskHeads.RequestValues, Dele
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-//        mRepository.deleteTaskHeads(requestValues.getTaskHeadIds());
+        mRepository.deleteTaskHeads(requestValues.getTaskHeadIds());
 
         getUseCaseCallback().onSuccess(new ResponseValue());
     }

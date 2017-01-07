@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.TaskHeadDetail;
 
 import java.util.List;
 
@@ -17,9 +18,10 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
+
     /*
-        * TaskHeadsView
-        * */
+                * TaskHeadsView
+                * */
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
@@ -31,6 +33,8 @@ public interface TaskDataSource {
 
     void deleteTaskHeads(List<String> taskheadIds);
 
+    int getTaskHeadsCount();
+
     /*
     * TaskHeadDetailView
     * */
@@ -41,8 +45,28 @@ public interface TaskDataSource {
         void onSaveFailed();
     }
 
-    void saveTaskHead(@NonNull TaskHead taskHead, @NonNull SaveCallback callback);
-    void saveMembers(@NonNull List<Member> members, @NonNull SaveCallback callback);
+    void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull SaveCallback callback);
+
+    interface EditTaskHeadDetailCallback {
+
+        void onEditSuccess();
+
+        void onEditFailed();
+    }
+
+    void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
+                            @NonNull List<Member> addingMembers,
+                            @NonNull List<String> deletingMemberIds,
+                            @NonNull EditTaskHeadDetailCallback callback);
+
+    interface GetTaskHeadDetailCallback {
+
+        void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail);
+
+        void onDataNotAvailable();
+    }
+
+    void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback);
 
     /*
     * TasksView

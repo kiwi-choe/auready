@@ -14,6 +14,8 @@ import com.kiwi.auready_ver2.data.source.local.PersistenceContract.MemberEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
 
+import java.util.List;
+
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.INSERT_ERROR;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.TAG_SQLITE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.*;
@@ -129,6 +131,32 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         } finally {
             sDb.endTransaction();
         }
+    }
+
+    public long insertTaskHeadAndMembers(ContentValues taskHeadValues, List<ContentValues> memberValuesList) {
+        sDb = sDbHelper.getWritableDatabase();
+
+        long isSuccessAll = INSERT_ERROR;
+        sDb.beginTransaction();
+        try {
+            // Save TaskHead
+            long isSuccessOfTaskHead = sDb.insertOrThrow(TaskHeadEntry.TABLE_NAME, null, taskHeadValues);
+
+            // Save members
+            long isSuccessOfMember = INSERT_ERROR;
+            for (ContentValues values : memberValuesList) {
+                isSuccessOfMember = sDb.insertOrThrow(MemberEntry.TABLE_NAME, null, values);
+            }
+            if (isSuccessOfTaskHead != INSERT_ERROR && isSuccessOfMember != INSERT_ERROR) {
+                isSuccessAll = isSuccessOfTaskHead; // any value is ok, if not INSERT_ERROR
+                sDb.setTransactionSuccessful();
+            }
+        } catch (SQLException e) {
+            Log.e(TAG_SQLITE, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " ). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+        return isSuccessAll;
     }
 }
 

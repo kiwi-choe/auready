@@ -14,6 +14,7 @@ final class PersistenceContract {
         static final String TAG_SQLITE = "SQLiteException: ";
 
         static final long INSERT_ERROR = -1;
+        public static final int DELETE_ERROR = 0;
     }
     /* Inner class that defines the table contents */
     static class FriendEntry {

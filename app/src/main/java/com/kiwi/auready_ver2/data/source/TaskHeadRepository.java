@@ -36,56 +36,11 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mTaskHeadLocalDataSource = checkNotNull(taskHeadLocalDataSource);
     }
 
-    //    @Override
-//    public int getTaskHeadsCount() {
-//
-//        if (mCachedTaskHeads != null) {
-//            return mCachedTaskHeads.size();
-//        }
-//        return mTaskHeadLocalDataSource.getTaskHeadsCount();
-//    }
-//
 //    @Override
 //    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
 //        mTaskHeadLocalDataSource.updateTaskHeadsOrder(taskHeads);
 //
 //        refreshTaskHeadCache(taskHeads);
-//    }
-//
-//    @Override
-//    public void editTaskHead(@NonNull String id, String title, List<Friend> members) {
-//        checkNotNull(id);
-//        mTaskHeadLocalDataSource.editTaskHead(id, title, members);
-//
-//        // Do in memory cache update to keep the app UI up to date
-//        if (mCachedTaskHeads == null) {
-//            mCachedTaskHeads = new LinkedHashMap<>();
-//        }
-//        TaskHead taskHead = mCachedTaskHeads.get(id);
-//        TaskHead editedTaskHead = new TaskHead(id, title, members, taskHead.getOrder());
-//        mCachedTaskHeads.put(id, editedTaskHead);
-//    }
-//
-//    @Override
-//    public void addMembers(@NonNull String id, List<Friend> members) {
-//        mTaskHeadLocalDataSource.addMembers(id, members);
-//
-//        // Do in memory cache update to keep the app UI up to date
-//        if (mCachedTaskHeads == null) {
-//            mCachedTaskHeads = new LinkedHashMap<>();
-//        }
-//        TaskHead taskHead = mCachedTaskHeads.get(id);
-//        TaskHead editedTaskHead = new TaskHead(id, taskHead.getTitle(), members, taskHead.getOrder());
-//        mCachedTaskHeads.put(id, editedTaskHead);
-//    }
-//
-//    @Override
-//    public void deleteTaskHeads(List<String> taskHeadIds) {
-//        mTaskHeadLocalDataSource.deleteTaskHeads(taskHeadIds);
-//
-//        for(String taskHeadId:taskHeadIds) {
-//            mCachedTaskHeads.remove(taskHeadId);
-//        }
 //    }
 //
     @Override
@@ -198,26 +153,4 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         INSTANCE = null;
     }
 
-
-//    // Compare members of TaskHeadDetailView to members of cache
-//    public List<String> getDeletingMemberIdsAfterComparingMembers(String taskHeadId, List<Friend> editedMembers) {
-//
-//        List<String> deletingMemberIds = new ArrayList<>(0);
-//        // todo. If cache is null, compare with Local data
-//        List<Friend> membersOfCache;
-//        if (mCachedTaskHeads != null) {
-//            TaskHead cacheTaskHead = mCachedTaskHeads.get(taskHeadId);
-//            if (cacheTaskHead != null) {
-//                membersOfCache = cacheTaskHead.getMembers();
-//
-//                for (Friend cacheMember : membersOfCache) {
-//                    if(!editedMembers.contains(cacheMember)) {
-//                        deletingMemberIds.add(cacheMember.getTaskHeadId());
-//                    }
-//                }
-//            }
-//        }
-//
-//        return deletingMemberIds;
-//    }
 }
