@@ -13,6 +13,16 @@ public class Member {
     private final String mFriendId;
     private final String mName;
 
+    /*
+    * when Create new taskHead
+    * */
+    public Member(String friendId, String name) {
+        mId = UUID.randomUUID().toString();
+        mTaskHeadId = null;
+        mFriendId = friendId;
+        mName = name;
+    }
+
     public Member(String taskHeadId, String friendId, String name) {
         mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
@@ -41,5 +51,12 @@ public class Member {
 
     public String getFriendId() {
         return mFriendId;
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + mId + " taskHeadId: " + mTaskHeadId +
+                " friendId: " + mFriendId + " name: " + mName;
+
     }
 }

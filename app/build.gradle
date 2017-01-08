@@ -76,6 +76,8 @@ dependencies {
     testCompile "com.squareup.retrofit2:retrofit-mock:$rootProject.ext.retrofitMock"
     testCompile "com.squareup.okhttp3:mockwebserver:$rootProject.ext.mockwebserver"
 
+    testCompile "org.robolectric:robolectric:$rootProject.ext.robolectric"
+
     // Android Testing Support Library's runner and rules
     androidTestCompile "com.android.support.test:runner:$rootProject.ext.runnerVersion"
     androidTestCompile "com.android.support.test:rules:$rootProject.ext.rulesVersion"
@@ -112,6 +114,7 @@ dependencies. This is required since Espresso internally has a dependency on sup
 */
 configurations.all {
     resolutionStrategy.force "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+    resolutionStrategy.force 'com.google.guava:guava:18.0'
 }
 
 /*

@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.data.source.local;
 /**
  * The contract used for the db to save tables locally.
  */
-final class PersistenceContract {
+public final class PersistenceContract {
 
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
@@ -14,7 +14,8 @@ final class PersistenceContract {
         static final String TAG_SQLITE = "SQLiteException: ";
 
         static final long INSERT_ERROR = -1;
-        public static final int DELETE_ERROR = 0;
+        public static final long INSERT_NOTHING = 0;
+        public static final int DELETE_NOTHING = 0;
     }
     /* Inner class that defines the table contents */
     static class FriendEntry {
@@ -32,11 +33,11 @@ final class PersistenceContract {
         static final String COLUMN_NAME = "name";
     }
 
-    static class TaskHeadEntry {
-        static final String TABLE_NAME = "taskhead";
-        static final String COLUMN_ID = "_id";
-        static final String COLUMN_TITLE = "title";
-        static final String COLUMN_ORDER = "sequence";
+    public static class TaskHeadEntry {
+        public static final String TABLE_NAME = "taskhead";
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_ORDER = "sequence";
     }
 
     static class TaskEntry {

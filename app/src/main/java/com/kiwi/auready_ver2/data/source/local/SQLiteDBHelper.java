@@ -77,7 +77,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         }
     }
 
-    long insert(String table, String nullColumnHack, ContentValues values) {
+    public long insert(String table, String nullColumnHack, ContentValues values) {
         sDb = sDbHelper.getWritableDatabase();
 
         long isSuccess = INSERT_ERROR;

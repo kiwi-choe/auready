@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -118,7 +119,7 @@ public class TaskRepository implements TaskDataSource {
     public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
                                    @NonNull List<Member> addingMembers,
                                    @NonNull List<String> deletingMemberIds,
-                                   @NonNull EditTaskHeadDetailCallback callback) {
+                                   @NonNull final EditTaskHeadDetailCallback callback) {
 
         checkNotNull(editTaskHead);
         checkNotNull(addingMembers);
@@ -135,9 +136,9 @@ public class TaskRepository implements TaskDataSource {
 
         // Compare cachedMembersOfTaskHead to editMembers
         final List<Member> addingMembers = getAddingMembers(editTaskHead.getId(), editMembers);
-
-        // Save taskHead, Save or Delete members
+        Log.d("TEST_NOW", "addingMembers: " + addingMembers.size());
         final List<String> deletingMemberIds = getDeletingMemberIds(editTaskHead.getId(), editMembers);
+        // Save taskHead, Save or Delete members
         editTaskHeadDetail(editTaskHead, addingMembers, deletingMemberIds, new EditTaskHeadDetailCallback() {
             @Override
             public void onEditSuccess() {
@@ -149,13 +150,13 @@ public class TaskRepository implements TaskDataSource {
 
             @Override
             public void onEditFailed() {
-
+callback.onEditFailed();
             }
         });
     }
 
     @Override
-    public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull final GetTaskHeadDetailCallback callback) {
+    public void getTaskHeadDetail(@NonNull final String taskHeadId, @NonNull final GetTaskHeadDetailCallback callback) {
         checkNotNull(taskHeadId);
         checkNotNull(callback);
 
@@ -175,15 +176,24 @@ public class TaskRepository implements TaskDataSource {
         });
     }
 
+    private void showMembersOfTaskHead(String taskHeadId) {
+        List<Member> members = mCachedMembersOfTaskHead.get(taskHeadId);
+        for(Member member:members) {
+            Log.d("TEST_NOW", "show member: " + member.toString());
+        }
+    }
+
     private List<String> getDeletingMemberIds(String taskHeadId, List<Member> editMembers) {
         // Compare cachedMembersOfTaskHead to editMembers
         List<String> deletingMemberIds = new ArrayList<>();
 
         if (mCachedMembersOfTaskHead != null) {
             List<Member> cachedMembers = mCachedMembersOfTaskHead.get(taskHeadId);
-            for (Member member : cachedMembers) {
-                if (!editMembers.contains(member)) {
-                    deletingMemberIds.add(member.getId());
+            if (cachedMembers != null) {
+                for (Member member : cachedMembers) {
+                    if (!editMembers.contains(member)) {
+                        deletingMemberIds.add(member.getId());
+                    }
                 }
             }
         }
@@ -214,9 +224,18 @@ public class TaskRepository implements TaskDataSource {
 
         if (mCachedMembersOfTaskHead != null) {
             List<Member> cachedMembers = mCachedMembersOfTaskHead.get(taskHeadId);
-            for (Member member : editMembers) {
-                if (!cachedMembers.contains(member)) {
-                    addingMembers.add(member);
+            if (cachedMembers != null) {
+
+                Log.d("TEST_NOW", "getAddingMembers, cachedMember: " + cachedMembers.size());
+                for(Member cachedMember:cachedMembers) {
+                    Log.d("TEST_NOW", "getAddingMembers, cachedMember: " + cachedMember.toString());
+                }
+
+                for (Member member : editMembers) {
+                    Log.d("TEST_NOW", "getAddingMembers, member: " + member.toString());
+                    if (!cachedMembers.contains(member)) {
+                        addingMembers.add(member);
+                    }
                 }
             }
         }
@@ -224,18 +243,23 @@ public class TaskRepository implements TaskDataSource {
     }
 
     private void refreshTaskHeadDetailCache(TaskHeadDetail taskHeadDetail) {
+        clearTaskHeadDetailCache();
         // Save taskHead
         TaskHead taskHead = taskHeadDetail.getTaskHead();
         if (mCachedTaskHeads == null) {
             mCachedTaskHeads = new LinkedHashMap<>();
         }
+        mCachedTaskHeads.remove(taskHead.getId());
         mCachedTaskHeads.put(taskHead.getId(), taskHead);
 
         // Save members of taskHead
         if (mCachedMembersOfTaskHead == null) {
             mCachedMembersOfTaskHead = new LinkedHashMap<>();
         }
+        mCachedMembersOfTaskHead.remove(taskHead.getId());
         mCachedMembersOfTaskHead.put(taskHead.getId(), taskHeadDetail.getMembers());
+        //testing
+        showMembersOfTaskHead(taskHead.getId());
 
         // Save members by member id
         if (mCachedMembers == null) {
@@ -243,7 +267,12 @@ public class TaskRepository implements TaskDataSource {
         }
         List<Member> members = taskHeadDetail.getMembers();
         for (Member member : members) {
+            mCachedMembers.remove(member.getId());
             mCachedMembers.put(member.getId(), member);
         }
+    }
+
+    private void clearTaskHeadDetailCache() {
+
     }
 }

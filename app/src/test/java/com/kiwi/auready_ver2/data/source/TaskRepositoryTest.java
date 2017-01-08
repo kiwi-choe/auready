@@ -204,7 +204,6 @@ public class TaskRepositoryTest {
                 eq(editTaskHead), eq(addingMembers), any(List.class), mEditCallbackCaptor.capture());
         // Verify that getAddingMembers function
         assertThat(addingMembers.size(), is(2));
-
         mEditCallbackCaptor.getValue().onEditSuccess();
         assertThat(mRepository.mCachedMembers.containsKey(newMember1.getId()), is(true));
         assertThat(mRepository.mCachedMembers.containsKey(newMember2.getId()), is(true));
@@ -270,11 +269,21 @@ public class TaskRepositoryTest {
 
         verify(mGetTaskHeadDetailCallback).onDataNotAvailable();
     }
+    @Test
+    public void getTaskHeadDetail_checkCache() {
+        saveStubbedTaskHeadDetails_toLocal();
+
+        String taskHeadId = TASKHEADS.get(0).getId();
+        mRepository.getTaskHeadDetail(taskHeadId, mGetTaskHeadDetailCallback);
+
+        assertThat(mRepository.mCachedMembersOfTaskHead.get(taskHeadId).get(0).getName(), is(MEMBERS.get(0).getName()));
+        assertThat(mRepository.mCachedMembersOfTaskHead.get(taskHeadId).get(1).getName(), is(MEMBERS.get(1).getName()));
+        assertThat(mRepository.mCachedMembersOfTaskHead.get(taskHeadId).get(2).getName(), is(MEMBERS.get(2).getName()));
+    }
 
     /*
     * convenience methods
     * */
-
     private void setTaskHeadDetailNotAvailable(TaskDataSource dataSource, String taskHeadId) {
         verify(dataSource).getTaskHeadDetail(eq(taskHeadId), mGetTaskHeadDetailCallbackCaptor.capture());
         mGetTaskHeadDetailCallbackCaptor.getValue().onDataNotAvailable();

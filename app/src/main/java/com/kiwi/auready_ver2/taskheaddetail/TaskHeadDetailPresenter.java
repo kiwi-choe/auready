@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -67,6 +68,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     @Override
     public void createTaskHeadDetail(final String title, int order, List<Member> members) {
         final TaskHead newTaskHead = new TaskHead(title, order);
+
         TaskHeadDetail newTaskHeadDetail = new TaskHeadDetail(newTaskHead, members);
         if (newTaskHeadDetail.isEmpty()) {
             mView.showEmptyTaskHeadError();
@@ -111,6 +113,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void populateTaskHeadDetail() {
+        Log.d("TEST_NOW", "entered into populateTaskHeadDetail");
         if (mTaskHeadId == null) {
             throw new RuntimeException("populateTaskHeadDetail() was called but taskhead is new.");
         }
@@ -119,12 +122,13 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                     @Override
                     public void onSuccess(GetTaskHeadDetail.ResponseValue response) {
+                        Log.d("TEST_NOW", "entered into onSUccess " + response.getTaskHeadDetail().getTaskHead().getTitle());
                         showTaskHead(response.getTaskHeadDetail());
                     }
 
                     @Override
                     public void onError() {
-
+                        Log.d("TEST_NOW", "entered into onError");
                     }
                 });
     }
@@ -139,7 +143,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 // Make new member List
                 ArrayList<Member> members = new ArrayList<>();
                 for (Friend friend : friends) {
-                    Member newMember = new Member(mTaskHeadId, friend.getId(), friend.getName());
+                    Member newMember = new Member(friend.getId(), friend.getName());
                     members.add(newMember);
                 }
 

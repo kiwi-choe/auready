@@ -117,14 +117,22 @@ public class TaskLocalDataSource implements TaskDataSource {
         // Save TaskHead
         TaskHead taskHead = taskHeadDetail.getTaskHead();
         checkNotNull(taskHead);
+        String taskHeadId = taskHead.getId();
         ContentValues taskHeadValues = new ContentValues();
-        taskHeadValues.put(TaskHeadEntry.COLUMN_ID, taskHead.getId());
+        taskHeadValues.put(TaskHeadEntry.COLUMN_ID, taskHeadId);
         taskHeadValues.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
         taskHeadValues.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
 
         // Save members
-        List<Member> members = taskHeadDetail.getMembers();
-        checkNotNull(members);
+        List<Member> tmpMembers = taskHeadDetail.getMembers();
+        checkNotNull(tmpMembers);
+
+        // Coz member of the new taskHeadDetail didnt set taskHeadId
+        List<Member> members = new ArrayList<>();
+        for(Member member:tmpMembers) {
+            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName()));
+        }
+
         List<ContentValues> memberValuesList = new ArrayList<>();
         for (Member member : members) {
             ContentValues memberValues = new ContentValues();
@@ -132,6 +140,7 @@ public class TaskLocalDataSource implements TaskDataSource {
             memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
             memberValues.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
             memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
+            Log.d("TEST_NOW", "in saveTaskHeadDetail, member name: " + member.getName());
             memberValuesList.add(memberValues);
         }
 
@@ -152,39 +161,23 @@ public class TaskLocalDataSource implements TaskDataSource {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-
+        boolean isSuccessAll = false;
         db.beginTransaction();
         try {
-            // Save taskHead with the existing id
-            ContentValues taskHeadValues = new ContentValues();
-            taskHeadValues.put(TaskHeadEntry.COLUMN_ID, editTaskHead.getId());
-            taskHeadValues.put(TaskHeadEntry.COLUMN_TITLE, editTaskHead.getTitle());
-            taskHeadValues.put(TaskHeadEntry.COLUMN_ORDER, editTaskHead.getOrder());
-            long isSuccessOfTaskHead = db.insertOrThrow(TaskHeadEntry.TABLE_NAME, null, taskHeadValues);
+            long isSuccessOfTaskHead = updateTaskHead(editTaskHead);
 
-            // Save adding members
-            long isSuccessOfAddMember = DBExceptionTag.INSERT_ERROR;
-            for (Member member : addingMembers) {
-                ContentValues memberValues = new ContentValues();
-                memberValues.put(MemberEntry.COLUMN_ID, member.getId());
-                memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-                memberValues.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
-                memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
-                isSuccessOfAddMember = db.insertOrThrow(MemberEntry.TABLE_NAME, null, memberValues);
+            long isSuccessOfAddMember = DBExceptionTag.INSERT_NOTHING;
+            if(addingMembers.size() != 0) {
+                isSuccessOfAddMember = saveMembers(editTaskHead.getId(), addingMembers);
             }
 
-            // Delete members
-            int isSuccessOfDeleteMembers = DBExceptionTag.DELETE_ERROR;
-            String whereClause = null;
-            for (String id : deletingMembers) {
-                whereClause = MemberEntry.COLUMN_ID + " LIKE?";
-                String[] whereArgs = {id};
-                isSuccessOfDeleteMembers = db.delete(MemberEntry.TABLE_NAME, whereClause, whereArgs);
+            if(deletingMembers.size() != 0) {
+                deleteMembers(deletingMembers);
             }
 
             if (isSuccessOfTaskHead != DBExceptionTag.INSERT_ERROR &&
-                    isSuccessOfAddMember != DBExceptionTag.INSERT_ERROR &&
-                    isSuccessOfDeleteMembers != DBExceptionTag.DELETE_ERROR) {
+                    isSuccessOfAddMember != DBExceptionTag.INSERT_ERROR) {
+                isSuccessAll = true;
                 db.setTransactionSuccessful();
             }
 
@@ -194,10 +187,62 @@ public class TaskLocalDataSource implements TaskDataSource {
             db.endTransaction();
         }
 
+        if(isSuccessAll) {
+            Log.d("TEST_NOW", "Success to edit taskHeadDetail");
+            callback.onEditSuccess();
+        } else {
+            Log.d("TEST_NOW", "fail to edit taskHeadDetail");
+            callback.onEditFailed();
+        }
+    }
+
+    private void deleteMembers(List<String> deletingMembers) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        // Delete members
+        String whereClause = null;
+        for (String id : deletingMembers) {
+            whereClause = MemberEntry.COLUMN_ID + " LIKE?";
+            String[] whereArgs = {id};
+            db.delete(MemberEntry.TABLE_NAME, whereClause, whereArgs);
+        }
+    }
+
+    private long saveMembers(String taskHeadId, List<Member> addingMembers) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // Save adding members
+        // Coz member of the new taskHeadDetail didnt set taskHeadId
+        List<Member> tmpMembers = new ArrayList<>(0);
+        for(Member member:addingMembers) {
+            tmpMembers.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName()));
+        }
+        long isSuccessOfAddMember = DBExceptionTag.INSERT_ERROR;
+        for (Member member : tmpMembers) {
+            ContentValues memberValues = new ContentValues();
+            memberValues.put(MemberEntry.COLUMN_ID, member.getId());
+            memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
+            memberValues.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
+            isSuccessOfAddMember = db.insertOrThrow(MemberEntry.TABLE_NAME, null, memberValues);
+        }
+        return isSuccessOfAddMember;
+    }
+
+    private long updateTaskHead(TaskHead editTaskHead) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        // update taskHead with the existing id
+        ContentValues taskHeadValues = new ContentValues();
+        taskHeadValues.put(TaskHeadEntry.COLUMN_TITLE, editTaskHead.getTitle());
+        String selection = TaskHeadEntry.COLUMN_ID + " LIKE?";
+        String[] selectionArgs = {editTaskHead.getId()};
+        return db.update(TaskHeadEntry.TABLE_NAME, taskHeadValues, selection, selectionArgs);
     }
 
     @Override
     public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback) {
+
+        Log.d("TEST_NOW", "entered into getTaskHeadDetail_Local");
 
         // Get 2 objects - get a TaskHead and get Members
         // Get a taskHead
@@ -225,7 +270,7 @@ public class TaskLocalDataSource implements TaskDataSource {
                 String memberId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_ID));
                 String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_HEAD_ID_FK));
                 String friendId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_FRIEND_ID_FK));
-                String name = cursor.getColumnName(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_NAME));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_NAME));
                 Member member = new Member(memberId, taskHeadId_fk, friendId, name);
                 members.add(member);
             }

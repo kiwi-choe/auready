@@ -210,7 +210,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         String myName = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
 
         Friend meOfFriend = new Friend(myIdOfFriend, myEmail, myName);
-        Member me = new Member(mTaskHeadId, meOfFriend.getId(), meOfFriend.getName());
+        Member me = new Member(meOfFriend.getId(), meOfFriend.getName());
         mMembers.add(0, me);
     }
 
