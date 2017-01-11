@@ -13,7 +13,7 @@ import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadsOrder;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,19 +31,19 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private final GetTaskHeads mGetTaskHeads;
     private final DeleteTaskHeads mDeleteTaskHeads;
     private final GetTaskHeadsCount mGetTaskHeadCount;
-    private UpdateTaskHeadsOrder mUpdateTaskHeadsOrder;
+    private UpdateTaskHeadOrders mUpdateTaskHeadOrders;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
                               @NonNull GetTaskHeads getTaskHeads,
                               @NonNull DeleteTaskHeads deleteTaskHeads,
                               @NonNull GetTaskHeadsCount getTaskHeadCount,
-                              @NonNull UpdateTaskHeadsOrder updateTaskHeadsOrder) {
+                              @NonNull UpdateTaskHeadOrders updateTaskHeadOrders) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
         mDeleteTaskHeads = checkNotNull(deleteTaskHeads, "deleteTaskHeads cannot be null");
         mGetTaskHeadCount = checkNotNull(getTaskHeadCount);
-        mUpdateTaskHeadsOrder = updateTaskHeadsOrder;
+        mUpdateTaskHeadOrders = updateTaskHeadOrders;
 
         mTaskHeadView.setPresenter(this);
     }
@@ -150,31 +150,27 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                 });
     }
 
-//    @Override
-//    public void updateOrders(List<TaskHead> taskheads) {
-//
-//        List<TaskHead> updatingTaskHeads = new ArrayList<>(0);
-//        int size = taskheads.size();
-//        for(int i = 0; i<size; i++) {
-//            TaskHead taskHead = taskheads.get(i);
-//            TaskHead newTaskHead = new TaskHead(
-//                    taskHead.getTaskHeadId(), taskHead.getTitle(), taskHead.getMembers(), i);
-//            updatingTaskHeads.add(newTaskHead);
-//        }
-//
-//        mUseCaseHandler.execute(mUpdateTaskHeadsOrder, new UpdateTaskHeadsOrder.RequestValues(updatingTaskHeads),
-//                new UseCase.UseCaseCallback<UpdateTaskHeadsOrder.ResponseValue>() {
-//
-//                    @Override
-//                    public void onSuccess(UpdateTaskHeadsOrder.ResponseValue response) {
-//                        loadTaskHeads();
-//                    }
-//
-//                    @Override
-//                    public void onError() {
-//
-//                    }
-//                });
-//    }
+    @Override
+    public void updateOrders(List<TaskHead> taskheads) {
+        List<TaskHead> updatingTaskHeads = new ArrayList<>(0);
+        int size = taskheads.size();
+        for(int i = 0; i<size; i++) {
+            TaskHead taskHead = taskheads.get(i);
+            updatingTaskHeads.add(new TaskHead(taskHead.getId(), taskHead.getTitle(), i));
+        }
 
+        mUseCaseHandler.execute(mUpdateTaskHeadOrders, new UpdateTaskHeadOrders.RequestValues(updatingTaskHeads),
+                new UseCase.UseCaseCallback<UpdateTaskHeadOrders.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(UpdateTaskHeadOrders.ResponseValue response) {
+                        loadTaskHeads();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
 }

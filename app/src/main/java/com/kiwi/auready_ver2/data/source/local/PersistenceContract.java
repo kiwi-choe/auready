@@ -25,12 +25,12 @@ public final class PersistenceContract {
         static final String COLUMN_NAME = "name";
     }
 
-    static class MemberEntry {
-        static final String TABLE_NAME = "member";
-        static final String COLUMN_ID = "_id";
-        static final String COLUMN_HEAD_ID_FK = "taskheadid";
-        static final String COLUMN_FRIEND_ID_FK = "friendid";
-        static final String COLUMN_NAME = "name";
+    public static class MemberEntry {
+        public static final String TABLE_NAME = "member";
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_HEAD_ID_FK = "taskheadid";
+        public static final String COLUMN_FRIEND_ID_FK = "friendid";
+        public static final String COLUMN_NAME = "name";
     }
 
     public static class TaskHeadEntry {

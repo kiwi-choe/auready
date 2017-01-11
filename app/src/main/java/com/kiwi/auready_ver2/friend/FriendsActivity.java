@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.friend;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +10,8 @@ import android.view.MenuItem;
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.util.ActivityUtils;
+
+import java.util.ArrayList;
 
 public class FriendsActivity extends AppCompatActivity {
 
@@ -35,6 +36,14 @@ public class FriendsActivity extends AppCompatActivity {
                 (FriendsFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
         if (friendsFragment == null) {
             friendsFragment = FriendsFragment.newInstance();
+
+            Bundle bundle = new Bundle();
+            if(getIntent().hasExtra(FriendsFragment.EXTRA_KEY_MEMBERS)) {
+                ArrayList<String> friendIdOfMembers = getIntent().getStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS);
+                bundle.putStringArrayList(FriendsFragment.EXTRA_KEY_MEMBERS, friendIdOfMembers);
+            }
+            friendsFragment.setArguments(bundle);
+
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), friendsFragment, R.id.content_frame, FriendsFragment.TAG_FRIENDFRAG);
         }

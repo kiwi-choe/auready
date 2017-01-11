@@ -13,18 +13,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by kiwi on 8/26/16.
  */
-public class UpdateTaskHeadsOrder extends UseCase<UpdateTaskHeadsOrder.RequestValues, UpdateTaskHeadsOrder.ResponseValue> {
+public class UpdateTaskHeadOrders extends UseCase<UpdateTaskHeadOrders.RequestValues, UpdateTaskHeadOrders.ResponseValue> {
 
     private final TaskRepository mRepository;
 
-    public UpdateTaskHeadsOrder(@NonNull TaskRepository taskRepository) {
+    public UpdateTaskHeadOrders(@NonNull TaskRepository taskRepository) {
         mRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
         List<TaskHead> taskHeads = requestValues.getTaskHeads();
-//        mRepository.updateTaskHeadsOrder(taskHeads);
+        mRepository.updateTaskHeadOrders(taskHeads);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

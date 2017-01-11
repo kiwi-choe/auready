@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,10 +22,20 @@ public class SaveFriend extends UseCase<SaveFriend.RequestValues, SaveFriend.Res
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        Friend friend = requestValues.getFriend();
-        mFriendRepository.saveFriend(friend);
+        final Friend friend = requestValues.getFriend();
+        mFriendRepository.saveFriend(friend, new FriendDataSource.SaveCallback() {
+            @Override
+            public void onSaveSuccess() {
 
-        getUseCaseCallback().onSuccess(new ResponseValue(friend));
+                getUseCaseCallback().onSuccess(new ResponseValue(friend));
+            }
+
+            @Override
+            public void onSaveFailed() {
+                getUseCaseCallback().onError();
+            }
+        });
+
     }
 
     public static final class RequestValues implements UseCase.RequestValues {

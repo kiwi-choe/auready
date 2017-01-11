@@ -93,6 +93,23 @@ public class TaskRepository implements TaskDataSource {
         return mLocalDataSource.getTaskHeadsCount();
     }
 
+    @Override
+    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
+        mLocalDataSource.updateTaskHeadOrders(taskHeads);
+
+        refreshTaskHeadsCache(taskHeads);
+    }
+
+    private void refreshTaskHeadsCache(List<TaskHead> taskHeads) {
+        if (mCachedTaskHeads == null) {
+            mCachedTaskHeads = new LinkedHashMap<>();
+        }
+        mCachedTaskHeads.clear();
+        for (TaskHead taskHead : taskHeads) {
+            mCachedTaskHeads.put(taskHead.getId(), taskHead);
+        }
+    }
+
     /*
     * TaskHeadDetail
     * */
@@ -105,6 +122,8 @@ public class TaskRepository implements TaskDataSource {
             @Override
             public void onSaveSuccess() {
                 refreshTaskHeadDetailCache(taskHeadDetail);
+                Log.d("TEST_NOW", "after saveTaskHeadDetail");
+                showMembersCacheOf(taskHeadDetail.getTaskHead().getId());
                 callback.onSaveSuccess();
             }
 
@@ -150,7 +169,7 @@ public class TaskRepository implements TaskDataSource {
 
             @Override
             public void onEditFailed() {
-callback.onEditFailed();
+                callback.onEditFailed();
             }
         });
     }
@@ -166,6 +185,8 @@ callback.onEditFailed();
             @Override
             public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
                 refreshTaskHeadDetailCache(taskHeadDetail);
+                Log.d("TEST_NOW", "after getTaskHeadDetail");
+                showMembersCacheOf(taskHeadId);
                 callback.onTaskHeadDetailLoaded(taskHeadDetail);
             }
 
@@ -176,10 +197,14 @@ callback.onEditFailed();
         });
     }
 
-    private void showMembersOfTaskHead(String taskHeadId) {
-        List<Member> members = mCachedMembersOfTaskHead.get(taskHeadId);
-        for(Member member:members) {
-            Log.d("TEST_NOW", "show member: " + member.toString());
+    private void showMembersCacheOf(String taskHeadId) {
+        if(mCachedMembersOfTaskHead != null) {
+            List<Member> members = mCachedMembersOfTaskHead.get(taskHeadId);
+            if(members != null) {
+                for(Member member: members) {
+                    Log.d("TEST_NOW", member.toString());
+                }
+            }
         }
     }
 
@@ -227,7 +252,7 @@ callback.onEditFailed();
             if (cachedMembers != null) {
 
                 Log.d("TEST_NOW", "getAddingMembers, cachedMember: " + cachedMembers.size());
-                for(Member cachedMember:cachedMembers) {
+                for (Member cachedMember : cachedMembers) {
                     Log.d("TEST_NOW", "getAddingMembers, cachedMember: " + cachedMember.toString());
                 }
 
@@ -243,7 +268,6 @@ callback.onEditFailed();
     }
 
     private void refreshTaskHeadDetailCache(TaskHeadDetail taskHeadDetail) {
-        clearTaskHeadDetailCache();
         // Save taskHead
         TaskHead taskHead = taskHeadDetail.getTaskHead();
         if (mCachedTaskHeads == null) {
@@ -256,10 +280,9 @@ callback.onEditFailed();
         if (mCachedMembersOfTaskHead == null) {
             mCachedMembersOfTaskHead = new LinkedHashMap<>();
         }
+        Log.d("TEST_NOW", "taskHead in refreshTaskHeadDetailCache is " + taskHead.getId());
         mCachedMembersOfTaskHead.remove(taskHead.getId());
         mCachedMembersOfTaskHead.put(taskHead.getId(), taskHeadDetail.getMembers());
-        //testing
-        showMembersOfTaskHead(taskHead.getId());
 
         // Save members by member id
         if (mCachedMembers == null) {
@@ -270,9 +293,5 @@ callback.onEditFailed();
             mCachedMembers.remove(member.getId());
             mCachedMembers.put(member.getId(), member);
         }
-    }
-
-    private void clearTaskHeadDetailCache() {
-
     }
 }

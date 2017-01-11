@@ -111,6 +111,40 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
+    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
+
+        String whenThenArgs = "";
+        String whereArgs = "";
+
+        for (TaskHead taskHead : taskHeads) {
+            whenThenArgs = whenThenArgs + " WHEN \"" + taskHead.getId() + "\" THEN " + taskHead.getOrder();
+        }
+
+        String TOKEN = ", ";
+        int size = taskHeads.size();
+        for (int i = 0; i < size; i++) {
+            whereArgs = whereArgs + "\"" + taskHeads.get(i).getId() + "\"";
+            if (i == size - 1) {
+                break;
+            }
+            whereArgs = whereArgs + TOKEN;
+        }
+
+        String sql = String.format(
+                "UPDATE %s" +
+                        " SET %s = CASE %s" +
+                        "%s END" +
+                        " WHERE %s IN (%s)",
+                TaskHeadEntry.TABLE_NAME,
+                TaskHeadEntry.COLUMN_ORDER, TaskHeadEntry.COLUMN_ID,
+                whenThenArgs,
+                TaskHeadEntry.COLUMN_ID, whereArgs);
+
+
+        mDbHelper.execSQL(sql);
+    }
+
+    @Override
     public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull SaveCallback callback) {
         checkNotNull(taskHeadDetail);
 
@@ -129,7 +163,7 @@ public class TaskLocalDataSource implements TaskDataSource {
 
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> members = new ArrayList<>();
-        for(Member member:tmpMembers) {
+        for (Member member : tmpMembers) {
             members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName()));
         }
 
@@ -140,7 +174,6 @@ public class TaskLocalDataSource implements TaskDataSource {
             memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
             memberValues.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
             memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
-            Log.d("TEST_NOW", "in saveTaskHeadDetail, member name: " + member.getName());
             memberValuesList.add(memberValues);
         }
 
@@ -167,11 +200,11 @@ public class TaskLocalDataSource implements TaskDataSource {
             long isSuccessOfTaskHead = updateTaskHead(editTaskHead);
 
             long isSuccessOfAddMember = DBExceptionTag.INSERT_NOTHING;
-            if(addingMembers.size() != 0) {
+            if (addingMembers.size() != 0) {
                 isSuccessOfAddMember = saveMembers(editTaskHead.getId(), addingMembers);
             }
 
-            if(deletingMembers.size() != 0) {
+            if (deletingMembers.size() != 0) {
                 deleteMembers(deletingMembers);
             }
 
@@ -187,7 +220,7 @@ public class TaskLocalDataSource implements TaskDataSource {
             db.endTransaction();
         }
 
-        if(isSuccessAll) {
+        if (isSuccessAll) {
             Log.d("TEST_NOW", "Success to edit taskHeadDetail");
             callback.onEditSuccess();
         } else {
@@ -213,7 +246,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         // Save adding members
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> tmpMembers = new ArrayList<>(0);
-        for(Member member:addingMembers) {
+        for (Member member : addingMembers) {
             tmpMembers.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName()));
         }
         long isSuccessOfAddMember = DBExceptionTag.INSERT_ERROR;
@@ -242,8 +275,6 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback) {
 
-        Log.d("TEST_NOW", "entered into getTaskHeadDetail_Local");
-
         // Get 2 objects - get a TaskHead and get Members
         // Get a taskHead
         String sql = String.format(
@@ -259,13 +290,6 @@ public class TaskLocalDataSource implements TaskDataSource {
         List<Member> members = new ArrayList<>();
         if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
-                // Set TaskHead
-                taskHeadId = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
-                String title = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
-                int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
-                if (taskHead == null) {
-                    taskHead = new TaskHead(taskHeadId, title, order);
-                }
                 // Set members
                 String memberId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_ID));
                 String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_HEAD_ID_FK));
@@ -273,6 +297,13 @@ public class TaskLocalDataSource implements TaskDataSource {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_NAME));
                 Member member = new Member(memberId, taskHeadId_fk, friendId, name);
                 members.add(member);
+
+                // Set TaskHead
+                String title = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
+                int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+                if (taskHead == null) {
+                    taskHead = new TaskHead(taskHeadId_fk, title, order);
+                }
             }
         }
         if (cursor != null) {

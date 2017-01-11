@@ -21,24 +21,12 @@ public interface FriendDataSource {
         void onDataNotAvailable();
     }
 
-    interface GetFriendCallback {
-
-        void onFriendLoaded(Friend friend);
-        void onDataNotAvailable();
-    }
-
-    interface SaveFriendsCallback {
-
-        void onFriendsSaved(List<Friend> friends);
-        void onDataNotAvailable();
-    }
-
     void getFriends(@NonNull LoadFriendsCallback callback);
 
-    void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback getFriendCallback);
+    interface SaveCallback {
+        void onSaveSuccess();
+        void onSaveFailed();
+    }
 
-    // only for Local
-    void initFriend(@NonNull List<Friend> friends);
-
-    void saveFriend(@NonNull Friend friend);
+    void saveFriend(@NonNull Friend friend, @NonNull SaveCallback callback);
 }

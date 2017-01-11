@@ -43,8 +43,7 @@ public class LoginActivity extends AppCompatActivity implements
 
         LoginPresenter presenter = new LoginPresenter(
                 Injection.provideUseCaseHandler(),
-                loginFragment,
-                Injection.provideSaveFriends(getApplicationContext())
+                loginFragment
         );
 
         // Google Sign-In

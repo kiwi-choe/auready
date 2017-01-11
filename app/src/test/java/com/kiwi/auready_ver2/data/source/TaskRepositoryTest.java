@@ -170,6 +170,45 @@ public class TaskRepositoryTest {
     }
 
     /*
+    * Update taskHeads order
+    * */
+    @Test
+    public void updateTaskHeadsOrder_fromLocal() {
+        // Save the original taskHeads to compare
+        List<TaskHeadDetail> savedTaskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
+        final TaskHead taskHead0 = savedTaskHeadDetails.get(0).getTaskHead();
+        TaskHead taskHead1 = savedTaskHeadDetails.get(1).getTaskHead();
+
+        List<TaskHead> updatingTaskHeads = new ArrayList<>();
+        TaskHead updating0 = new TaskHead(taskHead0.getId(), taskHead0.getTitle(), 100);
+        updatingTaskHeads.add(updating0);
+        TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200);
+        updatingTaskHeads.add(updating1);
+        mRepository.updateTaskHeadOrders(updatingTaskHeads);
+
+        verify(mLocalDataSource).updateTaskHeadOrders(eq(updatingTaskHeads));
+    }
+
+    @Test
+    public void updateTaskHeadOrders_refreshCache() {
+        // Save the original taskHeads to compare
+        List<TaskHeadDetail> savedTaskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
+        final TaskHead taskHead0 = savedTaskHeadDetails.get(0).getTaskHead();
+        TaskHead taskHead1 = savedTaskHeadDetails.get(1).getTaskHead();
+
+        // Updating orders
+        List<TaskHead> updatingTaskHeads = new ArrayList<>();
+        TaskHead updating0 = new TaskHead(taskHead0.getId(), taskHead0.getTitle(), 100);
+        updatingTaskHeads.add(updating0);
+        TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200);
+        updatingTaskHeads.add(updating1);
+        mRepository.updateTaskHeadOrders(updatingTaskHeads);
+
+        assertThat(mRepository.mCachedTaskHeads.get(taskHead0.getId()).getOrder(), is(100));
+        assertThat(mRepository.mCachedTaskHeads.get(taskHead1.getId()).getOrder(), is(200));
+    }
+
+    /*
     * Edit TaskHeadDetail
     * update TaskHead
     * and add or delete members
@@ -269,6 +308,7 @@ public class TaskRepositoryTest {
 
         verify(mGetTaskHeadDetailCallback).onDataNotAvailable();
     }
+
     @Test
     public void getTaskHeadDetail_checkCache() {
         saveStubbedTaskHeadDetails_toLocal();

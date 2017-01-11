@@ -2,14 +2,12 @@ package com.kiwi.auready_ver2.friend;
 
 import android.support.annotation.NonNull;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -18,9 +16,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by kiwi on 6/28/16.
  */
 public class FriendsPresenter implements FriendsContract.Presenter {
-
-    // We start the friends to 3.
-    private static ArrayList<Friend> FRIENDS = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
 
     private final FriendsContract.View mFriendView;
     private final UseCaseHandler mUseCaseHandler;

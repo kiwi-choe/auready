@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.data.source.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
@@ -12,14 +11,13 @@ import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
-import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadsOrder;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,8 +33,7 @@ public class Injection {
     * */
     public static FriendRepository provideFriendRepository(@NonNull Context context) {
         checkNotNull(context);
-        return FriendRepository.getInstance(FakeFriendRemoteDataSource.getInstance(),
-                FriendLocalDataSource.getInstance(context));
+        return FriendRepository.getInstance(FriendLocalDataSource.getInstance(context));
     }
 
     public static UseCaseHandler provideUseCaseHandler() {
@@ -49,10 +46,6 @@ public class Injection {
 
     public static SaveFriend provideSaveFriend(@NonNull Context context) {
         return new SaveFriend(Injection.provideFriendRepository(context));
-    }
-
-    public static InitFriend provideSaveFriends(@NonNull Context context) {
-        return new InitFriend(Injection.provideFriendRepository(context));
     }
 
     public static DeleteFriend provideDeleteFriend(@NonNull Context context) {
@@ -76,8 +69,8 @@ public class Injection {
         return new GetTaskHeadsCount(Injection.provideTaskRepository(context));
     }
 
-    public static UpdateTaskHeadsOrder provideUpdateTaskHeadsOrder(@NonNull Context context) {
-        return new UpdateTaskHeadsOrder(Injection.provideTaskRepository(context));
+    public static UpdateTaskHeadOrders provideUpdateTaskHeadsOrder(@NonNull Context context) {
+        return new UpdateTaskHeadOrders(Injection.provideTaskRepository(context));
     }
 
     public static SaveTaskHeadDetail provideSaveTaskHeadDetail(@NonNull Context context) {

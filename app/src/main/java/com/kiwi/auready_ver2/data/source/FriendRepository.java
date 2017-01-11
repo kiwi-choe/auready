@@ -4,7 +4,9 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -13,23 +15,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class FriendRepository implements FriendDataSource {
 
-//    private static List<Friend> FRIENDS = Lists.newArrayList(new Friend("email1", "name1"), new Friend("email2", "name2"));
-
     private static FriendRepository INSTANCE = null;
 
-    private final FriendDataSource mFriendRemoteDataSource;
     private final FriendDataSource mFriendsLocalDataSource;
 
-    private FriendRepository(@NonNull FriendDataSource friendRemoteDataSource,
-                             @NonNull FriendDataSource friendLocalDataSource) {
-        mFriendRemoteDataSource = checkNotNull(friendRemoteDataSource);
+    public Map<String, Friend> mCacheFriends;
+
+    private FriendRepository(@NonNull FriendDataSource friendLocalDataSource) {
         mFriendsLocalDataSource = checkNotNull(friendLocalDataSource);
     }
 
-    public static FriendRepository getInstance(FriendDataSource friendRemoteDataSource,
-                                               FriendDataSource friendLocalDataSource) {
+    public static FriendRepository getInstance(FriendDataSource friendLocalDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new FriendRepository(friendRemoteDataSource, friendLocalDataSource);
+            INSTANCE = new FriendRepository(friendLocalDataSource);
         }
         return INSTANCE;
     }
@@ -41,14 +39,17 @@ public class FriendRepository implements FriendDataSource {
 
     @Override
     public void deleteAllFriends() {
+        mFriendsLocalDataSource.deleteAllFriends();
 
+        if(mCacheFriends != null) {
+            mCacheFriends.clear();
+        }
     }
 
     @Override
     public void deleteFriend(@NonNull String id) {
         checkNotNull(id);
-        mFriendRemoteDataSource.deleteFriend(id);
-mFriendsLocalDataSource.deleteFriend(id);
+        mFriendsLocalDataSource.deleteFriend(id);
     }
 
     @Override
@@ -59,54 +60,50 @@ mFriendsLocalDataSource.deleteFriend(id);
         mFriendsLocalDataSource.getFriends(new LoadFriendsCallback() {
             @Override
             public void onFriendsLoaded(List<Friend> friends) {
+                refreshCaches(friends);
                 callback.onFriendsLoaded(friends);
             }
 
             @Override
             public void onDataNotAvailable() {
+                callback.onDataNotAvailable();
             }
         });
     }
 
-    /*
-        * Gets friend from local data source(sqlite) unless the table is new or empty.
-        * In that case it uses the network data source. This is done to simplify the sample.
-        * Note: {@link LoadFriendsCallback()#onDataNotAvailable()} is fired if both data sources fail to get the data.
-        * */
-    @Override
-    public void getFriend(@NonNull String friendColumnId, @NonNull final GetFriendCallback callback) {
-        checkNotNull(friendColumnId);
-        checkNotNull(callback);
+    private void refreshCaches(List<Friend> friends) {
+        if(mCacheFriends == null) {
+            mCacheFriends = new LinkedHashMap<>();
+        }
+        mCacheFriends.clear();
+        for(Friend friend:friends) {
 
-        // Load from server/persisted if needed.
-
-        // Is the friend in the local data source? If not, query the network.
-        mFriendsLocalDataSource.getFriend(friendColumnId, new GetFriendCallback() {
-            @Override
-            public void onFriendLoaded(Friend friend) {
-                callback.onFriendLoaded(friend);
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                // Load from remoteDataSource
-            }
-        });
-    }
-
-    @Override
-    public void initFriend(@NonNull List<Friend> friends) {
-        // Create ME friend object
-
-        if(friends.size() != 0) {
-            mFriendsLocalDataSource.initFriend(friends);
+            mCacheFriends.put(friend.getId(), friend);
         }
     }
 
-
     @Override
-    public void saveFriend(@NonNull Friend friend) {
+    public void saveFriend(@NonNull final Friend friend, @NonNull SaveCallback callback) {
+
         checkNotNull(friend);
-        mFriendsLocalDataSource.saveFriend(friend);
+        mFriendsLocalDataSource.saveFriend(friend, new SaveCallback() {
+            @Override
+            public void onSaveSuccess() {
+                // Do in memory cache update to keep the app UI up to date
+                addToCache(friend);
+            }
+
+            @Override
+            public void onSaveFailed() {
+
+            }
+        });
+    }
+
+    private void addToCache(Friend friend) {
+        if(mCacheFriends == null) {
+            mCacheFriends = new LinkedHashMap<>();
+        }
+        mCacheFriends.put(friend.getId(), friend);
     }
 }

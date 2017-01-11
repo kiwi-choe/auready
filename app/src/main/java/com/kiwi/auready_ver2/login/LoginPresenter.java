@@ -5,17 +5,13 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
-import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
 import com.kiwi.auready_ver2.rest_service.ILoginService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
-import java.util.List;
 import java.util.regex.Matcher;
 
 import retrofit2.Call;
@@ -32,16 +28,13 @@ public class LoginPresenter implements LoginContract.Presenter {
     private static final String TAG = "TAG_LoginPresenter";
 
     private final LoginContract.View mLoginView;
-    private final InitFriend mInitFriend;
 
     private final UseCaseHandler mUseCaseHandler;
 
     public LoginPresenter(@NonNull UseCaseHandler useCaseHandler,
-                          @NonNull LoginContract.View loginView,
-                          @NonNull InitFriend InitFriend) {
+                          @NonNull LoginContract.View loginView) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mLoginView = checkNotNull(loginView, "loginView cannot be null");
-        mInitFriend = checkNotNull(InitFriend, "InitFriend cannot be null");
 
         mLoginView.setPresenter(this);
     }
@@ -131,42 +124,18 @@ public class LoginPresenter implements LoginContract.Presenter {
         // send logged in email to MainView
         mLoginView.setLoginSuccessUI(loggedInEmail, loginResponse.getName());
 
-        // Initialize Friend Local data source
-        // Create ME friend object
-        Friend ME = new Friend(loggedInEmail, loginResponse.getName());
-        initFriend(ME, loginResponse.getFriends());
-
         // Set LoggedInUser info to SharedPreferences
+//        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
         mLoginView.setLoggedInUserInfo(
-                loginResponse.getTokenInfo(), loggedInEmail, loginResponse.getName(), ME.getId());
+                loginResponse.getTokenInfo(),
+                loggedInEmail,
+                loginResponse.getName(),
+                loginResponse.getFriendId());
     }
 
     @Override
     public void onLoginFail(int stringResource) {
         mLoginView.showLoginFailMessage(stringResource);
-    }
-
-    @Override
-    public void initFriend(@NonNull Friend me, List<Friend> friends) {
-        checkNotNull(me);
-        // Add a friend ME
-        friends.add(me);
-        // Save into FriendRepository
-        if (friends.size() != 0) {
-            mUseCaseHandler.execute(mInitFriend, new InitFriend.RequestValues(friends),
-                    new UseCase.UseCaseCallback<InitFriend.ResponseValue>() {
-                        @Override
-                        public void onSuccess(InitFriend.ResponseValue response) {
-                            // finish this activity and open the main
-                        }
-
-                        @Override
-                        public void onError() {
-                            // show save error
-                            showSaveError();
-                        }
-                    });
-        }
     }
 
     @Override

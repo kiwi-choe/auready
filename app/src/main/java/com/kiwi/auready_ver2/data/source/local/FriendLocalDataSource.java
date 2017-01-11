@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,75 +91,11 @@ public class FriendLocalDataSource implements FriendDataSource {
         }
     }
 
-    /*
-        * Note: {@link GetFriendCallback#onDataNotAvailable()} is fired
-        * if the {@link Friend} isn't found.
-        * */
     @Override
-    public void getFriend(@NonNull String friendColumnId, @NonNull GetFriendCallback callback) {
-        mDb = mDbHelper.getReadableDatabase();
-
-        String[] projection = {
-                FriendEntry.COLUMN_ID,
-                FriendEntry.COLUMN_EMAIL,
-                FriendEntry.COLUMN_NAME
-        };
-
-        String selection = FriendEntry.COLUMN_ID + " LIKE?";
-        String[] selectionArgs = {friendColumnId};
-
-        Cursor c = mDb.query(
-                FriendEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
-
-        Friend friend = null;
-        if (c != null && c.getCount() > 0) {
-            c.moveToFirst();
-            String itemId = c.getString(c.getColumnIndexOrThrow(FriendEntry.COLUMN_ID));
-            String email = c.getString(c.getColumnIndexOrThrow(FriendEntry.COLUMN_EMAIL));
-            String name = c.getString(c.getColumnIndexOrThrow(FriendEntry.COLUMN_NAME));
-
-            friend = new Friend(itemId, email, name);
-        }
-        if (c != null) {
-            c.close();
-        }
-
-        if (friend != null) {
-            callback.onFriendLoaded(friend);
-        } else {
-            callback.onDataNotAvailable();
-        }
-    }
-
-    @Override
-    public void initFriend(@NonNull List<Friend> friends) {
-        checkNotNull(friends);
-        mDb = mDbHelper.getWritableDatabase();
-
-        mDb.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-
-            for (Friend friend : friends) {
-                values.put(FriendEntry.COLUMN_ID, friend.getId());
-                values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
-                values.put(FriendEntry.COLUMN_NAME, friend.getName());
-
-                mDb.insert(FriendEntry.TABLE_NAME, null, values);
-            }
-            mDb.setTransactionSuccessful();
-        } catch (SQLiteException e) {
-            Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new list to (" + FriendEntry.TABLE_NAME + " ). ", e);
-        } finally {
-            mDb.endTransaction();
-        }
-    }
-
-    @Override
-    public void saveFriend(@NonNull Friend friend) {
+    public void saveFriend(@NonNull Friend friend, @NonNull SaveCallback callback) {
         checkNotNull(friend);
         mDb = mDbHelper.getWritableDatabase();
-
+        long isSuccess = DBExceptionTag.INSERT_ERROR;
         mDb.beginTransaction();
         try {
             ContentValues values = new ContentValues();
@@ -167,12 +103,18 @@ public class FriendLocalDataSource implements FriendDataSource {
             values.put(FriendEntry.COLUMN_EMAIL, friend.getEmail());
             values.put(FriendEntry.COLUMN_NAME, friend.getName());
 
-            mDb.insert(FriendEntry.TABLE_NAME, null, values);
+            isSuccess = mDb.insert(FriendEntry.TABLE_NAME, null, values);
             mDb.setTransactionSuccessful();
         } catch (SQLiteException e) {
             Log.e(DBExceptionTag.TAG_SQLITE, "Error insert new one to (" + FriendEntry.TABLE_NAME + "). ", e);
         } finally {
             mDb.endTransaction();
+        }
+
+        if(isSuccess != DBExceptionTag.INSERT_ERROR) {
+            callback.onSaveSuccess();
+        } else {
+            callback.onSaveFailed();
         }
     }
 }

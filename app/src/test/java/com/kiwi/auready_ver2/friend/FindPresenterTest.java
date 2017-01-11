@@ -3,13 +3,14 @@ package com.kiwi.auready_ver2.friend;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.verify;
@@ -51,7 +52,8 @@ public class FindPresenterTest {
         // Given a new Friend
         final Friend newFriend = new Friend(EMAIL, NAME);
         mFindPresenter.saveFriend(newFriend);
-        verify(mFriendRepository).saveFriend(newFriend);
+        FriendDataSource.SaveCallback saveCallback = Mockito.mock(FriendDataSource.SaveCallback.class);
+        verify(mFriendRepository).saveFriend(newFriend, saveCallback);
 
         // Show Success Msg
         verify(mFindView).showSuccessMsgOfAddFriend(newFriend);

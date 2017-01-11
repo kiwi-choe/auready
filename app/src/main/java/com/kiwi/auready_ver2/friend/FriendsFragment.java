@@ -32,6 +32,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     public static final String TAG_FRIENDFRAG = "TAG_FriendFragment";
 
     public static final String EXTRA_KEY_SELECTED_FRIENDS = "extraKeyOfSelectedFriends";
+    public static final String EXTRA_KEY_MEMBERS = "extraKey_members";
 
     private FriendsContract.Presenter mPresenter;
 
@@ -42,6 +43,8 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     private LinearLayout mNoSearchedEmailView;
     private TextView mLoadingIndicator;
     private ListView mListView;
+
+    private ArrayList<String> mMembers = new ArrayList<>();
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -54,6 +57,9 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(getArguments() != null) {
+            mMembers = getArguments().getStringArrayList(EXTRA_KEY_MEMBERS);
+        }
         mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0), mItemListener);
 
         setHasOptionsMenu(true);

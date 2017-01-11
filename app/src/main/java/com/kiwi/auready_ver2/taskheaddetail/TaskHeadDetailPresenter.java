@@ -113,7 +113,6 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
     @Override
     public void populateTaskHeadDetail() {
-        Log.d("TEST_NOW", "entered into populateTaskHeadDetail");
         if (mTaskHeadId == null) {
             throw new RuntimeException("populateTaskHeadDetail() was called but taskhead is new.");
         }
@@ -122,13 +121,12 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                     @Override
                     public void onSuccess(GetTaskHeadDetail.ResponseValue response) {
-                        Log.d("TEST_NOW", "entered into onSUccess " + response.getTaskHeadDetail().getTaskHead().getTitle());
                         showTaskHead(response.getTaskHeadDetail());
                     }
 
                     @Override
                     public void onError() {
-                        Log.d("TEST_NOW", "entered into onError");
+                        Log.d(TaskHeadDetailFragment.TAG_TASKHEADDETAILFRAG, "entered into onError");
                     }
                 });
     }

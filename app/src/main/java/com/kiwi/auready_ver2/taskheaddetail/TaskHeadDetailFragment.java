@@ -27,6 +27,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
+import com.kiwi.auready_ver2.friend.FriendsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ import java.util.List;
 public class TaskHeadDetailFragment extends Fragment implements
         TaskHeadDetailContract.View {
 
-    public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFragment";
+    public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFrag";
     private static final String TAG_TASKHEADDETAILFRAG_DEBUG = "TaskHeadDetailView";
 
     public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
@@ -135,12 +136,24 @@ public class TaskHeadDetailFragment extends Fragment implements
         memberAddBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), FriendsActivity.class);
-                startActivityForResult(intent, FriendsActivity.REQ_FRIENDS);
+                openFriendsView();
             }
         });
 
         return root;
+    }
+
+    private void openFriendsView() {
+        Intent intent = new Intent(getActivity(), FriendsActivity.class);
+
+        // Set friendId of members
+        ArrayList<String> friendIdOfMembers = new ArrayList<>();
+        for(Member member:mMembers) {
+            friendIdOfMembers.add(member.getFriendId());
+        }
+        intent.putStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS, friendIdOfMembers);
+
+        startActivityForResult(intent, FriendsActivity.REQ_FRIENDS);
     }
 
     @Override

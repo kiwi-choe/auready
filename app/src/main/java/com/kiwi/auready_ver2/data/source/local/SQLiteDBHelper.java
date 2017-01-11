@@ -86,7 +86,25 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             isSuccess = sDb.insertOrThrow(table, nullColumnHack, values);
             sDb.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(TAG_SQLITE, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " ). ", e);
+            Log.e(TAG_SQLITE, "Error insert new one to ( " + table + " ). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+        return isSuccess;
+    }
+
+    public long insertMultipleRows(String table, String nullColumnHack, List<ContentValues> valuesList) {
+        sDb = sDbHelper.getWritableDatabase();
+
+        long isSuccess = INSERT_ERROR;
+        sDb.beginTransaction();
+        try {
+            for (ContentValues values : valuesList) {
+                isSuccess = sDb.insertOrThrow(table, nullColumnHack, values);
+            }
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG_SQLITE, "Error insert new one to ( " + table + " ). ", e);
         } finally {
             sDb.endTransaction();
         }
@@ -152,7 +170,8 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
                 sDb.setTransactionSuccessful();
             }
         } catch (SQLException e) {
-            Log.e(TAG_SQLITE, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " ). ", e);
+            Log.e(TAG_SQLITE, "Error insert new one to ( " + TaskHeadEntry.TABLE_NAME + " and " +
+                    MemberEntry.TABLE_NAME + " ). ", e);
         } finally {
             sDb.endTransaction();
         }

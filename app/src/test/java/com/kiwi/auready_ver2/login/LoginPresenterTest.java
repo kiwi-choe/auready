@@ -3,11 +3,9 @@ package com.kiwi.auready_ver2.login;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.FriendsContract;
-import com.kiwi.auready_ver2.login.domain.usecase.InitFriend;
 import com.kiwi.auready_ver2.rest_service.MockSuccessLoginService;
 
 import org.junit.Before;
@@ -16,9 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.io.IOException;
-import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -59,18 +55,6 @@ public class LoginPresenterTest {
         verify(mLoginView).setLoginSuccessUI(eq(EMAIL), eq(loginResponse.getName()));
     }
 
-    @Test
-    public void initFriends_whenLoginSuccess() {
-
-        mLoginPresenter.onLoginSuccess(MockSuccessLoginService.RESPONSE, EMAIL);
-
-        // Create ME friend object and Add to friendList
-        List<Friend> friendList = MockSuccessLoginService.RESPONSE.getFriends();
-        Friend friend = new Friend(EMAIL, MockSuccessLoginService.RESPONSE.getName());
-        friendList.add(friend);
-        // ME and FRIENDS is saved in the repository
-        verify(mFriendRepository).initFriend(friendList);
-    }
 
     @Test
     public void setLoggedInUserInfo_whenLoginSuccess() {
@@ -79,8 +63,10 @@ public class LoginPresenterTest {
         mLoginPresenter.onLoginSuccess(successResponse, EMAIL);
 
         verify(mLoginView).setLoggedInUserInfo(
-                eq(successResponse.getTokenInfo()), eq(EMAIL),
-                eq(successResponse.getName()), any(String.class));
+                eq(successResponse.getTokenInfo()),
+                eq(EMAIL),
+                eq(successResponse.getName()),
+                eq(successResponse.getFriendId()));
     }
 
     @Test
@@ -102,8 +88,7 @@ public class LoginPresenterTest {
     private LoginPresenter givenLoginPresenter() {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
-        InitFriend InitFriend = new InitFriend(mFriendRepository);
 
-        return new LoginPresenter(useCaseHandler, mLoginView, InitFriend);
+        return new LoginPresenter(useCaseHandler, mLoginView);
     }
 }

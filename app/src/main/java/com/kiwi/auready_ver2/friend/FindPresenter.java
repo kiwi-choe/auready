@@ -37,7 +37,6 @@ public class FindPresenter implements FindContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveFriend.ResponseValue response) {
-                        checkNotNull(response.getFriend(), "response.getFriend() cannot be null");
                         mFindView.showSuccessMsgOfAddFriend(response.getFriend());
                     }
 

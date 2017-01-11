@@ -35,6 +35,8 @@ public interface TaskDataSource {
 
     int getTaskHeadsCount();
 
+    void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads);
+
     /*
     * TaskHeadDetailView
     * */

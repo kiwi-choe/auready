@@ -6,11 +6,15 @@ import com.kiwi.auready_ver2.data.Friend;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.List;
+import java.util.ArrayList;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -21,24 +25,29 @@ import static org.mockito.Mockito.verify;
 public class FriendRepositoryTest {
 
     private static final String FRIEND_COL_ID = "friendColumnId";
-    private FriendRepository mFriendRepository;
+    // We start the friends to 3.
+    private static ArrayList<Friend> FRIENDS = Lists.newArrayList(
+            new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
+
+    private FriendRepository mRepository;
 
     @Mock
-    private FriendDataSource mFriendRemoteDataSource;
-    @Mock
-    private FriendDataSource mFriendLocalDataSource;
+    private FriendDataSource mLocalDataSource;
 
     @Mock
-    private FriendDataSource.GetFriendCallback mGetFriendCallback;
+    private FriendDataSource.SaveCallback mSaveCallback;
+    @Captor
+    private ArgumentCaptor<FriendDataSource.SaveCallback> mSaveCallbackCaptor;
     @Mock
-    private FriendDataSource.LoadFriendsCallback mGetFriendsCallback;
+    private FriendDataSource.LoadFriendsCallback mLoadFriendsCallback;
+    @Captor
+    private ArgumentCaptor<FriendDataSource.LoadFriendsCallback> mLoadFriendsCallbackCaptor;
 
     @Before
     public void setupFriendRepository() {
         MockitoAnnotations.initMocks(this);
         // Get a reference to the class under test
-        mFriendRepository = FriendRepository.getInstance(
-                mFriendRemoteDataSource, mFriendLocalDataSource);
+        mRepository = FriendRepository.getInstance(mLocalDataSource);
     }
 
     @After
@@ -47,59 +56,64 @@ public class FriendRepositoryTest {
     }
 
     @Test
-    public void getFriend_requestsAnFriendFromLocalDataSource() {
-        // When a friend is requested from the friend repository
-        mFriendRepository.getFriend(FRIEND_COL_ID, mGetFriendCallback);
-
-        // Then the friend is loaded from the database
-        verify(mFriendLocalDataSource).getFriend(eq(FRIEND_COL_ID), any(
-                FriendDataSource.GetFriendCallback.class));
-    }
-
-    @Test
-    public void getFriends_requestsFriendsFromLocalDataSource() {
-
-        mFriendRepository.getFriends(mGetFriendsCallback);
-        verify(mFriendLocalDataSource).getFriends(any(
-                FriendDataSource.LoadFriendsCallback.class));
-    }
-
-    @Test
-    public void saveMeToRepo_beforeInitFriend() {
-        // Given a stub friend list
-        List<Friend> friends = Lists.newArrayList(
-                new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
-
-        // Try to initialize Local FriendDB
-        String loggedInEmail = "loggedInEmail";
-        String loggedInName = "loggedInName";
-        mFriendRepository.initFriend(friends);
-
-        // Create ME friend object and add friendList
-        // Save friendList to Local source
-        verify(mFriendLocalDataSource).initFriend(friends);
-    }
-
-    @Test
     public void saveFriend() {
         // Given a stub friend with title and description
         Friend newFriend = new Friend("aa@aa.com", "nameOfaa");
 
         // When a friend is saved to the friend repository
-        mFriendRepository.saveFriend(newFriend);
+        mRepository.saveFriend(newFriend , mSaveCallback);
 
         // Then the persistent repository are called
-        verify(mFriendLocalDataSource).saveFriend(newFriend);
+        verify(mLocalDataSource).saveFriend(eq(newFriend), mSaveCallbackCaptor.capture());
+    }
+    @Test
+    public void saveFriend_addToCache_whenSaveToLocalIsSucceed() {
+        // Given a stub friend with title and description
+        Friend newFriend = new Friend("aa@aa.com", "nameOfaa");
+
+        // Save to Local data source is succeed
+        mRepository.saveFriend(newFriend , mSaveCallback);
+        setFriendsSavedSuccess(mLocalDataSource, newFriend);
+
+        assertThat(mRepository.mCacheFriends.containsKey(newFriend.getId()), is(true));
     }
 
     @Test
-    public void deleteFriend() {
-        Friend friend = new Friend("aa@aa.com", "nameOfaa");
-        mFriendRepository.deleteFriend(friend.getId());
+    public void getFriends_requestsFriendsFromLocalDataSource() {
 
-        verify(mFriendRemoteDataSource).deleteFriend(friend.getId());
-        verify(mFriendLocalDataSource).deleteFriend(friend.getId());
+        mRepository.getFriends(mLoadFriendsCallback);
+        verify(mLocalDataSource).getFriends(any(FriendDataSource.LoadFriendsCallback.class));
+    }
 
+    @Test
+    public void getFriendsWithLocalDataSourceUnavailable_firesOnDataUnavailable() {
+        mRepository.getFriends(mLoadFriendsCallback);
+        setFriendsNotAvailable(mLocalDataSource);
 
+        verify(mLoadFriendsCallback).onDataNotAvailable();
+    }
+
+    @Test
+    public void deleteAll_fromLocal() {
+        mRepository.deleteAllFriends();
+
+        verify(mLocalDataSource).deleteAllFriends();
+    }
+
+    private void setFriendsNotAvailable(FriendDataSource dataSource) {
+        verify(dataSource).getFriends(mLoadFriendsCallbackCaptor.capture());
+        mLoadFriendsCallbackCaptor.getValue().onDataNotAvailable();
+    }
+
+    private void saveStubbedFriends(ArrayList<Friend> friends) {
+        for(Friend friend:friends) {
+            mRepository.saveFriend(friend, mSaveCallback);
+            setFriendsSavedSuccess(mLocalDataSource, friend);
+        }
+    }
+
+    private void setFriendsSavedSuccess(FriendDataSource dataSource, Friend newFriend) {
+        verify(dataSource).saveFriend(eq(newFriend), mSaveCallbackCaptor.capture());
+        mSaveCallbackCaptor.getValue().onSaveSuccess();
     }
 }

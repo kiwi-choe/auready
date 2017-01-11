@@ -74,6 +74,7 @@ class FriendsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
+        // bind views
         final Friend friend = getItem(position);
         viewHolder.friendName.setText(friend.getName());
 

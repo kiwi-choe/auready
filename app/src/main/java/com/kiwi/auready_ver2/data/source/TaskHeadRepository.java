@@ -36,13 +36,6 @@ public class TaskHeadRepository implements TaskHeadDataSource {
         mTaskHeadLocalDataSource = checkNotNull(taskHeadLocalDataSource);
     }
 
-//    @Override
-//    public void updateTaskHeadsOrder(List<TaskHead> taskHeads) {
-//        mTaskHeadLocalDataSource.updateTaskHeadsOrder(taskHeads);
-//
-//        refreshTaskHeadCache(taskHeads);
-//    }
-//
     @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
 
