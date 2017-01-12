@@ -50,6 +50,10 @@ public class FriendRepository implements FriendDataSource {
     public void deleteFriend(@NonNull String id) {
         checkNotNull(id);
         mFriendsLocalDataSource.deleteFriend(id);
+
+        if(mCacheFriends != null) {
+            mCacheFriends.remove(id);
+        }
     }
 
     @Override

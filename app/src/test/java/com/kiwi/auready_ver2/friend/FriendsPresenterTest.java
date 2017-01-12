@@ -1,13 +1,11 @@
 package com.kiwi.auready_ver2.friend;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
-import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 
@@ -18,11 +16,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import static com.kiwi.auready_ver2.StubbedData.FriendStub.FRIENDS;
 import static junit.framework.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -30,8 +27,6 @@ import static org.mockito.Mockito.verify;
  * Created by kiwi on 6/30/16.
  */
 public class FriendsPresenterTest {
-
-    private static ArrayList<Friend> FRIENDS;
 
     private FriendsPresenter mFriendsPresenter;
 
@@ -54,9 +49,6 @@ public class FriendsPresenterTest {
         MockitoAnnotations.initMocks(this);
 
         mFriendsPresenter = givenFriendPresenter();
-
-        // We start the friends to 3.
-        FRIENDS = Lists.newArrayList(new Friend("aa", "name1"), new Friend("bb", "name2"), new Friend("cc", "name3"));
     }
 
     private FriendsPresenter givenFriendPresenter() {

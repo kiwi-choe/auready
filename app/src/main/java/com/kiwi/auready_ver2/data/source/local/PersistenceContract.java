@@ -18,11 +18,11 @@ public final class PersistenceContract {
         public static final int DELETE_NOTHING = 0;
     }
     /* Inner class that defines the table contents */
-    static class FriendEntry {
-        static final String TABLE_NAME = "friend";
-        static final String COLUMN_ID = "_id";
-        static final String COLUMN_EMAIL = "email";
-        static final String COLUMN_NAME = "name";
+    public static class FriendEntry {
+        public static final String TABLE_NAME = "friend";
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_EMAIL = "email";
+        public static final String COLUMN_NAME = "name";
     }
 
     public static class MemberEntry {

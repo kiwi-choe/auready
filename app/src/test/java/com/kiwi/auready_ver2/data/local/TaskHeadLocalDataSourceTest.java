@@ -2,7 +2,6 @@ package com.kiwi.auready_ver2.data.local;
 
 import android.content.ContentValues;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract;
@@ -22,6 +21,7 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEADS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -33,12 +33,7 @@ import static org.mockito.Mockito.verify;
  */
 
 @RunWith(RobolectricTestRunner.class)
-public class LocalDataSourceTest_TaskHead {
-
-    public static List<TaskHead> TASKHEADS = Lists.newArrayList(
-            new TaskHead("stubbedTaskHeadId0", "title0", 0),
-            new TaskHead("stubbedTaskHeadId1", "title1", 1),
-            new TaskHead("stubbedTaskHeadId2", "title2", 2));
+public class TaskHeadLocalDataSourceTest {
 
     private static SQLiteDBHelper mDbHelper;
     private TaskLocalDataSource mTaskLocalDataSource = TaskLocalDataSource.getInstance(RuntimeEnvironment.application);

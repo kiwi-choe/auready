@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
  */
 
 @RunWith(RobolectricTestRunner.class)
-public class LocalDataSourceTest_TaskHeadDetail {
+public class TaskHeadDetailLocalDataSourceTest {
 
     private static SQLiteDBHelper mDbHelper;
     private TaskLocalDataSource mLocalDataSource = TaskLocalDataSource.getInstance(RuntimeEnvironment.application);

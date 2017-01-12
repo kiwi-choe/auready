@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2;
 
 import com.google.common.collect.Lists;
+import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -15,7 +16,8 @@ public final class StubbedData {
 
     // To prevent someone from accidentally instantiating this class
     // give it an empty constructor.
-    private StubbedData() {}
+    private StubbedData() {
+    }
 
     /*
     * {@link Task}s stub that is added to the fake service API layer.
@@ -42,6 +44,14 @@ public final class StubbedData {
                 new Task("stubbedTask0", TASKHEAD.getId(), MEMBERS.get(0).getId(), "description", 0),
                 new Task("stubbedTask1", TASKHEAD.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
                 new Task("stubbedTask2", TASKHEAD.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
+    }
+
+    public static abstract class FriendStub {
+        // We start the friends to 3.
+        public static List<Friend> FRIENDS = Lists.newArrayList(
+                new Friend("stubbedFriendId0", "aa@aa.com", "aa"),
+                new Friend("stubbedFriendId1", "bb@bb.com", "bb"),
+                new Friend("stubbedFriendId2", "cc@cc.com", "cc"));
     }
 
 }

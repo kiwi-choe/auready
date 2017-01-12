@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.data.source;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Friend;
 
 import org.junit.After;
@@ -11,8 +10,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import static com.kiwi.auready_ver2.StubbedData.FriendStub.FRIENDS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
@@ -25,9 +25,6 @@ import static org.mockito.Mockito.verify;
 public class FriendRepositoryTest {
 
     private static final String FRIEND_COL_ID = "friendColumnId";
-    // We start the friends to 3.
-    private static ArrayList<Friend> FRIENDS = Lists.newArrayList(
-            new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
 
     private FriendRepository mRepository;
 
@@ -95,9 +92,25 @@ public class FriendRepositoryTest {
 
     @Test
     public void deleteAll_fromLocal() {
+        mRepository.saveFriend(FRIENDS.get(0), mSaveCallback);
+
         mRepository.deleteAllFriends();
 
         verify(mLocalDataSource).deleteAllFriends();
+    }
+
+    @Test
+    public void deleteFriend_fromLocal() {
+        // Save the stubbed friends
+        saveStubbedFriends(FRIENDS);
+
+        Friend deletingFriend = FRIENDS.get(1);
+        mRepository.deleteFriend(deletingFriend.getId());
+
+        verify(mLocalDataSource).deleteFriend(eq(deletingFriend.getId()));
+
+        assertThat(mRepository.mCacheFriends.containsKey(deletingFriend.getId()), is(false));
+        assertThat(mRepository.mCacheFriends.size(), is(2));
     }
 
     private void setFriendsNotAvailable(FriendDataSource dataSource) {
@@ -105,7 +118,7 @@ public class FriendRepositoryTest {
         mLoadFriendsCallbackCaptor.getValue().onDataNotAvailable();
     }
 
-    private void saveStubbedFriends(ArrayList<Friend> friends) {
+    private void saveStubbedFriends(List<Friend> friends) {
         for(Friend friend:friends) {
             mRepository.saveFriend(friend, mSaveCallback);
             setFriendsSavedSuccess(mLocalDataSource, friend);
