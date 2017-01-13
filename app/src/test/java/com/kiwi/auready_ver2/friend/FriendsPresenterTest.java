@@ -86,6 +86,5 @@ public class FriendsPresenterTest {
         // Verify deleteFriend is called
         verify(mFriendRepository).deleteFriend((eq(friend.getId())));
         // Update view
-        // load friends for updating list
     }
 }

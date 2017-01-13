@@ -47,5 +47,24 @@ public class FindPresenter implements FindContract.Presenter {
                 });
     }
 
+    @Override
+    public void findPeople(@NonNull String emailOrName) {
+        // Find people by email or name
+        // request to Server
+
+        // onSuccess, call view.showSearchedEmailList(ArrayList<String> searchedEmailList);
+        // onFailed, call view.showNoResultByEmail();
+    }
+
+    @Override
+    public void addFriend(@NonNull Friend friend) {
+
+        // 1. Add to friend table (= save friend)
+        // If the friend reject 'the request to be friends', delete the friend from LocalDataSource? not sure-
+
+        // 2. Request to Server
+        // onSuccess,
+    }
+
 
 }

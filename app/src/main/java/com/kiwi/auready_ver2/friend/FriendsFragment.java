@@ -40,7 +40,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
 
     private LinearLayout mFriendsView;
     private LinearLayout mNoFriendsView;
-    private LinearLayout mNoSearchedEmailView;
     private TextView mLoadingIndicator;
     private ListView mListView;
 
@@ -84,11 +83,10 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
 
         // Set up no friends and searching user view
         mNoFriendsView = (LinearLayout) root.findViewById(R.id.no_friends_layout);
-        mNoSearchedEmailView = (LinearLayout) root.findViewById(R.id.no_searched_email_layout);
         mLoadingIndicator = (TextView) root.findViewById(R.id.loading_indicator);
 
         // Set up search editText
-        final EditText searchEditText = (EditText) root.findViewById(R.id.ed_search_people);
+        final EditText searchEditText = (EditText) root.findViewById(R.id.ed_search_friend);
         searchEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -136,16 +134,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
 
         mFriendsView.setVisibility(View.VISIBLE);
         mNoFriendsView.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showSearchedEmailList(ArrayList<String> searchedEmailList) {
-
-    }
-
-    @Override
-    public void showNoResultByEmail() {
-
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.friend;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -11,6 +12,7 @@ import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.kiwi.auready_ver2.friend.FriendsFragment.TAG_FRIENDFRAG;
 
 /**
  * Created by kiwi on 6/28/16.
@@ -74,7 +76,7 @@ public class FriendsPresenter implements FriendsContract.Presenter {
 
                     @Override
                     public void onError() {
-
+                        Log.d(TAG_FRIENDFRAG, "deleteFriend onError()");
                     }
                 });
      }

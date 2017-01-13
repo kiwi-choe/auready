@@ -87,4 +87,14 @@ public class FindFragment extends Fragment implements
         String successMsg = newFriend.getName() + " " + getString(R.string.add_friend_success_msg);
         Snackbar.make(getView(), successMsg, Snackbar.LENGTH_SHORT);
     }
+
+    @Override
+    public void showSearchedEmailList(ArrayList<String> searchedEmailList) {
+
+    }
+
+    @Override
+    public void showNoResultByEmail() {
+
+    }
 }

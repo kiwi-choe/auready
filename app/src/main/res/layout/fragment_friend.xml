@@ -12,7 +12,7 @@
         android:orientation="horizontal"
         android:weightSum="1">
         <EditText
-            android:id="@+id/ed_search_people"
+            android:id="@+id/ed_search_friend"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginStart="6dp"
@@ -20,7 +20,7 @@
             android:layout_marginBottom="6dp"
             android:layout_weight="0.95"/>
         <ImageButton
-            android:id="@+id/bt_search_people"
+            android:id="@+id/bt_search_friend"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@android:drawable/ic_menu_search"
@@ -56,19 +56,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/no_friends_msg"
-            android:layout_gravity="center" />
-    </LinearLayout>
-
-    <!-- Show no user that is searched by email  message -->
-    <LinearLayout
-        android:id="@+id/no_searched_email_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/txt_no_searched_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_searched_email_msg"
             android:layout_gravity="center" />
     </LinearLayout>
 </LinearLayout>

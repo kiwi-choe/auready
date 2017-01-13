@@ -19,9 +19,6 @@ public interface FriendsContract {
         void showNoFriends();
         void showFriends(List<Friend> friendList);
 
-        void showSearchedEmailList(ArrayList<String> searchedEmailList);
-        void showNoResultByEmail();
-
         void setLoadingIndicator(boolean active);
 
         void setResultToTaskHeadDetailView(ArrayList<Friend> selectedFriends);

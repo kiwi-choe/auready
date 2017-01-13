@@ -1,14 +1,68 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.kiwi.auready_ver2.friend.FindFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!--testing-->
     <Button
         android:id="@+id/bt_test_save_friend"
         android:text="Save a friend: name is nameOfaa"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</FrameLayout>
+    <!-- Searching layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="1">
+        <EditText
+            android:id="@+id/ed_search_people"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="6dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="0.95"/>
+        <ImageButton
+            android:id="@+id/bt_search_people"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_search"
+            android:background="@android:color/transparent" />
+    </LinearLayout>
+
+    <!-- Loading indicator -->
+    <TextView
+        android:id="@+id/loading_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- Show Searched people List -->
+    <LinearLayout
+        android:id="@+id/searched_list_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/searched_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <!-- Show no user that is searched by email  message -->
+    <LinearLayout
+        android:id="@+id/no_searched_email_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/txt_no_searched_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_searched_email_msg"
+            android:layout_gravity="center" />
+    </LinearLayout>
+</LinearLayout>
