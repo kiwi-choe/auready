@@ -39,6 +39,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         return INSTANCE;
     }
 
+
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
 
@@ -317,5 +318,10 @@ public class TaskLocalDataSource implements TaskDataSource {
         } else {
             callback.onDataNotAvailable();
         }
+    }
+
+    @Override
+    public void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback) {
+
     }
 }

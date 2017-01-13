@@ -55,6 +55,10 @@ public class TaskRepository implements TaskDataSource {
         INSTANCE = null;
     }
 
+    @Override
+    public void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback) {
+
+    }
 
     @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {

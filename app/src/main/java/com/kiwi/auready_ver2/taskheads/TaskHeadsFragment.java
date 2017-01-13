@@ -106,7 +106,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 final TaskHead taskHead = mTaskHeadsAdapter.getItem(position);
                 if (!mIsActionMode) {
-                    showTasksView(taskHead.getId());
+                    showTasksView(taskHead.getId(), taskHead.getTitle());
                 } else {
                     mTaskHeadsView.setItemChecked(position, !mTaskHeadsView.isItemChecked(position));
                 }
@@ -198,10 +198,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     }
 
     @Override
-    public void showTasksView(String taskHeadId) {
+    public void showTasksView(String taskHeadId, String title) {
         Intent intent = new Intent(getContext(), TasksActivity.class);
         intent.putExtra(TasksActivity.ARG_TASKHEAD_ID, taskHeadId);
-
+        intent.putExtra(TasksActivity.ARG_TITLE, title);
         startActivity(intent);
     }
 

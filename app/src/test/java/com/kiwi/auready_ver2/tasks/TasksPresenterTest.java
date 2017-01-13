@@ -2,19 +2,27 @@ package com.kiwi.auready_ver2.tasks;
 
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.source.TaskHeadDetailDataSource;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit tests for the implementation of {@link TasksPresenter}.
@@ -30,17 +38,39 @@ public class TasksPresenterTest {
     @Mock
     private TaskRepository mTaskRepository;
 
+    @Mock
+    private TaskDataSource.LoadMembersCallback mLoadMembersCallback;
     @Captor
-    private ArgumentCaptor<TaskHeadDetailDataSource.GetTaskHeadDetailCallback> mGetTaskHeadCallbackCaptor;
-//    @Captor
-//    private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
+    private ArgumentCaptor<TaskDataSource.LoadMembersCallback> mLoadMembersCallbackCaptor;
 
     @Before
     public void setup() {
 
         MockitoAnnotations.initMocks(this);
     }
-//
+
+    @Test
+    public void getMembers() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+
+        mTasksPresenter.populateMembers();
+
+        // Get members from repo
+        verify(mTaskRepository).getMembers(eq(TASKHEAD.getId()), mLoadMembersCallbackCaptor.capture());
+        mLoadMembersCallbackCaptor.getValue().onMembersLoaded(MEMBERS);
+        // and update View
+        verify(mTasksView).showMembers(eq(MEMBERS));
+    }
+
+    @Test
+    public void cannotGetMembers_withInvalidTaskHeadId_whenStartPresenter() {
+        mTasksPresenter = givenTasksPresenter(null);
+
+        mTasksPresenter.start();
+
+        verify(mTaskRepository, never()).getMembers(anyString(), mLoadMembersCallbackCaptor.capture());
+    }
+
 //    @Test
 //    public void getTaskHeadFromRepo_withValidTaskHeadId() {
 //        // Given the tasksPresenter with valid taskheadId
@@ -52,8 +82,8 @@ public class TasksPresenterTest {
 //        verify(mTaskHeadRepository).getTaskHeadDetail(eq(TASKHEAD.getTaskHeadId()), mGetTaskHeadCallbackCaptor.capture());
 //        mGetTaskHeadCallbackCaptor.getValue().onTaskHeadDetailLoaded(TASKHEAD);
 //        // and update view related TaskHead
-//        verify(mTasksView).setTitle(TASKHEAD.getTitle());
-//        verify(mTasksView).setMembers(TASKHEAD.getMembers());
+//        verify(mTasksView).showTitle(TASKHEAD.getTitle());
+//        verify(mTasksView).showMembers(TASKHEAD.getMembers());
 //    }
 
 //    @Test
@@ -135,9 +165,10 @@ public class TasksPresenterTest {
         GetTasksOfMember getTasksOfMember = new GetTasksOfMember(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
         DeleteTask deleteTask = new DeleteTask(mTaskRepository);
-        GetTasksOfTaskHead getTasksOfTaskHead = new GetTasksOfTaskHead(mTaskRepository);
+        GetMembers getMembers = new GetMembers(mTaskRepository);
 
-        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView);
+        return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
+                getMembers);
     }
 
 }

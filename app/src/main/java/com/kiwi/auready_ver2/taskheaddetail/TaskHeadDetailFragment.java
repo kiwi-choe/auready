@@ -39,6 +39,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     private static final String TAG_TASKHEADDETAILFRAG_DEBUG = "TaskHeadDetailView";
 
     public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
+    public static final String EXTRA_TITLE = "extra_title";
 
     // when getArguments().getInt()
     private static final int DEFAULT_INT = 0;
@@ -195,7 +196,8 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void showAddedTaskHead(String taskHeadId, String title) {
         Intent intent = getActivity().getIntent();
-        intent.putExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID, taskHeadId);
+        intent.putExtra(EXTRA_TASKHEAD_ID, taskHeadId);
+        intent.putExtra(EXTRA_TITLE, title);
         sendResult(Activity.RESULT_OK, intent);
     }
 
@@ -241,7 +243,9 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void showEditedTaskHead() {
-        sendResult(Activity.RESULT_OK, null);
+        Intent intent = new Intent();
+        intent.putExtra(EXTRA_TITLE, mTitle.getText().toString());
+        sendResult(Activity.RESULT_OK, intent);
     }
 
     @Override

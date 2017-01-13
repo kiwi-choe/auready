@@ -11,6 +11,7 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 public class TasksActivity extends AppCompatActivity {
 
     public static final String ARG_TASKHEAD_ID = "TASKHEAD_ID";
+    public static final String ARG_TITLE = "TITLE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,16 +25,21 @@ public class TasksActivity extends AppCompatActivity {
         TasksFragment tasksFragment = (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
 
         String taskHeadId = null;
+        String title = null;
         if (tasksFragment == null) {
             tasksFragment = TasksFragment.newInstance();
 
             if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
-
                 taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
-                Bundle bundle = new Bundle();
-                bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
-                tasksFragment.setArguments(bundle);
             }
+            if(getIntent().hasExtra(ARG_TITLE)) {
+                title = getIntent().getStringExtra(ARG_TITLE);
+            }
+            Bundle bundle = new Bundle();
+            bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
+            bundle.putString(ARG_TITLE, title);
+            tasksFragment.setArguments(bundle);
+
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), tasksFragment,
                     R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
         }
@@ -42,7 +48,8 @@ public class TasksActivity extends AppCompatActivity {
         TasksPresenter presenter = new TasksPresenter(
                 Injection.provideUseCaseHandler(),
                 taskHeadId,
-                tasksFragment);
+                tasksFragment,
+                Injection.provideGetMembers(getApplicationContext()));
     }
 }
 

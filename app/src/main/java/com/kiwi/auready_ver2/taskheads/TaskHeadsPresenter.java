@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -74,12 +73,8 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     private void processTaskHeads(List<TaskHead> taskHeads) {
         if (taskHeads.isEmpty()) {
-            Log.d("TEST!!", "taskHeads is empty");
             mTaskHeadView.showNoTaskHeads();
         } else {
-            for(TaskHead taskHead: taskHeads) {
-                Log.d("TEST!!", taskHead.getTitle());
-            }
             mTaskHeadView.showTaskHeads(taskHeads);
         }
     }
@@ -110,10 +105,17 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     public void result(int requestCode, int resultCode, Intent data) {
         if (TaskHeadsActivity.REQ_ADD_TASKHEAD == requestCode && Activity.RESULT_OK == resultCode) {
             // Created TaskHead, Open TasksView of this taskhead
+            String taskHeadId = "";
             if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID)) {
-                String taskHeadId = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID);
-                mTaskHeadView.showTasksView(taskHeadId);
+                taskHeadId = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TASKHEAD_ID);
             }
+            String title = "";
+            if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TITLE)) {
+                title = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TITLE);
+            }
+
+            mTaskHeadView.showTasksView(taskHeadId, title);
+
             // Canceled create taskhead, Open TaskHeadsView
         }
         if (TaskHeadsActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {

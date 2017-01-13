@@ -18,6 +18,7 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -87,5 +88,9 @@ public class Injection {
 
     public static EditTaskHeadDetail provideEditTaskHeadDetail(@NonNull Context context) {
         return new EditTaskHeadDetail(Injection.provideTaskRepository(context));
+    }
+
+    public static GetMembers provideGetMembers(@NonNull Context context) {
+        return new GetMembers(Injection.provideTaskRepository(context));
     }
 }

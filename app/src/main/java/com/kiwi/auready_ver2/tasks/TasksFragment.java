@@ -6,19 +6,16 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
@@ -31,8 +28,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class TasksFragment extends Fragment implements TasksContract.View {
 
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
+    public static final int REQ_EDIT_TASKHEAD = 0;
 
-    private TextView mTitleView;
     private ExpandableListView mTasksView;
     private TasksAdapter mTasksAdapter;
 
@@ -54,9 +51,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TasksActivity.ARG_TASKHEAD_ID);
+            mTaskHeadTitle = getArguments().getString(TasksActivity.ARG_TITLE);
         }
 
-        mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Friend>(), new HashMap<String, ArrayList<Task>>(), mTaskItemListener);
+        mTasksAdapter = new TasksAdapter(getContext(), new ArrayList<Member>(), new HashMap<String, ArrayList<Task>>(), mTaskItemListener);
     }
 
 
@@ -74,6 +72,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        // Set title
+        setTitle(mTaskHeadTitle);
 
         // Set ListView
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
@@ -104,7 +105,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     private void showTaskHeadDetail() {
         Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
         intent.putExtra(TaskHeadDetailActivity.ARG_TASKHEAD_ID, mTaskHeadId);
-        startActivity(intent);
+        startActivityForResult(intent, REQ_EDIT_TASKHEAD);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode, resultCode, data);
     }
 
     private void showMessage(String message) {
@@ -112,14 +118,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public void setTitle(String title) {
+    public void setTitle(String titleOfTaskHead) {
         if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) {
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(mTaskHeadTitle);
         }
     }
 
     @Override
-    public void setMembers(List<Friend> members) {
+    public void showMembers(List<Member> members) {
         mTasksAdapter.replaceMemberList(members);
     }
 

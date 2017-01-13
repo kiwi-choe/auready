@@ -1,10 +1,11 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
-import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.List;
@@ -12,16 +13,15 @@ import java.util.List;
 /**
  * This specifies the contract between the view and the presenter.
  */
-public class TasksContract {
+class TasksContract {
 
     interface View extends BaseView<Presenter> {
 
+        void setTitle(String titleOfTaskHead);
         /*
-        * TaskHead
+        * Member
         * */
-        void setTitle(String title);
-
-        void setMembers(List<Friend> members);
+        void showMembers(List<Member> members);
 
         /*
         * Tasks
@@ -35,7 +35,7 @@ public class TasksContract {
 
     interface Presenter extends BasePresenter {
 
-        void populateTaskHead();
+        void populateMembers();
 
         // Get tasks by taskHeadId and memberId
         void getTasks(@NonNull String memberId);
@@ -50,5 +50,7 @@ public class TasksContract {
                         @NonNull String description, @NonNull int order);
 
         void deleteTask(@NonNull String id);
+
+        void result(int requestCode, int resultCode, Intent data);
     }
 }

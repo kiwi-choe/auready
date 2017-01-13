@@ -18,10 +18,9 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
-
     /*
-                * TaskHeadsView
-                * */
+                    * TaskHeadsView
+                    * */
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
@@ -70,9 +69,18 @@ public interface TaskDataSource {
 
     void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback);
 
+
     /*
     * TasksView
     * */
+    interface LoadMembersCallback {
+
+        void onMembersLoaded(List<Member> members);
+
+        void onDataNotAvailable();
+    }
+
+    void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback);
 
 //    interface LoadTasksCallback {
 //        void onTasksLoaded(List<Task> tasks);

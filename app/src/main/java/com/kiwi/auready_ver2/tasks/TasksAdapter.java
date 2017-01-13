@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 
 import java.util.ArrayList;
@@ -26,14 +25,14 @@ import java.util.List;
 public class TasksAdapter extends BaseExpandableListAdapter {
 
     final private TasksFragment.TaskItemListener mTaskItemListener;
-    private ArrayList<Friend> mMemberList = null;
+    private ArrayList<Member> mMemberList = null;
     private HashMap<String, ArrayList<Task>> mTasksList = null;
     private HashMap<String, ArrayList<Boolean>> mSelection = new HashMap<>();
 
     private LayoutInflater mInflater = null;
     int mCurrentActionModeMember = -1;
 
-    public TasksAdapter(Context context, ArrayList<Friend> memberList, HashMap<String, ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
+    public TasksAdapter(Context context, ArrayList<Member> memberList, HashMap<String, ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
         super();
 
         mInflater = LayoutInflater.from(context);
@@ -233,7 +232,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void replaceMemberList(List<Friend> members) {
+    public void replaceMemberList(List<Member> members) {
         setMemberList((ArrayList) members);
         notifyDataSetChanged();
     }
@@ -243,7 +242,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     }
 
 
-    private void setMemberList(ArrayList<Friend> members) {
+    private void setMemberList(ArrayList<Member> members) {
         mMemberList = members;
     }
 
