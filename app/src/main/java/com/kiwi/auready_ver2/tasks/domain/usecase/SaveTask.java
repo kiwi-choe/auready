@@ -22,7 +22,7 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
     @Override
     protected void executeUseCase(RequestValues requestValue) {
         final Task newTask = requestValue.getTask();
-//        mTaskRepository.saveTask(newTask);
+        mTaskRepository.saveTask(newTask);
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 

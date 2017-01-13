@@ -40,14 +40,11 @@ class TasksContract {
         // Get tasks by taskHeadId and memberId
         void getTasks(@NonNull String memberId);
 
-        // Get tasks by taskHeadId
-        void getTasks();
-
         void createTask(@NonNull String memberId,
                         @NonNull String description, @NonNull int order);
 
-        void updateTask(@NonNull String memberId, @NonNull String taskId,
-                        @NonNull String description, @NonNull int order);
+        void editTask(@NonNull String memberId, @NonNull String taskId,
+                      @NonNull String description, @NonNull int order);
 
         void deleteTask(@NonNull String id);
 

@@ -49,7 +49,10 @@ public class TasksActivity extends AppCompatActivity {
                 Injection.provideUseCaseHandler(),
                 taskHeadId,
                 tasksFragment,
-                Injection.provideGetMembers(getApplicationContext()));
+                Injection.provideGetMembers(getApplicationContext()),
+                Injection.provideGetTasks(getApplicationContext()),
+                Injection.provideSaveTask(getApplicationContext()),
+                Injection.provideDeleteTask(getApplicationContext()));
     }
 }
 

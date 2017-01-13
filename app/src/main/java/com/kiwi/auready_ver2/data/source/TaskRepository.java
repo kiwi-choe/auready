@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
 
@@ -57,6 +58,20 @@ public class TaskRepository implements TaskDataSource {
 
     @Override
     public void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback) {
+
+    }
+
+    @Override
+    public void getTasks(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
+    }
+
+    @Override
+    public void saveTask(@NonNull Task task) {
+
+    }
+
+    @Override
+    public void deleteTask(@NonNull String id) {
 
     }
 

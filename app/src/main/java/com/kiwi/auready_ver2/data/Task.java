@@ -38,11 +38,11 @@ public class Task {
     * To create an active Task if the Task already has an id
     * Update the existing task.
     * */
-    public Task(@NonNull String taskHeadId, @NonNull String memberId, @NonNull String id,
+    public Task(@NonNull String id, @NonNull String taskHeadId, @NonNull String memberId,
                 String description, int order) {
+        mId = id;
         mTaskHeadId = taskHeadId;
         mMemberId = memberId;
-        mId = id;
         mDescription = description;
         mCompleted = false;
         mOrder = order;
@@ -54,9 +54,9 @@ public class Task {
     * */
     public Task(@NonNull String taskHeadId, @NonNull String memberId,
                 String description, boolean completed, int order) {
+        mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
         mMemberId = memberId;
-        mId = UUID.randomUUID().toString();;
         mDescription = description;
         mCompleted = completed;
         mOrder = order;

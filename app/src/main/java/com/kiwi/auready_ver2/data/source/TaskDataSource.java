@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
 
@@ -19,8 +20,8 @@ import java.util.List;
 public interface TaskDataSource {
 
     /*
-                    * TaskHeadsView
-                    * */
+                        * TaskHeadsView
+                        * */
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
@@ -82,29 +83,27 @@ public interface TaskDataSource {
 
     void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback);
 
-//    interface LoadTasksCallback {
-//        void onTasksLoaded(List<Task> tasks);
-//
-//        void onDataNotAvailable();
-//    }
-//
+    interface LoadTasksCallback {
+        void onTasksLoaded(List<Task> tasks);
+
+        void onDataNotAvailable();
+    }
+
 //    interface DeleteTasksCallback {
 //        void onDeleteSuccess();
 //
 //        void onDeleteFail();
 //    }
 
-    // Get tasks by taskHeadId and memberId
-//    void getTasks(@NonNull String taskHeadId, @NonNull String memberId, @NonNull LoadTasksCallback callback);
-    // Get tasks by taskHeadId
-//    void getTasks(@NonNull String taskHeadId, @NonNull LoadTasksCallback callback);
+    void getTasks(@NonNull String memberId, @NonNull LoadTasksCallback callback);
 
-//    void saveTask(@NonNull Task task);
+    void saveTask(@NonNull Task task);
+
+    void deleteTask(@NonNull String id);
 
     // When delete a taskhead
 //    void deleteTasks(@NonNull List<String> taskHeadIds);
     // When delete a member of taskHeadDetail(update taskhead)
 //    void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
 
-//    void deleteTask(@NonNull String id);
 }
