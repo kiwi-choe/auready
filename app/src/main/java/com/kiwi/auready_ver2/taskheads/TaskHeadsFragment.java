@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -42,6 +43,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     private TextView mNoTaskHeadTxt;
     private DragSortListView mTaskHeadsView;
+    private ActionMode mActionMode;
 
     public TaskHeadsFragment() {
         // Required empty public constructor
@@ -107,10 +109,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                 final TaskHead taskHead = mTaskHeadsAdapter.getItem(position);
                 if (!mIsActionMode) {
                     showTasksView(taskHead.getId(), taskHead.getTitle());
-                } else {
-                    mTaskHeadsView.setItemChecked(position, !mTaskHeadsView.isItemChecked(position));
                 }
-
             }
         });
 
@@ -191,6 +190,9 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     @Override
     public void showTaskHeadDetail(int cntOfTaskHeads) {
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
 
         Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
         intent.putExtra(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS, cntOfTaskHeads);
@@ -199,6 +201,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     @Override
     public void showTasksView(String taskHeadId, String title) {
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
+
         Intent intent = new Intent(getContext(), TasksActivity.class);
         intent.putExtra(TasksActivity.ARG_TASKHEAD_ID, taskHeadId);
         intent.putExtra(TasksActivity.ARG_TITLE, title);
@@ -224,6 +230,29 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
     private boolean mIsActionMode = false;
 
+
+    void startAnimation(final boolean isDelete) {
+        if (!mTaskHeadsView.getViewTreeObserver().isAlive()) {
+            return;
+        }
+
+        mTaskHeadsView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mTaskHeadsView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                int count = mTaskHeadsView.getChildCount();
+                for (int i = 0; i < count; i++) {
+                    View childView = mTaskHeadsView.getChildAt(i);
+                    mTaskHeadsAdapter.startAnimation(childView, isDelete);
+                }
+
+                return true;
+            }
+        });
+
+    }
+
     @Override
     public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
         if (position >= 0 && position < mTaskHeadsAdapter.getCount()) {
@@ -239,9 +268,11 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     @Override
     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+        mActionMode = actionMode;
         MenuInflater inflater = actionMode.getMenuInflater();
         inflater.inflate(R.menu.contextual_menu_delete, menu);
 
+        startAnimation(true);
         mIsActionMode = true;
 
         return true;
@@ -257,7 +288,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         switch (menuItem.getItemId()) {
             case R.id.item_delete:
                 mPresenter.deleteTaskHeads(mTaskHeadsAdapter.getCurrentCheckedTaskHeads());
-                mTaskHeadsAdapter.clearSelection();
                 actionMode.finish();
                 return true;
             default:
@@ -268,8 +298,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     @Override
     public void onDestroyActionMode(ActionMode actionMode) {
+        mActionMode = null;
         mTaskHeadsAdapter.clearSelection();
 
+        startAnimation(false);
         mIsActionMode = false;
     }
 

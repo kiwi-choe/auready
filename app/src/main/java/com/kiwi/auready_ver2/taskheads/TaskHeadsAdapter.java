@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +21,9 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
     private List<TaskHead> mTaskHeads;
     private HashMap<Integer, Boolean> mSelection = new HashMap<>();
+
+    float mCheckboxStartX = -1;
+    float mCheckboxEndX = -1;
 
     public TaskHeadsAdapter(List<TaskHead> taskHeads) {
         setList(taskHeads);
@@ -57,6 +61,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
             rowView = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
             viewHolder = new ViewHolder();
+            viewHolder.checkBox = (CheckBox) rowView.findViewById(R.id.delete_check_box);
             viewHolder.titleTV = (TextView) rowView.findViewById(R.id.taskhead_title);
             viewHolder.reorderImage = (ImageView) rowView.findViewById(R.id.reorder);
 
@@ -65,15 +70,18 @@ public class TaskHeadsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) rowView.getTag();
         }
 
+        HoldPosition(rowView);
         final TaskHead taskHead = getItem(position);
 
         viewHolder.titleTV.setText(taskHead.getTitle());
 
         if (mSelection.get(position) != null) {
-            rowView.setBackgroundColor(rowView.getResources().getColor(R.color.listview_selected_item));
+            viewHolder.checkBox.setChecked(true);
         } else {
-            rowView.setBackgroundColor(rowView.getResources().getColor(R.color.listview_background));
+            viewHolder.checkBox.setChecked(false);
         }
+
+        rowView.setBackground(rowView.getResources().getDrawable(R.drawable.listview_state_drawable));
 
         return rowView;
     }
@@ -120,6 +128,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
+        CheckBox checkBox;
         TextView titleTV;
         ImageView reorderImage;
     }
@@ -131,5 +140,36 @@ public class TaskHeadsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    // animation
+    public void startAnimation(View view, boolean isDelete) {
+        final float distance = view.getResources().getDimension(R.dimen.checkbox_start_trans_x);
+        mCheckboxStartX = isDelete ? distance : 0;
+        mCheckboxEndX = isDelete ? 0 : distance;
 
+        CheckBox checkbox = (CheckBox) view.findViewById(R.id.delete_check_box);
+        checkbox.setTranslationX(mCheckboxStartX);
+        checkbox.animate().translationX(mCheckboxEndX);
+
+        TextView textview = (TextView) view.findViewById(R.id.taskhead_title);
+        textview.setTranslationX(mCheckboxStartX - distance);
+        textview.animate().translationX(mCheckboxEndX - distance);
+
+        ImageView imageview = (ImageView) view.findViewById(R.id.reorder);
+        imageview.setTranslationX(mCheckboxStartX - distance);
+        imageview.animate().translationX(mCheckboxEndX - distance);
+    }
+
+    private void HoldPosition(View view) {
+        ViewHolder holder = (ViewHolder) view.getTag();
+        final float distance = view.getResources().getDimension(R.dimen.checkbox_start_trans_x);
+        if (mCheckboxStartX == -1) {
+            return;
+        }
+
+        if (holder.checkBox.getTranslationX() != mCheckboxEndX) {
+            holder.checkBox.setTranslationX(mCheckboxEndX);
+            holder.titleTV.setTranslationX(mCheckboxEndX - distance);
+            holder.reorderImage.setTranslationX(mCheckboxEndX - distance);
+        }
+    }
 }

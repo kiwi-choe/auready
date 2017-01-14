@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -60,9 +61,11 @@ public class TaskHeadDetailFragment extends Fragment implements
     private List<Member> mMembers;
 
     // q find the better way
+    ListView mMemberListView;
     private List<Member> mAddedMembers = new ArrayList<>();
-    private boolean mIsActionMode = false;
     private Button mDeleteBt;
+
+    private ActionMode mActionMode;
 
     public TaskHeadDetailFragment() {
         // Required empty public constructor
@@ -121,7 +124,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
 
-        final ListView mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
+        mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
         View memberAddBtLayout = inflater.inflate(R.layout.member_add_bt, null, false);
         mMemberListView.addFooterView(memberAddBtLayout);
         mMemberListView.setAdapter(mMemberListAdapter);
@@ -164,6 +167,10 @@ public class TaskHeadDetailFragment extends Fragment implements
         }
         intent.putStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS, friendIdOfMembers);
 
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
+
         startActivityForResult(intent, FriendsActivity.REQ_FRIENDS);
     }
 
@@ -201,12 +208,6 @@ public class TaskHeadDetailFragment extends Fragment implements
         mMembers.addAll(members);
         mMembers.addAll(mAddedMembers);
         mMemberListAdapter.notifyDataSetChanged();
-
-        if (members.size() == 0) {
-            mDeleteBt.setVisibility(View.GONE);
-        } else {
-            mDeleteBt.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -249,6 +250,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setNewTaskHeadView() {
         mCreateBt.setVisibility(View.VISIBLE);
         mDoneBt.setVisibility(View.GONE);
+        mDeleteBt.setVisibility(View.GONE);
         mTitle.requestFocus();
     }
 
@@ -256,6 +258,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setEditTaskHeadView() {
         mDoneBt.setVisibility(View.VISIBLE);
         mCreateBt.setVisibility(View.GONE);
+        mDeleteBt.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -312,6 +315,8 @@ public class TaskHeadDetailFragment extends Fragment implements
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mode.getMenuInflater();
         inflater.inflate(R.menu.contextual_menu_delete, menu);
+        mActionMode = mode;
+        startAnimation(true);
         return true;
     }
 
@@ -337,7 +342,32 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         mMemberListAdapter.clearSelection();
+        startAnimation(false);
+        mActionMode = null;
+    }
 
-        mIsActionMode = false;
+    private void startAnimation(final boolean isDelete) {
+        if (!mMemberListView.getViewTreeObserver().isAlive()) {
+            return;
+        }
+
+        mMemberListView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mMemberListView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                int count = mMemberListView.getChildCount();
+                if (mMemberListView.getLastVisiblePosition() == mMemberListView.getCount() - 1) {
+                    count -= 1;
+                }
+
+                for (int i = 0; i < count; i++) {
+                    View childView = mMemberListView.getChildAt(i);
+                    mMemberListAdapter.startAnimation(childView, isDelete);
+                }
+
+                return true;
+            }
+        });
     }
 }

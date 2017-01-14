@@ -14,4 +14,9 @@
     <dimen name="listview_item_reorder_icon_size">24dp</dimen>
 
     <dimen name="title_textview_textsize">20sp</dimen>
+
+    <!--animation-->
+    <dimen name="checkbox_start_trans_x">-48dp</dimen>
+    <dimen name="checkbox_end_trans_x">0dp</dimen>
+
 </resources>
