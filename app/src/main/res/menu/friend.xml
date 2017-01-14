@@ -7,10 +7,6 @@
     <item
         android:id="@+id/action_confirm"
         android:title="@string/action_confirm"
+        android:icon="@drawable/check_icon"
         app:showAsAction="always"/>
-    <item
-        android:id="@+id/action_open_findview"
-        android:title="@string/action_open_findview"
-        app:showAsAction="always"/>
-
 </menu>

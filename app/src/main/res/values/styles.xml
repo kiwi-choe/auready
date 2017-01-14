@@ -16,7 +16,38 @@
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:actionModeBackground">@color/colorAccent</item>"
+        <item name="android:actionModeBackground">@color/colorAccent</item>
     </style>
 
+    <style name="custom_actionbar_textview_style" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="listview_textview_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:fontFamily">"sans-serif</item>
+        <item name="android:textSize">@dimen/listview_item_textview_textsize</item>
+        <item name="android:textColor">@color/listview_text_title</item>
+    </style>
+
+    <style name="listview_reorder_icon_style">
+        <item name="android:layout_width">@dimen/listview_item_reorder_icon_size</item>
+        <item name="android:layout_height">@dimen/listview_item_reorder_icon_size</item>
+        <item name="android:layout_gravity">center_vertical|end</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:tint">@color/icon_gray</item>
+    </style>
+
+    <style name="title_textview_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:fontFamily">"sans-serif-medium</item>
+        <item name="android:textSize">@dimen/title_textview_textsize</item>
+        <item name="android:textColor">@color/listview_text_title</item>
+    </style>
 </resources>

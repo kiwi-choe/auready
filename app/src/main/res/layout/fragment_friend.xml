@@ -9,22 +9,26 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:orientation="horizontal"
         android:weightSum="1">
+
         <EditText
             android:id="@+id/ed_search_friend"
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginBottom="6dp"
             android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
-            android:layout_weight="0.95"/>
+            android:layout_weight="0.95" />
+
         <ImageButton
             android:id="@+id/bt_search_friend"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@android:drawable/ic_menu_search"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_menu_search" />
     </LinearLayout>
 
     <!-- Loading indicator -->
@@ -43,7 +47,7 @@
         <ListView
             android:id="@+id/friend_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <!-- Show no friends message -->
@@ -51,11 +55,12 @@
         android:id="@+id/no_friends_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/txt_no_friends"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/no_friends_msg"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:text="@string/no_friends_msg" />
     </LinearLayout>
 </LinearLayout>

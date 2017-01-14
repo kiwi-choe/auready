@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="@dimen/lsitview_item_height"
     android:orientation="horizontal"
-    android:weightSum="10">
+    android:paddingEnd="@dimen/listview_item_start_end_margin"
+    android:paddingStart="@dimen/listview_item_start_end_margin">
 
     <TextView
         android:id="@+id/taskhead_title"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:gravity="center_vertical"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
+        style="@style/listview_textview_style"
+        android:layout_alignParentStart="true" />
 
     <ImageView
         android:id="@+id/reorder"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        style="@style/listview_reorder_icon_style"
         android:layout_alignParentEnd="true"
-        android:background="@android:drawable/ic_dialog_dialer" />
+        android:layout_centerVertical="true"
+        android:src="@drawable/re_order_icon" />
 
 </RelativeLayout>

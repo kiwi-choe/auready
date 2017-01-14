@@ -5,6 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -56,7 +58,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mMembers = getArguments().getStringArrayList(EXTRA_KEY_MEMBERS);
         }
         mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0), mItemListener);
@@ -109,12 +111,23 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        FloatingActionButton fab =
+                (FloatingActionButton) getActivity().findViewById(R.id.fab_add_friend);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFindView();
+            }
+        });
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_open_findview) {
-            openFindView();
-            return true;
-        } else if (id == R.id.action_confirm) {
+        if (id == R.id.action_confirm) {
             ArrayList<Friend> selectedFriends = (ArrayList<Friend>) mListAdapter.getCheckedItems();
             setResultToTaskHeadDetailView(selectedFriends);
         }
