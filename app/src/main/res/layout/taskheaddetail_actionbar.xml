@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingEnd="@dimen/listview_item_start_end_margin">
 
     <TextView
         android:id="@+id/cancel_taskhead"
-        android:text="Cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="start"/>
+        style="@style/custom_actionbar_textview_style"
+        android:gravity="start"
+        android:text="Cancel" />
 
     <TextView
         android:id="@+id/create_taskhead"
-        android:text="Create"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/custom_actionbar_textview_style"
+        android:layout_alignParentEnd="true"
         android:gravity="end"
-        android:layout_alignParentEnd="true" />
+        android:text="Create" />
+
     <TextView
         android:id="@+id/done_taskhead"
-        android:text="Done"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="end"
+        style="@style/custom_actionbar_textview_style"
         android:layout_alignParentEnd="true"
-        android:visibility="gone"/>
+        android:gravity="end"
+        android:text="Done"
+        android:visibility="gone" />
 
 </RelativeLayout>

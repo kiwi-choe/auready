@@ -16,7 +16,13 @@
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="android:textColorPrimary">@android:color/white</item>
-        <item name="android:actionModeBackground">@color/colorAccent</item>"
+        <item name="android:actionModeBackground">@color/colorAccent</item>
+    </style>
+
+    <style name="custom_actionbar_textview_style" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="listview_textview_style">
