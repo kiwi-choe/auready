@@ -60,7 +60,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/fab_margin"
-                android:src="@drawable/ic_add"
+                android:src="@drawable/add_list_icon"
                 app:fabSize="normal"
                 app:layout_anchor="@id/content_frame"
                 app:layout_anchorGravity="bottom|right|end" />
