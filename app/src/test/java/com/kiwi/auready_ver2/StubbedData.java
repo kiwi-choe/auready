@@ -39,11 +39,12 @@ public final class StubbedData {
         public static TaskHeadDetail TASKHEAD_DETAIL =
                 new TaskHeadDetail(TASKHEAD, MEMBERS);
 
+        public static Task TASK = new Task("stubbedTaskId", MEMBERS.get(0).getId(), "description", 0);
         // 3 tasks, one active and two completed of MEMBER the index 0
         public static List<Task> TASKS = Lists.newArrayList(
-                new Task("stubbedTask0", TASKHEAD.getId(), MEMBERS.get(0).getId(), "description", 0),
-                new Task("stubbedTask1", TASKHEAD.getId(), MEMBERS.get(0).getId(), "description2", true, 0),
-                new Task("stubbedTask2", TASKHEAD.getId(), MEMBERS.get(0).getId(), "description3", true, 0));
+                new Task("stubbedTask0", MEMBERS.get(0).getId(), "description", 0),
+                new Task("stubbedTask1", MEMBERS.get(0).getId(), "description2", true, 0),
+                new Task("stubbedTask2", MEMBERS.get(0).getId(), "description3", true, 0));
     }
 
     public static abstract class FriendStub {

@@ -40,13 +40,13 @@ public final class PersistenceContract {
         public static final String COLUMN_ORDER = "sequence";
     }
 
-    static class TaskEntry {
-        static final String TABLE_NAME = "task";
-        static final String COLUMN_ID = "_id";
-        static final String COLUMN_MEMBER_ID_FK = "memberid";
-        static final String COLUMN_DESCRIPTION = "description";
-        static final String COLUMN_COMPLETED = "completed";
-        static final String COLUMN_ORDER = "sequence";
+    public static class TaskEntry {
+        public static final String TABLE_NAME = "task";
+        public static final String COLUMN_ID = "_id";
+        public static final String COLUMN_MEMBER_ID_FK = "memberid";
+        public static final String COLUMN_DESCRIPTION = "description";
+        public static final String COLUMN_COMPLETED = "completed";
+        public static final String COLUMN_ORDER = "sequence";
     }
 
     static class SQL_CREATE_TABLE {

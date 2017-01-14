@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.data.source.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
@@ -37,7 +38,8 @@ public class Injection {
     * */
     public static FriendRepository provideFriendRepository(@NonNull Context context) {
         checkNotNull(context);
-        return FriendRepository.getInstance(FriendLocalDataSource.getInstance(context));
+        return FriendRepository.getInstance(FriendLocalDataSource.getInstance(context),
+                FakeFriendRemoteDataSource.getInstance());
     }
 
     public static UseCaseHandler provideUseCaseHandler() {

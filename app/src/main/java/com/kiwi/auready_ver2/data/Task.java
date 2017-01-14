@@ -11,7 +11,6 @@ public class Task {
 
     private String mId;
 
-    private String mTaskHeadId;
     private String mMemberId;
 
     private String mDescription;
@@ -24,10 +23,9 @@ public class Task {
     * To create a new active Task
     * with order
     * */
-    public Task(@NonNull String taskHeadId, @NonNull String memberId,
+    public Task(@NonNull String memberId,
                 String description, int order) {
         mId = UUID.randomUUID().toString();
-        mTaskHeadId = taskHeadId;
         mMemberId = memberId;
         mDescription = description;
         mCompleted = false;
@@ -38,10 +36,9 @@ public class Task {
     * To create an active Task if the Task already has an id
     * Update the existing task.
     * */
-    public Task(@NonNull String id, @NonNull String taskHeadId, @NonNull String memberId,
+    public Task(@NonNull String id, @NonNull String memberId,
                 String description, int order) {
         mId = id;
-        mTaskHeadId = taskHeadId;
         mMemberId = memberId;
         mDescription = description;
         mCompleted = false;
@@ -52,10 +49,9 @@ public class Task {
     * To create a completed Task.
     * Use this only on testing.
     * */
-    public Task(@NonNull String taskHeadId, @NonNull String memberId,
+    public Task(@NonNull String memberId,
                 String description, boolean completed, int order) {
         mId = UUID.randomUUID().toString();
-        mTaskHeadId = taskHeadId;
         mMemberId = memberId;
         mDescription = description;
         mCompleted = completed;
@@ -65,10 +61,9 @@ public class Task {
     /*
     * Get task from local db
     * */
-    public Task(String id, String taskHeadId, String memberId,
+    public Task(String id, String memberId,
                 String description, boolean completed, int order) {
         mId = id;
-        mTaskHeadId = taskHeadId;
         mMemberId = memberId;
         mDescription = description;
         mCompleted = completed;
@@ -90,10 +85,6 @@ public class Task {
 
     public String getId() {
         return mId;
-    }
-
-    public String getTaskHeadId() {
-        return mTaskHeadId;
     }
 
     public int getOrder() {
