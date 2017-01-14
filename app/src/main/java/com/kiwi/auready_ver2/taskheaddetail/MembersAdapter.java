@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,6 +18,8 @@ import java.util.List;
  */
 
 public class MembersAdapter extends ArrayAdapter<Member> {
+
+    private HashMap<Integer, Boolean> mSelection = new HashMap<>();
 
     public MembersAdapter(Context context, int resource, List<Member> members) {
         super(context, resource, members);
@@ -51,7 +54,34 @@ public class MembersAdapter extends ArrayAdapter<Member> {
             memberNameTV.setText(member.getName());
         }
 
+        if (mSelection.get(position) != null) {
+            rowView.setBackgroundColor(rowView.getResources().getColor(R.color.listview_selected_item));
+        } else {
+            rowView.setBackgroundColor(rowView.getResources().getColor(R.color.listview_background));
+        }
+
         return rowView;
     }
+
+    // for delete Item
+    public void clearSelection() {
+        mSelection = new HashMap<>();
+        notifyDataSetChanged();
+    }
+
+    public void setNewSelection(int position, boolean checked) {
+        mSelection.put(position, checked);
+        notifyDataSetChanged();
+    }
+
+    public void removeSelection(int position) {
+        mSelection.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public int getSelectedCount() {
+        return mSelection.size();
+    }
+
 }
 

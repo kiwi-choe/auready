@@ -70,9 +70,9 @@ public class TaskHeadsAdapter extends BaseAdapter {
         viewHolder.titleTV.setText(taskHead.getTitle());
 
         if (mSelection.get(position) != null) {
-            rowView.setBackgroundColor(rowView.getResources().getColor(android.R.color.darker_gray));
+            rowView.setBackgroundColor(rowView.getResources().getColor(R.color.listview_selected_item));
         } else {
-            rowView.setBackgroundColor(rowView.getResources().getColor(android.R.color.background_light));
+            rowView.setBackgroundColor(rowView.getResources().getColor(R.color.listview_background));
         }
 
         return rowView;
