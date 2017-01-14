@@ -249,6 +249,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setNewTaskHeadView() {
         mCreateBt.setVisibility(View.VISIBLE);
         mDoneBt.setVisibility(View.GONE);
+        mTitle.requestFocus();
     }
 
     @Override
