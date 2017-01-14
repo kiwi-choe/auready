@@ -17,17 +17,19 @@ public class FriendRepository implements FriendDataSource {
 
     private static FriendRepository INSTANCE = null;
 
-    private final FriendDataSource mFriendsLocalDataSource;
+    private final FriendDataSource mLocalDataSource;
+    private final FriendDataSource mRemoteDataSource;
 
     public Map<String, Friend> mCacheFriends;
 
-    private FriendRepository(@NonNull FriendDataSource friendLocalDataSource) {
-        mFriendsLocalDataSource = checkNotNull(friendLocalDataSource);
+    private FriendRepository(@NonNull FriendDataSource localDataSource, FriendDataSource remoteDataSource) {
+        mLocalDataSource = checkNotNull(localDataSource);
+        mRemoteDataSource = remoteDataSource;
     }
 
-    public static FriendRepository getInstance(FriendDataSource friendLocalDataSource) {
+    public static FriendRepository getInstance(FriendDataSource localDataSource, FriendDataSource remoteDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new FriendRepository(friendLocalDataSource);
+            INSTANCE = new FriendRepository(localDataSource, remoteDataSource);
         }
         return INSTANCE;
     }
@@ -39,7 +41,7 @@ public class FriendRepository implements FriendDataSource {
 
     @Override
     public void deleteAllFriends() {
-        mFriendsLocalDataSource.deleteAllFriends();
+        mLocalDataSource.deleteAllFriends();
 
         if(mCacheFriends != null) {
             mCacheFriends.clear();
@@ -49,7 +51,7 @@ public class FriendRepository implements FriendDataSource {
     @Override
     public void deleteFriend(@NonNull String id) {
         checkNotNull(id);
-        mFriendsLocalDataSource.deleteFriend(id);
+        mLocalDataSource.deleteFriend(id);
 
         if(mCacheFriends != null) {
             mCacheFriends.remove(id);
@@ -61,7 +63,7 @@ public class FriendRepository implements FriendDataSource {
         checkNotNull(callback);
 
         // Get from Local
-        mFriendsLocalDataSource.getFriends(new LoadFriendsCallback() {
+        mLocalDataSource.getFriends(new LoadFriendsCallback() {
             @Override
             public void onFriendsLoaded(List<Friend> friends) {
                 refreshCaches(friends);
@@ -90,7 +92,7 @@ public class FriendRepository implements FriendDataSource {
     public void saveFriend(@NonNull final Friend friend, @NonNull SaveCallback callback) {
 
         checkNotNull(friend);
-        mFriendsLocalDataSource.saveFriend(friend, new SaveCallback() {
+        mLocalDataSource.saveFriend(friend, new SaveCallback() {
             @Override
             public void onSaveSuccess() {
                 // Do in memory cache update to keep the app UI up to date

@@ -111,7 +111,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void createTask(@NonNull String memberId, @NonNull String description, @NonNull int order) {
-        Task newTask = new Task(mTaskHeadId, memberId, description, order);
+        Task newTask = new Task(memberId, description, order);
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
@@ -129,7 +129,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void editTask(@NonNull String memberId, @NonNull String taskId, @NonNull String description, @NonNull int order) {
-        Task task = new Task(taskId, mTaskHeadId, memberId, description, order);
+        Task task = new Task(taskId, memberId, description, order);
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 

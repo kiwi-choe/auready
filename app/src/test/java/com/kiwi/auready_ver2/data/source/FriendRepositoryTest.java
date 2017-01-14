@@ -30,6 +30,8 @@ public class FriendRepositoryTest {
 
     @Mock
     private FriendDataSource mLocalDataSource;
+    @Mock
+    private FriendDataSource mRemoteDataSource;
 
     @Mock
     private FriendDataSource.SaveCallback mSaveCallback;
@@ -40,11 +42,12 @@ public class FriendRepositoryTest {
     @Captor
     private ArgumentCaptor<FriendDataSource.LoadFriendsCallback> mLoadFriendsCallbackCaptor;
 
+
     @Before
     public void setupFriendRepository() {
         MockitoAnnotations.initMocks(this);
         // Get a reference to the class under test
-        mRepository = FriendRepository.getInstance(mLocalDataSource);
+        mRepository = FriendRepository.getInstance(mLocalDataSource, mRemoteDataSource);
     }
 
     @After
@@ -90,6 +93,11 @@ public class FriendRepositoryTest {
         verify(mLoadFriendsCallback).onDataNotAvailable();
     }
 
+    @Test
+    public void getFriends_fromRemote() {
+        mRepository.getFriends(mLoadFriendsCallback);
+//        verify(mRemoteDataSource).
+    }
     @Test
     public void deleteAll_fromLocal() {
         mRepository.saveFriend(FRIENDS.get(0), mSaveCallback);

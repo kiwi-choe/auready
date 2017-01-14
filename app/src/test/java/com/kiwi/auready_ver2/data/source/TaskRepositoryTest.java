@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASK;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEADS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAIL;
 import static org.hamcrest.Matchers.is;
@@ -29,32 +30,35 @@ import static org.mockito.Mockito.verify;
  */
 public class TaskRepositoryTest {
 
-    private static final String TASKHEAD_ID = "stub_taskHeadId";
-    private static final String MEMBER_ID = "stub_memberId";
-    private static final String DESCRIPTION = "stub_description";
-
     private TaskRepository mRepository;
 
     @Mock
     private TaskDataSource mLocalDataSource;
-    @Mock
-    private TaskDataSource mTaskRemoteDataSource;
+
     @Mock
     private TaskDataSource.LoadTaskHeadsCallback mLoadTaskHeadsCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
+
     @Mock
     private TaskDataSource.SaveCallback mSaveCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.SaveCallback> mSaveCallbackCaptor;
+
     @Mock
     private TaskDataSource.EditTaskHeadDetailCallback mEditCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.EditTaskHeadDetailCallback> mEditCallbackCaptor;
+
     @Mock
     private TaskDataSource.GetTaskHeadDetailCallback mGetTaskHeadDetailCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.GetTaskHeadDetailCallback> mGetTaskHeadDetailCallbackCaptor;
+
+    @Mock
+    private TaskDataSource.LoadTasksCallback mLoadTasksCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
 
     @Before
     public void setup() {
@@ -319,6 +323,26 @@ public class TaskRepositoryTest {
         assertThat(mRepository.mCachedMembersOfTaskHead.get(taskHeadId).get(0).getName(), is(MEMBERS.get(0).getName()));
         assertThat(mRepository.mCachedMembersOfTaskHead.get(taskHeadId).get(1).getName(), is(MEMBERS.get(1).getName()));
         assertThat(mRepository.mCachedMembersOfTaskHead.get(taskHeadId).get(2).getName(), is(MEMBERS.get(2).getName()));
+    }
+
+    /*
+    * Get Tasks
+    * */
+    @Test
+    public void getTasks_fromLocal() {
+        String memberId = "stubbedMemberId";
+        mRepository.getTasks(memberId, mLoadTasksCallback);
+
+        verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+    }
+
+
+    @Test
+    public void saveTask_toLocal() {
+        mRepository.saveTask(TASK);
+
+        verify(mLocalDataSource).saveTask(eq(TASK));
+        assertThat(mRepository.mCachedTasks.containsKey(TASK.getId()), is(true));
     }
 
     /*

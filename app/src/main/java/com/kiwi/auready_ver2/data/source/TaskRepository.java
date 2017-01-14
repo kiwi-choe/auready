@@ -34,6 +34,7 @@ public class TaskRepository implements TaskDataSource {
     Map<String, List<Member>> mCachedMembersOfTaskHead = null;
     // Key: member id
     Map<String, Member> mCachedMembers = null;
+    Map<String, Task> mCachedTasks = null;
 
     // Prevent direct instantiation
     private TaskRepository(TaskDataSource taskLocalDataSource) {
@@ -63,11 +64,28 @@ public class TaskRepository implements TaskDataSource {
 
     @Override
     public void getTasks(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
+        mLocalDataSource.getTasks(memberId, new LoadTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
     }
 
     @Override
     public void saveTask(@NonNull Task task) {
+        checkNotNull(task);
+        mLocalDataSource.saveTask(task);
 
+        if(mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        mCachedTasks.put(task.getId(), task);
     }
 
     @Override

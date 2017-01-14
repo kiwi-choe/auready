@@ -333,7 +333,14 @@ public class TaskLocalDataSource implements TaskDataSource {
 
     @Override
     public void saveTask(@NonNull Task task) {
+        ContentValues values = new ContentValues();
+        values.put(TaskEntry.COLUMN_ID, task.getId());
+        values.put(TaskEntry.COLUMN_MEMBER_ID_FK, task.getMemberId());
+        values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
+        values.put(TaskEntry.COLUMN_COMPLETED, task.getCompleted());
+        values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
+        mDbHelper.insert(TaskEntry.TABLE_NAME, null, values);
     }
 
     @Override
