@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/lsitview_item_height"
+    android:paddingStart="@dimen/listview_item_start_end_margin"
+    android:paddingEnd="@dimen/listview_item_start_end_margin"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/member_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
+        style="@style/listview_textview_style" />
 </LinearLayout>

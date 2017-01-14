@@ -9,14 +9,22 @@
         android:id="@+id/taskheaddetail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/taskheaddetail_title" />
+        android:background="@color/dark_background"
+        android:drawableStart="@drawable/title_drawable"
+        android:hint="@string/taskheaddetail_title"
+        android:paddingBottom="10dp"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp" />
 
     <TextView
-        android:text="@string/member_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        style="@style/title_textview_style"
+        android:paddingTop="10dp"
+        android:paddingStart="@dimen/listview_item_start_end_margin"
+        android:text="@string/member_title" />
+
     <ListView
         android:id="@+id/taskheaddetail_member_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:headerDividersEnabled="true" />
 </LinearLayout>

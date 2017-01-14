@@ -5,4 +5,9 @@
     <color name="colorAccent">#FF4081</color>
 
     <color name="shadow_item_color">#66000000</color>
+
+    <!--listview-->
+    <color name="listview_text_title">#dd000000</color>
+
+    <color name="dark_background">#a4a4a4</color>
 </resources>
