@@ -12,6 +12,8 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,6 +133,10 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
             ArrayList<Friend> selectedFriends = (ArrayList<Friend>) mListAdapter.getCheckedItems();
             setResultToTaskHeadDetailView(selectedFriends);
         }
+//        } else if (id == R.id.delete) {
+//            // Todo : start action mode
+//        }
+
         return false;
     }
 

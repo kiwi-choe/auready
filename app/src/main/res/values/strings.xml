@@ -73,5 +73,6 @@
     <string name="delete">delete</string>
     <string name="item_selected">selected</string>
     <string name="friend_title">Friends</string>
+    <string name="complete">Complete</string>
 
 </resources>

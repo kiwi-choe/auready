@@ -240,7 +240,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
         MenuInflater inflater = actionMode.getMenuInflater();
-        inflater.inflate(R.menu.contextual_menu, menu);
+        inflater.inflate(R.menu.contextual_menu_delete, menu);
 
         mIsActionMode = true;
 
