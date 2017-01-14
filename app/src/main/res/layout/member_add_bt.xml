@@ -6,11 +6,9 @@
     android:paddingEnd="5dp"
     android:paddingStart="5dp">
 
-    <android.support.v7.widget.AppCompatButton
+    <Button
         android:id="@+id/member_add_bt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:backgroundTint="@android:color/holo_blue_dark"
-        android:text="@string/add_member"
-        android:textColor="@android:color/white" />
+        android:text="@string/add_member" />
 </LinearLayout>
