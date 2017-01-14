@@ -11,7 +11,7 @@
     <dimen name="lsitview_item_height">48dp</dimen>
     <dimen name="listview_item_start_end_margin">16dp</dimen>
     <dimen name="listview_item_textview_textsize">16sp</dimen>
-    <dimen name="listview_item_reorder_icon_size">28dp</dimen>
+    <dimen name="listview_item_reorder_icon_size">24dp</dimen>
 
     <dimen name="title_textview_textsize">20sp</dimen>
 </resources>

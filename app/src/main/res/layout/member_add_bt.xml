@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingEnd="5dp"
+    android:paddingStart="5dp">
 
-    <Button
+    <android.support.v7.widget.AppCompatButton
         android:id="@+id/member_add_bt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/add_member"/>
+        android:backgroundTint="@android:color/holo_blue_dark"
+        android:text="@string/add_member"
+        android:textColor="@android:color/white" />
 </LinearLayout>

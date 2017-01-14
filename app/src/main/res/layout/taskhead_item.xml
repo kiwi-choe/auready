@@ -14,8 +14,8 @@
     <ImageView
         android:id="@+id/reorder"
         style="@style/listview_reorder_icon_style"
-        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/re_order_icon" />
+        android:layout_centerVertical="true"
+        android:src="@drawable/re_order_icon" />
 
 </RelativeLayout>

@@ -8,6 +8,7 @@
 
     <!--listview-->
     <color name="listview_text_title">#dd000000</color>
+    <color name="icon_gray">#8affffff</color>
 
     <color name="dark_background">#a4a4a4</color>
 </resources>
