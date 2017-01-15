@@ -250,7 +250,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setNewTaskHeadView() {
         mCreateBt.setVisibility(View.VISIBLE);
         mDoneBt.setVisibility(View.GONE);
-        mDeleteBt.setVisibility(View.GONE);
         mTitle.requestFocus();
     }
 
@@ -258,7 +257,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setEditTaskHeadView() {
         mDoneBt.setVisibility(View.VISIBLE);
         mCreateBt.setVisibility(View.GONE);
-        mDeleteBt.setVisibility(View.VISIBLE);
     }
 
     @Override

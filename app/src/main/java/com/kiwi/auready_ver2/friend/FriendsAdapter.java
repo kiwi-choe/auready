@@ -13,6 +13,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,7 +32,6 @@ class FriendsAdapter extends BaseAdapter {
     public FriendsAdapter(List<Friend> friends, FriendsFragment.FriendItemListener itemListener) {
         setList(friends);
         mItemListener = itemListener;
-
     }
 
     private void setList(List<Friend> friends) {
@@ -77,7 +77,6 @@ class FriendsAdapter extends BaseAdapter {
         // bind views
         final Friend friend = getItem(position);
         viewHolder.friendName.setText(friend.getName());
-
         viewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
@@ -92,6 +91,12 @@ class FriendsAdapter extends BaseAdapter {
                 }
             }
         });
+
+        if (mSelectedFriends[position]) {
+            viewHolder.friendCheckbox.setChecked(true);
+        } else {
+            viewHolder.friendCheckbox.setChecked(false);
+        }
 
         for (int i = 0; i < mFriends.size(); i++) {
             if (friend.getId().equals(mFriends.get(i).getId())) {
@@ -143,18 +148,17 @@ class FriendsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void toggle(int position) {
+        mSelectedFriends[position] = !mSelectedFriends[position];
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         CheckBox friendCheckbox;
         TextView friendName;
         Button deleteFriendBtn;
     }
 
-    public boolean isItemSelected() {
-        for (int i = 0; i < mFriends.size(); i++) {
-            if (mSelectedFriends[i])
-                return true;
-        }
-        return false;
-    }
+
 }
 

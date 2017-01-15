@@ -1,4 +1,3 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/listview_selected_item" />
-    <item android:drawable="?attr/selectableItemBackground"/>
 </layer-list>
