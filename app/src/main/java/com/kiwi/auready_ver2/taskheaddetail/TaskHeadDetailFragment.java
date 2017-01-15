@@ -221,7 +221,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void showEmptyTaskHeadError() {
         Snackbar.make(mTitle, getString(R.string.empty_taskhead_message), Snackbar.LENGTH_LONG).show();
-        sendResult(Activity.RESULT_OK, null);
     }
 
     @Override
