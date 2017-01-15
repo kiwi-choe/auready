@@ -148,5 +148,13 @@ class FriendsAdapter extends BaseAdapter {
         TextView friendName;
         Button deleteFriendBtn;
     }
+
+    public boolean isItemSelected() {
+        for (int i = 0; i < mFriends.size(); i++) {
+            if (mSelectedFriends[i])
+                return true;
+        }
+        return false;
+    }
 }
 

@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:context="com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment">
 
@@ -18,8 +20,8 @@
 
     <TextView
         style="@style/title_textview_style"
-        android:paddingTop="10dp"
         android:paddingStart="@dimen/listview_item_start_end_margin"
+        android:paddingTop="10dp"
         android:text="@string/member_title" />
 
     <ListView

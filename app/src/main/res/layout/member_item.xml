@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/lsitview_item_height"
-    android:paddingStart="@dimen/listview_item_start_end_margin"
-    android:paddingEnd="@dimen/listview_item_start_end_margin"
-    android:orientation="vertical">
+    android:paddingEnd="@dimen/listview_item_start_end_margin">
+
+    <CheckBox
+        android:id="@+id/delete_member_check_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="@dimen/listview_item_start_end_margin"
+        android:focusable="false"
+        android:translationX="@dimen/checkbox_start_trans_x" />
 
     <TextView
         android:id="@+id/member_name"
-        style="@style/listview_textview_style" />
-</LinearLayout>
+        style="@style/listview_textview_style"
+        android:layout_marginStart="@dimen/listview_item_start_end_margin" />
+</RelativeLayout>

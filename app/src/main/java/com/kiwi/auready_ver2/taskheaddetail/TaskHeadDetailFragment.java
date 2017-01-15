@@ -12,15 +12,17 @@ import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
@@ -33,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskHeadDetailFragment extends Fragment implements
-        TaskHeadDetailContract.View {
+        TaskHeadDetailContract.View, AbsListView.MultiChoiceModeListener {
 
     public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFrag";
     private static final String TAG_TASKHEADDETAILFRAG_DEBUG = "TaskHeadDetailView";
@@ -57,11 +59,13 @@ public class TaskHeadDetailFragment extends Fragment implements
     private EditText mTitle;
     private MembersAdapter mMemberListAdapter;
     private List<Member> mMembers;
-    private ActionModeCallback mActionModeCallBack;
-    private ActionMode mActionMode;
 
     // q find the better way
+    ListView mMemberListView;
     private List<Member> mAddedMembers = new ArrayList<>();
+    private Button mDeleteBt;
+
+    private ActionMode mActionMode;
 
     public TaskHeadDetailFragment() {
         // Required empty public constructor
@@ -75,9 +79,9 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mMembers = new ArrayList<>(0);
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TaskHeadDetailActivity.ARG_TASKHEAD_ID);
-            if(mTaskHeadId == null) {
+            if (mTaskHeadId == null) {
                 initMembers();
                 // set order for new taskHead
                 mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS, DEFAULT_INT);
@@ -85,7 +89,6 @@ public class TaskHeadDetailFragment extends Fragment implements
         }
 
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
-        mActionModeCallBack = new ActionModeCallback();
     }
 
 
@@ -121,14 +124,16 @@ public class TaskHeadDetailFragment extends Fragment implements
 
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
 
-        ListView mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
+        mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
         View memberAddBtLayout = inflater.inflate(R.layout.member_add_bt, null, false);
         mMemberListView.addFooterView(memberAddBtLayout);
         mMemberListView.setAdapter(mMemberListAdapter);
+        mMemberListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mMemberListView.setMultiChoiceModeListener(this);
         mMemberListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                mActionMode = getActivity().startActionMode(mActionModeCallBack);
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                mMemberListView.setItemChecked(position, true);
                 return true;
             }
         });
@@ -141,6 +146,14 @@ public class TaskHeadDetailFragment extends Fragment implements
             }
         });
 
+        mDeleteBt = (Button) memberAddBtLayout.findViewById(R.id.member_delete_bt);
+        mDeleteBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMemberListView.setItemChecked(-1, true);
+            }
+        });
+
         return root;
     }
 
@@ -149,10 +162,14 @@ public class TaskHeadDetailFragment extends Fragment implements
 
         // Set friendId of members
         ArrayList<String> friendIdOfMembers = new ArrayList<>();
-        for(Member member:mMembers) {
+        for (Member member : mMembers) {
             friendIdOfMembers.add(member.getFriendId());
         }
         intent.putStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS, friendIdOfMembers);
+
+        if (mActionMode != null) {
+            mActionMode.finish();
+        }
 
         startActivityForResult(intent, FriendsActivity.REQ_FRIENDS);
     }
@@ -232,12 +249,15 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void setNewTaskHeadView() {
         mCreateBt.setVisibility(View.VISIBLE);
         mDoneBt.setVisibility(View.GONE);
+        mDeleteBt.setVisibility(View.GONE);
+        mTitle.requestFocus();
     }
 
     @Override
     public void setEditTaskHeadView() {
         mDoneBt.setVisibility(View.VISIBLE);
         mCreateBt.setVisibility(View.GONE);
+        mDeleteBt.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -255,7 +275,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void addMembers(ArrayList<Member> members) {
-        for (Member member:members) {
+        for (Member member : members) {
             Log.d("TEST!", member.getName());
         }
         mAddedMembers.addAll(members);
@@ -269,7 +289,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     private void sendResult(int resultCode, @Nullable Intent intent) {
-        if(intent != null) {
+        if (intent != null) {
             getActivity().setResult(resultCode, intent);
         } else {
             getActivity().setResult(resultCode);
@@ -277,27 +297,76 @@ public class TaskHeadDetailFragment extends Fragment implements
         getActivity().finish();
     }
 
-    private class ActionModeCallback implements ActionMode.Callback {
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            Toast.makeText(getContext(), "onCreateActionMode", Toast.LENGTH_SHORT).show();
-            return true;
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+        if (position >= 0 && position < mMemberListAdapter.getCount()) {
+            if (checked) {
+                mMemberListAdapter.setNewSelection(position, checked);
+            } else {
+                mMemberListAdapter.removeSelection(position);
+            }
         }
 
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
+        mode.setTitle(mMemberListAdapter.getSelectedCount() + " " + getContext().getResources().getString(R.string.item_selected));
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.contextual_menu_delete, menu);
+        mActionMode = mode;
+        startAnimation(true);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_delete:
+                // Todo : remove member
+                mMemberListAdapter.clearSelection();
+                mode.finish();
+                return true;
+            default:
+                break;
+        }
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        mMemberListAdapter.clearSelection();
+        startAnimation(false);
+        mActionMode = null;
+    }
+
+    private void startAnimation(final boolean isDelete) {
+        if (!mMemberListView.getViewTreeObserver().isAlive()) {
+            return;
         }
 
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return false;
-        }
+        mMemberListView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mMemberListView.getViewTreeObserver().removeOnPreDrawListener(this);
 
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            mActionMode = null;
-        }
+                int count = mMemberListView.getChildCount();
+                if (mMemberListView.getLastVisiblePosition() == mMemberListView.getCount() - 1) {
+                    count -= 1;
+                }
+
+                for (int i = 0; i < count; i++) {
+                    View childView = mMemberListView.getChildAt(i);
+                    mMemberListAdapter.startAnimation(childView, isDelete);
+                }
+
+                return true;
+            }
+        });
     }
 }
