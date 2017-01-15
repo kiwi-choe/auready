@@ -1,12 +1,8 @@
 package com.kiwi.auready_ver2.rest_service;
 
-import com.google.common.collect.Lists;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.api_model.ClientCredential;
 import com.kiwi.auready_ver2.data.api_model.LoginResponse;
 import com.kiwi.auready_ver2.data.api_model.TokenInfo;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -18,7 +14,6 @@ import retrofit2.mock.BehaviorDelegate;
 public class MockSuccessLoginService implements ILoginService {
 
     public static final String STUB_NAME = "loggedInName";
-    private static final List<Friend> STUB_FRIENDS = Lists.newArrayList(new Friend("aa@aa.com", "aa"), new Friend("bb@bb.com", "bb"), new Friend("cc@cc.com", "cc"));
     public static final String STUB_FRIEND_ID = "friendIdOfUser";
 
     public static final LoginResponse RESPONSE =
