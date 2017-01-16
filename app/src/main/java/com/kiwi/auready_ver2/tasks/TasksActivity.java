@@ -52,7 +52,8 @@ public class TasksActivity extends AppCompatActivity {
                 Injection.provideGetMembers(getApplicationContext()),
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),
-                Injection.provideDeleteTask(getApplicationContext()));
+                Injection.provideDeleteTasks(getApplicationContext()),
+                Injection.provideEditTasks(getApplicationContext()));
     }
 }
 

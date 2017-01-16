@@ -220,7 +220,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         viewHolder.reorderBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
+//                mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
             }
         });
 

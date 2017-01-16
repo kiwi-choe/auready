@@ -145,10 +145,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     TaskItemListener mTaskItemListener = new TaskItemListener() {
-        @Override
-        public void onDeleteClick(String taskId) {
-            mPresenter.deleteTask(taskId);
-        }
 
         @Override
         public void onAddTaskClick(String memberId, String description, int order) {
@@ -179,7 +175,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     };
 
     public interface TaskItemListener {
-        void onDeleteClick(String taskId);
 
         void onAddTaskClick(String memberId, String description, int order);
 

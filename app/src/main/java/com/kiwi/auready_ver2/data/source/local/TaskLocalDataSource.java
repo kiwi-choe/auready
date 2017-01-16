@@ -344,7 +344,12 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTask(@NonNull String id) {
+    public void deleteTasks(@NonNull List<String> taskHeadIds) {
+
+    }
+
+    @Override
+    public void editTasks(@NonNull List<Task> tasks) {
 
     }
 }

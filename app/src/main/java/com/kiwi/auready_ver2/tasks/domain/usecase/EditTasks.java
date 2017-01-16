@@ -3,36 +3,39 @@ package com.kiwi.auready_ver2.tasks.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
+import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by kiwi on 9/19/16.
+ * Edit tasks
  */
-public class DeleteTask extends UseCase<DeleteTask.RequestValues, DeleteTask.ResponseValue> {
+public class EditTasks extends UseCase<EditTasks.RequestValues, EditTasks.ResponseValue> {
 
     private final TaskRepository mTaskRepository;
 
-    public DeleteTask(@NonNull TaskRepository taskRepository) {
+    public EditTasks(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository);
     }
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.deleteTask(values.getId());
+        mTaskRepository.editTasks(values.getTasks());
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final String mId;
+        private final List<Task> mTasks;
 
-        public RequestValues(@NonNull String id) {
-            mId = checkNotNull(id);
+        public RequestValues(@NonNull List<Task> tasks) {
+            mTasks = checkNotNull(tasks, "tasks cannot be null");
         }
 
-        public String getId() {
-            return mId;
+        public List<Task> getTasks() {
+            return mTasks;
         }
     }
 
