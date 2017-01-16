@@ -93,24 +93,6 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         return isSuccess;
     }
 
-    public long insertMultipleRows(String table, String nullColumnHack, List<ContentValues> valuesList) {
-        sDb = sDbHelper.getWritableDatabase();
-
-        long isSuccess = INSERT_ERROR;
-        sDb.beginTransaction();
-        try {
-            for (ContentValues values : valuesList) {
-                isSuccess = sDb.insertOrThrow(table, nullColumnHack, values);
-            }
-            sDb.setTransactionSuccessful();
-        } catch (SQLException e) {
-            Log.e(TAG_SQLITE, "Error insert new one to ( " + table + " ). ", e);
-        } finally {
-            sDb.endTransaction();
-        }
-        return isSuccess;
-    }
-
     public Cursor query(String table, String[] columns, String selection,
                         String[] selectionArgs, String groupBy, String having,
                         String orderBy) {

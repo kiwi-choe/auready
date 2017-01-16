@@ -80,6 +80,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+
         setHasOptionsMenu(true);
 
         return root;
@@ -131,17 +132,19 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showTasks(List<Task> tasks) {
+        mTasksView.setVisibility(View.VISIBLE);
         mTasksAdapter.replaceTasksList(tasks);
     }
 
     @Override
     public void showTasks(String memberId, List<Task> tasks) {
+        mTasksView.setVisibility(View.VISIBLE);
         mTasksAdapter.replaceTasksList(memberId, tasks);
     }
 
     @Override
     public void showNoTasks() {
-
+        mTasksView.setVisibility(View.GONE);
     }
 
     TaskItemListener mTaskItemListener = new TaskItemListener() {

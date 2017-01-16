@@ -19,6 +19,8 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.*;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.TAG_SQLITE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.DATABASE_NAME;
 
 /**
  * Created by kiwi on 8/25/16.
@@ -217,7 +219,7 @@ public class TaskLocalDataSource implements TaskDataSource {
             }
 
         } catch (SQLException e) {
-            Log.e(DBExceptionTag.TAG_SQLITE, "Could not edit the rows in ( " + SQL_CREATE_TABLE.DATABASE_NAME + "). ", e);
+            Log.e(TAG_SQLITE, "Could not edit the rows in ( " + DATABASE_NAME + "). ", e);
         } finally {
             db.endTransaction();
         }
@@ -324,11 +326,63 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback) {
 
+        List<Member> members = new ArrayList<>();
+
+        String selection = MemberEntry.COLUMN_HEAD_ID_FK + " LIKE?";
+        String[] selectionArgs = {taskHeadId};
+
+        Cursor c = mDbHelper.query(MemberEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+                String id = c.getString(c.getColumnIndexOrThrow(MemberEntry.COLUMN_ID));
+                String taskheadId_fk = c.getString(c.getColumnIndexOrThrow(MemberEntry.COLUMN_HEAD_ID_FK));
+                String friendId_fk = c.getString(c.getColumnIndexOrThrow(MemberEntry.COLUMN_FRIEND_ID_FK));
+                String name = c.getString(c.getColumnIndexOrThrow(MemberEntry.COLUMN_NAME));
+
+                Member member = new Member(id, taskheadId_fk, friendId_fk, name);
+                members.add(member);
+            }
+        }
+        if(c!=null) {
+            c.close();
+        }
+        if(members.isEmpty()) {
+            callback.onDataNotAvailable();
+        } else {
+            callback.onMembersLoaded(members);
+        }
     }
 
     @Override
     public void getTasks(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
 
+        List<Task> tasks = new ArrayList<>();
+
+        String selection = TaskEntry.COLUMN_MEMBER_ID_FK + " LIKE?";
+        String[] selectionArgs = {memberId};
+        String orderBy = TaskEntry.COLUMN_ORDER + " asc";
+
+        Cursor c = mDbHelper.query(TaskEntry.TABLE_NAME, null, selection, selectionArgs, null, null, orderBy);
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+                String id = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ID));
+                String memberId_fk = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_MEMBER_ID_FK));
+                String description = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_DESCRIPTION));
+                boolean completed = (c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_COMPLETED)) > 0);
+                int order = c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ORDER));
+
+                Task task = new Task(id, memberId_fk, description, completed, order);
+                tasks.add(task);
+            }
+        }
+        if(c!=null) {
+            c.close();
+        }
+        if(tasks.isEmpty()) {
+            callback.onDataNotAvailable();
+        } else {
+            callback.onTasksLoaded(tasks);
+        }
     }
 
     @Override
@@ -337,19 +391,63 @@ public class TaskLocalDataSource implements TaskDataSource {
         values.put(TaskEntry.COLUMN_ID, task.getId());
         values.put(TaskEntry.COLUMN_MEMBER_ID_FK, task.getMemberId());
         values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
-        values.put(TaskEntry.COLUMN_COMPLETED, task.getCompleted());
+        values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
         values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
         mDbHelper.insert(TaskEntry.TABLE_NAME, null, values);
     }
 
     @Override
-    public void deleteTasks(@NonNull List<String> taskHeadIds) {
+    public void deleteTasks(@NonNull List<String> taskIds) {
 
+        String args = "";
+        String TOKEN = ", ";
+        int size = taskIds.size();
+        for (int i = 0; i < size; i++) {
+            args = args + "\"" + taskIds.get(i);
+            args = args + "\"";
+            if (i == size - 1) {
+                break;
+            }
+            args = args + TOKEN;
+        }
+
+        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
+                TaskEntry.TABLE_NAME,
+                TaskEntry.COLUMN_ID,
+                args);
+
+        mDbHelper.execSQL(sql);
     }
 
     @Override
     public void editTasks(@NonNull List<Task> tasks) {
 
+        boolean isSuccess = false;
+
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        db.beginTransaction();
+        try {
+            int numOfRows = 0;
+
+            String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
+            for(Task task:tasks) {
+                ContentValues values = new ContentValues();
+                values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
+                values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
+
+                String[] whereArgs = {task.getId()};
+                numOfRows += db.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
+            }
+
+            if(numOfRows == tasks.size()) {
+                isSuccess = true;
+                db.setTransactionSuccessful();
+            }
+        } catch (SQLException e) {
+            Log.e(TAG_SQLITE, "Could not delete taskheads in ( " + DATABASE_NAME + "). ", e);
+        } finally {
+            db.endTransaction();
+        }
     }
 }

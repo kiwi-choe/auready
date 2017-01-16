@@ -87,41 +87,32 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void getTasks(@NonNull String memberId) {
+    public void getTasks(@NonNull final String memberId) {
         checkNotNull(memberId);
 
         mUseCaseHandler.execute(mGetTasks, new GetTasks.RequestValues(memberId),
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasks.ResponseValue response) {
-                        List<Task> tasks = response.getTasks();
-                        processTasks(tasks);
+                        mTasksView.showTasks(memberId, response.getTasks());
                     }
 
                     @Override
                     public void onError() {
-
+                        mTasksView.showNoTasks();
                     }
                 });
     }
 
-    private void processTasks(List<Task> tasks) {
-        if(tasks.isEmpty()) {
-            mTasksView.showNoTasks();
-        } else {
-            mTasksView.showTasks(tasks);
-        }
-    }
-
     @Override
-    public void createTask(@NonNull String memberId, @NonNull String description, @NonNull int order) {
+    public void createTask(@NonNull final String memberId, @NonNull String description, @NonNull int order) {
         Task newTask = new Task(memberId, description, order);
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-
+                        getTasks(memberId);
                     }
 
                     @Override

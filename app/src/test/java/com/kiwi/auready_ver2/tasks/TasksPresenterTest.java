@@ -4,7 +4,6 @@ import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
@@ -41,8 +40,6 @@ public class TasksPresenterTest {
 
     @Mock
     private TasksContract.View mTasksView;
-    @Mock
-    private TaskHeadRepository mTaskHeadRepository;
     @Mock
     private TaskRepository mTaskRepository;
 
@@ -90,7 +87,7 @@ public class TasksPresenterTest {
     }
 
     @Test
-    public void getTasks() {
+    public void getTasksOfMember() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         // Get tasks of selected member
@@ -100,11 +97,11 @@ public class TasksPresenterTest {
         verify(mTaskRepository).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
-        verify(mTasksView).showTasks(eq(TASKS));
+        verify(mTasksView).showTasks(eq(memberId), eq(TASKS));
     }
 
     @Test
-    public void getTasks_whenTasksIsEmpty_showNoTasks() {
+    public void getTasksOfMember_whenTasksIsEmpty_showNoTasks() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         // Get tasks of selected member
@@ -112,10 +109,13 @@ public class TasksPresenterTest {
         mTasksPresenter.getTasks(memberId);
 
         verify(mTaskRepository).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
-        List<Task> emptyTasks = new ArrayList<>();
-        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(emptyTasks);
-
+        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
         verify(mTasksView).showNoTasks();
+    }
+
+    @Test
+    public void getTasks_ofAllMembers() {
+
     }
 
     @Test

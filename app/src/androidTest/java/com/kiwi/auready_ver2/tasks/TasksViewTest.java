@@ -8,8 +8,6 @@ import android.support.test.runner.AndroidJUnit4;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import org.junit.Rule;

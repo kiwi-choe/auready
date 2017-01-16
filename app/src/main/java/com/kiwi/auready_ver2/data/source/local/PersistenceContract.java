@@ -62,6 +62,7 @@ public final class PersistenceContract {
         private static final String INTEGER_TYPE = " INTEGER";
         private static final String COMMA_SEP = ", ";
         private static final String ON_DELETE_CASCADE = " ON DELETE CASCADE";
+        private static final String DEFAULT = " DEFAULT";
 
         // insert, update, delete, execSQL, ...
 
@@ -97,7 +98,7 @@ public final class PersistenceContract {
                         TaskEntry.COLUMN_ID + TEXT_TYPE + PRIMARY_KEY +
                         TaskEntry.COLUMN_MEMBER_ID_FK + TEXT_TYPE + COMMA_SEP +
                         TaskEntry.COLUMN_DESCRIPTION + TEXT_TYPE + COMMA_SEP +
-                        TaskEntry.COLUMN_COMPLETED + INTEGER_TYPE + COMMA_SEP +
+                        TaskEntry.COLUMN_COMPLETED + INTEGER_TYPE + DEFAULT + " 0" + COMMA_SEP +
                         TaskEntry.COLUMN_ORDER + INTEGER_TYPE + COMMA_SEP +
                         FOREIGN_KEY + TaskEntry.COLUMN_MEMBER_ID_FK +
                         REFERENCES + MemberEntry.TABLE_NAME + "(" + MemberEntry.COLUMN_ID + ")" +

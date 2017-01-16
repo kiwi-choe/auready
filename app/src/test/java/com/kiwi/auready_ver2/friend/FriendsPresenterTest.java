@@ -5,7 +5,6 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 
@@ -35,8 +34,6 @@ public class FriendsPresenterTest {
 
     @Mock
     private FriendRepository mFriendRepository;
-    @Mock
-    private TaskHeadRepository mTaskHeadRepository;
 
     @Captor
     private ArgumentCaptor<FriendDataSource.LoadFriendsCallback> mLoadFriendsCallbackCaptor;

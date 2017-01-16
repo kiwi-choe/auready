@@ -39,6 +39,8 @@ class TasksContract {
 
         // Get tasks by memberId
         void getTasks(@NonNull String memberId);
+        // Get tasks of all members
+
 
         void createTask(@NonNull String memberId,
                         @NonNull String description, @NonNull int order);

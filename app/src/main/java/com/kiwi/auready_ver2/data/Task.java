@@ -90,6 +90,7 @@ public class Task {
     public int getOrder() {
         return mOrder;
     }
+
     public void setOrder(int order) {
         mOrder = order;
     }
@@ -104,6 +105,10 @@ public class Task {
 
     public boolean getCompleted() {
         return mCompleted;
+    }
+
+    public int getCompletedInteger() {
+        return (mCompleted ? 1 : 0);
     }
 
     public String getMemberId() {
