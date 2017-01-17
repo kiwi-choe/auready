@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.api_model.SearchedUser;
 
 /**
  * Fake RemoteDataSource of Friend
@@ -24,6 +25,16 @@ public class FakeFriendRemoteDataSource implements FriendDataSource {
 
     @Override
     public void deleteFriend(@NonNull String id) {
+
+    }
+
+    @Override
+    public void findPeople(@NonNull String emailOrName, LoadSearchedPeopleCallback callback) {
+
+    }
+
+    @Override
+    public void addFriend(@NonNull SearchedUser user, @NonNull AddFriendCallback callback) {
 
     }
 

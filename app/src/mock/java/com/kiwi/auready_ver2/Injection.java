@@ -9,7 +9,9 @@ import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
+import com.kiwi.auready_ver2.friend.domain.usecase.AddFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
+import com.kiwi.auready_ver2.friend.domain.usecase.FindPeople;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHeadDetail;
@@ -114,5 +116,13 @@ public class Injection {
 
     public static EditTasks provideEditTasks(@NonNull Context context) {
         return new EditTasks(Injection.provideTaskRepository(context));
+    }
+
+    public static FindPeople provideFindPeople(@NonNull Context context) {
+        return new FindPeople(Injection.provideFriendRepository(context));
+    }
+
+    public static AddFriend provideAddFriend(@NonNull Context context) {
+        return new AddFriend(Injection.provideFriendRepository(context));
     }
 }

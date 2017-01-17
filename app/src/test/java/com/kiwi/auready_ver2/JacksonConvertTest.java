@@ -31,6 +31,6 @@ public class JacksonConvertTest {
                 .forType(new TypeReference<List<Friend>>() {})
                         .readValue(json);
 
-//        assertEquals(MEMBERS.get(0).getEmail(), friends.get(0).getEmail());
+//        assertEquals(MEMBERS.get(0).getName(), friends.get(0).getName());
     }
 }

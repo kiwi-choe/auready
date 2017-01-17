@@ -1,7 +1,7 @@
 package com.kiwi.auready_ver2.data.api_model;
 
 /**
- * Created by kiwi on 6/14/16.
+ * Signup info
  */
 public class SignupInfo {
 

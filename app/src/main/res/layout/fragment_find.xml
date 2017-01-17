@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
-    <!-- Show no user that is searched by email  message -->
+    <!-- Show no user that is searched by name  message -->
     <LinearLayout
         android:id="@+id/no_searched_email_layout"
         android:layout_width="match_parent"
