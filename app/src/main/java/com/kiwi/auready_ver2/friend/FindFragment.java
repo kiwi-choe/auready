@@ -12,7 +12,7 @@ import android.widget.Button;
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
+import com.kiwi.auready_ver2.data.SearchedUser;
 
 import java.util.ArrayList;
 import java.util.List;

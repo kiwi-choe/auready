@@ -26,8 +26,6 @@ public class FindActivity extends AppCompatActivity {
         FindPresenter presenter = new FindPresenter(
                 Injection.provideUseCaseHandler(),
                 findFragment,
-                Injection.provideSaveFriend(getApplicationContext()),
-                Injection.provideFindPeople(getApplicationContext()),
-                Injection.provideAddFriend(getApplicationContext()));
+                Injection.provideSaveFriend(getApplicationContext()));
     }
 }

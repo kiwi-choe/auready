@@ -1,8 +1,6 @@
-package com.kiwi.auready_ver2.rest_service;
+package com.kiwi.auready_ver2.rest_service.login;
 
-import com.kiwi.auready_ver2.data.api_model.ClientCredential;
-import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
-import com.kiwi.auready_ver2.data.api_model.LoginResponse;
+import com.kiwi.auready_ver2.rest_service.ErrorResponse;
 import com.kiwi.auready_ver2.login.IBaseUrl;
 
 import org.junit.Before;

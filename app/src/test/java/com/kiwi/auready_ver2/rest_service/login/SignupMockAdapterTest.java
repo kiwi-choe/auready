@@ -1,21 +1,22 @@
-package com.kiwi.auready_ver2.rest_service;
+package com.kiwi.auready_ver2.rest_service.login;
 
-import com.kiwi.auready_ver2.data.api_model.ErrorResponse;
-import com.kiwi.auready_ver2.data.api_model.SignupInfo;
-import com.kiwi.auready_ver2.data.api_model.SignupResponse;
 import com.kiwi.auready_ver2.login.IBaseUrl;
+import com.kiwi.auready_ver2.rest_service.ErrorResponse;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Converter;
-import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.mock.BehaviorDelegate;
@@ -23,26 +24,42 @@ import retrofit2.mock.MockRetrofit;
 import retrofit2.mock.NetworkBehavior;
 
 /**
- * Created by kiwi on 6/17/16.
+ * Signup service test
  */
 public class SignupMockAdapterTest {
 
     public static final String STUB_EMAIL = "dd@gmail.com";
     public static final String STUB_NAME = "nameOfdd";
 
+    private Retrofit mRetrofit;
     private MockRetrofit mockRetrofit;
-    private Retrofit retrofit;
 
     @Before
     public void setUp() throws Exception {
-        retrofit = new Retrofit.Builder().baseUrl(IBaseUrl.BASE_URL)
-                .client(new OkHttpClient())
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request original = chain.request();
+                        Request request = original.newBuilder()
+                                .header("Content-Type", "application/json")
+                                .header("Accept", "application/json")
+                                .method(original.method(), original.body())
+                                .build();
+                        Response response = chain.proceed(request);
+                        return response;
+                    }
+                });
+        OkHttpClient client = httpClient.build();
+        mRetrofit = new Retrofit.Builder()
+                .baseUrl(IBaseUrl.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
 
         NetworkBehavior behavior = NetworkBehavior.create();
 
-        mockRetrofit = new MockRetrofit.Builder(retrofit)
+        mockRetrofit = new MockRetrofit.Builder(mRetrofit)
                 .networkBehavior(behavior)
                 .build();
     }
@@ -60,7 +77,7 @@ public class SignupMockAdapterTest {
 
         // Actual Test
         Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
-        Response<SignupResponse> signupResponse = signupCall.execute();
+        retrofit2.Response<SignupResponse> signupResponse = signupCall.execute();
 
         // Asserting response
         Assert.assertTrue(signupResponse.isSuccessful());
@@ -78,10 +95,10 @@ public class SignupMockAdapterTest {
         SignupInfo signupInfo = new SignupInfo(email, password);
 
         Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
-        Response<SignupResponse> signupResponse = signupCall.execute();
+        retrofit2.Response<SignupResponse> signupResponse = signupCall.execute();
         Assert.assertFalse(signupResponse.isSuccessful());
 
-        Converter<ResponseBody, ErrorResponse> errorConverter = retrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
+        Converter<ResponseBody, ErrorResponse> errorConverter = mRetrofit.responseBodyConverter(ErrorResponse.class, new Annotation[0]);
         ErrorResponse error = errorConverter.convert(signupResponse.errorBody());
 
         // Asserting response

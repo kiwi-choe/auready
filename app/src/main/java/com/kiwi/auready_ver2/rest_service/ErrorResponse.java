@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.data.api_model;
+package com.kiwi.auready_ver2.rest_service;
 
 import com.google.gson.annotations.SerializedName;
 

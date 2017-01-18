@@ -5,12 +5,12 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
-import com.kiwi.auready_ver2.friend.domain.usecase.AddFriend;
+import com.kiwi.auready_ver2.data.source.remote.FriendRemoteDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
-import com.kiwi.auready_ver2.friend.domain.usecase.FindPeople;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHeadDetail;
@@ -29,9 +29,8 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Enables injection of mock implementations for {@link FriendDataSource} at compile time.
- * This is useful for testing, since it allows us to use a fake instance of the class
- * to isolate the dependencies and run a test hermetically.
+ * Enables injection of production implementations for
+ * {@link FriendDataSource}, {@link TaskDataSource} at compile time.
  */
 public class Injection {
 
@@ -62,7 +61,7 @@ public class Injection {
 
 
     /*
-    * Task
+    * Task - TaskHead, Member, Task
     * */
     public static TaskRepository provideTaskRepository(@NonNull Context context) {
         checkNotNull(context);

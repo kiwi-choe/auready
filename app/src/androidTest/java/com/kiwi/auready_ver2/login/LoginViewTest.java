@@ -8,9 +8,9 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.api_model.ClientCredential;
-import com.kiwi.auready_ver2.data.api_model.LoginResponse;
-import com.kiwi.auready_ver2.rest_service.ILoginService;
+import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
+import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;

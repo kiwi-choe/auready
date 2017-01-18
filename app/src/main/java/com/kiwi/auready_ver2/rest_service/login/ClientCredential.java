@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.data.api_model;
+package com.kiwi.auready_ver2.rest_service.login;
 
 /**
  * Created by kiwi on 6/23/16.

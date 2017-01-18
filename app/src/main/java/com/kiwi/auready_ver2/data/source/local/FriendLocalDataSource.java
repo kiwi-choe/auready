@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 
 import java.util.ArrayList;
@@ -49,16 +48,6 @@ public class FriendLocalDataSource implements FriendDataSource {
         String[] selectionArgs = {id};
 
         mDbHelper.delete(TABLE_NAME, selection, selectionArgs);
-    }
-
-    @Override
-    public void findPeople(@NonNull String emailOrName, LoadSearchedPeopleCallback callback) {
-        // implement in Remote only
-    }
-
-    @Override
-    public void addFriend(@NonNull SearchedUser user, @NonNull AddFriendCallback callback) {
-
     }
 
     @Override

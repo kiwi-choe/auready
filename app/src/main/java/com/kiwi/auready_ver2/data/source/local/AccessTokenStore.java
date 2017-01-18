@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;

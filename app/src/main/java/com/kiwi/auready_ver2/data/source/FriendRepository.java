@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.data.source;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -57,38 +56,6 @@ public class FriendRepository implements FriendDataSource {
         if (mCacheFriends != null) {
             mCacheFriends.remove(id);
         }
-    }
-
-    @Override
-    public void findPeople(@NonNull String emailOrName, @NonNull LoadSearchedPeopleCallback callback) {
-
-        mRemoteDataSource.findPeople(emailOrName, new LoadSearchedPeopleCallback() {
-            @Override
-            public void onSearchedPeopleLoaded(@NonNull List<SearchedUser> searchedPeople) {
-
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-
-            }
-        });
-    }
-
-    @Override
-    public void addFriend(@NonNull SearchedUser user, @NonNull AddFriendCallback callback) {
-
-        mRemoteDataSource.addFriend(user, new AddFriendCallback() {
-            @Override
-            public void onSuccessAddFriend() {
-
-            }
-
-            @Override
-            public void onFailedAddFriend() {
-
-            }
-        });
     }
 
     @Override

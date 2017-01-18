@@ -3,8 +3,7 @@ package com.kiwi.auready_ver2.friend.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
-import com.kiwi.auready_ver2.data.source.FriendDataSource;
+import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -22,17 +21,6 @@ public class AddFriend extends UseCase<AddFriend.RequestValues, AddFriend.Respon
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mFriendRepository.addFriend(requestValues.getUser(), new FriendDataSource.AddFriendCallback() {
-            @Override
-            public void onSuccessAddFriend() {
-                getUseCaseCallback().onSuccess(new ResponseValue());
-            }
-
-            @Override
-            public void onFailedAddFriend() {
-                getUseCaseCallback().onError();
-            }
-        });
     }
 
     public static final class RequestValues implements UseCase.RequestValues {

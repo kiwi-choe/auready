@@ -1,7 +1,4 @@
-package com.kiwi.auready_ver2.rest_service;
-
-import com.kiwi.auready_ver2.data.api_model.SignupInfo;
-import com.kiwi.auready_ver2.data.api_model.SignupResponse;
+package com.kiwi.auready_ver2.rest_service.login;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

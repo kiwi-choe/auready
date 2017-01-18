@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.friend;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
+import com.kiwi.auready_ver2.data.SearchedUser;
 
 import java.util.List;
 

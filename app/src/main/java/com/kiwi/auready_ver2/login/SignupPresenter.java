@@ -4,9 +4,9 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.api_model.SignupInfo;
-import com.kiwi.auready_ver2.data.api_model.SignupResponse;
-import com.kiwi.auready_ver2.rest_service.ISignupService;
+import com.kiwi.auready_ver2.rest_service.login.SignupInfo;
+import com.kiwi.auready_ver2.rest_service.login.SignupResponse;
+import com.kiwi.auready_ver2.rest_service.login.ISignupService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.util.LoginUtils;
 

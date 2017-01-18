@@ -1,7 +1,6 @@
 package com.kiwi.auready_ver2.data.source;
 
 import com.kiwi.auready_ver2.data.Friend;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
 
 import org.junit.After;
 import org.junit.Before;
@@ -9,7 +8,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
@@ -44,10 +42,6 @@ public class FriendRepositoryTest {
     private FriendDataSource.LoadFriendsCallback mLoadFriendsCallback;
     @Captor
     private ArgumentCaptor<FriendDataSource.LoadFriendsCallback> mLoadFriendsCallbackCaptor;
-    @Captor
-    private ArgumentCaptor<FriendDataSource.LoadSearchedPeopleCallback> mLoadSearchedPeopleCallbackCaptor;
-    @Captor
-    private ArgumentCaptor<FriendDataSource.AddFriendCallback> mAddFriendCallbackCaptor;
 
 
     @Before
@@ -138,26 +132,6 @@ public class FriendRepositoryTest {
         assertThat(mRepository.mCacheFriends.size(), is(2));
     }
 
-    @Test
-    public void findPeople() {
-
-        String emailOrName = "emailOrName";
-        FriendDataSource.LoadSearchedPeopleCallback loadSearchedPeopleCallback =
-                Mockito.mock(FriendDataSource.LoadSearchedPeopleCallback.class);
-        mRepository.findPeople(emailOrName, loadSearchedPeopleCallback);
-
-        verify(mRemoteDataSource).findPeople(eq(emailOrName), mLoadSearchedPeopleCallbackCaptor.capture());
-    }
-
-    @Test
-    public void addFriend() {
-        SearchedUser user = new SearchedUser("name", 0);
-        FriendDataSource.AddFriendCallback addFriendCallback =
-                Mockito.mock(FriendDataSource.AddFriendCallback.class);
-        mRepository.addFriend(user, addFriendCallback);
-
-        verify(mRemoteDataSource).addFriend(eq(user), mAddFriendCallbackCaptor.capture());
-    }
     private void setFriendsNotAvailable(FriendDataSource dataSource) {
         verify(dataSource).getFriends(mLoadFriendsCallbackCaptor.capture());
         mLoadFriendsCallbackCaptor.getValue().onDataNotAvailable();

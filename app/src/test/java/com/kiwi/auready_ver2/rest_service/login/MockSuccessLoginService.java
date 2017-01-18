@@ -1,8 +1,9 @@
-package com.kiwi.auready_ver2.rest_service;
+package com.kiwi.auready_ver2.rest_service.login;
 
-import com.kiwi.auready_ver2.data.api_model.ClientCredential;
-import com.kiwi.auready_ver2.data.api_model.LoginResponse;
-import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
+import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
+import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

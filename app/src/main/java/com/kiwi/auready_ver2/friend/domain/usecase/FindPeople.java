@@ -3,8 +3,7 @@ package com.kiwi.auready_ver2.friend.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
-import com.kiwi.auready_ver2.data.api_model.SearchedUser;
-import com.kiwi.auready_ver2.data.source.FriendDataSource;
+import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 
 import java.util.List;
@@ -25,19 +24,6 @@ public class FindPeople extends UseCase<FindPeople.RequestValues, FindPeople.Res
     @Override
     protected void executeUseCase(RequestValues requestValues) {
 
-        mFriendRepository.findPeople(requestValues.getEmailOrName(), new FriendDataSource.LoadSearchedPeopleCallback() {
-
-            @Override
-            public void onSearchedPeopleLoaded(@NonNull List<SearchedUser> searchedPeople) {
-                checkNotNull(searchedPeople);
-                getUseCaseCallback().onSuccess(new ResponseValue(searchedPeople));
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                getUseCaseCallback().onError();
-            }
-        });
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
