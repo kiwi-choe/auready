@@ -42,13 +42,14 @@ public class AccessTokenStore {
     // Create new AccessTokenStore
     public static AccessTokenStore getInstance(@NonNull Context context) {
         checkNotNull(context);
-        if(sSharedPrefs == null) {
+        if (sSharedPrefs == null) {
             sSharedPrefs = new AccessTokenStore(context);
         }
         return sSharedPrefs;
     }
+
     public static AccessTokenStore getInstance() {
-        if(sSharedPrefs == null) {
+        if (sSharedPrefs == null) {
             throw new IllegalStateException(
                     "Should use getInstance(Context) at least once before using this method.");
             // or, can create a new instance here.
@@ -83,19 +84,6 @@ public class AccessTokenStore {
     public void setLoggedInStatus() {
         mEditor = mPref.edit();
         mEditor.putBoolean(IS_LOGIN, true);
-        mEditor.apply();
-        mEditor = null;
-    }
-    // testing for adding ME to members in TaskHeadDetail
-    public void save_forTesting(String userEmail, String userName, String myIdOfFriend) {
-
-        mEditor = mPref.edit();
-
-        mEditor.putString(USER_EMAIL, userEmail);
-        mEditor.putString(USER_NAME, userName);
-        mEditor.putString(MY_ID_OF_FRIEND, myIdOfFriend);
-
-        // commit changes
         mEditor.apply();
         mEditor = null;
     }

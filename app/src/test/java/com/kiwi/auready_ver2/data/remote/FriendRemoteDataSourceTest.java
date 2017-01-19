@@ -1,106 +1,46 @@
 package com.kiwi.auready_ver2.data.remote;
 
-import android.test.mock.MockContext;
-
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
+import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.remote.FriendRemoteDataSource;
-import com.kiwi.auready_ver2.login.IBaseUrl;
-import com.kiwi.auready_ver2.rest_service.friend.FriendResponse;
-import com.kiwi.auready_ver2.rest_service.friend.IFriendService;
-import com.kiwi.auready_ver2.rest_service.friend.MockSuccessFriendService;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-
-import okhttp3.Interceptor;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.mock.BehaviorDelegate;
-import retrofit2.mock.MockRetrofit;
-import retrofit2.mock.NetworkBehavior;
-
-import static junit.framework.Assert.assertTrue;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Friend Remote Data Source test - with mock Server service
  */
 public class FriendRemoteDataSourceTest {
 
-    private static final String STUB_ACCESSTOKEN = "stub_accessToken";
-
     private FriendRemoteDataSource mRemoteDataSource = FriendRemoteDataSource.getInstance();
 
-    private Retrofit mRetrofit;
-    private MockRetrofit mMockRetrofit;
-
-    private MockContext context;
-
     @Before
-    public void setup() throws Exception {
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
         // Set AccessTokenStore
-        context = new MockContext();
-        AccessTokenStore.getInstance(context);
-
-        // Set serviceBuilder
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request original = chain.request();
-
-                        Request request = original.newBuilder()
-                                .header("Content-Type", "application/json")
-                                .header("Accept", "application/json")
-                                .header("Authorization", "Bearer" + " " + STUB_ACCESSTOKEN)
-                                .method(original.method(), original.body())
-                                .build();
-                        okhttp3.Response response = chain.proceed(request);
-                        return response;
-                    }
-                });
-
-        OkHttpClient client = httpClient.build();
-        mRetrofit = new Retrofit.Builder()
-                .baseUrl(IBaseUrl.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build();
-
-        NetworkBehavior behavior = NetworkBehavior.create();
-
-        mMockRetrofit = new MockRetrofit.Builder(mRetrofit)
-                .networkBehavior(behavior)
-                .build();
-
+//        MockContext context = new MockContext();
+//        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(context);
+//        TokenInfo tokenInfo = new TokenInfo("stubAccessToken", "tokenType");
+//        accessTokenStore.save(tokenInfo, "userEmail", "userName", "myIdOfFriend");
     }
 
     @Test
     public void getFriends() throws Exception {
 
-//        FriendDataSource.LoadFriendsCallback loadCallback =
-//                Mockito.mock(FriendDataSource.LoadFriendsCallback.class);
-//        mRemoteDataSource.getFriends(loadCallback);
+        final FriendDataSource.LoadFriendsCallback loadCallback =
+                Mockito.mock(FriendDataSource.LoadFriendsCallback.class);
+        mRemoteDataSource.getFriends(loadCallback);
 
-        BehaviorDelegate<IFriendService> delegate = mMockRetrofit.create(IFriendService.class);
-        IFriendService mockFriendService = new MockSuccessFriendService(delegate);
+        // Mock friendService
+// 그 내부의 작동은 알 필요 없다!
+//        verify(mockService).getFriends();
+//        verify(mockFriendsCall).enqueue(callbackCaptor.capture());
+//        Response<FriendsResponse> response = mockFriendsCall.execute();
+//        callbackCaptor.getValue().onResponse(mockFriendsCall, response);
 
-        // Actual test
-        Call<FriendResponse> call = mockFriendService.getFriends();
-        Response<FriendResponse> response = call.execute();
 
-        // Asserting response
-        assertTrue(response.isSuccessful());
-        assertThat(response.body().getId(), is(MockSuccessFriendService.FRIEND_ID));
-        assertThat(response.body().getEmail(), is(MockSuccessFriendService.FRIEND_EMAIL));
-
-//        verify(loadCallback).onFriendsLoaded(FRIENDS);
+        // todo should be called onResponse using callbackCaptor
+//        verify(loadCallback).onFriendsLoaded();
     }
 }

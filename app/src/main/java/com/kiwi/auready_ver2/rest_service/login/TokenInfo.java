@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.rest_service.login;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by kiwi on 6/23/16.
+ * accessToken info
  */
 public class TokenInfo {
 
