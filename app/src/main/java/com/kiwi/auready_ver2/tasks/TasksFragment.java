@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
@@ -62,6 +64,24 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onResume() {
         super.onResume();
         mPresenter.start();
+
+        // To control backpress button
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (mTasksAdapter.isEditMode()) {
+                        mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
+                        mTasksAdapter.notifyDataSetInvalidated();
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -80,9 +100,21 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                Member selectedMember = (Member) mTasksAdapter.getGroup(groupPosition);
+                if (selectedMember == null) {
+                    return false;
+                }
+
+                // TODO : getTasks is too many called
+                mPresenter.getTasks(selectedMember.getId());
+                return false;
+            }
+        });
 
         setHasOptionsMenu(true);
-
         return root;
     }
 
@@ -147,12 +179,22 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView.setVisibility(View.GONE);
     }
 
+    @Override
+    public void scrollToAddButton() {
+        mTasksView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                int itemHeight = getResources().getDimensionPixelSize(R.dimen.lsitview_item_height);
+                mTasksView.smoothScrollBy(itemHeight, 200);
+            }
+        }, 100);
+    }
+
     TaskItemListener mTaskItemListener = new TaskItemListener() {
 
         @Override
         public void onAddTaskClick(String memberId, String description, int order) {
             mPresenter.createTask(memberId, description, order);
-
         }
 
         @Override

@@ -3,15 +3,14 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -29,8 +28,11 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private HashMap<String, ArrayList<Task>> mTasksList = null;
     private HashMap<String, ArrayList<Boolean>> mSelection = new HashMap<>();
 
+    public final int INVALID_POSITION = -1;
+
     private LayoutInflater mInflater = null;
-    int mCurrentActionModeMember = -1;
+    int mCurrentEditModeMember = INVALID_POSITION;
+    private View mCurrentSelectedDeleteTask = null;
 
     public TasksAdapter(Context context, ArrayList<Member> memberList, HashMap<String, ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
         super();
@@ -40,7 +42,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         mTasksList = tasksList;
         mTaskItemListener = taskItemListener;
 
-        mCurrentActionModeMember = -1;
+        mCurrentEditModeMember = INVALID_POSITION;
     }
 
     @Override
@@ -62,6 +64,10 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int memberPosition) {
+        if (memberPosition >= mMemberList.size()) {
+            return null;
+        }
+
         return mMemberList.get(memberPosition);
     }
 
@@ -104,7 +110,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         }
 
         viewHolder.memberName.setText(mMemberList.get(memberPosition).getName());
-        if (memberPosition == mCurrentActionModeMember) {
+        if (memberPosition == mCurrentEditModeMember) {
             view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_dark));
             viewHolder.delete_tasks_btn.setText("Delete");
             viewHolder.delete_tasks_btn.setOnClickListener(new View.OnClickListener() {
@@ -130,7 +136,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(final int memberPosition, final int taskPosition, boolean isLastTask, View convertView, ViewGroup parent) {
         View view = convertView;
-        ChildViewHolder viewHolder;
+        final ChildViewHolder viewHolder;
 
         if (view == null) {
             view = mInflater.inflate(R.layout.taskview_expand_list_child_view, parent, false);
@@ -139,7 +145,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.editText = (EditText) view.findViewById(R.id.task_edittext);
             viewHolder.textView = (TextView) view.findViewById(R.id.task_textview);
             viewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-            viewHolder.reorderBtn = (ImageView) view.findViewById(R.id.reorder_btn);
+            viewHolder.deleteTaskBtn = (Button) view.findViewById(R.id.delete_task_btn);
             viewHolder.addTaskBtn = (Button) view.findViewById(R.id.add_task_btn);
 
             view.setTag(viewHolder);
@@ -150,7 +156,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         viewHolder.editText.setVisibility(View.GONE);
         viewHolder.textView.setVisibility(View.GONE);
         viewHolder.checkBox.setVisibility(View.GONE);
-        viewHolder.reorderBtn.setVisibility(View.GONE);
+        viewHolder.deleteTaskBtn.setVisibility(View.GONE);
         viewHolder.addTaskBtn.setVisibility(View.GONE);
 
         if (isLastTask) {
@@ -158,7 +164,13 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (memberPosition != mCurrentEditModeMember) {
+                        mCurrentEditModeMember = memberPosition;
+                        notifyDataSetInvalidated();
+                    }
+
                     mTaskItemListener.onAddTaskClick(getMemberId(memberPosition), "empty : " + taskPosition, getChildrenCount(memberPosition) - 1);
+
                 }
             });
 
@@ -166,14 +178,43 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         }
 
         // set action mode
-        if (memberPosition == mCurrentActionModeMember) {
-            viewHolder.reorderBtn.setVisibility(View.VISIBLE);
-            viewHolder.textView.setVisibility(View.VISIBLE);
-            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_light));
+        if (memberPosition == mCurrentEditModeMember) {
+
+            viewHolder.editText.setVisibility(View.VISIBLE);
+            viewHolder.editText.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                        setActionModeMember(INVALID_POSITION);
+                        notifyDataSetInvalidated();
+                        return true;
+                    }
+
+                    return false;
+                }
+            });
+
+            viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View v, boolean hasFocus) {
+                    if (!hasFocus) {
+                        if (mCurrentSelectedDeleteTask != null) {
+                            mCurrentSelectedDeleteTask.setVisibility(View.GONE);
+                        }
+
+                        return;
+                    }
+
+                    mCurrentSelectedDeleteTask = viewHolder.deleteTaskBtn;
+                    mCurrentSelectedDeleteTask.setVisibility(View.VISIBLE);
+                }
+            });
+
+//            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_light));
         } else {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
-            viewHolder.editText.setVisibility(View.VISIBLE);
-            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
+            viewHolder.textView.setVisibility(View.VISIBLE);
+//            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
         }
 
         final ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
@@ -209,15 +250,17 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
         // set checkbox
         viewHolder.checkBox.setChecked(task.getCompleted());
-        viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+            public void onClick(View v) {
+                // TODO : need to impelement Presenter
                 mTaskItemListener.onTaskChecked(task.getId());
+                viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
             }
         });
 
         // set reorder
-        viewHolder.reorderBtn.setOnClickListener(new View.OnClickListener() {
+        viewHolder.deleteTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
@@ -277,8 +320,12 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     }
 
     public void setActionModeMember(int memberPosition) {
-        mCurrentActionModeMember = memberPosition;
+        mCurrentEditModeMember = memberPosition;
         notifyDataSetChanged();
+    }
+
+    public boolean isEditMode() {
+        return mCurrentEditModeMember != INVALID_POSITION;
     }
 
     private class GroupViewHolder {
@@ -291,7 +338,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         EditText editText;
         TextView textView;
         CheckBox checkBox;
-        ImageView reorderBtn;
+        Button deleteTaskBtn;
         Button addTaskBtn;
     }
 }
