@@ -3,10 +3,10 @@ package com.kiwi.auready_ver2.login;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.api_model.LoginResponse;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.FriendsContract;
-import com.kiwi.auready_ver2.rest_service.MockSuccessLoginService;
+import com.kiwi.auready_ver2.rest_service.login.MockSuccessLoginService;
 
 import org.junit.Before;
 import org.junit.Test;

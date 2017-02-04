@@ -43,7 +43,7 @@ public class FriendRepository implements FriendDataSource {
     public void deleteAllFriends() {
         mLocalDataSource.deleteAllFriends();
 
-        if(mCacheFriends != null) {
+        if (mCacheFriends != null) {
             mCacheFriends.clear();
         }
     }
@@ -53,7 +53,7 @@ public class FriendRepository implements FriendDataSource {
         checkNotNull(id);
         mLocalDataSource.deleteFriend(id);
 
-        if(mCacheFriends != null) {
+        if (mCacheFriends != null) {
             mCacheFriends.remove(id);
         }
     }
@@ -62,27 +62,56 @@ public class FriendRepository implements FriendDataSource {
     public void getFriends(@NonNull final LoadFriendsCallback callback) {
         checkNotNull(callback);
 
-        // Get from Local
-        mLocalDataSource.getFriends(new LoadFriendsCallback() {
+        mRemoteDataSource.getFriends(new LoadFriendsCallback() {
             @Override
             public void onFriendsLoaded(List<Friend> friends) {
                 refreshCaches(friends);
-                callback.onFriendsLoaded(friends);
+                refreshLocalDataSource(friends);
             }
 
             @Override
             public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
+                // Get from Local when Network couldn't connect
+                mLocalDataSource.getFriends(new LoadFriendsCallback() {
+                    @Override
+                    public void onFriendsLoaded(List<Friend> friends) {
+                        refreshCaches(friends);
+                        callback.onFriendsLoaded(friends);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        callback.onDataNotAvailable();
+                    }
+                });
+
             }
         });
     }
 
+    private void refreshLocalDataSource(List<Friend> friends) {
+        mLocalDataSource.deleteAllFriends();
+        for (Friend friend : friends) {
+            mLocalDataSource.saveFriend(friend, new SaveCallback() {
+                @Override
+                public void onSaveSuccess() {
+
+                }
+
+                @Override
+                public void onSaveFailed() {
+
+                }
+            });
+        }
+    }
+
     private void refreshCaches(List<Friend> friends) {
-        if(mCacheFriends == null) {
+        if (mCacheFriends == null) {
             mCacheFriends = new LinkedHashMap<>();
         }
         mCacheFriends.clear();
-        for(Friend friend:friends) {
+        for (Friend friend : friends) {
 
             mCacheFriends.put(friend.getId(), friend);
         }
@@ -107,7 +136,7 @@ public class FriendRepository implements FriendDataSource {
     }
 
     private void addToCache(Friend friend) {
-        if(mCacheFriends == null) {
+        if (mCacheFriends == null) {
             mCacheFriends = new LinkedHashMap<>();
         }
         mCacheFriends.put(friend.getId(), friend);

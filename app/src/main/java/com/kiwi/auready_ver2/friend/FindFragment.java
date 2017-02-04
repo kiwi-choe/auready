@@ -12,8 +12,10 @@ import android.widget.Button;
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.SearchedUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -83,18 +85,22 @@ public class FindFragment extends Fragment implements
     }
 
     @Override
-    public void showSuccessMsgOfAddFriend(Friend newFriend) {
-        String successMsg = newFriend.getName() + " " + getString(R.string.add_friend_success_msg);
+    public void setViewWhenAddFriendSucceed(@NonNull SearchedUser user) {
+        // Show message
+        String successMsg = user.getName() + " " + getString(R.string.add_friend_success_msg);
         Snackbar.make(getView(), successMsg, Snackbar.LENGTH_SHORT);
-    }
 
-    @Override
-    public void showSearchedEmailList(ArrayList<String> searchedEmailList) {
+        // Set ADD button to GONE
 
     }
 
     @Override
-    public void showNoResultByEmail() {
+    public void showSearchedPeople(List<SearchedUser> searchedPeople) {
+
+    }
+
+    @Override
+    public void showNoSearchedPeople() {
 
     }
 }

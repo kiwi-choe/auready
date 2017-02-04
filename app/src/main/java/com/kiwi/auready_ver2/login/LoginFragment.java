@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 import com.kiwi.auready_ver2.util.LoginUtils;

@@ -4,9 +4,9 @@ import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
-import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -18,10 +18,14 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -36,8 +40,6 @@ public class TasksPresenterTest {
 
     @Mock
     private TasksContract.View mTasksView;
-    @Mock
-    private TaskHeadRepository mTaskHeadRepository;
     @Mock
     private TaskRepository mTaskRepository;
 
@@ -85,7 +87,7 @@ public class TasksPresenterTest {
     }
 
     @Test
-    public void getTasks() {
+    public void getTasksOfMember() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         // Get tasks of selected member
@@ -95,7 +97,25 @@ public class TasksPresenterTest {
         verify(mTaskRepository).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
-        verify(mTasksView).showTasks(eq(TASKS));
+        verify(mTasksView).showTasks(eq(memberId), eq(TASKS));
+    }
+
+    @Test
+    public void getTasksOfMember_whenTasksIsEmpty_showNoTasks() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+
+        // Get tasks of selected member
+        final String memberId = MEMBERS.get(0).getId();
+        mTasksPresenter.getTasks(memberId);
+
+        verify(mTaskRepository).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
+        verify(mTasksView).showNoTasks();
+    }
+
+    @Test
+    public void getTasks_ofAllMembers() {
+
     }
 
     @Test
@@ -112,33 +132,37 @@ public class TasksPresenterTest {
     }
 
     @Test
-    public void updateTask_editTask() {
+    public void editTasks() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
-        String memberId = TASKS.get(0).getMemberId();
-        int order = TASKS.size();
         // Update a taskTextView
-        mTasksPresenter.editTask(memberId, "taskId", "changed description", order);
-        verify(mTaskRepository).saveTask(any(Task.class));
+        mTasksPresenter.editTasks(TASKS);
+        verify(mTaskRepository).editTasks(eq(TASKS));
     }
 
     @Test
-    public void deleteTask() {
+    public void deleteTasks() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
-        Task task = TASKS.get(0);
-        mTasksPresenter.deleteTask(task.getId());
-        verify(mTaskRepository).deleteTask(eq(task.getId()));
+
+        List<String> taskIds = new ArrayList<>();
+        for(Task task:TASKS) {
+            taskIds.add(task.getId());
+        }
+        mTasksPresenter.deleteTasks(taskIds);
+        verify(mTaskRepository).deleteTasks(anyListOf(String.class));
     }
 
     private TasksPresenter givenTasksPresenter(String taskHeadId) {
+
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
+        GetMembers getMembers = new GetMembers(mTaskRepository);
         GetTasks getTasks = new GetTasks(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
-        DeleteTask deleteTask = new DeleteTask(mTaskRepository);
-        GetMembers getMembers = new GetMembers(mTaskRepository);
+        DeleteTasks deleteTasks = new DeleteTasks(mTaskRepository);
+        EditTasks editTasks = new EditTasks(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getMembers, getTasks, saveTask, deleteTask);
+                getMembers, getTasks, saveTask, deleteTasks, editTasks);
     }
 
 }

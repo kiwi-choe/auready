@@ -60,8 +60,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     @Override
                     public void onSuccess(GetTaskHeads.ResponseValue response) {
-                        List<TaskHead> taskHeads = response.getTaskHeads();
-                        processTaskHeads(taskHeads);
+                        mTaskHeadView.showTaskHeads(response.getTaskHeads());
                     }
 
                     @Override
@@ -69,14 +68,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                         mTaskHeadView.showNoTaskHeads();
                     }
                 });
-    }
-
-    private void processTaskHeads(List<TaskHead> taskHeads) {
-        if (taskHeads.isEmpty()) {
-            mTaskHeadView.showNoTaskHeads();
-        } else {
-            mTaskHeadView.showTaskHeads(taskHeads);
-        }
     }
 
     @Override

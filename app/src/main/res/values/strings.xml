@@ -17,8 +17,8 @@
     <string name="login_hint_name">이름</string>
 
     <string name="signup_fail_message">Signup is failed</string>
-    <string name="email_empty_err">email is empty</string>
-    <string name="email_format_err">email format is invalid</string>
+    <string name="email_empty_err">name is empty</string>
+    <string name="email_format_err">name format is invalid</string>
     <string name="password_empty_err">password is empty</string>
     <string name="signup_fail_message_404">You are already registered</string>
     <string name="login_fail_message_400">login failed. Input the correct id or password</string>
@@ -28,7 +28,7 @@
 
     <!-- Tasks Activity -->
     <string name="logged_in_user_name">user name</string>
-    <string name="logged_in_user_email">user email</string>
+    <string name="logged_in_user_email">user name</string>
 
     <!-- Friend Fragment -->
     <string name="no_searched_email_msg">Nobody who you are searching</string>

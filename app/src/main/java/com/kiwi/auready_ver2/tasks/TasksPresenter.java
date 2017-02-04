@@ -8,7 +8,8 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
-import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -36,7 +37,8 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final GetMembers mGetMembers;
     private final GetTasks mGetTasks;
     private final SaveTask mSaveTask;
-    private final DeleteTask mDeleteTask;
+    private final DeleteTasks mDeleteTasks;
+    private final EditTasks mEditTasks;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
@@ -44,14 +46,16 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull GetMembers getMembers,
                           @NonNull GetTasks getTasks,
                           @NonNull SaveTask saveTask,
-                          @NonNull DeleteTask deleteTask) {
+                          @NonNull DeleteTasks deleteTasks,
+                          @NonNull EditTasks editTasks) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetMembers = checkNotNull(getMembers);
         mGetTasks = checkNotNull(getTasks);
         mSaveTask = checkNotNull(saveTask);
-        mDeleteTask = checkNotNull(deleteTask);
+        mDeleteTasks = checkNotNull(deleteTasks);
+        mEditTasks = checkNotNull(editTasks);
 
         mTasksView.setPresenter(this);
         // init mTaskList
@@ -83,41 +87,32 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void getTasks(@NonNull String memberId) {
+    public void getTasks(@NonNull final String memberId) {
         checkNotNull(memberId);
 
         mUseCaseHandler.execute(mGetTasks, new GetTasks.RequestValues(memberId),
                 new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasks.ResponseValue response) {
-                        List<Task> tasks = response.getTasks();
-                        processTasks(tasks);
+                        mTasksView.showTasks(memberId, response.getTasks());
                     }
 
                     @Override
                     public void onError() {
-
+                        mTasksView.showNoTasks();
                     }
                 });
     }
 
-    private void processTasks(List<Task> tasks) {
-        if(tasks.isEmpty()) {
-            mTasksView.showTasks(tasks);
-        } else {
-            mTasksView.showNoTasks();
-        }
-    }
-
     @Override
-    public void createTask(@NonNull String memberId, @NonNull String description, @NonNull int order) {
+    public void createTask(@NonNull final String memberId, @NonNull String description, @NonNull int order) {
         Task newTask = new Task(memberId, description, order);
         mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-
+                        getTasks(memberId);
                     }
 
                     @Override
@@ -127,41 +122,6 @@ public class TasksPresenter implements TasksContract.Presenter {
                 });
     }
 
-    @Override
-    public void editTask(@NonNull String memberId, @NonNull String taskId, @NonNull String description, @NonNull int order) {
-        Task task = new Task(taskId, memberId, description, order);
-        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(task),
-                new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(SaveTask.ResponseValue response) {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void deleteTask(@NonNull String id) {
-        checkNotNull(id);
-        mUseCaseHandler.execute(mDeleteTask, new DeleteTask.RequestValues(id),
-                new UseCase.UseCaseCallback<DeleteTask.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(DeleteTask.ResponseValue response) {
-
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
 
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
@@ -171,5 +131,41 @@ public class TasksPresenter implements TasksContract.Presenter {
                 mTasksView.setTitle(title);
             }
         }
+    }
+
+    @Override
+    public void deleteTasks(@NonNull List<String> taskIds) {
+        checkNotNull(taskIds);
+
+        mUseCaseHandler.execute(mDeleteTasks, new DeleteTasks.RequestValues(taskIds),
+                new UseCase.UseCaseCallback<DeleteTasks.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteTasks.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void editTasks(@NonNull List<Task> tasks) {
+        mUseCaseHandler.execute(mEditTasks, new EditTasks.RequestValues(tasks),
+                new UseCase.UseCaseCallback<EditTasks.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(EditTasks.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 }

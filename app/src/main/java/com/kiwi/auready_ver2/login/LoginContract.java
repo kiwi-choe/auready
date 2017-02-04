@@ -2,8 +2,8 @@ package com.kiwi.auready_ver2.login;
 
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
-import com.kiwi.auready_ver2.data.api_model.LoginResponse;
-import com.kiwi.auready_ver2.data.api_model.TokenInfo;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
+import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 
 /**
  * Created by kiwi on 6/11/16.

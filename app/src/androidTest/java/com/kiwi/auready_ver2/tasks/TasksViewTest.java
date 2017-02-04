@@ -8,8 +8,6 @@ import android.support.test.runner.AndroidJUnit4;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import org.junit.Rule;
@@ -57,9 +55,9 @@ public class TasksViewTest {
 
     private void startActivityWithStubbedTasks(String memberId, List<Task> tasks) {
         // Add taskheads stub to the fake service api layer.
-        TaskHeadRepository.destroyInstance();
+//        TaskHeadRepository.destroyInstance();
         List<TaskHead> taskHeads = Lists.newArrayList(TASKHEAD);
-        FakeTaskHeadRemoteDataSource.getInstance().addTaskHeads(taskHeads);
+//        TaskHeadRemoteDataSource.getInstance().addTaskHeads(taskHeads);
 
         // Add tasks stub to the fake service api layer.
         TaskRepository.destroyInstance();

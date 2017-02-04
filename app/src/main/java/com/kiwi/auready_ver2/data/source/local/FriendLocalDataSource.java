@@ -7,13 +7,15 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry.*;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry.COLUMN_EMAIL;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry.COLUMN_ID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry.COLUMN_NAME;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry.TABLE_NAME;
 
 /**
  * Created by kiwi on 7/5/16.
@@ -94,7 +96,7 @@ public class FriendLocalDataSource implements FriendDataSource {
 
         long isSuccess = mDbHelper.insert(TABLE_NAME, null, values);
 
-        if (isSuccess != DBExceptionTag.INSERT_ERROR) {
+        if (isSuccess != PersistenceContract.DBExceptionTag.INSERT_ERROR) {
             callback.onSaveSuccess();
         } else {
             callback.onSaveFailed();

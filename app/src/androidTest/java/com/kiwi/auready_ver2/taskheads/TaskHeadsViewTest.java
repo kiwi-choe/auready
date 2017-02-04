@@ -11,8 +11,7 @@ import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.FakeTaskHeadRemoteDataSource;
-import com.kiwi.auready_ver2.data.source.TaskHeadRepository;
+import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 
 import org.hamcrest.Description;
@@ -184,8 +183,8 @@ public class TaskHeadsViewTest {
     }
     private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {
         // Add tasks stub to the fake service api layer.
-        TaskHeadRepository.destroyInstance();
-        FakeTaskHeadRemoteDataSource.getInstance().addTaskHeads(taskHeads);
+        TaskRepository.destroyInstance();
+//        FakeTaskHeadRemoteDataSource.getInstance().addTaskHeads(taskHeads);
 
         // Lazily start Activity from the ActivityTestRule this time to inject the start Intent.
         Intent startIntent = new Intent();

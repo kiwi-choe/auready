@@ -16,9 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -36,7 +33,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by kiwi on 1/8/17.
+ * {@link TaskHead} and {@link Member} Local test
  */
 
 @RunWith(RobolectricTestRunner.class)
@@ -44,13 +41,6 @@ public class TaskHeadDetailLocalDataSourceTest {
 
     private static SQLiteDBHelper mDbHelper;
     private TaskLocalDataSource mLocalDataSource = TaskLocalDataSource.getInstance(RuntimeEnvironment.application);
-
-    @Captor
-    private ArgumentCaptor<TaskDataSource.LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
-    @Mock
-    private TaskDataSource.SaveCallback mSaveCallback;
-    @Mock
-    private TaskDataSource.EditTaskHeadDetailCallback mEditCallback;
 
     @Before
     public void setup() {

@@ -3,12 +3,12 @@ package com.kiwi.auready_ver2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.data.source.FakeFriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
+import com.kiwi.auready_ver2.data.source.remote.FriendRemoteDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
@@ -19,7 +19,8 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
-import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -39,7 +40,7 @@ public class Injection {
     public static FriendRepository provideFriendRepository(@NonNull Context context) {
         checkNotNull(context);
         return FriendRepository.getInstance(FriendLocalDataSource.getInstance(context),
-                FakeFriendRemoteDataSource.getInstance());
+                FriendRemoteDataSource.getInstance());
     }
 
     public static UseCaseHandler provideUseCaseHandler() {
@@ -107,7 +108,11 @@ public class Injection {
         return new SaveTask(Injection.provideTaskRepository(context));
     }
 
-    public static DeleteTask provideDeleteTask(@NonNull Context context) {
-        return new DeleteTask(Injection.provideTaskRepository(context));
+    public static DeleteTasks provideDeleteTasks(@NonNull Context context) {
+        return new DeleteTasks(Injection.provideTaskRepository(context));
+    }
+
+    public static EditTasks provideEditTasks(@NonNull Context context) {
+        return new EditTasks(Injection.provideTaskRepository(context));
     }
 }

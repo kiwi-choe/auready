@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -37,7 +38,7 @@ public class FindPresenter implements FindContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveFriend.ResponseValue response) {
-                        mFindView.showSuccessMsgOfAddFriend(response.getFriend());
+//                        mFindView.setViewWhenAddFriendSucceed(response.getFriend());
                     }
 
                     @Override
@@ -49,22 +50,40 @@ public class FindPresenter implements FindContract.Presenter {
 
     @Override
     public void findPeople(@NonNull String emailOrName) {
+        checkNotNull(emailOrName);
         // Find people by email or name
         // request to Server
-
-        // onSuccess, call view.showSearchedEmailList(ArrayList<String> searchedEmailList);
-        // onFailed, call view.showNoResultByEmail();
+//        mUseCaseHandler.execute(mFindPeople, new FindPeople.RequestValues(emailOrName),
+//                new UseCase.UseCaseCallback<FindPeople.ResponseValue>() {
+//
+//                    @Override
+//                    public void onSuccess(FindPeople.ResponseValue response) {
+//                        mFindView.showSearchedPeople(response.getSearchedPeople());
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//                        mFindView.showNoSearchedPeople();
+//                    }
+//                });
     }
 
     @Override
-    public void addFriend(@NonNull Friend friend) {
-
-        // 1. Add to friend table (= save friend)
-        // If the friend reject 'the request to be friends', delete the friend from LocalDataSource? not sure-
-
-        // 2. Request to Server
-        // onSuccess,
+    public void addFriend(@NonNull final SearchedUser user) {
+        checkNotNull(user);
+//        mUseCaseHandler.execute(mAddFriend, new AddFriend.RequestValues(user),
+//                new UseCase.UseCaseCallback<AddFriend.ResponseValue>() {
+//
+//                    @Override
+//                    public void onSuccess(AddFriend.ResponseValue response) {
+//                        mFindView.setViewWhenAddFriendSucceed(user);
+//                    }
+//
+//                    @Override
+//                    public void onError() {
+//
+//                    }
+//                });
     }
-
 
 }

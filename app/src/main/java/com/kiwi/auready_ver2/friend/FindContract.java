@@ -3,8 +3,9 @@ package com.kiwi.auready_ver2.friend;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Friend;
+import com.kiwi.auready_ver2.data.SearchedUser;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kiwi on 8/12/16.
@@ -15,11 +16,11 @@ public interface FindContract {
 
         void setPresenter(@NonNull Presenter presenter);
 
-        void showSuccessMsgOfAddFriend(Friend newFriend);
+        void setViewWhenAddFriendSucceed(@NonNull SearchedUser user);
 
-        void showSearchedEmailList(ArrayList<String> searchedEmailList);
+        void showSearchedPeople(List<SearchedUser> searchedPeople);
 
-        void showNoResultByEmail();
+        void showNoSearchedPeople();
     }
 
     interface Presenter {
@@ -29,7 +30,7 @@ public interface FindContract {
 
         void findPeople(@NonNull String emailOrName);
 
-        void addFriend(@NonNull Friend friend);
+        void addFriend(@NonNull SearchedUser user);
     }
 
 }

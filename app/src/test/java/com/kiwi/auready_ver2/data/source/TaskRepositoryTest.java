@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data.source;
 
 import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
 
@@ -17,11 +18,14 @@ import java.util.List;
 
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASK;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEADS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAIL;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -59,6 +63,10 @@ public class TaskRepositoryTest {
     private TaskDataSource.LoadTasksCallback mLoadTasksCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
+    @Mock
+    private TaskDataSource.LoadMembersCallback mLoadMembersCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.LoadMembersCallback> mLoadMembersCallbackCaptor;
 
     @Before
     public void setup() {
@@ -334,15 +342,117 @@ public class TaskRepositoryTest {
         mRepository.getTasks(memberId, mLoadTasksCallback);
 
         verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        assertThat(mRepository.mCachedTasks.size(), is(TASKS.size()));
     }
 
+    @Test
+    public void getTasksWithLocalUnavailable_firesOnDataNotAvailable() {
+        String memberId = "stubbedMemberId";
+        mRepository.getTasks(memberId, mLoadTasksCallback);
 
+        // Local data source has no data available
+        verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
+
+        verify(mLoadTasksCallback).onDataNotAvailable();
+    }
+
+    @Test
+    public void getTasksWithLocal_firesOnTaskLoaded() {
+        String memberId = "stubbedMemberId";
+        mRepository.getTasks(memberId, mLoadTasksCallback);
+
+        // Local data source has no data available
+        verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        verify(mLoadTasksCallback).onTasksLoaded(anyListOf(Task.class));
+    }
+
+    /*
+    * Save Task
+    * */
     @Test
     public void saveTask_toLocal() {
         mRepository.saveTask(TASK);
 
         verify(mLocalDataSource).saveTask(eq(TASK));
         assertThat(mRepository.mCachedTasks.containsKey(TASK.getId()), is(true));
+    }
+
+    /*
+    * Delete Tasks
+    * */
+    @Test
+    public void deleteTasks_fromLocal() {
+        List<String> taskIds = new ArrayList<>();
+        taskIds.add(TASKS.get(0).getId());
+        taskIds.add(TASKS.get(1).getId());
+        mRepository.deleteTasks(taskIds);
+
+        verify(mLocalDataSource).deleteTasks(eq(taskIds));
+    }
+
+    @Test
+    public void deleteTasks_fromCache() {
+        // Save the stubbed taskheadDetails
+        mRepository.saveTask(TASKS.get(0));
+        mRepository.saveTask(TASKS.get(1));
+        mRepository.saveTask(TASKS.get(2));
+        assertThat(mRepository.mCachedTasks.size(), is(3));
+
+        // Delete taskHeads TASKHEADS index 1, 2nd
+        List<String> taskIds = new ArrayList<>(0);
+        taskIds.add(TASKS.get(1).getId());
+        mRepository.deleteTasks(taskIds);
+
+        assertThat(mRepository.mCachedTasks.size(), is(2));
+        assertThat(mRepository.mCachedTasks.containsKey(TASKS.get(0).getId()), is(true));
+        assertThat(mRepository.mCachedTasks.containsKey(TASKS.get(1).getId()), is(false));
+        assertThat(mRepository.mCachedTasks.containsKey(TASKS.get(2).getId()), is(true));
+    }
+
+    /*
+    * Edit Tasks
+    * */
+    @Test
+    public void editTasks_toLocal() {
+        // Save the stubbed tasks
+        List<Task> tasks = TASKS;
+        mRepository.saveTask(tasks.get(0));
+        mRepository.saveTask(tasks.get(1));
+
+        // Edit tasks
+        List<Task> editTasks = new ArrayList<>();
+        String description0 = "editDescription0";
+        Task editTask0 = new Task(
+                tasks.get(0).getId(), tasks.get(0).getMemberId(), description0, tasks.get(0).getOrder());
+        editTasks.add(editTask0);
+        String description1 = "editDescription1";
+        Task editTask1 = new Task(
+                tasks.get(1).getId(), tasks.get(1).getMemberId(), description1, tasks.get(1).getOrder());
+        editTasks.add(editTask1);
+        mRepository.editTasks(editTasks);
+
+        verify(mLocalDataSource).editTasks(eq(editTasks));
+
+        assertThat(mRepository.mCachedTasks.get(tasks.get(0).getId()).getDescription(), is(description0));
+        assertThat(mRepository.mCachedTasks.get(tasks.get(1).getId()).getDescription(), is(description1));
+    }
+
+    /*
+    * Get members
+    * */
+    @Test
+    public void getMembers_fromLocal() {
+        mRepository.getMembers(TASKHEAD.getId(), mLoadMembersCallback);
+        verify(mLocalDataSource).getMembers(eq(TASKHEAD.getId()), mLoadMembersCallbackCaptor.capture());
+        mLoadMembersCallbackCaptor.getValue().onMembersLoaded(MEMBERS);
+
+        assertThat(mRepository.mCachedMembersOfTaskHead.containsKey(TASKHEAD.getId()), is(true));
+        assertThat(mRepository.mCachedMembers.size(), is(MEMBERS.size()));
     }
 
     /*

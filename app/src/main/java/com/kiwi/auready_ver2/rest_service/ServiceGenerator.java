@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.rest_service;
 import com.kiwi.auready_ver2.login.IBaseUrl;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -55,7 +54,7 @@ public class ServiceGenerator {
             httpClient.interceptors().clear();
             httpClient.interceptors().add(new Interceptor() {
                 @Override
-                public Response intercept(Chain chain) throws IOException, SocketTimeoutException {
+                public Response intercept(Chain chain) throws IOException {
 
                     Request original = chain.request();
                     Request request = original.newBuilder()

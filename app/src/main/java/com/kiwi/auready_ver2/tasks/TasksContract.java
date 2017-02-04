@@ -37,17 +37,18 @@ class TasksContract {
 
         void populateMembers();
 
-        // Get tasks by taskHeadId and memberId
+        // Get tasks by memberId
         void getTasks(@NonNull String memberId);
+        // Get tasks of all members
+
 
         void createTask(@NonNull String memberId,
                         @NonNull String description, @NonNull int order);
 
-        void editTask(@NonNull String memberId, @NonNull String taskId,
-                      @NonNull String description, @NonNull int order);
-
-        void deleteTask(@NonNull String id);
-
         void result(int requestCode, int resultCode, Intent data);
+
+        void deleteTasks(@NonNull List<String> taskIds);
+
+        void editTasks(@NonNull List<Task> tasks);
     }
 }

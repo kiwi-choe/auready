@@ -20,8 +20,8 @@ import java.util.List;
 public interface TaskDataSource {
 
     /*
-                        * TaskHeadsView
-                        * */
+                                * TaskHeadsView
+                                * */
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);
@@ -89,21 +89,11 @@ public interface TaskDataSource {
         void onDataNotAvailable();
     }
 
-//    interface DeleteTasksCallback {
-//        void onDeleteSuccess();
-//
-//        void onDeleteFail();
-//    }
-
     void getTasks(@NonNull String memberId, @NonNull LoadTasksCallback callback);
 
     void saveTask(@NonNull Task task);
 
-    void deleteTask(@NonNull String id);
+    void deleteTasks(@NonNull List<String> taskIds);
 
-    // When delete a taskhead
-//    void deleteTasks(@NonNull List<String> taskHeadIds);
-    // When delete a member of taskHeadDetail(update taskhead)
-//    void deleteTasks(@NonNull String taskHeadId, @NonNull String memberId);
-
+    void editTasks(@NonNull List<Task> tasks);
 }
