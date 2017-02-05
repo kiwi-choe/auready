@@ -10,6 +10,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -31,7 +33,6 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private ArrayList<Member> mMemberList = null;
     private HashMap<String, ArrayList<Task>> mTasksList = null;
     private HashMap<String, ArrayList<Boolean>> mSelection = new HashMap<>();
-
     public final int INVALID_POSITION = -1;
 
     private LayoutInflater mInflater = null;
@@ -126,7 +127,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             @Override
             public void onClick(View view) {
                 if (memberPosition == mCurrentEditModeMember) {
-                    mTaskItemListener.onStartNormalMode();
+                    mTaskItemListener.onStartNormalMode(memberPosition);
                 } else {
                     mTaskItemListener.onStartEditMode(memberPosition, null);
                 }
@@ -161,7 +162,17 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = (ChildViewHolder) view.getTag();
         }
 
+//        Log.d("MY_LOG", "getView, getCurrent State : " + ExpandedAnimatorHelper.getCurrentState());
+        if (ExpandedAnimatorHelper.getCurrentState() == ExpandedAnimatorHelper.COLLAPSE_STATE) {
+            ExpandedAnimatorHelper.expandItem(view);
+        } else if (ExpandedAnimatorHelper.getCurrentState() == ExpandedAnimatorHelper.EXPANDED_STATE) {
+            ExpandedAnimatorHelper.collapseItem(view);
+        }
+
         if (isLastTask) {
+            viewHolder.checkBox.setVisibility(View.GONE);
+            viewHolder.deleteTaskBtn.setVisibility(View.GONE);
+            viewHolder.taskDescription.setVisibility(View.GONE);
             viewHolder.addTaskBtn.setVisibility(View.VISIBLE);
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -177,6 +188,9 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
             return view;
         } else {
+            viewHolder.checkBox.setVisibility(View.VISIBLE);
+            viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
+            viewHolder.taskDescription.setVisibility(View.VISIBLE);
             viewHolder.addTaskBtn.setVisibility(View.GONE);
         }
 
@@ -204,7 +218,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
                 @Override
                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                     if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                        mTaskItemListener.onStartNormalMode();
+                        mTaskItemListener.onStartNormalMode(memberPosition);
                         return true;
                     }
 
@@ -302,9 +316,9 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             }
         });
 
+
         return view;
     }
-
 
     @Override
     public boolean isChildSelectable(int memberPosition, int taskPosition) {
@@ -357,6 +371,11 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     public void setActionModeMember(int memberPosition) {
         mCurrentEditModeMember = memberPosition;
+        invalidateState();
+//        if(ExpandedAnimatorHelper.getCurrentState() == ExpandedAnimatorHelper.COLLAPSE_STATE){
+//            collapseState();
+//        }
+
         notifyDataSetChanged();
     }
 
@@ -426,5 +445,107 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         CheckBox checkBox;
         Button deleteTaskBtn;
         Button addTaskBtn;
+    }
+
+    public void collapseState() {
+        ExpandedAnimatorHelper.collapseState();
+    }
+
+    public void expandedState() {
+        ExpandedAnimatorHelper.expandedState();
+    }
+
+    public void invalidateState() {
+        ExpandedAnimatorHelper.invalidateState();
+    }
+
+    public static class ExpandedAnimatorHelper {
+        public final static int INVALID_STATE = -1;
+        public final static int EXPANDED_STATE = 0;
+        public final static int COLLAPSE_STATE = 1;
+        private static int mState = INVALID_STATE;
+
+        public static void collapseState() {
+            Log.d("MY_LOG", "collapseState");
+            mState = COLLAPSE_STATE;
+        }
+
+        public static void expandedState() {
+            Log.d("MY_LOG", "expandedState");
+            mState = EXPANDED_STATE;
+        }
+
+        public static void invalidateState() {
+            Log.d("MY_LOG", "invalidateState");
+            mState = INVALID_STATE;
+        }
+
+        public static int getCurrentState() {
+            return mState;
+        }
+
+        public static void expandItem(final View v) {
+            if (mState == EXPANDED_STATE || mState == INVALID_STATE) {
+                return;
+            }
+
+            v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            final int targtetHeight = v.getResources().getDimensionPixelSize(R.dimen.lsitview_item_height); //v.getMeasuredHeight(); : 48dp
+
+            v.getLayoutParams().height = 0;
+            v.setVisibility(View.VISIBLE);
+            Animation a = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    if (interpolatedTime == 1) {
+                        v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        invalidateState();
+                    } else {
+                        v.getLayoutParams().height = (int) (targtetHeight * interpolatedTime);
+                    }
+                    v.requestLayout();
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+
+            a.setDuration(ViewUtils.ANIMATION_DURATION);
+            v.startAnimation(a);
+        }
+
+        public static void collapseItem(final View v) {
+            if (mState == COLLAPSE_STATE || mState == INVALID_STATE) {
+                return;
+            }
+
+            final int initialHeight = v.getResources().getDimensionPixelSize(R.dimen.lsitview_item_height); //v.getMeasuredHeight(); : 48dp
+
+            Animation a = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    if (interpolatedTime == 1) {
+                        v.getLayoutParams().height = 0;
+                        invalidateState();
+//                        v.setVisibility(View.GONE);
+//                        collapseState();
+
+                    } else {
+                        v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                        v.requestLayout();
+                    }
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+
+            a.setDuration(ViewUtils.ANIMATION_DURATION);
+            v.startAnimation(a);
+        }
     }
 }

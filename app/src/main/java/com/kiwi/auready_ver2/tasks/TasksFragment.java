@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -71,14 +72,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mPresenter.start();
 
         // To control backpress button
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     if (mTasksAdapter.isEditMode()) {
-                        mTaskItemListener.onStartNormalMode();
+                        mTaskItemListener.onStartNormalMode(-1);
                         mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
                         mTasksAdapter.notifyDataSetInvalidated();
                         return true;
@@ -96,7 +97,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         // Set title
@@ -107,31 +108,34 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
 
-        // smooth collapse / expand animation
-        mTasksView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+        // smooth collapse / expandItem animation
+        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
-            public void onGroupCollapse(int groupPosition) {
-//                ViewUtils.collapse(mTasksView);
-            }
-        });
-        mTasksView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-//                ViewUtils.expand(mTasksView);
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                Log.d("MY_LOG", "onGroupClick");
+                if (mTasksView.isGroupExpanded(groupPosition)) {
+                    mTasksAdapter.expandedState();
+                    mTasksAdapter.notifyDataSetChanged();
+                } else {
+                    mTasksAdapter.collapseState();
+                }
+                return false;
             }
         });
 
-//        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-//            @Override
-//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-//                Member selectedMember = (Member) mTasksAdapter.getGroup(groupPosition);
-//                if (selectedMember == null) {
-//                    return false;
-//                }
-//
-//                return false;
-//            }
-//        });
+        mTasksView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                Log.d("MY_LOG", "onGroupExpand");
+            }
+        });
+
+        mTasksView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+                Log.d("MY_LOG", "onGroupCollapse");
+            }
+        });
 
         setHasOptionsMenu(true);
         return root;
@@ -223,7 +227,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         @Override
         public void onStartEditMode(final int memberPosition, final View longClickedView) {
-            mTasksView.expandGroup(memberPosition);
+            mTasksView.expandGroup(memberPosition, true);
             mTasksAdapter.setActionModeMember(memberPosition);
 
             // start animation
@@ -247,7 +251,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onStartNormalMode() {
+        public void onStartNormalMode(int memberPosition) {
+            if (memberPosition != -1) {
+                mTasksView.expandGroup(memberPosition);
+            }
+
             mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
 
             // start animation
@@ -308,7 +316,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onStartEditMode(int memberPosition, View longClickedView);
 
-        void onStartNormalMode();
+        void onStartNormalMode(int memberPosition);
 
         void onTaskChecked(String taskId);
 
