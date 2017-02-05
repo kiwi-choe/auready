@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="@dimen/lsitview_item_height"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:animateLayoutChanges="true">
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -16,24 +17,15 @@
         android:focusable="false"
         android:focusableInTouchMode="false" />
 
-    <TextView
-        android:id="@+id/task_textview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/checkbox"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
-
     <EditText
         android:id="@+id/task_edittext"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="@dimen/listview_item_start_end_margin"
-        android:gravity="center_vertical"
-        android:paddingEnd="@dimen/tasks_listview_delete_btn_width"
+        android:layout_toRightOf="@id/checkbox"
+        android:gravity="start"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">
 
-        <requestFocus />
+        <!--<requestFocus />-->
     </EditText>
 
     <Button

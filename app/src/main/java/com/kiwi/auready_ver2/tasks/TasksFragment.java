@@ -1,7 +1,10 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -13,13 +16,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
+import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -66,13 +71,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mPresenter.start();
 
         // To control backpress button
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
         getView().setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
                     if (mTasksAdapter.isEditMode()) {
+                        mTaskItemListener.onStartNormalMode();
                         mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
                         mTasksAdapter.notifyDataSetInvalidated();
                         return true;
@@ -100,19 +106,32 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
         mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
-        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-            @Override
-            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                Member selectedMember = (Member) mTasksAdapter.getGroup(groupPosition);
-                if (selectedMember == null) {
-                    return false;
-                }
 
-                // TODO : getTasks is too many called
-                mPresenter.getTasks(selectedMember.getId());
-                return false;
+        // smooth collapse / expand animation
+        mTasksView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int groupPosition) {
+//                ViewUtils.collapse(mTasksView);
             }
         });
+        mTasksView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+//                ViewUtils.expand(mTasksView);
+            }
+        });
+
+//        mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+//            @Override
+//            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+//                Member selectedMember = (Member) mTasksAdapter.getGroup(groupPosition);
+//                if (selectedMember == null) {
+//                    return false;
+//                }
+//
+//                return false;
+//            }
+//        });
 
         setHasOptionsMenu(true);
         return root;
@@ -160,6 +179,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     @Override
     public void showMembers(List<Member> members) {
         mTasksAdapter.replaceMemberList(members);
+
+        // TODO : need to fix
+        for (Member member : members) {
+            mPresenter.getTasks(member.getId());
+        }
     }
 
     @Override
@@ -198,14 +222,73 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onStartActionMode(int memberPosition) {
+        public void onStartEditMode(final int memberPosition, final View longClickedView) {
             mTasksView.expandGroup(memberPosition);
             mTasksAdapter.setActionModeMember(memberPosition);
+
+            // start animation
+            startAnimation(true);
+
+            // edit mode is launched by "Edit Mode" button
+            if (longClickedView == null) {
+                return;
+            }
+
+            // set Focus to long clicked editText after complete aniamtion
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mTasksAdapter.requestFocusToEditText(longClickedView);
+                    InputMethodManager keyboard =
+                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    keyboard.showSoftInput(longClickedView, 0);
+                }
+            }, ViewUtils.ANIMATION_DURATION);
         }
 
         @Override
-        public void onDeleteTasksClick(int memberPosition) {
-            mTasksAdapter.setActionModeMember(-1);
+        public void onStartNormalMode() {
+            mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
+
+            // start animation
+            startAnimation(false);
+
+            // hide keyboard after complete aniamtion
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    InputMethodManager keyboard =
+                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    View view = getActivity().getCurrentFocus();
+                    if (view == null) {
+                        view = new View(getActivity());
+                    }
+                    keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }, ViewUtils.ANIMATION_DURATION);
+        }
+
+
+        private void startAnimation(final boolean isGoingToEditMode) {
+            final ViewTreeObserver viewTreeObserver = mTasksView.getViewTreeObserver();
+            if (!viewTreeObserver.isAlive()) {
+                return;
+            }
+
+            viewTreeObserver.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    viewTreeObserver.removeOnPreDrawListener(this);
+
+                    int count = mTasksView.getChildCount();
+                    for (int i = 0; i < count; i++) {
+                        mTasksAdapter.startAnimation(isGoingToEditMode,
+                                mTasksView.getChildAt(i), ViewUtils.ANIMATION_DURATION, ViewUtils.INTERPOLATOR);
+                    }
+
+                    return true;
+                }
+            });
         }
 
         @Override
@@ -223,9 +306,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onAddTaskClick(String memberId, String description, int order);
 
-        void onStartActionMode(int memberPosition);
+        void onStartEditMode(int memberPosition, View longClickedView);
 
-        void onDeleteTasksClick(int memberPosition);
+        void onStartNormalMode();
 
         void onTaskChecked(String taskId);
 
