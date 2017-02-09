@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -141,22 +142,31 @@ public class TaskHeadsAdapter extends BaseAdapter {
     }
 
     // animation
-    public void startAnimation(View view, boolean isDelete) {
+    public void startAnimation(View view, boolean isDelete, long duration, Interpolator interpolator) {
         final float distance = view.getResources().getDimension(R.dimen.checkbox_start_trans_x);
         mCheckboxStartX = isDelete ? distance : 0;
         mCheckboxEndX = isDelete ? 0 : distance;
 
+        ArrayList<View> viewList = new ArrayList<>();
+
         CheckBox checkbox = (CheckBox) view.findViewById(R.id.delete_check_box);
         checkbox.setTranslationX(mCheckboxStartX);
         checkbox.animate().translationX(mCheckboxEndX);
+        viewList.add(checkbox);
 
         TextView textview = (TextView) view.findViewById(R.id.taskhead_title);
         textview.setTranslationX(mCheckboxStartX - distance);
         textview.animate().translationX(mCheckboxEndX - distance);
+        viewList.add(textview);
 
         ImageView imageview = (ImageView) view.findViewById(R.id.reorder);
         imageview.setTranslationX(mCheckboxStartX - distance);
         imageview.animate().translationX(mCheckboxEndX - distance);
+        viewList.add(imageview);
+
+        for (View animatedView : viewList) {
+            animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
+        }
     }
 
     private void HoldPosition(View view) {

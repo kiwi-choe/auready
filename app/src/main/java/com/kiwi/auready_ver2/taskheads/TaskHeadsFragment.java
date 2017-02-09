@@ -25,6 +25,7 @@ import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.view.DragSortController;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
+import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,7 +245,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                 int count = mTaskHeadsView.getChildCount();
                 for (int i = 0; i < count; i++) {
                     View childView = mTaskHeadsView.getChildAt(i);
-                    mTaskHeadsAdapter.startAnimation(childView, isDelete);
+                    mTaskHeadsAdapter.startAnimation(childView,
+                            isDelete, ViewUtils.ANIMATION_DURATION, ViewUtils.INTERPOLATOR);
                 }
 
                 return true;

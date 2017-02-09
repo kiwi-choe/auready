@@ -12,11 +12,21 @@
     <dimen name="listview_item_start_end_margin">16dp</dimen>
     <dimen name="listview_item_textview_textsize">16sp</dimen>
     <dimen name="listview_item_reorder_icon_size">24dp</dimen>
+    <dimen name="tasks_listview_delete_btn_width">60dp</dimen>
 
     <dimen name="title_textview_textsize">20sp</dimen>
 
-    <!--animation-->
+    <!--taskHead animation-->
     <dimen name="checkbox_start_trans_x">-48dp</dimen>
     <dimen name="checkbox_end_trans_x">0dp</dimen>
+
+    <!--tasks animation-->
+    <dimen name="tasks_checkbox_start_trans_x">@dimen/checkbox_end_trans_x</dimen>
+    <dimen name="tasks_checkbox_end_trans_x">@dimen/checkbox_start_trans_x</dimen>
+    <dimen name="tasks_description_start_trans_x">0dp</dimen>
+    <dimen name="tasks_description_end_trans_x">@dimen/checkbox_start_trans_x</dimen>
+    <dimen name="tasks_delete_btn_start_trans_x">@dimen/tasks_listview_delete_btn_width</dimen>
+    <dimen name="tasks_delete_btn_end_trans_x">0dp</dimen>
+
 
 </resources>

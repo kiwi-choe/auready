@@ -31,6 +31,8 @@ class TasksContract {
         void showTasks(String memberId, List<Task> tasks);
 
         void showNoTasks();
+
+        void scrollToAddButton();
     }
 
     interface Presenter extends BasePresenter {

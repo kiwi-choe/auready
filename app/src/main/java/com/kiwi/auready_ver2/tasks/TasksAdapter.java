@@ -1,22 +1,27 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.animation.TimeInterpolator;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.Transformation;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,9 +33,11 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     private ArrayList<Member> mMemberList = null;
     private HashMap<String, ArrayList<Task>> mTasksList = null;
     private HashMap<String, ArrayList<Boolean>> mSelection = new HashMap<>();
+    public final int INVALID_POSITION = -1;
 
     private LayoutInflater mInflater = null;
-    int mCurrentActionModeMember = -1;
+    int mCurrentEditModeMember = INVALID_POSITION;
+    private View mCurrentSelectedDeleteTask = null;
 
     public TasksAdapter(Context context, ArrayList<Member> memberList, HashMap<String, ArrayList<Task>> tasksList, TasksFragment.TaskItemListener taskItemListener) {
         super();
@@ -40,7 +47,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         mTasksList = tasksList;
         mTaskItemListener = taskItemListener;
 
-        mCurrentActionModeMember = -1;
+        mCurrentEditModeMember = INVALID_POSITION;
     }
 
     @Override
@@ -62,6 +69,10 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getGroup(int memberPosition) {
+        if (memberPosition >= mMemberList.size()) {
+            return null;
+        }
+
         return mMemberList.get(memberPosition);
     }
 
@@ -96,7 +107,7 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = new GroupViewHolder();
             viewHolder.memberName = (TextView) view.findViewById(R.id.member_name);
             viewHolder.auready_btn = (Button) view.findViewById(R.id.member_add_bt);
-            viewHolder.delete_tasks_btn = (Button) view.findViewById(R.id.delete_tasks_btn);
+            viewHolder.edit_tasks_btn = (Button) view.findViewById(R.id.delete_tasks_btn);
 
             view.setTag(viewHolder);
         } else {
@@ -104,42 +115,46 @@ public class TasksAdapter extends BaseExpandableListAdapter {
         }
 
         viewHolder.memberName.setText(mMemberList.get(memberPosition).getName());
-        if (memberPosition == mCurrentActionModeMember) {
+        if (memberPosition == mCurrentEditModeMember) {
             view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_dark));
-            viewHolder.delete_tasks_btn.setText("Delete");
-            viewHolder.delete_tasks_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mTaskItemListener.onDeleteTasksClick(memberPosition);
-                }
-            });
+            viewHolder.edit_tasks_btn.setText("Check Mode");
         } else {
             view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
-            viewHolder.delete_tasks_btn.setText("Edit tasks");
-            viewHolder.delete_tasks_btn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mTaskItemListener.onStartActionMode(memberPosition);
-                }
-            });
+            viewHolder.edit_tasks_btn.setText("Edit Mode");
         }
+
+        viewHolder.edit_tasks_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (memberPosition == mCurrentEditModeMember) {
+                    mTaskItemListener.onStartNormalMode(memberPosition);
+                } else {
+                    mTaskItemListener.onStartEditMode(memberPosition, null);
+                }
+            }
+        });
 
         return view;
     }
 
+    Drawable mEditTextBackground = null;
+
     @Override
     public View getChildView(final int memberPosition, final int taskPosition, boolean isLastTask, View convertView, ViewGroup parent) {
         View view = convertView;
-        ChildViewHolder viewHolder;
+        final ChildViewHolder viewHolder;
 
         if (view == null) {
             view = mInflater.inflate(R.layout.taskview_expand_list_child_view, parent, false);
 
             viewHolder = new ChildViewHolder();
-            viewHolder.editText = (EditText) view.findViewById(R.id.task_edittext);
-            viewHolder.textView = (TextView) view.findViewById(R.id.task_textview);
+            viewHolder.taskDescription = (EditText) view.findViewById(R.id.task_edittext);
+            if (mEditTextBackground == null) {
+                mEditTextBackground = viewHolder.taskDescription.getBackground();
+            }
+
             viewHolder.checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-            viewHolder.reorderBtn = (ImageView) view.findViewById(R.id.reorder_btn);
+            viewHolder.deleteTaskBtn = (Button) view.findViewById(R.id.delete_task_btn);
             viewHolder.addTaskBtn = (Button) view.findViewById(R.id.add_task_btn);
 
             view.setTag(viewHolder);
@@ -147,50 +162,133 @@ public class TasksAdapter extends BaseExpandableListAdapter {
             viewHolder = (ChildViewHolder) view.getTag();
         }
 
-        viewHolder.editText.setVisibility(View.GONE);
-        viewHolder.textView.setVisibility(View.GONE);
-        viewHolder.checkBox.setVisibility(View.GONE);
-        viewHolder.reorderBtn.setVisibility(View.GONE);
-        viewHolder.addTaskBtn.setVisibility(View.GONE);
+//        Log.d("MY_LOG", "getView, getCurrent State : " + ExpandedAnimatorHelper.getCurrentState());
+        if (ExpandedAnimatorHelper.getCurrentState() == ExpandedAnimatorHelper.COLLAPSE_STATE) {
+            ExpandedAnimatorHelper.expandItem(view);
+        } else if (ExpandedAnimatorHelper.getCurrentState() == ExpandedAnimatorHelper.EXPANDED_STATE) {
+            ExpandedAnimatorHelper.collapseItem(view);
+        }
 
         if (isLastTask) {
+            viewHolder.checkBox.setVisibility(View.GONE);
+            viewHolder.deleteTaskBtn.setVisibility(View.GONE);
+            viewHolder.taskDescription.setVisibility(View.GONE);
             viewHolder.addTaskBtn.setVisibility(View.VISIBLE);
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (memberPosition != mCurrentEditModeMember) {
+                        mCurrentEditModeMember = memberPosition;
+                        notifyDataSetInvalidated();
+                    }
+
                     mTaskItemListener.onAddTaskClick(getMemberId(memberPosition), "empty : " + taskPosition, getChildrenCount(memberPosition) - 1);
                 }
             });
 
             return view;
-        }
-
-        // set action mode
-        if (memberPosition == mCurrentActionModeMember) {
-            viewHolder.reorderBtn.setVisibility(View.VISIBLE);
-            viewHolder.textView.setVisibility(View.VISIBLE);
-            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_red_light));
         } else {
             viewHolder.checkBox.setVisibility(View.VISIBLE);
-            viewHolder.editText.setVisibility(View.VISIBLE);
-            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
+            viewHolder.deleteTaskBtn.setVisibility(View.VISIBLE);
+            viewHolder.taskDescription.setVisibility(View.VISIBLE);
+            viewHolder.addTaskBtn.setVisibility(View.GONE);
         }
 
         final ArrayList<Task> tasksList = mTasksList.get(getMemberId(memberPosition));
         final Task task = tasksList.get(taskPosition);
 
-        // set description
-        viewHolder.textView.setText(task.getDescription());
-        viewHolder.editText.setText(task.getDescription());
-        if (task.getCompleted()) {
-            viewHolder.textView.setTextColor(view.getResources().getColor(android.R.color.holo_blue_dark));
-            viewHolder.editText.setTextColor(view.getResources().getColor(android.R.color.holo_blue_dark));
+        // hold position
+        viewHolder.deleteTaskBtn.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_delete_btn_start_trans_x));
+
+        // set action mode
+        if (memberPosition == mCurrentEditModeMember) {
+            // hold position
+            viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_end_trans_x));
+            viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_end_trans_x));
+
+            // switch textview to edittext
+//            viewHolder.taskDescription.setEnabled(true);
+            viewHolder.taskDescription.setFocusable(true);
+            viewHolder.taskDescription.setFocusableInTouchMode(true);
+//            viewHolder.taskDescription.setClickable(true);
+//            viewHolder.taskDescription.setBackground(mEditTextBackground);
+            viewHolder.taskDescription.setBackground(null);
+
+            viewHolder.taskDescription.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+                        mTaskItemListener.onStartNormalMode(memberPosition);
+                        return true;
+                    }
+
+                    return false;
+                }
+            });
+
+            viewHolder.taskDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                @Override
+                public void onFocusChange(View view, boolean hasFocus) {
+                    EditText editText = ((EditText) view);
+                    editText.setCursorVisible(hasFocus);
+                    if (!hasFocus) {
+                        if (mCurrentSelectedDeleteTask != null) {
+                            startDeleteButtonAnimation(false);
+                        }
+                        return;
+                    }
+
+                    // place cursor at the end of text in edittext
+                    editText.setSelection(editText.getText().length());
+
+                    mCurrentSelectedDeleteTask = viewHolder.deleteTaskBtn;
+                    startDeleteButtonAnimation(true);
+                }
+            });
         } else {
-            viewHolder.textView.setTextColor(view.getResources().getColor(android.R.color.black));
-            viewHolder.editText.setTextColor(view.getResources().getColor(android.R.color.black));
+            // hold position
+            viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_start_trans_x));
+            viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_start_trans_x));
+
+            // switch edittext to textview
+            viewHolder.taskDescription.setFocusable(false);
+            viewHolder.taskDescription.setFocusableInTouchMode(false);
+            viewHolder.taskDescription.setBackground(null);
+            viewHolder.taskDescription.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isEditMode()) {
+                        return;
+                    }
+
+                    // TODO : need to impelement Presenter
+                    mTaskItemListener.onTaskChecked(task.getId());
+                    viewHolder.checkBox.setChecked(!viewHolder.checkBox.isChecked());
+                }
+            });
+
+            viewHolder.taskDescription.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if (isEditMode()) {
+                        return false;
+                    }
+
+                    mTaskItemListener.onStartEditMode(memberPosition, view);
+                    return true;
+                }
+            });
         }
 
-        viewHolder.editText.addTextChangedListener(new TextWatcher() {
+        // set description
+        viewHolder.taskDescription.setText(task.getDescription());
+        if (task.getCompleted()) {
+            viewHolder.taskDescription.setTextColor(view.getResources().getColor(android.R.color.holo_blue_dark));
+        } else {
+            viewHolder.taskDescription.setTextColor(view.getResources().getColor(android.R.color.black));
+        }
+
+        viewHolder.taskDescription.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -209,20 +307,15 @@ public class TasksAdapter extends BaseExpandableListAdapter {
 
         // set checkbox
         viewHolder.checkBox.setChecked(task.getCompleted());
-        viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
-                mTaskItemListener.onTaskChecked(task.getId());
-            }
-        });
 
         // set reorder
-        viewHolder.reorderBtn.setOnClickListener(new View.OnClickListener() {
+        viewHolder.deleteTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 //                mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
             }
         });
+
 
         return view;
     }
@@ -277,21 +370,182 @@ public class TasksAdapter extends BaseExpandableListAdapter {
     }
 
     public void setActionModeMember(int memberPosition) {
-        mCurrentActionModeMember = memberPosition;
+        mCurrentEditModeMember = memberPosition;
+        invalidateState();
+//        if(ExpandedAnimatorHelper.getCurrentState() == ExpandedAnimatorHelper.COLLAPSE_STATE){
+//            collapseState();
+//        }
+
         notifyDataSetChanged();
+    }
+
+    public boolean isEditMode() {
+        return mCurrentEditModeMember != INVALID_POSITION;
+    }
+
+
+    private void startDeleteButtonAnimation(boolean isShowingDeleteBtn) {
+        int destPos = mCurrentSelectedDeleteTask.getResources().getDimensionPixelSize(
+                isShowingDeleteBtn ?
+                        R.dimen.tasks_delete_btn_end_trans_x :
+                        R.dimen.tasks_delete_btn_start_trans_x);
+
+        mCurrentSelectedDeleteTask.animate()
+                .translationX(destPos)
+                .setDuration(ViewUtils.ANIMATION_DURATION)
+                .setInterpolator(ViewUtils.INTERPOLATOR)
+                .start();
+    }
+
+    public void startAnimation(boolean isGoingToEditMode, View view, long duration, TimeInterpolator interpolator) {
+        if (view == null || view.getTag() == null) {
+            return;
+        }
+
+        if (!(view.getTag() instanceof ChildViewHolder)) {
+            return;
+        }
+
+        ChildViewHolder viewHolder = (ChildViewHolder) view.getTag();
+        ArrayList<View> viewList = new ArrayList<>();
+
+        int checkboxNormalPos = view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_start_trans_x);
+        int checkboxEditPos = view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_end_trans_x);
+        viewHolder.checkBox.setTranslationX(isGoingToEditMode ? checkboxNormalPos : checkboxEditPos);
+        viewHolder.checkBox.animate().translationX(isGoingToEditMode ? checkboxEditPos : checkboxNormalPos);
+        viewList.add(viewHolder.checkBox);
+
+        int textNormalPos = view.getResources().getDimensionPixelSize(R.dimen.tasks_description_start_trans_x);
+        int textEditPos = view.getResources().getDimensionPixelSize(R.dimen.tasks_description_end_trans_x);
+        viewHolder.taskDescription.setTranslationX(isGoingToEditMode ? textNormalPos : textEditPos);
+        viewHolder.taskDescription.animate().translationX(isGoingToEditMode ? textEditPos : textNormalPos);
+        viewList.add(viewHolder.taskDescription);
+
+        for (View animatedView : viewList) {
+            animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
+        }
+    }
+
+    public void requestFocusToEditText(View longClickedView) {
+        EditText editText = (EditText) longClickedView;
+
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
     }
 
     private class GroupViewHolder {
         TextView memberName;
         Button auready_btn;
-        Button delete_tasks_btn;
+        Button edit_tasks_btn;
     }
 
     private class ChildViewHolder {
-        EditText editText;
-        TextView textView;
+        EditText taskDescription;
         CheckBox checkBox;
-        ImageView reorderBtn;
+        Button deleteTaskBtn;
         Button addTaskBtn;
+    }
+
+    public void collapseState() {
+        ExpandedAnimatorHelper.collapseState();
+    }
+
+    public void expandedState() {
+        ExpandedAnimatorHelper.expandedState();
+    }
+
+    public void invalidateState() {
+        ExpandedAnimatorHelper.invalidateState();
+    }
+
+    public static class ExpandedAnimatorHelper {
+        public final static int INVALID_STATE = -1;
+        public final static int EXPANDED_STATE = 0;
+        public final static int COLLAPSE_STATE = 1;
+        private static int mState = INVALID_STATE;
+
+        public static void collapseState() {
+            Log.d("MY_LOG", "collapseState");
+            mState = COLLAPSE_STATE;
+        }
+
+        public static void expandedState() {
+            Log.d("MY_LOG", "expandedState");
+            mState = EXPANDED_STATE;
+        }
+
+        public static void invalidateState() {
+            Log.d("MY_LOG", "invalidateState");
+            mState = INVALID_STATE;
+        }
+
+        public static int getCurrentState() {
+            return mState;
+        }
+
+        public static void expandItem(final View v) {
+            if (mState == EXPANDED_STATE || mState == INVALID_STATE) {
+                return;
+            }
+
+            v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            final int targtetHeight = v.getResources().getDimensionPixelSize(R.dimen.lsitview_item_height); //v.getMeasuredHeight(); : 48dp
+
+            v.getLayoutParams().height = 0;
+            v.setVisibility(View.VISIBLE);
+            Animation a = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    if (interpolatedTime == 1) {
+                        v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                        invalidateState();
+                    } else {
+                        v.getLayoutParams().height = (int) (targtetHeight * interpolatedTime);
+                    }
+                    v.requestLayout();
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+
+            a.setDuration(ViewUtils.ANIMATION_DURATION);
+            v.startAnimation(a);
+        }
+
+        public static void collapseItem(final View v) {
+            if (mState == COLLAPSE_STATE || mState == INVALID_STATE) {
+                return;
+            }
+
+            final int initialHeight = v.getResources().getDimensionPixelSize(R.dimen.lsitview_item_height); //v.getMeasuredHeight(); : 48dp
+
+            Animation a = new Animation() {
+                @Override
+                protected void applyTransformation(float interpolatedTime, Transformation t) {
+                    if (interpolatedTime == 1) {
+                        v.getLayoutParams().height = 0;
+                        invalidateState();
+//                        v.setVisibility(View.GONE);
+//                        collapseState();
+
+                    } else {
+                        v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                        v.requestLayout();
+                    }
+                }
+
+                @Override
+                public boolean willChangeBounds() {
+                    return true;
+                }
+            };
+
+            a.setDuration(ViewUtils.ANIMATION_DURATION);
+            v.startAnimation(a);
+        }
     }
 }

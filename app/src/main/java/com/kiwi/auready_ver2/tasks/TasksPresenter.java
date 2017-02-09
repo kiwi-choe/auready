@@ -113,6 +113,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
                         getTasks(memberId);
+                        mTasksView.scrollToAddButton();
                     }
 
                     @Override
