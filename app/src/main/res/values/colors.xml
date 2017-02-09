@@ -3,26 +3,21 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-
     <color name="shadow_item_color">#66000000</color>
-
 
     <!--taskhead-->
     <color name="taskhead_background_color">#dcdcdc</color>
     <color name="taskhead_list_item_background_color">#fffdfdfd</color>
     <color name="taskhead_list_item_select_color">#a5bfd4</color>
-
     <color name="listview_text_title">#dd000000</color>
     <color name="listview_sub_text">#dd000000</color>
-    <color name="icon_gray">#8affffff</color>
 
-    <!--tasks view-->
+    <!--tasksView-->
+    <color name="tasks_group_item_background">@color/taskhead_list_item_background_color</color>
     <color name="tasks_child_item_background">#fafafa</color>
 
-
+    <color name="icon_gray">#8affffff</color>
     <color name="dark_background">#a4a4a4</color>
-
-
     <color name="listview_background">#ffffff</color>
     <color name="listview_selected_item">@android:color/holo_blue_light</color>
 </resources>

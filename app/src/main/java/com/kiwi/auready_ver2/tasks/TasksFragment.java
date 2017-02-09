@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.R;
@@ -112,7 +113,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView = (AnimatedExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
 
-        mTasksView.addHeaderView(new Button(getContext()));
+        View progressLayout =
+                inflater.inflate(R.layout.overview_tasks_progress_layout, null);
+        mTasksView.addHeaderView(progressLayout);
+
+        View dummyFooterView = inflater.inflate(R.layout.tasks_dummy_view_for_padding, null);
+        mTasksView.addFooterView(dummyFooterView);
 
         // smooth collapse / expandItem animation
         mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -120,8 +126,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 Log.d("MY_LOG", "onGroupClick : " + mTasksView.isGroupExpanded(groupPosition));
                 if (mTasksView.isGroupExpanded(groupPosition)) {
+//                    mTasksView.setDividerHeight(getContext().getResources()
+//                            .getDimensionPixelSize(R.dimen.listview_padding_to_make_card_view));
                     mTasksView.collapseGroupWithAnimation(groupPosition);
                 } else {
+//                    mTasksView.setDividerHeight(0);
                     mTasksView.expandGroupWithAnimation(groupPosition);
                 }
                 return true;

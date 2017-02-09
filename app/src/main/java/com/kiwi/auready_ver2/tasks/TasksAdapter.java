@@ -115,11 +115,11 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
         }
 
         viewHolder.memberName.setText(mMemberList.get(memberPosition).getName());
-        if (memberPosition == mCurrentEditModeMember) {
-            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_green_light));
-        } else {
-            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
-        }
+//        if (memberPosition == mCurrentEditModeMember) {
+//            view.setBackgroundColor(view.getResources().getColor(android.R.color.holo_green_light));
+//        } else {
+//            view.setBackgroundColor(view.getResources().getColor(android.R.color.white));
+//        }
 
         viewHolder.auready_btn.setOnClickListener(new View.OnClickListener() {
             @Override

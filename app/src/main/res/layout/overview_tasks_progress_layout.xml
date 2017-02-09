@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/tasksview_progress_bar_layout_height"
+        android:gravity="center|start"
+        android:orientation="horizontal">
+
+        <com.kiwi.auready_ver2.util.view.CircleProgressBar
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            app:progress="10"
+            app:progressBarThickness="10dp" />
+
+        <com.kiwi.auready_ver2.util.view.CircleProgressBar
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            app:progress="10"
+            app:progressBarThickness="10dp" />
+
+        <com.kiwi.auready_ver2.util.view.CircleProgressBar
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="20dp"
+            app:progress="10"
+            app:progressBarThickness="10dp" />
+
+    </LinearLayout>
+</HorizontalScrollView>

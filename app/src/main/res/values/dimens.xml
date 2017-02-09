@@ -9,7 +9,7 @@
 
     <!--listview style-->
     <dimen name="taskhead_list_item_height">100dp</dimen>
-    <dimen name="lsitview_item_height">48dp</dimen>
+    <dimen name="lsitview_item_height">40dp</dimen>
     <dimen name="listview_item_start_end_margin">16dp</dimen>
     <dimen name="listview_item_textview_textsize">24sp</dimen>
     <dimen name="listview_item_sub_textview_textsize">16sp</dimen>
@@ -19,8 +19,10 @@
     <dimen name="title_textview_textsize">20sp</dimen>
 
     <dimen name="listview_padding_to_make_card_view">10dp</dimen>
-    <!--expandableListView-->
-    <dimen name="expandable_listview_group_item_height">72dp</dimen>
+
+    <!--tasksview-->
+    <dimen name="tasksview_group_item_height">120dp</dimen>
+    <dimen name="tasksview_progress_bar_layout_height">200dp</dimen>
 
 
     <!--taskHead animation-->

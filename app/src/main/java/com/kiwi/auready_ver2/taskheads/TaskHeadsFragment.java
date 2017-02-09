@@ -104,6 +104,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mTaskHeadsView.setMultiChoiceModeListener(this);
 
+        View dummyFooterView = inflater.inflate(R.layout.task_head_dummy_view_for_padding, null);
+        mTaskHeadsView.addHeaderView(dummyFooterView);
+        mTaskHeadsView.addFooterView(dummyFooterView);
+
         mTaskHeadsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {

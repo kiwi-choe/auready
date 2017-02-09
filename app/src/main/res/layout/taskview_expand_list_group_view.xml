@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
-    android:background="@drawable/taskhead_backgroud_selector"
-    android:elevation="2dp">
+    android:layout_height="@dimen/tasksview_group_item_height"
+    android:background="@color/tasks_group_item_background">
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="@color/taskhead_background_color"></View>
 
     <TextView
         android:id="@+id/member_name"
@@ -15,9 +20,11 @@
         android:layout_marginStart="@dimen/listview_item_start_end_margin" />
 
     <LinearLayout
+        android:id="@+id/button_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:layout_below="@id/divider"
         android:orientation="vertical">
 
         <Button
@@ -39,8 +46,12 @@
         android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_alignParentBottom="true"
+        android:layout_height="40dp"
+        android:layout_below="@+id/member_name"
+        android:layout_marginStart="@dimen/listview_item_start_end_margin"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:layout_toLeftOf="@id/button_group"
         android:max="100"
         android:progress="0" />
 </RelativeLayout>

@@ -2,10 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:animateLayoutChanges="true"
+    android:background="@color/tasks_child_item_background"
     android:minHeight="@dimen/lsitview_item_height"
     android:orientation="horizontal"
-    android:background="@color/tasks_child_item_background"
-    android:animateLayoutChanges="true">
+    android:elevation="1dp">
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -24,6 +25,7 @@
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/checkbox"
         android:gravity="start"
+        style="@style/listview_sub_textview_style"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">
 
         <!--<requestFocus />-->
@@ -41,5 +43,11 @@
         android:id="@+id/add_task_btn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Add Task" />
+        android:background="@color/tasks_child_item_background"
+        android:paddingStart="@dimen/listview_item_start_end_margin"
+        android:gravity="start|center_vertical"
+        android:fontFamily="sans-serif-light"
+        android:textSize="20sp"
+        android:textColor="@color/dark_background"
+        android:text="+ Add Task" />
 </RelativeLayout>
