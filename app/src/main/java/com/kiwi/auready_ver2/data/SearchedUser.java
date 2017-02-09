@@ -6,8 +6,11 @@ package com.kiwi.auready_ver2.data;
 
 public class SearchedUser {
 
+    public static final int NO_STATUS = -1;
+    public static final int PENDING = 0;
+
     private String name;
-    private int status;     // 0: no status, 1: pending
+    private int status;     // -1: no status, 0: pending
 
     public SearchedUser(String name, int status) {
         this.name = name;

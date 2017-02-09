@@ -35,8 +35,6 @@ public interface LoginContract {
         void onEmailError(int stringResource);
         void onPasswordError(int stringResource);
 
-        void requestLogin(String email, String password);
-
         void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail);
 
         void onLoginFail(int stringResource);

@@ -85,7 +85,7 @@ public class FindFragment extends Fragment implements
     }
 
     @Override
-    public void setViewWhenAddFriendSucceed(@NonNull SearchedUser user) {
+    public void setAddFriendSucceedUI(@NonNull SearchedUser user) {
         // Show message
         String successMsg = user.getName() + " " + getString(R.string.add_friend_success_msg);
         Snackbar.make(getView(), successMsg, Snackbar.LENGTH_SHORT);
@@ -101,6 +101,11 @@ public class FindFragment extends Fragment implements
 
     @Override
     public void showNoSearchedPeople() {
+
+    }
+
+    @Override
+    public void setAddFriendFailMessage(int stringResource) {
 
     }
 }
