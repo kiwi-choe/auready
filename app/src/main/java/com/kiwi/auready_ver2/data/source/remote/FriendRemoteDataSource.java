@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.friend.FriendsResponse;
 import com.kiwi.auready_ver2.rest_service.friend.IFriendService;
@@ -30,8 +29,9 @@ public class FriendRemoteDataSource implements FriendDataSource {
     private FriendRemoteDataSource() {
 
         // Before entering here, AccessTokenStore static Instance should be created
-        mAccessToken =
-                AccessTokenStore.getInstance().getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        mAccessToken = null;
+//        mAccessToken =
+//                AccessTokenStore.getInstance().getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
     }
 
     public static FriendRemoteDataSource getInstance() {

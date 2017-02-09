@@ -141,6 +141,9 @@ public class TaskRepository implements TaskDataSource {
         mLocalDataSource.editTaskHeadDetail(editTaskHead, addingMembers, deletingMemberIds, callback);
     }
 
+    /*
+    * In Repository, comparing to cachedMembers first
+    * */
     public void editTaskHeadDetail(@NonNull TaskHeadDetail taskheadDetail, @NonNull final EditTaskHeadDetailCallback callback) {
         checkNotNull(taskheadDetail);
 
