@@ -1,32 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="100dp"
+    android:background="@drawable/taskhead_backgroud_selector"
+    android:elevation="2dp">
 
     <TextView
         android:id="@+id/member_name"
-        android:layout_width="match_parent"
+        style="@style/listview_textview_style"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/listview_item_start_end_margin"
-        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-        android:textStyle="bold" />
+        android:layout_marginStart="@dimen/listview_item_start_end_margin" />
 
-    <Button
-        android:id="@+id/delete_tasks_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/auready_btn"
-        android:focusable="false"
-        android:text="Edit tasks" />
-
-    <Button
-        android:id="@+id/auready_btn"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:focusable="false"
-        android:text="AU READY!!" />
+        android:orientation="vertical">
 
+        <Button
+            android:id="@+id/auready_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:text="AU READY!!" />
+
+        <Button
+            android:id="@+id/edit_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="false"
+            android:text="EDIT" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentBottom="true"
+        android:max="100"
+        android:progress="0" />
 </RelativeLayout>

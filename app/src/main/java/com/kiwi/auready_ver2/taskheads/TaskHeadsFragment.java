@@ -276,6 +276,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         startAnimation(true);
         mIsActionMode = true;
+        mTaskHeadsAdapter.setActionMode(mIsActionMode);
 
         return true;
     }
@@ -305,6 +306,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         startAnimation(false);
         mIsActionMode = false;
+        mTaskHeadsAdapter.setActionMode(mIsActionMode);
     }
 
 

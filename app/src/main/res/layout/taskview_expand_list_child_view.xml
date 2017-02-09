@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/lsitview_item_height"
     android:orientation="horizontal"
+    android:background="@color/tasks_child_item_background"
     android:animateLayoutChanges="true">
 
     <CheckBox

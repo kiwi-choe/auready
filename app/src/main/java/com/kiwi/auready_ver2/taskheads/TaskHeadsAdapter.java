@@ -5,7 +5,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,8 +22,9 @@ public class TaskHeadsAdapter extends BaseAdapter {
     private List<TaskHead> mTaskHeads;
     private HashMap<Integer, Boolean> mSelection = new HashMap<>();
 
-    float mCheckboxStartX = -1;
-    float mCheckboxEndX = -1;
+    float startPos = -1;
+    float endPos = -1;
+    private boolean mIsActionMode = false;
 
     public TaskHeadsAdapter(List<TaskHead> taskHeads) {
         setList(taskHeads);
@@ -62,8 +62,8 @@ public class TaskHeadsAdapter extends BaseAdapter {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
             rowView = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
             viewHolder = new ViewHolder();
-            viewHolder.checkBox = (CheckBox) rowView.findViewById(R.id.delete_check_box);
-            viewHolder.titleTV = (TextView) rowView.findViewById(R.id.taskhead_title);
+            viewHolder.titleTextView = (TextView) rowView.findViewById(R.id.taskhead_title);
+            viewHolder.memberTextView = (TextView) rowView.findViewById(R.id.taskhead_member_list);
             viewHolder.reorderImage = (ImageView) rowView.findViewById(R.id.reorder);
 
             rowView.setTag(viewHolder);
@@ -71,18 +71,18 @@ public class TaskHeadsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) rowView.getTag();
         }
 
-        HoldPosition(rowView);
+//        viewHolder.reorderImage.setVisibility(mIsActionMode ? View.VISIBLE : View.GONE);
+
         final TaskHead taskHead = getItem(position);
 
-        viewHolder.titleTV.setText(taskHead.getTitle());
+        viewHolder.titleTextView.setText(taskHead.getTitle());
+        viewHolder.memberTextView.setText("궈니, 위니, 나무");
 
         if (mSelection.get(position) != null) {
-            viewHolder.checkBox.setChecked(true);
+            rowView.setSelected(true);
         } else {
-            viewHolder.checkBox.setChecked(false);
+            rowView.setSelected(false);
         }
-
-        rowView.setBackground(rowView.getResources().getDrawable(R.drawable.listview_state_drawable));
 
         return rowView;
     }
@@ -128,9 +128,13 @@ public class TaskHeadsAdapter extends BaseAdapter {
         return mTaskHeads;
     }
 
+    public void setActionMode(boolean mIsActionMode) {
+        this.mIsActionMode = mIsActionMode;
+    }
+
     private class ViewHolder {
-        CheckBox checkBox;
-        TextView titleTV;
+        TextView titleTextView;
+        TextView memberTextView;
         ImageView reorderImage;
     }
 
@@ -143,43 +147,19 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
     // animation
     public void startAnimation(View view, boolean isDelete, long duration, Interpolator interpolator) {
-        final float distance = view.getResources().getDimension(R.dimen.checkbox_start_trans_x);
-        mCheckboxStartX = isDelete ? distance : 0;
-        mCheckboxEndX = isDelete ? 0 : distance;
+        final float distance = view.getResources().getDimension(R.dimen.reorder_start_trans_x);
+        startPos = isDelete ? 0 : distance;
+        endPos = isDelete ? distance : 0;
 
         ArrayList<View> viewList = new ArrayList<>();
 
-        CheckBox checkbox = (CheckBox) view.findViewById(R.id.delete_check_box);
-        checkbox.setTranslationX(mCheckboxStartX);
-        checkbox.animate().translationX(mCheckboxEndX);
-        viewList.add(checkbox);
-
-        TextView textview = (TextView) view.findViewById(R.id.taskhead_title);
-        textview.setTranslationX(mCheckboxStartX - distance);
-        textview.animate().translationX(mCheckboxEndX - distance);
-        viewList.add(textview);
-
         ImageView imageview = (ImageView) view.findViewById(R.id.reorder);
-        imageview.setTranslationX(mCheckboxStartX - distance);
-        imageview.animate().translationX(mCheckboxEndX - distance);
+        imageview.setTranslationX(endPos);
+        imageview.animate().translationX(startPos);
         viewList.add(imageview);
 
         for (View animatedView : viewList) {
             animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
-        }
-    }
-
-    private void HoldPosition(View view) {
-        ViewHolder holder = (ViewHolder) view.getTag();
-        final float distance = view.getResources().getDimension(R.dimen.checkbox_start_trans_x);
-        if (mCheckboxStartX == -1) {
-            return;
-        }
-
-        if (holder.checkBox.getTranslationX() != mCheckboxEndX) {
-            holder.checkBox.setTranslationX(mCheckboxEndX);
-            holder.titleTV.setTranslationX(mCheckboxEndX - distance);
-            holder.reorderImage.setTranslationX(mCheckboxEndX - distance);
         }
     }
 }

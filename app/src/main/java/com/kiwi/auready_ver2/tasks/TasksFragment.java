@@ -19,12 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
+import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
+import com.kiwi.auready_ver2.util.view.ProgressDrawable;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
@@ -38,7 +42,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
     public static final int REQ_EDIT_TASKHEAD = 0;
 
-    private ExpandableListView mTasksView;
+    private AnimatedExpandableListView mTasksView;
     private TasksAdapter mTasksAdapter;
 
     private String mTaskHeadId;
@@ -105,21 +109,22 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         // Set ListView
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
-        mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
+        mTasksView = (AnimatedExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+
+        mTasksView.addHeaderView(new Button(getContext()));
 
         // smooth collapse / expandItem animation
         mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                Log.d("MY_LOG", "onGroupClick");
+                Log.d("MY_LOG", "onGroupClick : " + mTasksView.isGroupExpanded(groupPosition));
                 if (mTasksView.isGroupExpanded(groupPosition)) {
-                    mTasksAdapter.expandedState();
-                    mTasksAdapter.notifyDataSetChanged();
+                    mTasksView.collapseGroupWithAnimation(groupPosition);
                 } else {
-                    mTasksAdapter.collapseState();
+                    mTasksView.expandGroupWithAnimation(groupPosition);
                 }
-                return false;
+                return true;
             }
         });
 
@@ -182,7 +187,14 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showMembers(List<Member> members) {
-        mTasksAdapter.replaceMemberList(members);
+
+        // TODO : TEST DATA
+        ArrayList<Member> testMemebers = new ArrayList<>();
+        testMemebers.add(new Member("id_1", "최지원"));
+        testMemebers.add(new Member("id_2", "권오현"));
+        testMemebers.add(new Member("id_3", "나무"));
+
+        mTasksAdapter.replaceMemberList(testMemebers);
 
         // TODO : need to fix
         for (Member member : members) {
@@ -290,8 +302,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
                     int count = mTasksView.getChildCount();
                     for (int i = 0; i < count; i++) {
-                        mTasksAdapter.startAnimation(isGoingToEditMode,
-                                mTasksView.getChildAt(i), ViewUtils.ANIMATION_DURATION, ViewUtils.INTERPOLATOR);
+                        mTasksAdapter.startAnimation(isGoingToEditMode, mTasksView.getChildAt(i));
                     }
 
                     return true;

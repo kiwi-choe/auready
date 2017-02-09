@@ -6,9 +6,19 @@
 
     <color name="shadow_item_color">#66000000</color>
 
-    <!--listview-->
+
+    <!--taskhead-->
+    <color name="taskhead_background_color">#dcdcdc</color>
+    <color name="taskhead_list_item_background_color">#fffdfdfd</color>
+    <color name="taskhead_list_item_select_color">#a5bfd4</color>
+
     <color name="listview_text_title">#dd000000</color>
+    <color name="listview_sub_text">#dd000000</color>
     <color name="icon_gray">#8affffff</color>
+
+    <!--tasks view-->
+    <color name="tasks_child_item_background">#fafafa</color>
+
 
     <color name="dark_background">#a4a4a4</color>
 

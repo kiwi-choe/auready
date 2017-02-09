@@ -1,21 +1,26 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".taskheads.TaskHeadsFragment"
-    android:orientation="vertical">
+    android:background="@color/taskhead_background_color"
+    android:orientation="vertical"
+    android:padding="@dimen/listview_padding_to_make_card_view"
+    tools:context=".taskheads.TaskHeadsFragment">
 
     <com.kiwi.auready_ver2.util.view.DragSortListView
         android:id="@+id/taskheads"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:dividerHeight="@dimen/listview_padding_to_make_card_view"
+        android:listSelector="@android:color/transparent" />
 
     <TextView
         android:id="@+id/no_taskhead_txt"
-        android:text="@string/no_taskheads"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:text="@string/no_taskheads"
+        android:visibility="gone" />
 
 </LinearLayout>

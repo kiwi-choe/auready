@@ -27,11 +27,20 @@
 
     <style name="listview_textview_style">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical|start</item>
-        <item name="android:fontFamily">"sans-serif</item>
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textSize">@dimen/listview_item_textview_textsize</item>
         <item name="android:textColor">@color/listview_text_title</item>
+    </style>
+
+    <style name="listview_sub_textview_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:textSize">@dimen/listview_item_sub_textview_textsize</item>
+        <item name="android:textColor">@color/listview_sub_text</item>
     </style>
 
     <style name="listview_reorder_icon_style">
