@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.friend;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
@@ -63,16 +64,24 @@ public class FindPresenterTest {
     @Test
     public void findPeople() {
         String emailOrName = "emailOrName";
-        mFindPresenter.findPeople(emailOrName);
+//        mFindPresenter.onFindPeopleSucceed()
 
     }
 
     @Test
-    public void addFriend() {
-        SearchedUser user = new SearchedUser("email", 0);
-        mFindPresenter.addFriend(user);
+    public void addFriend_whenSucceed() {
+        SearchedUser user = new SearchedUser("email", SearchedUser.NO_STATUS);
+        mFindPresenter.onAddFriendSucceed(user);
+        
+        // Update view
+        verify(mFindView).setAddFriendSucceedUI(user);
+    }
+    @Test
+    public void addFriend_whenFail() {
+        int stringResource = R.string.addfriend_fail_msg_400;
+        mFindPresenter.onAddFriendFail(stringResource);
 
         // Update view
-//        verify(mFindView).setViewWhenAddFriendSucceed(user);
+        verify(mFindView).setAddFriendFailMessage(stringResource);
     }
 }

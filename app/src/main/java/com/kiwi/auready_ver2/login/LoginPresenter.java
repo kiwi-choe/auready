@@ -84,8 +84,7 @@ public class LoginPresenter implements LoginContract.Presenter {
         }
     }
 
-    @Override
-    public void requestLogin(final String email, String password) {
+    private void requestLogin(final String email, String password) {
 
         ILoginService loginService =
                 ServiceGenerator.createService(ILoginService.class);

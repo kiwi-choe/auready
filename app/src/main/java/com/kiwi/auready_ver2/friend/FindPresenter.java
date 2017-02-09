@@ -2,11 +2,18 @@ package com.kiwi.auready_ver2.friend;
 
 import android.support.annotation.NonNull;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
+import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.friend.IFriendService;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -38,7 +45,7 @@ public class FindPresenter implements FindContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveFriend.ResponseValue response) {
-//                        mFindView.setViewWhenAddFriendSucceed(response.getFriend());
+//                        mFindView.setAddFriendSucceedUI(response.getFriend());
                     }
 
                     @Override
@@ -71,19 +78,36 @@ public class FindPresenter implements FindContract.Presenter {
     @Override
     public void addFriend(@NonNull final SearchedUser user) {
         checkNotNull(user);
-//        mUseCaseHandler.execute(mAddFriend, new AddFriend.RequestValues(user),
-//                new UseCase.UseCaseCallback<AddFriend.ResponseValue>() {
-//
-//                    @Override
-//                    public void onSuccess(AddFriend.ResponseValue response) {
-//                        mFindView.setViewWhenAddFriendSucceed(user);
-//                    }
-//
-//                    @Override
-//                    public void onError() {
-//
-//                    }
-//                });
+
+        IFriendService friendService =
+                ServiceGenerator.createService(IFriendService.class);
+
+        Call<Void> call = friendService.addFriend(user);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    onAddFriendSucceed(user);
+                } else if(response.code() == 400) {
+                    onAddFriendFail(R.string.addfriend_fail_msg_400);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                onAddFriendFail(R.string.addfriend_fail_msg_onfailure);
+            }
+        });
+    }
+
+    @Override
+    public void onAddFriendSucceed(SearchedUser user) {
+        mFindView.setAddFriendSucceedUI(user);
+    }
+
+    @Override
+    public void onAddFriendFail(int stringResource) {
+        mFindView.setAddFriendFailMessage(stringResource);
     }
 
 }
