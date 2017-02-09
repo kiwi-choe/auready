@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/taskhead_list_item_height"
+    android:layout_height="wrap_content"
     android:background="@drawable/taskhead_backgroud_selector"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingBottom="20dp"
+    android:paddingTop="20dp">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -14,12 +17,14 @@
         <TextView
             android:id="@+id/taskhead_title"
             style="@style/listview_textview_style"
-            android:layout_marginStart="@dimen/listview_item_start_end_margin" />
+            android:layout_marginEnd="@dimen/task_head_title_end_margin"
+            android:layout_marginStart="@dimen/list_item_padding" />
 
         <TextView
             android:id="@+id/taskhead_member_list"
             style="@style/listview_sub_textview_style"
-            android:layout_marginStart="@dimen/listview_item_start_end_margin" />
+            android:layout_marginEnd="@dimen/task_head_title_end_margin"
+            android:layout_marginStart="@dimen/list_item_padding" />
     </LinearLayout>
 
     <ImageView
@@ -27,8 +32,32 @@
         style="@style/listview_reorder_icon_style"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:translationX="@dimen/reorder_start_trans_x"
         android:layout_marginEnd="@dimen/listview_item_start_end_margin"
-        android:src="@drawable/re_order_icon" />
+        android:src="@drawable/re_order_icon"
+        android:translationX="@dimen/reorder_start_trans_x" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:layout_marginEnd="@dimen/list_item_padding"
+        android:gravity="center_horizontal">
+
+        <com.kiwi.auready_ver2.util.view.CircleProgressBar
+            android:id="@+id/circle_progress_bar"
+            android:layout_width="@dimen/task_head_circle_progress"
+            android:layout_height="@dimen/task_head_circle_progress"
+            app:progress="10"
+            app:progressBarThickness="2dp"
+            android:layout_marginBottom="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="37%"/>
+    </LinearLayout>
+
 
 </RelativeLayout>

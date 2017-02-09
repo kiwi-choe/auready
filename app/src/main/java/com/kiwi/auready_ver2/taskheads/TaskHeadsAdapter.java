@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.util.view.CircleProgressBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,13 +66,12 @@ public class TaskHeadsAdapter extends BaseAdapter {
             viewHolder.titleTextView = (TextView) rowView.findViewById(R.id.taskhead_title);
             viewHolder.memberTextView = (TextView) rowView.findViewById(R.id.taskhead_member_list);
             viewHolder.reorderImage = (ImageView) rowView.findViewById(R.id.reorder);
+            viewHolder.circleProgressBar = (CircleProgressBar) rowView.findViewById(R.id.circle_progress_bar);
 
             rowView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) rowView.getTag();
         }
-
-//        viewHolder.reorderImage.setVisibility(mIsActionMode ? View.VISIBLE : View.GONE);
 
         final TaskHead taskHead = getItem(position);
 
@@ -136,6 +136,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
         TextView titleTextView;
         TextView memberTextView;
         ImageView reorderImage;
+        CircleProgressBar circleProgressBar;
     }
 
     public void reorder(int from, int to) {
@@ -154,6 +155,10 @@ public class TaskHeadsAdapter extends BaseAdapter {
         ArrayList<View> viewList = new ArrayList<>();
 
         ImageView imageview = (ImageView) view.findViewById(R.id.reorder);
+        if (imageview == null) {
+            return;
+        }
+
         imageview.setTranslationX(endPos);
         imageview.animate().translationX(startPos);
         viewList.add(imageview);

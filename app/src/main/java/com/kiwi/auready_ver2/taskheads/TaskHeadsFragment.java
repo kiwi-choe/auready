@@ -105,7 +105,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mTaskHeadsView.setMultiChoiceModeListener(this);
 
         View dummyFooterView = inflater.inflate(R.layout.task_head_dummy_view_for_padding, null);
-        mTaskHeadsView.addHeaderView(dummyFooterView);
+//        mTaskHeadsView.addHeaderView(dummyFooterView);
         mTaskHeadsView.addFooterView(dummyFooterView);
 
         mTaskHeadsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -263,9 +263,9 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
         if (position >= 0 && position < mTaskHeadsAdapter.getCount()) {
             if (checked) {
-                mTaskHeadsAdapter.setNewSelection(position, checked);
+                mTaskHeadsAdapter.setNewSelection(position - mTaskHeadsView.getHeaderViewsCount(), checked);
             } else {
-                mTaskHeadsAdapter.removeSelection(position);
+                mTaskHeadsAdapter.removeSelection(position - mTaskHeadsView.getHeaderViewsCount());
             }
         }
 

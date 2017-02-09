@@ -113,10 +113,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView = (AnimatedExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
 
-        View progressLayout =
-                inflater.inflate(R.layout.overview_tasks_progress_layout, null);
-        mTasksView.addHeaderView(progressLayout);
-
         View dummyFooterView = inflater.inflate(R.layout.tasks_dummy_view_for_padding, null);
         mTasksView.addFooterView(dummyFooterView);
 
