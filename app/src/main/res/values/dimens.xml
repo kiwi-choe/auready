@@ -41,4 +41,10 @@
     <dimen name="tasks_delete_btn_end_trans_x">0dp</dimen>
 
 
+    <!--color picker-->
+    <dimen name="color_swatch_large">64dp</dimen>
+    <dimen name="color_swatch_small">48dp</dimen>
+    <dimen name="color_swatch_margins_large">8dp</dimen>
+    <dimen name="color_swatch_margins_small">4dp</dimen>
+
 </resources>

@@ -21,8 +21,12 @@
     <color name="listview_background">#ffffff</color>
     <color name="listview_selected_item">@android:color/holo_blue_light</color>
 
+
+    <color name="color_picker_backgroud">#4a504f</color>
+    <color name="color_picker_title_color">#ffffff</color>
+
     <!--color picker-->
-    <color name="red">#F6402C</color>
+    <color name="red">#ccF6402C</color>
     <color name="pink">#EB1460</color>
     <color name="purple">#9C1AB1</color>
     <color name="deep_purple">#6633B9</color>
@@ -41,5 +45,27 @@
     <color name="brown">#7A5547</color>
     <color name="grey">#9D9D9D</color>
     <color name="blue_grey">#5E7C8B</color>
+
+    <array name="color_picker">
+        <item>@color/red</item>
+        <item>@color/pink</item>
+        <item>@color/purple</item>
+        <item>@color/deep_purple</item>
+        <item>@color/indigo</item>
+        <item>@color/blue</item>
+        <item>@color/light_blue</item>
+        <item>@color/cyan</item>
+        <item>@color/teal</item>
+        <item>@color/green</item>
+        <item>@color/light_green</item>
+        <item>@color/lime</item>
+        <item>@color/yellow</item>
+        <item>@color/amber</item>
+        <item>@color/orange</item>
+        <item>@color/deep_orange</item>
+        <item>@color/brown</item>
+        <item>@color/grey</item>
+        <item>@color/blue_grey</item>
+    </array>
 
 </resources>

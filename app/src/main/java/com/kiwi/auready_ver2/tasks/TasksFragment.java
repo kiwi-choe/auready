@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -29,6 +30,8 @@ import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
+import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
+import com.kiwi.auready_ver2.util.view.ColorPickerSwatch;
 import com.kiwi.auready_ver2.util.view.ProgressDrawable;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
@@ -240,28 +243,46 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onStartEditMode(final int memberPosition, final View longClickedView) {
-            mTasksView.expandGroup(memberPosition, true);
+        public void onClickColorPicker(final View memberView, final int memberPosition) {
+            ColorPickerDialog colorPickerDialog = new ColorPickerDialog();
+            int[] colors = memberView.getResources().getIntArray(R.array.color_picker);
+            final int numColumns = 5;
+            colorPickerDialog.initialize(R.string.color_picker_default_title,
+                    colors, colors[0], numColumns, ColorPickerDialog.SIZE_SMALL);
 
-            // start animation
-            startAnimation(true);
+            colorPickerDialog.show(getFragmentManager(), "colorPickerDialog");
 
-            // edit mode is launched by "Edit Mode" button
-            if (longClickedView == null) {
-                return;
-            }
-
-            // set Focus to long clicked editText after complete aniamtion
-            new Handler().postDelayed(new Runnable() {
+            colorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
                 @Override
-                public void run() {
-                    mTasksAdapter.requestFocusToEditText(longClickedView);
-                    InputMethodManager keyboard =
-                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    keyboard.showSoftInput(longClickedView, 0);
+                public void onColorSelected(int color) {
+                    mTasksAdapter.setGroupBackground(memberPosition, color);
                 }
-            }, ViewUtils.ANIMATION_DURATION);
+            });
         }
+
+//        @Override
+//        public void onStartEditMode(final int memberPosition, final View longClickedView) {
+//            mTasksView.expandGroup(memberPosition, true);
+//
+//            // start animation
+//            startAnimation(true);
+//
+//            // edit mode is launched by "Edit Mode" button
+//            if (longClickedView == null) {
+//                return;
+//            }
+//
+//            // set Focus to long clicked editText after complete aniamtion
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mTasksAdapter.requestFocusToEditText(longClickedView);
+//                    InputMethodManager keyboard =
+//                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+//                    keyboard.showSoftInput(longClickedView, 0);
+//                }
+//            }, ViewUtils.ANIMATION_DURATION);
+//        }
 
         @Override
         public void onStartNormalMode(int memberPosition) {
@@ -324,7 +345,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onAddTaskClick(String memberId, String description, int order);
 
-        void onStartEditMode(int memberPosition, View longClickedView);
+        void onClickColorPicker(final View memberView, final int memberPosition);
 
         void onStartNormalMode(int memberPosition);
 

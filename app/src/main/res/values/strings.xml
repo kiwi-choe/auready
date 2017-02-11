@@ -77,5 +77,9 @@
     <string name="complete">Complete</string>
     <string name="addfriend_fail_msg_400">Fail to request friending</string>
     <string name="addfriend_fail_msg_onfailure">called onFailure()</string>
+    <string name="color_picker_default_title">Select a Color</string>
+
+    <string name="color_swatch_description_selected">Color selected</string>
+    <string name="color_swatch_description">color</string>
 
 </resources>

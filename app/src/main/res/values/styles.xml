@@ -12,6 +12,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimaryDark</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
     </style>
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
@@ -71,4 +72,8 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/color_picker_backgroud</item>
+        <item name="android:textColorPrimary">@color/color_picker_title_color</item>
+    </style>
 </resources>

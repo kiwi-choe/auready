@@ -35,7 +35,7 @@
             android:text="AU READY!!" />
 
         <Button
-            android:id="@+id/edit_btn"
+            android:id="@+id/color_picker_btn"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:focusable="false"

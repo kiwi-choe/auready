@@ -22,6 +22,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
+import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
@@ -108,6 +109,7 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
             viewHolder.memberName = (TextView) view.findViewById(R.id.member_name);
             viewHolder.auready_btn = (Button) view.findViewById(R.id.auready_btn);
             viewHolder.progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+            viewHolder.colorPickerBtn = (Button) view.findViewById(R.id.color_picker_btn);
 
             view.setTag(viewHolder);
         } else {
@@ -127,6 +129,25 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
                 viewHolder.progressBar.setProgress(viewHolder.progressBar.getProgress() + 20);
             }
         });
+
+        final View finalView = view;
+        final View finalView1 = view;
+        viewHolder.colorPickerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mTaskItemListener.onClickColorPicker(finalView1, memberPosition);
+            }
+        });
+
+        // set background of child view
+        if (mBackgroudColor.get(memberPosition) != null) {
+
+            int color = mBackgroudColor.get(memberPosition);
+            view.setBackgroundColor(color);
+        } else {
+            view.setBackgroundColor(view.getResources().getColor(R.color.tasks_group_item_background));
+        }
+
         return view;
     }
 
@@ -203,6 +224,15 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
             viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_start_trans_x));
             viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_start_trans_x));
             viewHolder.deleteTaskBtn.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_delete_btn_start_trans_x));
+        }
+
+        // set background of group view (add alpha)
+        if (mBackgroudColor.get(memberPosition) != null) {
+            int color = mBackgroudColor.get(memberPosition);
+            int res = (color & 0x00ffffff) | (0x99 << 24);
+            view.setBackgroundColor(res);
+        } else {
+            view.setBackgroundColor(view.getResources().getColor(R.color.tasks_child_item_background));
         }
 
         viewHolder.taskDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -464,10 +494,22 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
         editText.requestFocus();
     }
 
+    HashMap<Integer, Integer> mBackgroudColor = new HashMap<>();
+
+    public void setGroupBackground(int memberPosition, int color) {
+        if (mBackgroudColor.get(memberPosition) != null) {
+            mBackgroudColor.remove(memberPosition);
+        }
+
+        mBackgroudColor.put(memberPosition, color);
+        notifyDataSetChanged();
+    }
+
     private class GroupViewHolder {
         TextView memberName;
         ProgressBar progressBar;
         Button auready_btn;
+        Button colorPickerBtn;
     }
 
     private class ChildViewHolder {
