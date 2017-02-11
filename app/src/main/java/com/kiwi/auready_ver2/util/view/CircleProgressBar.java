@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.util.view;
 
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -10,6 +11,7 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 
@@ -185,8 +187,8 @@ public class CircleProgressBar extends View {
     public void setProgressWithAnimation(float progress) {
 
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(this, "progress", progress);
-        objectAnimator.setDuration(1500);
-        objectAnimator.setInterpolator(new DecelerateInterpolator());
+        objectAnimator.setDuration(ViewUtils.ANIMATION_DURATION);
+        objectAnimator.setInterpolator(ViewUtils.INTERPOLATOR);
         objectAnimator.start();
     }
 }

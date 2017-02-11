@@ -24,6 +24,7 @@
 
     <!--tasksview-->
     <dimen name="tasksview_group_item_height">120dp</dimen>
+    <dimen name="tasksview_child_item_height">20dp</dimen>
     <dimen name="tasksview_progress_bar_layout_height">200dp</dimen>
     <dimen name="taskhead_list_footer_height">300dp</dimen>
 

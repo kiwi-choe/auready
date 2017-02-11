@@ -85,6 +85,19 @@ public class TaskHeadsAdapter extends BaseAdapter {
         }
         Log.d(TAG, "getview : " + view.getTag());
 
+        viewHolder.circleProgressBar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                viewHolder.circleProgressBar.setProgressWithAnimation(viewHolder.circleProgressBar.getProgress() + 15);
+                viewHolder.progressText.setText(viewHolder.circleProgressBar.getProgress() + "%");
+            }
+        });
+
+        viewHolder.circleProgressBar.setMin(0);
+        viewHolder.circleProgressBar.setMax(100);
+        viewHolder.progressText.setText((int) viewHolder.circleProgressBar.getProgress() + "%");
+
         return view;
     }
 

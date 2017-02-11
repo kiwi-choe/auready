@@ -41,23 +41,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:orientation="vertical"
         android:layout_marginEnd="@dimen/list_item_padding"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
         <com.kiwi.auready_ver2.util.view.CircleProgressBar
             android:id="@+id/circle_progress_bar"
             android:layout_width="@dimen/task_head_circle_progress"
             android:layout_height="@dimen/task_head_circle_progress"
-            app:progress="10"
-            app:progressBarThickness="2dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_marginBottom="5dp"
+            app:progressBarThickness="2dp" />
 
         <TextView
             android:id="@+id/progress_text"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="37%"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
 
