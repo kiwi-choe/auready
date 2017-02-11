@@ -11,7 +11,9 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.util.view.ViewUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -109,12 +111,14 @@ public class MembersAdapter extends ArrayAdapter<Member> {
         mCheckboxStartX = isDelete ? distance : 0;
         mCheckboxEndX = isDelete ? 0 : distance;
 
+        ArrayList<View> views = new ArrayList<>();
         CheckBox checkbox = (CheckBox) view.findViewById(R.id.delete_member_check_box);
         if (checkbox == null) {
             return;
         }
         checkbox.setTranslationX(mCheckboxStartX);
         checkbox.animate().translationX(mCheckboxEndX);
+        views.add(checkbox);
 
         TextView textview = (TextView) view.findViewById(R.id.member_name);
         if (textview == null) {
@@ -122,6 +126,12 @@ public class MembersAdapter extends ArrayAdapter<Member> {
         }
         textview.setTranslationX(mCheckboxStartX - distance);
         textview.animate().translationX(mCheckboxEndX - distance);
+        views.add(textview);
+
+        for (View animatedView : views) {
+            animatedView.animate().setDuration(ViewUtils.ANIMATION_DURATION)
+                    .setInterpolator(ViewUtils.INTERPOLATOR).start();
+        }
     }
 
     private void HoldPosition(View view) {

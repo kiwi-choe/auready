@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +21,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TaskHeadsAdapter extends BaseAdapter {
 
+    static final String TAG = "TaskHeadsAdatper";
     private List<TaskHead> mTaskHeads;
     private HashMap<Integer, Boolean> mSelection = new HashMap<>();
 
-    float startPos = -1;
-    float endPos = -1;
     private boolean mIsActionMode = false;
 
     public TaskHeadsAdapter(List<TaskHead> taskHeads) {
@@ -56,21 +56,21 @@ public class TaskHeadsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(final int position, final View view, ViewGroup viewGroup) {
-        View rowView = view;
+    public View getView(final int position, View view, ViewGroup viewGroup) {
         final ViewHolder viewHolder;
-        if (rowView == null) {
+        if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-            rowView = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
+            view = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
             viewHolder = new ViewHolder();
-            viewHolder.titleTextView = (TextView) rowView.findViewById(R.id.taskhead_title);
-            viewHolder.memberTextView = (TextView) rowView.findViewById(R.id.taskhead_member_list);
-            viewHolder.reorderImage = (ImageView) rowView.findViewById(R.id.reorder);
-            viewHolder.circleProgressBar = (CircleProgressBar) rowView.findViewById(R.id.circle_progress_bar);
+            viewHolder.titleTextView = (TextView) view.findViewById(R.id.taskhead_title);
+            viewHolder.memberTextView = (TextView) view.findViewById(R.id.taskhead_member_list);
+            viewHolder.reorderImage = (ImageView) view.findViewById(R.id.reorder);
+            viewHolder.circleProgressBar = (CircleProgressBar) view.findViewById(R.id.circle_progress_bar);
+            viewHolder.progressText = (TextView) view.findViewById(R.id.progress_text);
 
-            rowView.setTag(viewHolder);
+            view.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) rowView.getTag();
+            viewHolder = (ViewHolder) view.getTag();
         }
 
         final TaskHead taskHead = getItem(position);
@@ -79,12 +79,13 @@ public class TaskHeadsAdapter extends BaseAdapter {
         viewHolder.memberTextView.setText("궈니, 위니, 나무");
 
         if (mSelection.get(position) != null) {
-            rowView.setSelected(true);
+            view.setSelected(true);
         } else {
-            rowView.setSelected(false);
+            view.setSelected(false);
         }
+        Log.d(TAG, "getview : " + view.getTag());
 
-        return rowView;
+        return view;
     }
 
     // for delete Item
@@ -137,6 +138,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
         TextView memberTextView;
         ImageView reorderImage;
         CircleProgressBar circleProgressBar;
+        TextView progressText;
     }
 
     public void reorder(int from, int to) {
@@ -148,20 +150,37 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
     // animation
     public void startAnimation(View view, boolean isDelete, long duration, Interpolator interpolator) {
-        final float distance = view.getResources().getDimension(R.dimen.reorder_start_trans_x);
-        startPos = isDelete ? 0 : distance;
-        endPos = isDelete ? distance : 0;
-
-        ArrayList<View> viewList = new ArrayList<>();
-
-        ImageView imageview = (ImageView) view.findViewById(R.id.reorder);
-        if (imageview == null) {
+        if (view == null || view.getTag() == null) {
+            Log.d(TAG, "fail startAnimation! view  : " + view + ", view.getTag() : " + view.getTag());
             return;
         }
 
-        imageview.setTranslationX(endPos);
-        imageview.animate().translationX(startPos);
-        viewList.add(imageview);
+        if (view.getTag() instanceof ViewHolder == false) {
+            Log.d(TAG, "fail startAnimation! view.getTag() instanceof ViewHolder == false");
+            return;
+        }
+
+        final float distance = view.getResources().getDimension(R.dimen.reorder_start_trans_x);
+        float startPos = isDelete ? 0 : distance;
+        float endPos = isDelete ? distance : 0;
+
+        ArrayList<View> viewList = new ArrayList<>();
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+
+        ImageView reorderImage = viewHolder.reorderImage;
+        reorderImage.setTranslationX(endPos);
+        reorderImage.animate().translationX(startPos);
+        viewList.add(reorderImage);
+
+        CircleProgressBar circleProgressBar = viewHolder.circleProgressBar;
+        circleProgressBar.setTranslationX(startPos);
+        circleProgressBar.animate().translationX(endPos);
+        viewList.add(circleProgressBar);
+
+        TextView progressText = viewHolder.progressText;
+        progressText.setTranslationX(startPos);
+        progressText.animate().translationX(endPos);
+        viewList.add(progressText);
 
         for (View animatedView : viewList) {
             animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();

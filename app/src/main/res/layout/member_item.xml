@@ -16,5 +16,6 @@
     <TextView
         android:id="@+id/member_name"
         style="@style/listview_textview_style"
+        android:layout_centerVertical="true"
         android:layout_marginStart="@dimen/listview_item_start_end_margin" />
 </RelativeLayout>

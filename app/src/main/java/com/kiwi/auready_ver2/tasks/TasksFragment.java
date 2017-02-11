@@ -76,24 +76,24 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         super.onResume();
         mPresenter.start();
 
-        // To control backpress button
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (mTasksAdapter.isEditMode()) {
-                        mTaskItemListener.onStartNormalMode(-1);
-                        mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
-                        mTasksAdapter.notifyDataSetInvalidated();
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        });
+//        // To control backpress button
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//        getView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+//                    if (mTasksAdapter.isEditMode()) {
+//                        mTaskItemListener.onStartNormalMode(-1);
+//                        mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
+//                        mTasksAdapter.notifyDataSetInvalidated();
+//                        return true;
+//                    }
+//                }
+//
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -120,7 +120,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                Log.d("MY_LOG", "onGroupClick : " + mTasksView.isGroupExpanded(groupPosition));
                 if (mTasksView.isGroupExpanded(groupPosition)) {
 //                    mTasksView.setDividerHeight(getContext().getResources()
 //                            .getDimensionPixelSize(R.dimen.listview_padding_to_make_card_view));
@@ -136,14 +135,12 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                Log.d("MY_LOG", "onGroupExpand");
             }
         });
 
         mTasksView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Log.d("MY_LOG", "onGroupCollapse");
             }
         });
 
@@ -245,7 +242,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         @Override
         public void onStartEditMode(final int memberPosition, final View longClickedView) {
             mTasksView.expandGroup(memberPosition, true);
-            mTasksAdapter.setActionModeMember(memberPosition);
 
             // start animation
             startAnimation(true);
@@ -272,8 +268,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
             if (memberPosition != -1) {
                 mTasksView.expandGroup(memberPosition);
             }
-
-            mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
 
             // start animation
             startAnimation(false);

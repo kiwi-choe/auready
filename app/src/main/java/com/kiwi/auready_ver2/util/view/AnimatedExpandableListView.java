@@ -448,7 +448,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
                 Object o;
                 int state = (o = dummyView.getTag()) == null ? STATE_IDLE : (Integer) o;
 
-                Log.d("MY_LOG", "getView 2");
                 if (info.expanding && state != STATE_EXPANDING) {
                     ExpandAnimation ani = new ExpandAnimation(dummyView, 0, totalHeight, info);
                     ani.setDuration(this.parent.getAnimationDuration());
@@ -456,7 +455,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            Log.d("MY_LOG", "onAnimationEnd 1");
                             stopAnimation(groupPosition);
                             notifyDataSetChanged();
                             dummyView.setTag(STATE_IDLE);
@@ -484,7 +482,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            Log.d("MY_LOG", "onAnimationEnd 2");
                             stopAnimation(groupPosition);
                             listView.collapseGroup(groupPosition);
                             notifyDataSetChanged();
@@ -515,7 +512,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
         @Override
         public final int getChildrenCount(int groupPosition) {
             GroupInfo info = getGroupInfo(groupPosition);
-            Log.d("MY_LOG", "getChildrenCount : " + info.firstChildPosition);
             if (info.animating) {
                 return info.firstChildPosition + 1;
             } else {
@@ -651,7 +647,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
             Animation a = new Animation() {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    Log.d("MY_LOG", "expand applyTransformation");
                     if (interpolatedTime == 1) {
                         v.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
                     } else {
@@ -676,7 +671,6 @@ public class AnimatedExpandableListView extends ExpandableListView {
             Animation a = new Animation() {
                 @Override
                 protected void applyTransformation(float interpolatedTime, Transformation t) {
-                    Log.d("MY_LOG", "collapseItem applyTransformation");
                     if (interpolatedTime == 1) {
                         v.getLayoutParams().height = 0;
                     } else {

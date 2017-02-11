@@ -5,16 +5,10 @@
     android:orientation="horizontal">
 
     <Button
-        android:id="@+id/member_delete_bt"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="@string/delete_member" />
-
-    <Button
         android:id="@+id/member_add_bt"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:text="@string/add_member" />
+        style="@style/add_button_style"
+        android:text="+ Add member" />
 </LinearLayout>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:background="@color/tasks_child_item_background"
+    android:elevation="1dp"
     android:minHeight="@dimen/lsitview_item_height"
-    android:orientation="horizontal"
-    android:elevation="1dp">
+    android:orientation="horizontal">
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -14,18 +15,20 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/listview_item_start_end_margin"
-        android:layout_marginStart="@dimen/listview_item_start_end_margin"
+        android:layout_marginEnd="@dimen/list_item_padding"
+        android:layout_marginStart="@dimen/list_item_padding"
         android:focusable="false"
         android:focusableInTouchMode="false" />
 
     <EditText
         android:id="@+id/task_edittext"
+        style="@style/listview_sub_textview_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/list_item_padding"
+        android:layout_marginStart="@dimen/list_item_padding"
         android:layout_toRightOf="@id/checkbox"
         android:gravity="start"
-        style="@style/listview_sub_textview_style"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">
 
         <!--<requestFocus />-->
@@ -41,13 +44,6 @@
 
     <Button
         android:id="@+id/add_task_btn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/tasks_child_item_background"
-        android:paddingStart="@dimen/listview_item_start_end_margin"
-        android:gravity="start|center_vertical"
-        android:fontFamily="sans-serif-light"
-        android:textSize="20sp"
-        android:textColor="@color/dark_background"
+        style="@style/add_button_style"
         android:text="+ Add Task" />
 </RelativeLayout>
