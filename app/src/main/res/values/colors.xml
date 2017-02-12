@@ -8,9 +8,11 @@
     <!--taskhead-->
     <color name="taskhead_background_color">#dcdcdc</color>
     <color name="taskhead_list_item_background_color">#fffdfdfd</color>
-    <color name="taskhead_list_item_select_color">#a5bfd4</color>
+    <color name="taskhead_list_item_select_color">#acacac</color>
     <color name="listview_text_title">#dd000000</color>
     <color name="listview_sub_text">#dd000000</color>
+    <color name="cardview_shadow_color">#bdbdbd</color>
+    <color name="cardview_stroke_color">#5b5b5b</color>
 
     <!--tasksView-->
     <color name="tasks_group_item_background">@color/taskhead_list_item_background_color</color>
