@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:style="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="@dimen/lsitview_item_height"
-    android:orientation="horizontal"
-    android:animateLayoutChanges="true">
+    android:animateLayoutChanges="true"
+    android:background="@color/tasks_child_item_background"
+    android:minHeight="@dimen/tasksview_child_item_height"
+    android:orientation="horizontal">
 
     <CheckBox
         android:id="@+id/checkbox"
@@ -12,15 +14,17 @@
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/listview_item_start_end_margin"
-        android:layout_marginStart="@dimen/listview_item_start_end_margin"
+        android:layout_marginEnd="@dimen/list_item_padding"
+        android:layout_marginStart="@dimen/list_item_padding"
         android:focusable="false"
         android:focusableInTouchMode="false" />
 
     <EditText
         android:id="@+id/task_edittext"
+        style="@style/listview_sub_textview_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/tasks_listview_delete_btn_width"
         android:layout_toRightOf="@id/checkbox"
         android:gravity="start"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">
@@ -38,7 +42,6 @@
 
     <Button
         android:id="@+id/add_task_btn"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Add Task" />
+        style="@style/add_button_style"
+        android:text="+ Add Task" />
 </RelativeLayout>

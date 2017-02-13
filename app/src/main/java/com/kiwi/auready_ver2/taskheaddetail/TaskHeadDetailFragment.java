@@ -64,7 +64,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     // q find the better way
     ListView mMemberListView;
     private List<Member> mAddedMembers = new ArrayList<>();
-    private Button mDeleteBt;
+//    private Button mDeleteBt;
 
     private ActionMode mActionMode;
 
@@ -147,13 +147,13 @@ public class TaskHeadDetailFragment extends Fragment implements
             }
         });
 
-        mDeleteBt = (Button) memberAddBtLayout.findViewById(R.id.member_delete_bt);
-        mDeleteBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mMemberListView.setItemChecked(-1, true);
-            }
-        });
+//        mDeleteBt = (Button) memberAddBtLayout.findViewById(R.id.member_delete_bt);
+//        mDeleteBt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mMemberListView.setItemChecked(-1, true);
+//            }
+//        });
 
         return root;
     }

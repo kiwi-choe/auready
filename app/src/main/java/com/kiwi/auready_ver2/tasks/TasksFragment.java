@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -19,12 +20,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
+import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
+import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
+import com.kiwi.auready_ver2.util.view.ColorPickerSwatch;
+import com.kiwi.auready_ver2.util.view.ProgressDrawable;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
@@ -38,7 +47,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public static final String TAG_TASKSFRAGMENT = "Tag_TasksFragment";
     public static final int REQ_EDIT_TASKHEAD = 0;
 
-    private ExpandableListView mTasksView;
+    private AnimatedExpandableListView mTasksView;
     private TasksAdapter mTasksAdapter;
 
     private String mTaskHeadId;
@@ -71,24 +80,24 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         super.onResume();
         mPresenter.start();
 
-        // To control backpress button
-        getView().setFocusableInTouchMode(true);
-        getView().requestFocus();
-        getView().setOnKeyListener(new View.OnKeyListener() {
-            @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event) {
-                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-                    if (mTasksAdapter.isEditMode()) {
-                        mTaskItemListener.onStartNormalMode(-1);
-                        mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
-                        mTasksAdapter.notifyDataSetInvalidated();
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        });
+//        // To control backpress button
+//        getView().setFocusableInTouchMode(true);
+//        getView().requestFocus();
+//        getView().setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
+//                    if (mTasksAdapter.isEditMode()) {
+//                        mTaskItemListener.onEnterKeyClicked(-1);
+//                        mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
+//                        mTasksAdapter.notifyDataSetInvalidated();
+//                        return true;
+//                    }
+//                }
+//
+//                return false;
+//            }
+//        });
     }
 
     @Override
@@ -105,35 +114,37 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         // Set ListView
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
-        mTasksView = (ExpandableListView) root.findViewById(R.id.expand_listview);
+        mTasksView = (AnimatedExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
+
+        View dummyFooterView = inflater.inflate(R.layout.tasks_dummy_view_for_padding, null);
+        mTasksView.addFooterView(dummyFooterView);
 
         // smooth collapse / expandItem animation
         mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-                Log.d("MY_LOG", "onGroupClick");
                 if (mTasksView.isGroupExpanded(groupPosition)) {
-                    mTasksAdapter.expandedState();
-                    mTasksAdapter.notifyDataSetChanged();
+//                    mTasksView.setDividerHeight(getContext().getResources()
+//                            .getDimensionPixelSize(R.dimen.listview_padding_to_make_card_view));
+                    mTasksView.collapseGroupWithAnimation(groupPosition);
                 } else {
-                    mTasksAdapter.collapseState();
+//                    mTasksView.setDividerHeight(0);
+                    mTasksView.expandGroupWithAnimation(groupPosition);
                 }
-                return false;
+                return true;
             }
         });
 
         mTasksView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
-                Log.d("MY_LOG", "onGroupExpand");
             }
         });
 
         mTasksView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
             @Override
             public void onGroupCollapse(int groupPosition) {
-                Log.d("MY_LOG", "onGroupCollapse");
             }
         });
 
@@ -182,12 +193,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showMembers(List<Member> members) {
-        mTasksAdapter.replaceMemberList(members);
 
-        // TODO : need to fix
-        for (Member member : members) {
-            mPresenter.getTasks(member.getId());
-        }
     }
 
     @Override
@@ -226,55 +232,86 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onStartEditMode(final int memberPosition, final View longClickedView) {
-            mTasksView.expandGroup(memberPosition, true);
-            mTasksAdapter.setActionModeMember(memberPosition);
+        public void onClickColorPicker(final View memberView, final int memberPosition) {
+            ColorPickerDialog colorPickerDialog = new ColorPickerDialog();
+            int[] colors = memberView.getResources().getIntArray(R.array.color_picker);
+            final int numColumns = 5;
+            colorPickerDialog.initialize(R.string.color_picker_default_title,
+                    colors, colors[0], numColumns, ColorPickerDialog.SIZE_SMALL);
 
-            // start animation
-            startAnimation(true);
+            colorPickerDialog.show(getFragmentManager(), "colorPickerDialog");
 
-            // edit mode is launched by "Edit Mode" button
-            if (longClickedView == null) {
-                return;
-            }
-
-            // set Focus to long clicked editText after complete aniamtion
-            new Handler().postDelayed(new Runnable() {
+            colorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
                 @Override
-                public void run() {
-                    mTasksAdapter.requestFocusToEditText(longClickedView);
-                    InputMethodManager keyboard =
-                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    keyboard.showSoftInput(longClickedView, 0);
+                public void onColorSelected(int color) {
+                    mTasksAdapter.setGroupBackground(memberPosition, color);
                 }
-            }, ViewUtils.ANIMATION_DURATION);
+            });
         }
 
         @Override
-        public void onStartNormalMode(int memberPosition) {
-            if (memberPosition != -1) {
-                mTasksView.expandGroup(memberPosition);
-            }
+        public boolean onEnterKeyClicked(int memberPosition, int taskPosition) {
 
-            mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
+            Log.d("MY_LOG", "Focused Child : " + mTasksView.getFocusedChild());
 
-            // start animation
-            startAnimation(false);
+            // check whether childview is add button
+//            if (mTasksAdapter.getChildrenCount(memberPosition) == taskPosition + 2) {
+//
+//            }
+//            if (mTasksView.getChildAt()) {
+//
+//            }
 
-            // hide keyboard after complete aniamtion
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    InputMethodManager keyboard =
-                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    View view = getActivity().getCurrentFocus();
-                    if (view == null) {
-                        view = new View(getActivity());
-                    }
-                    keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-            }, ViewUtils.ANIMATION_DURATION);
+            return true;
         }
+
+//        @Override
+//        public void onStartEditMode(final int memberPosition, final View longClickedView) {
+//            mTasksView.expandGroup(memberPosition, true);
+//
+//            // start animation
+//            startAnimation(true);
+//
+//            // edit mode is launched by "Edit Mode" button
+//            if (longClickedView == null) {
+//                return;
+//            }
+//
+//            // set Focus to long clicked editText after complete aniamtion
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mTasksAdapter.requestFocusToEditText(longClickedView);
+//                    InputMethodManager keyboard =
+//                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+//                    keyboard.showSoftInput(longClickedView, 0);
+//                }
+//            }, ViewUtils.ANIMATION_DURATION);
+//        }
+
+//        @Override
+//        public void onEnterKeyClicked(int memberPosition) {
+//            if (memberPosition != -1) {
+//                mTasksView.expandGroup(memberPosition);
+//            }
+//
+//            // start animation
+//            startAnimation(false);
+//
+//            // hide keyboard after complete aniamtion
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    InputMethodManager keyboard =
+//                            (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+//                    View view = getActivity().getCurrentFocus();
+//                    if (view == null) {
+//                        view = new View(getActivity());
+//                    }
+//                    keyboard.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//                }
+//            }, ViewUtils.ANIMATION_DURATION);
+//        }
 
 
         private void startAnimation(final boolean isGoingToEditMode) {
@@ -290,8 +327,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
                     int count = mTasksView.getChildCount();
                     for (int i = 0; i < count; i++) {
-                        mTasksAdapter.startAnimation(isGoingToEditMode,
-                                mTasksView.getChildAt(i), ViewUtils.ANIMATION_DURATION, ViewUtils.INTERPOLATOR);
+                        mTasksAdapter.startAnimation(isGoingToEditMode, mTasksView.getChildAt(i));
                     }
 
                     return true;
@@ -314,9 +350,9 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onAddTaskClick(String memberId, String description, int order);
 
-        void onStartEditMode(int memberPosition, View longClickedView);
+        void onClickColorPicker(final View memberView, final int memberPosition);
 
-        void onStartNormalMode(int memberPosition);
+        boolean onEnterKeyClicked(int memberPosition, int taskPosition);
 
         void onTaskChecked(String taskId);
 

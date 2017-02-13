@@ -24,6 +24,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.view.DragSortController;
+import com.kiwi.auready_ver2.util.view.DragSortItemView;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
@@ -103,6 +104,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         mTaskHeadsView = (DragSortListView) root.findViewById(R.id.taskheads);
         mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mTaskHeadsView.setMultiChoiceModeListener(this);
+
+        View dummyFooterView = inflater.inflate(R.layout.task_head_dummy_view_for_padding, null);
+//        mTaskHeadsView.addHeaderView(dummyFooterView);
+        mTaskHeadsView.addFooterView(dummyFooterView);
 
         mTaskHeadsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -244,24 +249,24 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
                 int count = mTaskHeadsView.getChildCount();
                 for (int i = 0; i < count; i++) {
-                    View childView = mTaskHeadsView.getChildAt(i);
-                    mTaskHeadsAdapter.startAnimation(childView,
+                    // adapter view of taskhead set as child of DragSortItemView
+                    DragSortItemView childView = (DragSortItemView) mTaskHeadsView.getChildAt(i);
+                    mTaskHeadsAdapter.startAnimation(childView.getChildAt(0),
                             isDelete, ViewUtils.ANIMATION_DURATION, ViewUtils.INTERPOLATOR);
                 }
 
                 return true;
             }
         });
-
     }
 
     @Override
     public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
         if (position >= 0 && position < mTaskHeadsAdapter.getCount()) {
             if (checked) {
-                mTaskHeadsAdapter.setNewSelection(position, checked);
+                mTaskHeadsAdapter.setNewSelection(position - mTaskHeadsView.getHeaderViewsCount(), checked);
             } else {
-                mTaskHeadsAdapter.removeSelection(position);
+                mTaskHeadsAdapter.removeSelection(position - mTaskHeadsView.getHeaderViewsCount());
             }
         }
 
@@ -276,6 +281,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         startAnimation(true);
         mIsActionMode = true;
+        mTaskHeadsAdapter.setActionMode(mIsActionMode);
 
         return true;
     }
@@ -305,6 +311,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         startAnimation(false);
         mIsActionMode = false;
+        mTaskHeadsAdapter.setActionMode(mIsActionMode);
     }
 
 

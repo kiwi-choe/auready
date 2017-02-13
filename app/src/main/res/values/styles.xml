@@ -12,6 +12,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorPrimaryDark</item>
+        <item name="android:alertDialogTheme">@style/AlertDialog</item>
     </style>
 
     <style name="Toolbar" parent="ThemeOverlay.AppCompat.ActionBar">
@@ -27,11 +28,20 @@
 
     <style name="listview_textview_style">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center_vertical|start</item>
-        <item name="android:fontFamily">"sans-serif</item>
+        <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textSize">@dimen/listview_item_textview_textsize</item>
         <item name="android:textColor">@color/listview_text_title</item>
+    </style>
+
+    <style name="listview_sub_textview_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="android:textSize">@dimen/listview_item_sub_textview_textsize</item>
+        <item name="android:textColor">@color/listview_sub_text</item>
     </style>
 
     <style name="listview_reorder_icon_style">
@@ -49,5 +59,21 @@
         <item name="android:fontFamily">"sans-serif-medium</item>
         <item name="android:textSize">@dimen/title_textview_textsize</item>
         <item name="android:textColor">@color/listview_text_title</item>
+    </style>
+
+    <style name="add_button_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/tasks_child_item_background</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:paddingStart">@dimen/listview_item_start_end_margin</item>
+        <item name="android:textColor">@color/dark_background</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="AlertDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="android:background">@color/color_picker_backgroud</item>
+        <item name="android:textColorPrimary">@color/color_picker_title_color</item>
     </style>
 </resources>

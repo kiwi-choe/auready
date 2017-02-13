@@ -1,12 +1,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/taskhead_background_color"
+    android:orientation="vertical"
+    android:paddingEnd="@dimen/listview_padding_to_make_card_view"
+    android:paddingStart="@dimen/listview_padding_to_make_card_view">
 
-    <ExpandableListView
+    <com.kiwi.auready_ver2.util.view.AnimatedExpandableListView
         android:id="@+id/expand_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:groupIndicator="@null" />
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@null"
+        android:groupIndicator="@null"
+        android:listSelector="@android:color/transparent" />
 
 </LinearLayout>
