@@ -143,7 +143,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTasks.ResponseValue response) {
-
+                        
                     }
 
                     @Override

@@ -1,17 +1,12 @@
 package com.kiwi.auready_ver2.tasks;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,12 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
@@ -33,8 +23,6 @@ import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
 import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
 import com.kiwi.auready_ver2.util.view.ColorPickerSwatch;
-import com.kiwi.auready_ver2.util.view.ProgressDrawable;
-import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,25 +67,6 @@ public class TasksFragment extends Fragment implements TasksContract.View {
     public void onResume() {
         super.onResume();
         mPresenter.start();
-
-//        // To control backpress button
-//        getView().setFocusableInTouchMode(true);
-//        getView().requestFocus();
-//        getView().setOnKeyListener(new View.OnKeyListener() {
-//            @Override
-//            public boolean onKey(View v, int keyCode, KeyEvent event) {
-//                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK) {
-//                    if (mTasksAdapter.isEditMode()) {
-//                        mTaskItemListener.onEnterKeyClicked(-1);
-//                        mTasksAdapter.setActionModeMember(mTasksAdapter.INVALID_POSITION);
-//                        mTasksAdapter.notifyDataSetInvalidated();
-//                        return true;
-//                    }
-//                }
-//
-//                return false;
-//            }
-//        });
     }
 
     @Override
@@ -117,8 +86,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         mTasksView = (AnimatedExpandableListView) root.findViewById(R.id.expand_listview);
         mTasksView.setAdapter(mTasksAdapter);
 
-        View dummyFooterView = inflater.inflate(R.layout.tasks_dummy_view_for_padding, null);
-        mTasksView.addFooterView(dummyFooterView);
+//        View dummyFooterView = inflater.inflate(R.layout.tasks_dummy_view_for_padding, null);
+//        mTasksView.addFooterView(dummyFooterView);
 
         // smooth collapse / expandItem animation
         mTasksView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
@@ -132,6 +101,7 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 //                    mTasksView.setDividerHeight(0);
                     mTasksView.expandGroupWithAnimation(groupPosition);
                 }
+
                 return true;
             }
         });
@@ -193,7 +163,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showMembers(List<Member> members) {
-
+        mTasksView.setVisibility(View.VISIBLE);
+        mTasksAdapter.replaceMemberList(members);
     }
 
     @Override
@@ -336,8 +307,10 @@ public class TasksFragment extends Fragment implements TasksContract.View {
         }
 
         @Override
-        public void onTaskChecked(String taskId) {
-
+        public void onDeleteTaskClick(String taskId) {
+            ArrayList<String> deletedTaskId = new ArrayList<>();
+            deletedTaskId.add(taskId);
+            mPresenter.deleteTasks(deletedTaskId);
         }
 
         @Override
@@ -350,11 +323,11 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
         void onAddTaskClick(String memberId, String description, int order);
 
+        void onDeleteTaskClick(String taskId);
+
         void onClickColorPicker(final View memberView, final int memberPosition);
 
         boolean onEnterKeyClicked(int memberPosition, int taskPosition);
-
-        void onTaskChecked(String taskId);
 
         void onTaskDescEdited(String taskId);
     }

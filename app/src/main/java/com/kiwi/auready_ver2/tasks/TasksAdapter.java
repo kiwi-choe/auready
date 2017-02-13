@@ -18,13 +18,11 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
-import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
@@ -359,7 +357,7 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
         viewHolder.deleteTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mTaskItemListener.onDeleteClick(tasksList.get(taskPosition).getId());
+                mTaskItemListener.onDeleteTaskClick(tasksList.get(taskPosition).getId());
             }
         });
 
