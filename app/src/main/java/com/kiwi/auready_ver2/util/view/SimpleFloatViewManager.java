@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.kiwi.auready_ver2.R;
+
 /**
  * Simple implementation of the FloatViewManager class. Uses list
  * items as they appear in the ListView to create the floating View.
@@ -18,7 +20,7 @@ public class SimpleFloatViewManager implements DragSortListView.FloatViewManager
 
     private ImageView mImageView;
 
-    private int mFloatBGColor = Color.BLACK;
+    private int mFloatBGColor = Color.TRANSPARENT;
 
     private ListView mListView;
 

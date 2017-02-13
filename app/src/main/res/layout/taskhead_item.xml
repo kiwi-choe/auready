@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/taskhead_backgroud_selector"
+    android:background="@drawable/taskhead_background_selector"
     android:orientation="horizontal"
     android:paddingBottom="20dp"
     android:paddingTop="20dp">
@@ -19,12 +18,6 @@
             style="@style/listview_textview_style"
             android:layout_marginEnd="@dimen/task_head_title_end_margin"
             android:layout_marginStart="@dimen/list_item_padding" />
-
-        <TextView
-            android:id="@+id/taskhead_member_list"
-            style="@style/listview_sub_textview_style"
-            android:layout_marginEnd="@dimen/task_head_title_end_margin"
-            android:layout_marginStart="@dimen/list_item_padding" />
     </LinearLayout>
 
     <ImageView
@@ -33,30 +26,6 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="@dimen/listview_item_start_end_margin"
-        android:src="@drawable/re_order_icon"
-        android:translationX="@dimen/reorder_start_trans_x" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/list_item_padding"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <com.kiwi.auready_ver2.util.view.CircleProgressBar
-            android:id="@+id/circle_progress_bar"
-            android:layout_width="@dimen/task_head_circle_progress"
-            android:layout_height="@dimen/task_head_circle_progress"
-            android:layout_marginBottom="5dp"
-            app:progressBarThickness="2dp" />
-
-        <TextView
-            android:id="@+id/progress_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-
+        android:src="@drawable/re_order_icon" />
 
 </RelativeLayout>

@@ -63,10 +63,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.taskhead_item, viewGroup, false);
             viewHolder = new ViewHolder();
             viewHolder.titleTextView = (TextView) view.findViewById(R.id.taskhead_title);
-            viewHolder.memberTextView = (TextView) view.findViewById(R.id.taskhead_member_list);
             viewHolder.reorderImage = (ImageView) view.findViewById(R.id.reorder);
-            viewHolder.circleProgressBar = (CircleProgressBar) view.findViewById(R.id.circle_progress_bar);
-            viewHolder.progressText = (TextView) view.findViewById(R.id.progress_text);
 
             view.setTag(viewHolder);
         } else {
@@ -76,27 +73,12 @@ public class TaskHeadsAdapter extends BaseAdapter {
         final TaskHead taskHead = getItem(position);
 
         viewHolder.titleTextView.setText(taskHead.getTitle());
-        viewHolder.memberTextView.setText("궈니, 위니, 나무");
 
         if (mSelection.get(position) != null) {
             view.setSelected(true);
         } else {
             view.setSelected(false);
         }
-        Log.d(TAG, "getview : " + view.getTag());
-
-        viewHolder.circleProgressBar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                viewHolder.circleProgressBar.setProgressWithAnimation(viewHolder.circleProgressBar.getProgress() + 15);
-                viewHolder.progressText.setText(viewHolder.circleProgressBar.getProgress() + "%");
-            }
-        });
-
-        viewHolder.circleProgressBar.setMin(0);
-        viewHolder.circleProgressBar.setMax(100);
-        viewHolder.progressText.setText((int) viewHolder.circleProgressBar.getProgress() + "%");
 
         return view;
     }
@@ -148,10 +130,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
 
     private class ViewHolder {
         TextView titleTextView;
-        TextView memberTextView;
         ImageView reorderImage;
-        CircleProgressBar circleProgressBar;
-        TextView progressText;
     }
 
     public void reorder(int from, int to) {
@@ -181,22 +160,14 @@ public class TaskHeadsAdapter extends BaseAdapter {
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
         ImageView reorderImage = viewHolder.reorderImage;
-        reorderImage.setTranslationX(endPos);
-        reorderImage.animate().translationX(startPos);
+        reorderImage.setTranslationX(startPos);
+        reorderImage.animate().translationX(endPos);
         viewList.add(reorderImage);
-
-        CircleProgressBar circleProgressBar = viewHolder.circleProgressBar;
-        circleProgressBar.setTranslationX(startPos);
-        circleProgressBar.animate().translationX(endPos);
-        viewList.add(circleProgressBar);
-
-        TextView progressText = viewHolder.progressText;
-        progressText.setTranslationX(startPos);
-        progressText.animate().translationX(endPos);
-        viewList.add(progressText);
 
         for (View animatedView : viewList) {
             animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
         }
+
+
     }
 }
