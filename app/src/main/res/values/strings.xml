@@ -75,7 +75,6 @@
     <string name="item_selected">selected</string>
     <string name="friend_title">Friends</string>
     <string name="complete">Complete</string>
-    <string name="addfriend_fail_msg_400">Fail to request friending</string>
-    <string name="addfriend_fail_msg_onfailure">called onFailure()</string>
+    <string name="addfriend_fail_msg_onfailure">Fail to request friending</string>
 
 </resources>

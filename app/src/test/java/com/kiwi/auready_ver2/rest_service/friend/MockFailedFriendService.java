@@ -10,7 +10,7 @@ import okhttp3.MediaType;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.http.Body;
+import retrofit2.http.Path;
 import retrofit2.mock.BehaviorDelegate;
 import retrofit2.mock.Calls;
 
@@ -41,8 +41,7 @@ public class MockFailedFriendService implements IFriendService {
     }
 
     @Override
-    public Call<List<SearchedUser>> getUsers(@Body String emailOrName) {
-
+    public Call<List<SearchedUser>> getUsers(@Path("search") String emailOrName) {
         ErrorResponse error = new ErrorResponse(ERROR_CODE, ERROR_FINDPEOPLE_MSG);
         Gson gson = new Gson();
         String json = gson.toJson(error);
@@ -51,12 +50,12 @@ public class MockFailedFriendService implements IFriendService {
     }
 
     @Override
-    public Call<Void> addFriend(@Body SearchedUser user) {
+    public Call<Void> addFriend(@Path("name") String name) {
 
         ErrorResponse error = new ErrorResponse(ERROR_CODE, ERROR_ADDFRIEND_MSG);
         Gson gson = new Gson();
         String json = gson.toJson(error);
         Response response = Response.error(ERROR_CODE, ResponseBody.create(MediaType.parse("application/json"), json));
-        return delegate.returning(Calls.response(response)).addFriend(user);
+        return delegate.returning(Calls.response(response)).addFriend(name);
     }
 }
