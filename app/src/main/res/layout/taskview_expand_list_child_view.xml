@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     android:animateLayoutChanges="true"
     android:background="@color/tasks_child_item_background"
-    android:elevation="1dp"
     android:minHeight="@dimen/tasksview_child_item_height"
     android:orientation="horizontal">
 
@@ -25,8 +24,7 @@
         style="@style/listview_sub_textview_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="@dimen/list_item_padding"
-        android:layout_marginStart="@dimen/list_item_padding"
+        android:layout_marginEnd="@dimen/tasks_listview_delete_btn_width"
         android:layout_toRightOf="@id/checkbox"
         android:gravity="start"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium">

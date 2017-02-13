@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -183,7 +185,7 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
             viewHolder.addTaskBtn.setVisibility(View.VISIBLE);
             viewHolder.addTaskBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
+                public void onClick(final View view) {
                     mTaskItemListener.onAddTaskClick(getMemberId(memberPosition), "empty : " + taskPosition, getChildrenCount(memberPosition) - 1);
 
                     new Handler().postDelayed(new Runnable() {
@@ -197,6 +199,10 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
                             mCurrentSelectedGroupViewPosition = memberPosition;
                             mCurrentSelectedChildViewPosition = taskPosition;
                             mCurrentSelectedChildViewHolder.taskDescription.requestFocus();
+
+                            InputMethodManager keyboard =
+                                    (InputMethodManager) view.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                            keyboard.showSoftInput(mCurrentSelectedChildViewHolder.taskDescription, 0);
                         }
                     }, 100);
 
@@ -217,12 +223,12 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
 
         // hold views button position
         if (taskPosition == mCurrentSelectedChildViewPosition && memberPosition == mCurrentSelectedGroupViewPosition) {
-            viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_end_trans_x));
-            viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_end_trans_x));
+//            viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_end_trans_x));
+//            viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_end_trans_x));
             viewHolder.deleteTaskBtn.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_delete_btn_end_trans_x));
         } else {
-            viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_start_trans_x));
-            viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_start_trans_x));
+//            viewHolder.taskDescription.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_description_start_trans_x));
+//            viewHolder.checkBox.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_checkbox_start_trans_x));
             viewHolder.deleteTaskBtn.setTranslationX(view.getResources().getDimensionPixelSize(R.dimen.tasks_delete_btn_start_trans_x));
         }
 
@@ -238,8 +244,10 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
         viewHolder.taskDescription.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
-                EditText editText = ((EditText) view);
-                editText.setCursorVisible(hasFocus);
+
+//                EditText editText = ((EditText) view);
+//                Log.d("MY_LOG", "focus change : " + editText.getText() + ", hasFocus : " + hasFocus);
+//                editText.setCursorVisible(hasFocus);
                 if (!hasFocus) {
                     if (mCurrentSelectedChildViewHolder != null) {
                         mCurrentSelectedChildViewHolder.taskDescription.clearFocus();
@@ -249,11 +257,13 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
                 }
 
                 // place cursor at the end of text in edittext
-                editText.setSelection(editText.getText().length());
+//                editText.setSelection(editText.getText().length());
 
                 mCurrentSelectedChildViewHolder = viewHolder;
                 mCurrentSelectedGroupViewPosition = memberPosition;
                 mCurrentSelectedChildViewPosition = taskPosition;
+
+                Log.d("MY_LOG", "after focus change : " + mCurrentSelectedChildViewHolder.taskDescription.getText() + ", hasFocus : " + hasFocus);
 
                 clickTaskDescriptionAnimation(true);
             }
@@ -270,34 +280,39 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
                 }
 
                 if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_ENTER) {
-                    Log.d("MY_LOG", "task : " + taskPosition + ", task count : " + getChildrenCount(memberPosition));
 
-                    // check whether childview is add button
-                    if (getChildrenCount(memberPosition) == taskPosition + 2) {
-                        View view = getRealChildView(memberPosition, taskPosition + 2, true, null, null);
-                        ChildViewHolder childViewHolder = (ChildViewHolder) view.getTag();
-                        childViewHolder.addTaskBtn.performClick();
-                        return true;
-                    }
+                    mTaskItemListener.onEnterKeyClicked(memberPosition, taskPosition);
 
-                    View view = getRealChildView(memberPosition, taskPosition + 1, false, null, null);
-                    final ChildViewHolder childViewHolder = (ChildViewHolder) view.getTag();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (mCurrentSelectedChildViewHolder != null) {
-                                mCurrentSelectedChildViewHolder.taskDescription.clearFocus();
-                            }
 
-                            mCurrentSelectedChildViewHolder = childViewHolder;
-                            mCurrentSelectedGroupViewPosition = memberPosition;
-                            mCurrentSelectedChildViewPosition = taskPosition + 1;
-                            mCurrentSelectedChildViewHolder.taskDescription.requestFocus();
-                        }
-                    }, 100);
-
-                    notifyDataSetChanged();
-                    return true;
+//                    // check whether childview is add button
+//                    if (getChildrenCount(memberPosition) == taskPosition + 2) {
+//                        View view = getRealChildView(memberPosition, taskPosition + 2, true, null, null);
+//                        ChildViewHolder childViewHolder = (ChildViewHolder) view.getTag();
+//                        mCurrentSelectedChildViewHolder.taskDescription.clearFocus();
+//                        childViewHolder.addTaskBtn.performClick();
+//                        return true;
+//                    }
+//
+//                    View view = getRealChildView(memberPosition, taskPosition + 1, false, null, null);
+//                    final ChildViewHolder childViewHolder = (ChildViewHolder) view.getTag();
+//                    new Handler().postDelayed(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            if (mCurrentSelectedChildViewHolder != null) {
+//                                mCurrentSelectedChildViewHolder.taskDescription.clearFocus();
+//                            }
+//
+//                            mCurrentSelectedChildViewHolder = childViewHolder;
+////                            mCurrentSelectedGroupViewPosition = memberPosition;
+////                            mCurrentSelectedChildViewPosition = taskPosition + 1;
+//                            mCurrentSelectedChildViewHolder.taskDescription.requestFocus();
+//
+//                            Log.d("MY_LOG", "selected : " + mCurrentSelectedChildViewHolder.taskDescription.getText());
+//                        }
+//                    }, 100);
+//
+//                    notifyDataSetChanged();
+//                    return true;
                 }
 
                 return false;
@@ -414,7 +429,7 @@ public class TasksAdapter extends AnimatedExpandableListView.AnimatedExpandableL
 
     private void clickTaskDescriptionAnimation(boolean isClick) {
         startDeleteButtonAnimation(isClick);
-        startCheckBoxAnimation(isClick);
+//        startCheckBoxAnimation(isClick);
     }
 
     private void startCheckBoxAnimation(boolean isHidingCheckbox) {
