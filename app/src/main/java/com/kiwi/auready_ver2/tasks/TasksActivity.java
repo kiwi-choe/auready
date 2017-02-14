@@ -129,7 +129,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         @Override
         public void CreateViewCompleted(String memberId) {
-            mPresenter.getTasks(memberId);
+            mPresenter.getTasksOfMember(memberId);
         }
     };
 

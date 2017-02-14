@@ -70,7 +70,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void start() {
         if (mTaskHeadId != null) {
             populateMembers();
-            getTasksOfTaskHead(mTaskHeadId);
         }
     }
 
@@ -110,7 +109,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void getTasksOfTaskHead(@NonNull String taskHeadId) {
+    public void getTasksOfTaskHead(@NonNull final String taskHeadId) {
         checkNotNull(taskHeadId);
         mUseCaseHandler.execute(mGetTasksOfTaskHead, new GetTasksOfTaskHead.RequestValues(taskHeadId),
                 new UseCase.UseCaseCallback<GetTasksOfTaskHead.ResponseValue>() {
@@ -119,13 +118,13 @@ public class TasksPresenter implements TasksContract.Presenter {
                         if(response.getTasks().size() != 0) {
                             mTasksView.showTasks(response.getTasks());
                         } else {
-                            mTasksView.showNoTasks();
+                            mTasksView.showNoTasks(taskHeadId);
                         }
                     }
 
                     @Override
                     public void onError() {
-                        mTasksView.showNoTasks();
+                        mTasksView.showNoTasks(taskHeadId);
                     }
                 });
     }
