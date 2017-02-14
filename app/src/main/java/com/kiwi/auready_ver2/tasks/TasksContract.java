@@ -30,7 +30,7 @@ class TasksContract {
 
         void showTasks(String memberId, List<Task> tasks);
 
-        void showNoTasks();
+        void showNoTasks(String memberId);
 
         void scrollToAddButton();
     }

@@ -99,7 +99,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onError() {
-                        mTasksView.showNoTasks();
+                        mTasksView.showNoTasks(memberId);
                     }
                 });
     }
@@ -126,7 +126,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void result(int requestCode, int resultCode, Intent data) {
-        if (TasksFragment.REQ_EDIT_TASKHEAD == requestCode && Activity.RESULT_OK == resultCode) {
+        if (TasksActivity.REQ_EDIT_TASKHEAD == requestCode && Activity.RESULT_OK == resultCode) {
             if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TITLE)) {
                 String title = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TITLE);
                 mTasksView.setTitle(title);
@@ -143,7 +143,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTasks.ResponseValue response) {
-                        
+
                     }
 
                     @Override

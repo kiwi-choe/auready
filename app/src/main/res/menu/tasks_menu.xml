@@ -3,15 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/menu1"
-        android:title="@string/menu_title"
-        app:showAsAction="ifRoom|withText" />
-    <item
-        android:id="@+id/menu2"
-        android:title="@string/menu_title"
-        app:showAsAction="ifRoom|withText" />
-    <item
-        android:id="@+id/menu3"
-        android:title="@string/menu_title"
+        android:id="@+id/edit_menu"
+        android:title="@string/edit_task"
         app:showAsAction="ifRoom|withText" />
 </menu>

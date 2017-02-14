@@ -214,6 +214,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         Intent intent = new Intent(getContext(), TasksActivity.class);
         intent.putExtra(TasksActivity.ARG_TASKHEAD_ID, taskHeadId);
         intent.putExtra(TasksActivity.ARG_TITLE, title);
+
         startActivity(intent);
     }
 

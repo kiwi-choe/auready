@@ -1,17 +1,39 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.util.ActivityUtils;
+import com.kiwi.auready_ver2.data.Member;
+import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
-public class TasksActivity extends AppCompatActivity {
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+public class TasksActivity extends AppCompatActivity implements TasksContract.View {
 
     public static final String ARG_TASKHEAD_ID = "TASKHEAD_ID";
     public static final String ARG_TITLE = "TITLE";
+    public static final int REQ_EDIT_TASKHEAD = 0;
+
+    // tasks fragment view pager
+    private ViewPager mViewPager;
+    private TasksFragmentPagerAdapter mPagerAdapter;
+
+    private String mTaskHeadId;
+
+    private TasksPresenter mPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,38 +44,123 @@ public class TasksActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
         setSupportActionBar(toolbar);
 
-        TasksFragment tasksFragment = (TasksFragment) getSupportFragmentManager().findFragmentById(R.id.content_frame);
-
-        String taskHeadId = null;
-        String title = null;
-        if (tasksFragment == null) {
-            tasksFragment = TasksFragment.newInstance();
-
-            if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
-                taskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
-            }
-            if(getIntent().hasExtra(ARG_TITLE)) {
-                title = getIntent().getStringExtra(ARG_TITLE);
-            }
-            Bundle bundle = new Bundle();
-            bundle.putString(ARG_TASKHEAD_ID, taskHeadId);
-            bundle.putString(ARG_TITLE, title);
-            tasksFragment.setArguments(bundle);
-
-            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(), tasksFragment,
-                    R.id.content_frame, TasksFragment.TAG_TASKSFRAGMENT);
+        // set Title
+        if (getIntent().hasExtra(ARG_TITLE)) {
+            String title = getIntent().getStringExtra(ARG_TITLE);
+            setTitle(title);
         }
 
         // Create the presenter
-        TasksPresenter presenter = new TasksPresenter(
+        String mTaskHeadId = null;
+        if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
+            mTaskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
+        }
+
+        mPresenter = new TasksPresenter(
                 Injection.provideUseCaseHandler(),
-                taskHeadId,
-                tasksFragment,
+                mTaskHeadId,
+                this,
                 Injection.provideGetMembers(getApplicationContext()),
                 Injection.provideGetTasks(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode, resultCode, data);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.tasks_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.edit_menu:
+                showTaskHeadDetail();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showTaskHeadDetail() {
+        Intent intent = new Intent(this, TaskHeadDetailActivity.class);
+        intent.putExtra(TaskHeadDetailActivity.ARG_TASKHEAD_ID, mTaskHeadId);
+        startActivityForResult(intent, REQ_EDIT_TASKHEAD);
+    }
+
+    @Override
+    public void setTitle(String titleOfTaskHead) {
+        if (this.getSupportActionBar() != null) {
+            this.getSupportActionBar().setTitle(titleOfTaskHead);
+        }
+    }
+
+    @Override
+    public void showMembers(List<Member> members) {
+        initFragments(members);
+    }
+
+    private void initFragments(List<Member> members) {
+        mViewPager = (ViewPager) findViewById(R.id.tasks_fragment_pager);
+        mPagerAdapter = new TasksFragmentPagerAdapter(getSupportFragmentManager(), members, mTaskViewListener);
+        mViewPager.setAdapter(mPagerAdapter);
+    }
+
+    interface TaskViewListener {
+        void CreateViewCompleted(String memberId);
+    }
+
+    private TaskViewListener mTaskViewListener = new TaskViewListener() {
+
+        @Override
+        public void CreateViewCompleted(String memberId) {
+            mPresenter.getTasks(memberId);
+        }
+    };
+
+    @Override
+    public void showTasks(List<Task> tasks) {
+
+    }
+
+    @Override
+    public void showTasks(String memberId, List<Task> tasks) {
+        Log.d("MY_LOG", "showTasks");
+
+        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+        fragment.showTasks(tasks);
+    }
+
+    @Override
+    public void showNoTasks(String memberId) {
+        Log.d("MY_LOG", "showNoTasks");
+
+        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+        fragment.showNoTasks();
+    }
+
+    @Override
+    public void scrollToAddButton() {
+
+    }
+
+    @Override
+    public void setPresenter(TasksContract.Presenter presenter) {
+        mPresenter = (TasksPresenter) checkNotNull(presenter);
     }
 }
 

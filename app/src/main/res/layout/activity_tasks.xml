@@ -24,15 +24,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
-                android:minHeight="?attr/actionBarSize"
-                android:gravity="start"/>
+                android:gravity="start"
+                android:minHeight="?attr/actionBarSize" />
         </android.support.design.widget.AppBarLayout>
 
         <!-- fragments -->
-        <FrameLayout
-            android:id="@+id/content_frame"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/tasks_fragment_pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </RelativeLayout>
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
