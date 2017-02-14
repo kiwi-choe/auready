@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/tasksview_group_item_height"
-    android:background="@color/tasks_group_item_background">
+    android:background="@color/tasks_listview_background">
 
     <View
         android:id="@+id/divider"

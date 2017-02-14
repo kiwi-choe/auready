@@ -16,7 +16,7 @@
     <dimen name="listview_item_reorder_icon_size">24dp</dimen>
     <dimen name="tasks_listview_delete_btn_width">60dp</dimen>
     <dimen name="title_textview_textsize">20sp</dimen>
-    <dimen name="listview_padding_to_make_card_view">10dp</dimen>
+    <dimen name="listview_padding_to_make_card_view">20dp</dimen>
 
     <dimen name="task_head_circle_progress">40dp</dimen>
     <dimen name="task_head_title_end_margin">55dp</dimen>

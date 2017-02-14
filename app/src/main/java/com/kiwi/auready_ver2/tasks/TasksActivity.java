@@ -16,6 +16,7 @@ import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -122,14 +123,39 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     }
 
     interface TaskViewListener {
-        void CreateViewCompleted(String memberId);
+        void onCreateViewCompleted(String memberId);
+
+        void onTaskAddButtonClicked(Task task);
+
+        void onTaskDeleteButtonClicked(String taskId);
+
+        void onEditedTask(Task task);
     }
 
     private TaskViewListener mTaskViewListener = new TaskViewListener() {
 
         @Override
-        public void CreateViewCompleted(String memberId) {
+        public void onCreateViewCompleted(String memberId) {
             mPresenter.getTasksOfMember(memberId);
+        }
+
+        @Override
+        public void onTaskAddButtonClicked(Task task) {
+            mPresenter.createTask(task.getMemberId(), task.getDescription(), task.getOrder());
+        }
+
+        @Override
+        public void onTaskDeleteButtonClicked(String taskId) {
+            ArrayList<String> deleteTask = new ArrayList<>();
+            deleteTask.add(taskId);
+            mPresenter.deleteTasks(deleteTask);
+        }
+
+        @Override
+        public void onEditedTask(Task task) {
+            ArrayList<Task> edittedTask = new ArrayList<>();
+            edittedTask.add(task);
+            mPresenter.editTasks(edittedTask);
         }
     };
 
@@ -140,16 +166,12 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showTasks(String memberId, List<Task> tasks) {
-        Log.d("MY_LOG", "showTasks");
-
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         fragment.showTasks(tasks);
     }
 
     @Override
     public void showNoTasks(String memberId) {
-        Log.d("MY_LOG", "showNoTasks");
-
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         fragment.showNoTasks();
     }

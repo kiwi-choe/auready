@@ -36,8 +36,6 @@
     </style>
 
     <style name="listview_sub_textview_style">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:gravity">center_vertical|start</item>
         <item name="android:textSize">@dimen/listview_item_sub_textview_textsize</item>
@@ -64,11 +62,8 @@
     <style name="add_button_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@color/tasks_child_item_background</item>
         <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:gravity">start|center_vertical</item>
         <item name="android:paddingStart">@dimen/listview_item_start_end_margin</item>
-        <item name="android:textColor">@color/dark_background</item>
         <item name="android:textSize">20sp</item>
     </style>
 

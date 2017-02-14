@@ -3,25 +3,49 @@
     android:layout_height="match_parent"
     android:background="@color/tasksview_background_color"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/listview_padding_to_make_card_view"
-    android:paddingStart="@dimen/listview_padding_to_make_card_view">
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:paddingStart="@dimen/activity_horizontal_margin">
 
-    <TextView
-        android:id="@+id/member_name"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_gravity="center" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/task_header_view_background"
+        android:elevation="5dp"
+        android:minHeight="50dp"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingStart="@dimen/activity_horizontal_margin">
 
-    <ListView
-        android:id="@+id/tasks_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/member_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/listview_text_title"
+            android:textSize="20dp" />
 
-    <TextView
-        android:id="@+id/no_task_textview"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="sans-serif"
+            android:text="AU Ready?"
+            android:textColor="#511381"
+            android:textSize="15dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:text="NO TASK"
-        android:textSize="50dp" />
+        android:layout_height="wrap_content">
+
+        <com.kiwi.auready_ver2.util.view.DragSortListView
+            android:id="@+id/tasks_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/task_header_view_background" />
+
+    </RelativeLayout>
 </LinearLayout>

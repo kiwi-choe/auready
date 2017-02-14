@@ -16,8 +16,12 @@
     <color name="taskhead_list_drag_shadow_view">#88ffffff</color>
 
     <!--tasksView-->
-    <color name="tasksview_background_color">#e4e4e4</color>
-    <color name="tasks_group_item_background">@color/taskhead_list_item_background_color</color>
+    <color name="tasksview_background_color">#e700ff8c</color>
+    <color name="tasksview_list_header_view">#cacaca</color>
+    <color name="tasks_listview_background">#bababa</color>
+    <color name="tasks_item_background">#fafafa</color>
+
+
     <color name="tasks_child_item_background">#fafafa</color>
 
     <color name="icon_gray">#8affffff</color>
