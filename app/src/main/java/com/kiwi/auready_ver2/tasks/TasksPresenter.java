@@ -11,7 +11,8 @@ import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import java.util.LinkedList;
@@ -35,27 +36,30 @@ public class TasksPresenter implements TasksContract.Presenter {
     * */
     public LinkedList<Task> mTaskList;
     private final GetMembers mGetMembers;
-    private final GetTasks mGetTasks;
+    private final GetTasksOfMember mGetTasksOfMember;
     private final SaveTask mSaveTask;
     private final DeleteTasks mDeleteTasks;
     private final EditTasks mEditTasks;
+    private final GetTasksOfTaskHead mGetTasksOfTaskHead;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           String taskHeadId,
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetMembers getMembers,
-                          @NonNull GetTasks getTasks,
+                          @NonNull GetTasksOfMember getTasksOfMember,
                           @NonNull SaveTask saveTask,
                           @NonNull DeleteTasks deleteTasks,
-                          @NonNull EditTasks editTasks) {
+                          @NonNull EditTasks editTasks,
+                          @NonNull GetTasksOfTaskHead getTasksOfTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = taskHeadId;
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetMembers = checkNotNull(getMembers);
-        mGetTasks = checkNotNull(getTasks);
+        mGetTasksOfMember = checkNotNull(getTasksOfMember);
         mSaveTask = checkNotNull(saveTask);
         mDeleteTasks = checkNotNull(deleteTasks);
         mEditTasks = checkNotNull(editTasks);
+        mGetTasksOfTaskHead = checkNotNull(getTasksOfTaskHead);
 
         mTasksView.setPresenter(this);
         // init mTaskList
@@ -66,6 +70,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void start() {
         if (mTaskHeadId != null) {
             populateMembers();
+            getTasksOfTaskHead(mTaskHeadId);
         }
     }
 
@@ -87,19 +92,40 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void getTasks(@NonNull final String memberId) {
+    public void getTasksOfMember(@NonNull final String memberId) {
         checkNotNull(memberId);
 
-        mUseCaseHandler.execute(mGetTasks, new GetTasks.RequestValues(memberId),
-                new UseCase.UseCaseCallback<GetTasks.ResponseValue>() {
+        mUseCaseHandler.execute(mGetTasksOfMember, new GetTasksOfMember.RequestValues(memberId),
+                new UseCase.UseCaseCallback<GetTasksOfMember.ResponseValue>() {
                     @Override
-                    public void onSuccess(GetTasks.ResponseValue response) {
+                    public void onSuccess(GetTasksOfMember.ResponseValue response) {
                         mTasksView.showTasks(memberId, response.getTasks());
                     }
 
                     @Override
                     public void onError() {
                         mTasksView.showNoTasks(memberId);
+                    }
+                });
+    }
+
+    @Override
+    public void getTasksOfTaskHead(@NonNull String taskHeadId) {
+        checkNotNull(taskHeadId);
+        mUseCaseHandler.execute(mGetTasksOfTaskHead, new GetTasksOfTaskHead.RequestValues(taskHeadId),
+                new UseCase.UseCaseCallback<GetTasksOfTaskHead.ResponseValue>() {
+                    @Override
+                    public void onSuccess(GetTasksOfTaskHead.ResponseValue response) {
+                        if(response.getTasks().size() != 0) {
+                            mTasksView.showTasks(response.getTasks());
+                        } else {
+                            mTasksView.showNoTasks();
+                        }
+                    }
+
+                    @Override
+                    public void onError() {
+                        mTasksView.showNoTasks();
                     }
                 });
     }
@@ -112,7 +138,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-                        getTasks(memberId);
+                        getTasksOfMember(memberId);
                         mTasksView.scrollToAddButton();
                     }
 

@@ -118,4 +118,10 @@ public class Task {
     public boolean isEmpty() {
         return (mDescription == null || "".equals(mDescription));
     }
+
+    @Override
+    public String toString() {
+        return "id: " + mId + " memberId: " + mMemberId +
+                " description: " + mDescription + " completed: " + mCompleted + " order: " + mOrder;
+    }
 }

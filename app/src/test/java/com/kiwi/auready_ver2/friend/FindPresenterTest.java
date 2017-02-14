@@ -8,6 +8,7 @@ import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
+import com.kiwi.auready_ver2.rest_service.friend.MockSuccessFriendService;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.List;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -45,10 +48,11 @@ public class FindPresenterTest {
 
     private FindPresenter givenFindPresenter() {
 
+        String accessToken = "stubbedAccessToken";
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         SaveFriend saveFriend = new SaveFriend(mFriendRepository);
 
-        return new FindPresenter(useCaseHandler, mFindView, saveFriend);
+        return new FindPresenter(accessToken, useCaseHandler, mFindView, saveFriend);
     }
 
     // for Testing
@@ -62,23 +66,31 @@ public class FindPresenterTest {
     }
 
     @Test
-    public void findPeople() {
-        String emailOrName = "emailOrName";
-//        mFindPresenter.onFindPeopleSucceed()
+    public void findPeople_whenSucceed() {
+        List<SearchedUser> searchedUsers = MockSuccessFriendService.SEARCHED_PEOPLE;
+        mFindPresenter.onFindPeopleSucceed(searchedUsers);
 
+        verify(mFindView).showSearchedPeople(searchedUsers);
+    }
+
+    @Test
+    public void findPeople_whenFail() {
+        mFindPresenter.onFindPeopleFail();
+
+        verify(mFindView).showNoSearchedPeople();
     }
 
     @Test
     public void addFriend_whenSucceed() {
-        SearchedUser user = new SearchedUser("email", SearchedUser.NO_STATUS);
-        mFindPresenter.onAddFriendSucceed(user);
+        SearchedUser user = new SearchedUser("username!", SearchedUser.NO_STATUS);
+        mFindPresenter.onAddFriendSucceed(user.getName());
         
         // Update view
-        verify(mFindView).setAddFriendSucceedUI(user);
+        verify(mFindView).setAddFriendSucceedUI(user.getName());
     }
     @Test
     public void addFriend_whenFail() {
-        int stringResource = R.string.addfriend_fail_msg_400;
+        int stringResource = R.string.addfriend_fail_msg_onfailure;
         mFindPresenter.onAddFriendFail(stringResource);
 
         // Update view

@@ -61,10 +61,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 mTaskHeadId,
                 this,
                 Injection.provideGetMembers(getApplicationContext()),
-                Injection.provideGetTasks(getApplicationContext()),
+                Injection.provideGetTasksOfMember(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTasks(getApplicationContext()),
-                Injection.provideEditTasks(getApplicationContext()));
+                Injection.provideEditTasks(getApplicationContext()),
+                Injection.provideGetTasksOfTaskHead(getApplicationContext()));
     }
 
     @Override

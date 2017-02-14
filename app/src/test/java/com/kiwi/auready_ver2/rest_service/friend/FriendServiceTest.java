@@ -114,8 +114,7 @@ public class FriendServiceTest {
         IFriendService mockFriendService = createMockSuccessService();
 
         // Actual test
-        String emailOrName = "stubbedEmailOrName";
-        Call<List<SearchedUser>> call = mockFriendService.getUsers(emailOrName);
+        Call<List<SearchedUser>> call = mockFriendService.getUsers("emailOrName!!");
         Response<List<SearchedUser>> response = call.execute();
 
         assertTrue(response.isSuccessful());
@@ -128,8 +127,7 @@ public class FriendServiceTest {
         IFriendService mockFriendService = createMockFailedService();
 
         // Actual test
-        String emailOrName = "stubbedEmailOrName";
-        Call<List<SearchedUser>> call = mockFriendService.getUsers(emailOrName);
+        Call<List<SearchedUser>> call = mockFriendService.getUsers("emailOrName!!");
         Response<List<SearchedUser>> response = call.execute();
 
         assertFalse(response.isSuccessful());
@@ -143,8 +141,8 @@ public class FriendServiceTest {
     public void addFriend_Success() throws IOException {
         IFriendService mockFriendService = createMockSuccessService();
 
-        SearchedUser user = new SearchedUser("name", 0);
-        Call<Void> call = mockFriendService.addFriend(user);
+        String name = "other username";
+        Call<Void> call = mockFriendService.addFriend(name);
         Response<Void> response = call.execute();
 
         assertTrue(response.isSuccessful());
@@ -154,8 +152,8 @@ public class FriendServiceTest {
     public void addFriend_Failure() throws IOException {
         IFriendService mockFriendService = createMockFailedService();
 
-        SearchedUser user = new SearchedUser("name", 0);
-        Call<Void> call = mockFriendService.addFriend(user);
+        String name = "other username";
+        Call<Void> call = mockFriendService.addFriend(name);
         Response<Void> response = call.execute();
 
         assertFalse(response.isSuccessful());

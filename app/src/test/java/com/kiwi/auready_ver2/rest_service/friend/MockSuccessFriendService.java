@@ -6,7 +6,7 @@ import com.kiwi.auready_ver2.data.SearchedUser;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
+import retrofit2.http.Path;
 import retrofit2.mock.BehaviorDelegate;
 
 import static com.kiwi.auready_ver2.StubbedData.FriendStub.FRIENDS;
@@ -33,12 +33,12 @@ public class MockSuccessFriendService implements IFriendService {
     }
 
     @Override
-    public Call<List<SearchedUser>> getUsers(@Body String emailOrName) {
+    public Call<List<SearchedUser>> getUsers(@Path("search") String emailOrName) {
         return delegate.returningResponse(SEARCHED_PEOPLE).getUsers(emailOrName);
     }
 
     @Override
-    public Call<Void> addFriend(@Body SearchedUser user) {
-        return delegate.returningResponse(null).addFriend(user);
+    public Call<Void> addFriend(@Path("name") String name) {
+        return delegate.returningResponse(null).addFriend(name);
     }
 }

@@ -14,19 +14,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Fetches the list of tasks by memberId.
  */
-public class GetTasks extends UseCase<GetTasks.RequestValues, GetTasks.ResponseValue> {
+public class GetTasksOfMember extends UseCase<GetTasksOfMember.RequestValues, GetTasksOfMember.ResponseValue> {
 
 
     private final TaskRepository mTaskRepository;
 
-    public GetTasks(@NonNull TaskRepository taskRepository) {
+    public GetTasksOfMember(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(final RequestValues values) {
 
-        mTaskRepository.getTasks(values.getMemberId(), new TaskDataSource.LoadTasksCallback() {
+        mTaskRepository.getTasksOfMember(values.getMemberId(), new TaskDataSource.LoadTasksCallback() {
 
             @Override
             public void onTasksLoaded(List<Task> tasks) {

@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 public class FindActivity extends AppCompatActivity {
@@ -22,8 +23,13 @@ public class FindActivity extends AppCompatActivity {
                     getSupportFragmentManager(), findFragment, R.id.content_frame, FindFragment.TAG_FINDFRAG);
         }
 
+        // Create Singleton AccessTokenStore
+        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
+        String accessToken = accessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+
         // Create Presenter
         FindPresenter presenter = new FindPresenter(
+                accessToken,
                 Injection.provideUseCaseHandler(),
                 findFragment,
                 Injection.provideSaveFriend(getApplicationContext()));

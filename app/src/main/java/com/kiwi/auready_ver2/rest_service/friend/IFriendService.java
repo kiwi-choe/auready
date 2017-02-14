@@ -5,9 +5,9 @@ import com.kiwi.auready_ver2.data.SearchedUser;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 
 /**
  * Friend service
@@ -17,9 +17,9 @@ public interface IFriendService {
     @GET("/friend")
     Call<FriendsResponse> getFriends();
 
-    @GET("/user")
-    Call<List<SearchedUser>> getUsers(@Body String emailOrName);
+    @GET("/user/{search}")
+    Call<List<SearchedUser>> getUsers(@Path("search") String emailOrName);
 
-    @POST("/friending")
-    Call<Void> addFriend(@Body SearchedUser user);
+    @POST("/relationship/{name}")
+    Call<Void> addFriend(@Path("name") String name);
 }

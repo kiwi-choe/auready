@@ -16,7 +16,7 @@ public interface FindContract {
 
         void setPresenter(@NonNull Presenter presenter);
 
-        void setAddFriendSucceedUI(@NonNull SearchedUser user);
+        void setAddFriendSucceedUI(@NonNull String name);
 
         void showSearchedPeople(List<SearchedUser> searchedPeople);
 
@@ -32,11 +32,15 @@ public interface FindContract {
 
         void findPeople(@NonNull String emailOrName);
 
-        void addFriend(@NonNull SearchedUser user);
+        void addFriend(@NonNull String name);
 
-        void onAddFriendSucceed(SearchedUser user);
+        void onAddFriendSucceed(@NonNull String name);
 
         void onAddFriendFail(int stringResource);
+
+        void onFindPeopleSucceed(@NonNull List<SearchedUser> searchedUsers);
+
+        void onFindPeopleFail();
     }
 
 }
