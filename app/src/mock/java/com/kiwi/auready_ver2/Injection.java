@@ -22,7 +22,8 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -100,8 +101,8 @@ public class Injection {
         return new GetMembers(Injection.provideTaskRepository(context));
     }
 
-    public static GetTasks provideGetTasks(@NonNull Context context) {
-        return new GetTasks(Injection.provideTaskRepository(context));
+    public static GetTasksOfMember provideGetTasksOfMember(@NonNull Context context) {
+        return new GetTasksOfMember(Injection.provideTaskRepository(context));
     }
 
     public static SaveTask provideSaveTask(@NonNull Context context) {
@@ -114,5 +115,9 @@ public class Injection {
 
     public static EditTasks provideEditTasks(@NonNull Context context) {
         return new EditTasks(Injection.provideTaskRepository(context));
+    }
+
+    public static GetTasksOfTaskHead provideGetTasksOfTaskHead(@NonNull Context context) {
+        return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
     }
 }

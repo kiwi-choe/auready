@@ -90,7 +90,7 @@ public class TaskLocalDataSourceTest {
 
         // Get the saved tasks by memberId
         String memberId = TASKS.get(0).getMemberId();
-        mLocalDataSource.getTasks(memberId, new TaskDataSource.LoadTasksCallback() {
+        mLocalDataSource.getTasksOfMember(memberId, new TaskDataSource.LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
                 assertNotNull(tasks);
@@ -128,7 +128,7 @@ public class TaskLocalDataSourceTest {
 
         TaskDataSource.LoadTasksCallback loadTasksCallback = Mockito.mock(TaskDataSource.LoadTasksCallback.class);
         String memberId = TASKS.get(0).getMemberId();
-        mLocalDataSource.getTasks(memberId, loadTasksCallback);
+        mLocalDataSource.getTasksOfMember(memberId, loadTasksCallback);
         verify(loadTasksCallback).onTasksLoaded(anyListOf(Task.class));
 
         deleteAll();
@@ -138,7 +138,7 @@ public class TaskLocalDataSourceTest {
     public void getTasksWithUnAvailableData_firesOnDataNotAvailable() {
         // without saving any tasks
         TaskDataSource.LoadTasksCallback loadTasksCallback = Mockito.mock(TaskDataSource.LoadTasksCallback.class);
-        mLocalDataSource.getTasks("stubbedMemberId", loadTasksCallback);
+        mLocalDataSource.getTasksOfMember("stubbedMemberId", loadTasksCallback);
         verify(loadTasksCallback, never()).onTasksLoaded(anyListOf(Task.class));
         verify(loadTasksCallback).onDataNotAvailable();
     }
@@ -156,7 +156,7 @@ public class TaskLocalDataSourceTest {
         mLocalDataSource.deleteTasks(deletingIds);
 
         // Retrieve tasks to verify that tasks are deleted
-        mLocalDataSource.getTasks(memberId, new TaskDataSource.LoadTasksCallback() {
+        mLocalDataSource.getTasksOfMember(memberId, new TaskDataSource.LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
                 assertTrue(tasks.size() == 1);
@@ -189,7 +189,7 @@ public class TaskLocalDataSourceTest {
         updatingTasks.add(updatingTask1);
         mLocalDataSource.editTasks(updatingTasks);
 
-        mLocalDataSource.getTasks(TASKS.get(0).getMemberId(), new TaskDataSource.LoadTasksCallback() {
+        mLocalDataSource.getTasksOfMember(TASKS.get(0).getMemberId(), new TaskDataSource.LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
                 assertNotNull(tasks);
@@ -258,6 +258,19 @@ public class TaskLocalDataSourceTest {
         deleteAll();
     }
 
+    @Test
+    public void getTasksOfTaskHead_checkResultValues() {
+        // Save 2 stubbedTasks
+        mLocalDataSource.saveTask(TASKS.get(0));
+        mLocalDataSource.saveTask(TASKS.get(1));
+
+        TaskDataSource.LoadTasksCallback loadTasksCallback = Mockito.mock(TaskDataSource.LoadTasksCallback.class);
+        String taskheadId = TASKHEAD.getId();
+        mLocalDataSource.getTasksOfTaskHead(taskheadId, loadTasksCallback);
+        verify(loadTasksCallback).onTasksLoaded(anyListOf(Task.class));
+
+        deleteAll();
+    }
     private void deleteAllTaskHeadDetails() {
         mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
     }

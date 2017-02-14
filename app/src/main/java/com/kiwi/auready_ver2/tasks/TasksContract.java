@@ -40,8 +40,9 @@ class TasksContract {
         void populateMembers();
 
         // Get tasks by memberId
-        void getTasks(@NonNull String memberId);
+        void getTasksOfMember(@NonNull String memberId);
         // Get tasks of all members
+        void getTasksOfTaskHead(@NonNull String taskHeadId);
 
 
         void createTask(@NonNull String memberId,

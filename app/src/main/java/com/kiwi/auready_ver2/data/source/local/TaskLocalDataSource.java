@@ -343,10 +343,10 @@ public class TaskLocalDataSource implements TaskDataSource {
                 members.add(member);
             }
         }
-        if(c!=null) {
+        if (c != null) {
             c.close();
         }
-        if(members.isEmpty()) {
+        if (members.isEmpty()) {
             callback.onDataNotAvailable();
         } else {
             callback.onMembersLoaded(members);
@@ -354,7 +354,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTasks(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
+    public void getTasksOfMember(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
 
         List<Task> tasks = new ArrayList<>();
 
@@ -375,10 +375,48 @@ public class TaskLocalDataSource implements TaskDataSource {
                 tasks.add(task);
             }
         }
-        if(c!=null) {
+        if (c != null) {
             c.close();
         }
-        if(tasks.isEmpty()) {
+        if (tasks.isEmpty()) {
+            callback.onDataNotAvailable();
+        } else {
+            callback.onTasksLoaded(tasks);
+        }
+    }
+
+    @Override
+    public void getTasksOfTaskHead(@NonNull String taskheadId, @NonNull LoadTasksCallback callback) {
+        List<Task> tasks = new ArrayList<>();
+
+        String query = String.format(
+                "SELECT * FROM %s " +
+                        "INNER JOIN %s ON %s.%s = %s.%s " +
+                        "INNER JOIN %s ON %s.%s = %s.%s " +
+                        "WHERE %s.%s = \'%s\'",
+                TaskEntry.TABLE_NAME,
+                MemberEntry.TABLE_NAME, MemberEntry.TABLE_NAME, MemberEntry.COLUMN_ID, TaskEntry.TABLE_NAME, TaskEntry.COLUMN_ID,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, MemberEntry.TABLE_NAME, MemberEntry.COLUMN_HEAD_ID_FK,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, taskheadId
+        );
+        Cursor c = mDbHelper.rawQuery(query, null);
+        if(c != null && c.getCount() > 0) {
+            while(c.moveToNext()) {
+                String id = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ID));
+                String memberId = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_MEMBER_ID_FK));
+                String description = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_DESCRIPTION));
+                boolean completed = (c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_COMPLETED)) > 0);
+                int order = c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ORDER));
+
+                Task task = new Task(id, memberId, description, completed, order);
+                Log.d("getTasksOfTaskHead", task.toString() + "\n");
+                tasks.add(task);
+            }
+        }
+        if (c != null) {
+            c.close();
+        }
+        if (tasks.isEmpty()) {
             callback.onDataNotAvailable();
         } else {
             callback.onTasksLoaded(tasks);
@@ -431,7 +469,7 @@ public class TaskLocalDataSource implements TaskDataSource {
             int numOfRows = 0;
 
             String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
-            for(Task task:tasks) {
+            for (Task task : tasks) {
                 ContentValues values = new ContentValues();
                 values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
                 values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
@@ -440,7 +478,7 @@ public class TaskLocalDataSource implements TaskDataSource {
                 numOfRows += db.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
             }
 
-            if(numOfRows == tasks.size()) {
+            if (numOfRows == tasks.size()) {
                 isSuccess = true;
                 db.setTransactionSuccessful();
             }

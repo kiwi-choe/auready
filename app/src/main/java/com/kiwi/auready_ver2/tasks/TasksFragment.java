@@ -1,17 +1,12 @@
 package com.kiwi.auready_ver2.tasks;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,12 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
@@ -33,8 +23,6 @@ import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.util.view.AnimatedExpandableListView;
 import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
 import com.kiwi.auready_ver2.util.view.ColorPickerSwatch;
-import com.kiwi.auready_ver2.util.view.ProgressDrawable;
-import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -193,7 +181,8 @@ public class TasksFragment extends Fragment implements TasksContract.View {
 
     @Override
     public void showMembers(List<Member> members) {
-
+        mTasksView.setVisibility(View.VISIBLE);
+        mTasksAdapter.replaceMemberList(members);
     }
 
     @Override

@@ -8,7 +8,8 @@ import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import org.junit.Before;
@@ -92,9 +93,9 @@ public class TasksPresenterTest {
 
         // Get tasks of selected member
         final String memberId = MEMBERS.get(0).getId();
-        mTasksPresenter.getTasks(memberId);
+        mTasksPresenter.getTasksOfMember(memberId);
 
-        verify(mTaskRepository).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        verify(mTaskRepository).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
         verify(mTasksView).showTasks(eq(memberId), eq(TASKS));
@@ -106,16 +107,23 @@ public class TasksPresenterTest {
 
         // Get tasks of selected member
         final String memberId = MEMBERS.get(0).getId();
-        mTasksPresenter.getTasks(memberId);
+        mTasksPresenter.getTasksOfMember(memberId);
 
-        verify(mTaskRepository).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        verify(mTaskRepository).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
         verify(mTasksView).showNoTasks();
     }
 
     @Test
-    public void getTasks_ofAllMembers() {
+    public void getTasks_ofTaskHead() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
+        // Get tasks by taskheadId
+        mTasksPresenter.getTasksOfTaskHead(TASKHEAD.getId());
+        verify(mTaskRepository).getTasksOfTaskHead(eq(TASKHEAD.getId()), mLoadTasksCallbackCaptor.capture());
+        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
+
+        verify(mTasksView).showTasks(eq(TASKS));
     }
 
     @Test
@@ -156,13 +164,14 @@ public class TasksPresenterTest {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetMembers getMembers = new GetMembers(mTaskRepository);
-        GetTasks getTasks = new GetTasks(mTaskRepository);
+        GetTasksOfMember getTasksOfMember = new GetTasksOfMember(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
         DeleteTasks deleteTasks = new DeleteTasks(mTaskRepository);
         EditTasks editTasks = new EditTasks(mTaskRepository);
+        GetTasksOfTaskHead getTasksOfTaskHead = new GetTasksOfTaskHead(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getMembers, getTasks, saveTask, deleteTasks, editTasks);
+                getMembers, getTasksOfMember, saveTask, deleteTasks, editTasks, getTasksOfTaskHead);
     }
 
 }

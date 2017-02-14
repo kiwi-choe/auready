@@ -339,9 +339,9 @@ public class TaskRepositoryTest {
     @Test
     public void getTasks_fromLocal() {
         String memberId = "stubbedMemberId";
-        mRepository.getTasks(memberId, mLoadTasksCallback);
+        mRepository.getTasksOfMember(memberId, mLoadTasksCallback);
 
-        verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        verify(mLocalDataSource).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
         assertThat(mRepository.mCachedTasks.size(), is(TASKS.size()));
@@ -350,10 +350,10 @@ public class TaskRepositoryTest {
     @Test
     public void getTasksWithLocalUnavailable_firesOnDataNotAvailable() {
         String memberId = "stubbedMemberId";
-        mRepository.getTasks(memberId, mLoadTasksCallback);
+        mRepository.getTasksOfMember(memberId, mLoadTasksCallback);
 
         // Local data source has no data available
-        verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        verify(mLocalDataSource).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
 
         verify(mLoadTasksCallback).onDataNotAvailable();
@@ -362,10 +362,10 @@ public class TaskRepositoryTest {
     @Test
     public void getTasksWithLocal_firesOnTaskLoaded() {
         String memberId = "stubbedMemberId";
-        mRepository.getTasks(memberId, mLoadTasksCallback);
+        mRepository.getTasksOfMember(memberId, mLoadTasksCallback);
 
         // Local data source has no data available
-        verify(mLocalDataSource).getTasks(eq(memberId), mLoadTasksCallbackCaptor.capture());
+        verify(mLocalDataSource).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
 
         verify(mLoadTasksCallback).onTasksLoaded(anyListOf(Task.class));

@@ -50,10 +50,11 @@ public class TasksActivity extends AppCompatActivity {
                 taskHeadId,
                 tasksFragment,
                 Injection.provideGetMembers(getApplicationContext()),
-                Injection.provideGetTasks(getApplicationContext()),
+                Injection.provideGetTasksOfMember(getApplicationContext()),
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTasks(getApplicationContext()),
-                Injection.provideEditTasks(getApplicationContext()));
+                Injection.provideEditTasks(getApplicationContext()),
+                Injection.provideGetTasksOfTaskHead(getApplicationContext()));
     }
 }
 
