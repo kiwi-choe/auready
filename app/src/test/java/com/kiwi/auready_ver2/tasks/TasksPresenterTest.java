@@ -25,6 +25,8 @@ import java.util.List;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
@@ -102,6 +104,25 @@ public class TasksPresenterTest {
     }
 
     @Test
+    public void filterCompletedTasks_AfterLoadingTasks_AndUpdateView() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+
+        // Given TASKS: 2 completed tasks, 1 uncompleted task
+        // Get tasks of selected member
+        final String memberId = MEMBERS.get(0).getId();
+        mTasksPresenter.getTasksOfMember(memberId);
+
+        // Filter completed tasks and others
+        List<Task> completed = new ArrayList<>();
+        List<Task> uncompleted = new ArrayList<>();
+        mTasksPresenter.filterTasks(TASKS, completed, uncompleted);
+        // Verify that filtering result
+        assertThat(completed.size(), is(2));
+        assertThat(uncompleted.size(), is(1));
+
+        verify(mTasksView).showFilteredTasks(completed, uncompleted);
+    }
+    @Test
     public void getTasksOfMember_whenTasksIsEmpty_showNoTasks() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
@@ -111,7 +132,7 @@ public class TasksPresenterTest {
 
         verify(mTaskRepository).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
-        verify(mTasksView).showNoTasks();
+        verify(mTasksView).showNoTasks(memberId);
     }
 
     @Test

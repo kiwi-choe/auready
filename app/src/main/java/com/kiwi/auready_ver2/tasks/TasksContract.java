@@ -33,6 +33,8 @@ class TasksContract {
         void showNoTasks(String memberId);
 
         void scrollToAddButton();
+
+        void showFilteredTasks(List<Task> completed, List<Task> uncompleted);
     }
 
     interface Presenter extends BasePresenter {
@@ -53,5 +55,7 @@ class TasksContract {
         void deleteTasks(@NonNull List<String> taskIds);
 
         void editTasks(@NonNull List<Task> tasks);
+
+        void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted);
     }
 }

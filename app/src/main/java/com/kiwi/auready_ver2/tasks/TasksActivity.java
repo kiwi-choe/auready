@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -178,6 +177,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void scrollToAddButton() {
+
+    }
+
+    @Override
+    public void showFilteredTasks(List<Task> completed, List<Task> uncompleted) {
 
     }
 

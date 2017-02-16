@@ -15,6 +15,7 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -98,7 +99,14 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<GetTasksOfMember.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
-                        mTasksView.showTasks(memberId, response.getTasks());
+                        if(response.getTasks().size() != 0) {
+                            List<Task> completed = new ArrayList<>();
+                            List<Task> uncompleted = new ArrayList<>();
+                            filterTasks(response.getTasks(), completed, uncompleted);
+                        } else {
+                            mTasksView.showNoTasks(memberId);
+                        }
+//                        mTasksView.showTasks(memberId, response.getTasks());
                     }
 
                     @Override
@@ -193,5 +201,17 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     }
                 });
+    }
+
+    @Override
+    public void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted) {
+        for(Task task:tasks) {
+            if(task.getCompleted()) {
+                completed.add(task);
+            } else {
+                uncompleted.add(task);
+            }
+        }
+        mTasksView.showFilteredTasks(completed, uncompleted);
     }
 }
