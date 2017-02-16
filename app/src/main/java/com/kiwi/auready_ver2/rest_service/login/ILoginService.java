@@ -10,9 +10,9 @@ import retrofit2.http.POST;
  */
 public interface ILoginService {
 
-    @POST("/oauth2/token")
+    @POST("/auth/token")
     Call<LoginResponse> login(@Body ClientCredential clientCredential);
 
-    @DELETE("/oauth2/token")
+    @DELETE("/auth/token")
     Call<Void> logout();
 }

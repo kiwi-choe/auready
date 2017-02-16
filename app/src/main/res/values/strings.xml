@@ -8,7 +8,7 @@
     <!-- Login Fragment -->
     <string name="login_button">LOGIN</string>
     <string name="logout_button">로그아웃</string>
-    <string name="fragment_login_bt_signup">아직 계정이 없으신가요?</string>
+    <string name="fragment_login_bt_signup">You have not an account yet?</string>
     <string name="login_hint_email">이메일</string>
     <string name="login_hint_password">비밀번호</string>
 

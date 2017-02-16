@@ -55,6 +55,7 @@ public class LoginMockAdapterTest {
         // Create the loginInfo stub
         String email = "email";
         ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_SECRET,
                 ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 email,
@@ -76,6 +77,7 @@ public class LoginMockAdapterTest {
         // Create the invalid loginInfo stub
         String email = "unregistered-email@gmail.com";
         ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_SECRET,
                 ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 email,
@@ -101,6 +103,7 @@ public class LoginMockAdapterTest {
         // Create the loginInfo stub
         String email = "validEmail@gmail.com";
         ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_SECRET,
                 ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 email,

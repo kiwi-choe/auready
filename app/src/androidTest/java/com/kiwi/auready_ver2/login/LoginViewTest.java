@@ -161,6 +161,7 @@ public class LoginViewTest {
 
         // Create the loginInfo stub
         ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_SECRET,
                 ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 loggedInEmail,
