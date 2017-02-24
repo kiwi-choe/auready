@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.tasks;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -126,9 +125,6 @@ public class TasksFragment extends Fragment {
     public void showTasks(List<Task> tasks) {
         mListview.setVisibility(View.VISIBLE);
         mTasksAdapter.updateTasks(tasks);
-    }
-
-    public void showNoTasks() {
     }
 
     interface TaskItemListener {

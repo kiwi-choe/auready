@@ -28,6 +28,7 @@ import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -78,15 +79,18 @@ public class TasksPresenterTest {
         mTasksPresenter.start();
 
         verify(mTaskRepository).getMembers(eq(TASKHEAD.getId()), mLoadMembersCallbackCaptor.capture());
+        mLoadMembersCallbackCaptor.getValue().onMembersLoaded(MEMBERS);
+        verify(mTasksView).showMembers(MEMBERS);
     }
 
     @Test
-    public void cannotGetMembers_withInvalidTaskHeadId_whenStartPresenter() {
+    public void cannotGetMembersAndView_withInvalidTaskHeadId_whenStartPresenter() {
         mTasksPresenter = givenTasksPresenter(null);
 
         mTasksPresenter.start();
 
         verify(mTaskRepository, never()).getMembers(anyString(), mLoadMembersCallbackCaptor.capture());
+        verify(mTasksView, never()).showMembers(anyList());
     }
 
     @Test
@@ -123,7 +127,7 @@ public class TasksPresenterTest {
         verify(mTasksView).showFilteredTasks(completed, uncompleted);
     }
     @Test
-    public void getTasksOfMember_whenTasksIsEmpty_showNoTasks() {
+    public void getTasksOfMember_whenTasksIsEmpty() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         // Get tasks of selected member
@@ -132,19 +136,6 @@ public class TasksPresenterTest {
 
         verify(mTaskRepository).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onDataNotAvailable();
-        verify(mTasksView).showNoTasks(memberId);
-    }
-
-    @Test
-    public void getTasks_ofTaskHead() {
-        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
-
-        // Get tasks by taskheadId
-        mTasksPresenter.getTasksOfTaskHead(TASKHEAD.getId());
-        verify(mTaskRepository).getTasksOfTaskHead(eq(TASKHEAD.getId()), mLoadTasksCallbackCaptor.capture());
-        mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
-
-        verify(mTasksView).showTasks(eq(TASKS));
     }
 
     @Test

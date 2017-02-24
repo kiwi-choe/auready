@@ -159,20 +159,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     };
 
     @Override
-    public void showTasks(List<Task> tasks) {
-
-    }
-
-    @Override
     public void showTasks(String memberId, List<Task> tasks) {
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         fragment.showTasks(tasks);
-    }
-
-    @Override
-    public void showNoTasks(String memberId) {
-        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
-        fragment.showNoTasks();
     }
 
     @Override

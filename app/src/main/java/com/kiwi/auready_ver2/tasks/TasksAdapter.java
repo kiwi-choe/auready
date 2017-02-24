@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,6 +145,7 @@ public class TasksAdapter extends BaseAdapter {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("test_addtaskbt", "entered getAddButton");
                 mTaskItemListener.OnAddTaskButtonClicked(position);
             }
         });

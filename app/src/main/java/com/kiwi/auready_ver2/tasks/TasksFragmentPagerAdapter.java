@@ -13,18 +13,18 @@ import java.util.List;
 public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     // key : Member ID, value : TasksFragment
-    private HashMap<String, TasksFragment> tasksFragments;
+    private HashMap<String, TasksFragment> mTasksFragments;
     List<Member> mMembers;
-    TasksActivity.TaskViewListener mTaskViewListner;
+    TasksActivity.TaskViewListener mTaskViewListener;
 
     public TasksFragmentPagerAdapter(FragmentManager fm, List<Member> members, TasksActivity.TaskViewListener taskViewListener) {
         super(fm);
         mMembers = members;
-        mTaskViewListner = taskViewListener;
+        mTaskViewListener = taskViewListener;
 
-        tasksFragments = new HashMap<>();
+        mTasksFragments = new HashMap<>();
         for (Member member : members) {
-            tasksFragments.put(member.getId(),
+            mTasksFragments.put(member.getId(),
                     TasksFragment.newInstance(
                             member.getId(),
                             member.getName(),
@@ -35,9 +35,9 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
     @Override
     public Fragment getItem(int position) {
         final String getMemberId = mMembers.get(position).getId();
-        mTaskViewListner.onCreateViewCompleted(getMemberId);
+        mTaskViewListener.onCreateViewCompleted(getMemberId);
 
-        return tasksFragments.get(getMemberId);
+        return mTasksFragments.get(getMemberId);
     }
 
     @Override
@@ -46,13 +46,12 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     public Fragment getItem(String memberId) {
-        return tasksFragments.get(memberId);
+        return mTasksFragments.get(memberId);
     }
 
     public List<Member> getMembers() {
         return mMembers;
     }
-
 
     interface TaskFragmentListener {
         void onAddTaskButtonClicked(Task task);
@@ -66,17 +65,17 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
         @Override
         public void onAddTaskButtonClicked(Task task) {
-            mTaskViewListner.onTaskAddButtonClicked(task);
+            mTaskViewListener.onTaskAddButtonClicked(task);
         }
 
         @Override
         public void onTaskDeleteButtonClicked(String taskId) {
-            mTaskViewListner.onTaskDeleteButtonClicked(taskId);
+            mTaskViewListener.onTaskDeleteButtonClicked(taskId);
         }
 
         @Override
         public void onEditedTask(Task task) {
-            mTaskViewListner.onEditedTask(task);
+            mTaskViewListener.onEditedTask(task);
         }
     };
 }

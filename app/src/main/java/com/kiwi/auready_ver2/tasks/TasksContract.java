@@ -26,11 +26,7 @@ class TasksContract {
         /*
         * Tasks
         * */
-        void showTasks(List<Task> tasks);
-
-        void showTasks(String memberId, List<Task> tasks);
-
-        void showNoTasks(String memberId);
+            void showTasks(String memberId, List<Task> tasks);
 
         void scrollToAddButton();
 
@@ -43,9 +39,6 @@ class TasksContract {
 
         // Get tasks by memberId
         void getTasksOfMember(@NonNull String memberId);
-        // Get tasks of all members
-        void getTasksOfTaskHead(@NonNull String taskHeadId);
-
 
         void createTask(@NonNull String memberId,
                         @NonNull String description, @NonNull int order);

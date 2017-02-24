@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -15,7 +16,6 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,7 +86,6 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onError() {
-
                     }
                 });
     }
@@ -100,39 +99,12 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
                         if(response.getTasks().size() != 0) {
-                            List<Task> completed = new ArrayList<>();
-                            List<Task> uncompleted = new ArrayList<>();
-                            filterTasks(response.getTasks(), completed, uncompleted);
-                        } else {
-                            mTasksView.showNoTasks(memberId);
-                        }
-//                        mTasksView.showTasks(memberId, response.getTasks());
-                    }
-
-                    @Override
-                    public void onError() {
-                        mTasksView.showNoTasks(memberId);
-                    }
-                });
-    }
-
-    @Override
-    public void getTasksOfTaskHead(@NonNull final String taskHeadId) {
-        checkNotNull(taskHeadId);
-        mUseCaseHandler.execute(mGetTasksOfTaskHead, new GetTasksOfTaskHead.RequestValues(taskHeadId),
-                new UseCase.UseCaseCallback<GetTasksOfTaskHead.ResponseValue>() {
-                    @Override
-                    public void onSuccess(GetTasksOfTaskHead.ResponseValue response) {
-                        if(response.getTasks().size() != 0) {
-                            mTasksView.showTasks(response.getTasks());
-                        } else {
-                            mTasksView.showNoTasks(taskHeadId);
+                            mTasksView.showTasks(memberId, response.getTasks());
                         }
                     }
 
                     @Override
                     public void onError() {
-                        mTasksView.showNoTasks(taskHeadId);
                     }
                 });
     }
@@ -145,6 +117,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
+                        Log.d("test_addtaskbt", "onSuccess createTask");
                         getTasksOfMember(memberId);
                         mTasksView.scrollToAddButton();
                     }
