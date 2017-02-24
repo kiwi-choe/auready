@@ -51,7 +51,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         }
 
         // Create the presenter
-        String mTaskHeadId = null;
+        mTaskHeadId = null;
         if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
             mTaskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
         }
@@ -152,9 +152,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         @Override
         public void onEditedTask(Task task) {
-            ArrayList<Task> edittedTask = new ArrayList<>();
-            edittedTask.add(task);
-            mPresenter.editTasks(edittedTask);
+            ArrayList<Task> editedTask = new ArrayList<>();
+            editedTask.add(task);
+            mPresenter.editTasks(editedTask);
         }
     };
 

@@ -18,6 +18,7 @@ class TasksContract {
     interface View extends BaseView<Presenter> {
 
         void setTitle(String titleOfTaskHead);
+
         /*
         * Member
         * */
@@ -26,7 +27,7 @@ class TasksContract {
         /*
         * Tasks
         * */
-            void showTasks(String memberId, List<Task> tasks);
+        void showTasks(String memberId, List<Task> tasks);
 
         void scrollToAddButton();
 
