@@ -35,6 +35,7 @@ class FriendsAdapter extends BaseAdapter {
 
     private void setList(List<Friend> friends) {
         mFriends = checkNotNull(friends);
+        mSearchedFriends.clear();
         mSearchedFriends.addAll(mFriends);
         mSelectedFriends = new boolean[friends.size()];
     }
