@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -117,7 +116,6 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-                        Log.d("test_addtaskbt", "onSuccess createTask");
                         getTasksOfMember(memberId);
                         mTasksView.scrollToAddButton();
                     }

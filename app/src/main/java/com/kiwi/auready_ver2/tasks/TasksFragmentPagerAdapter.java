@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.kiwi.auready_ver2.data.Member;
-import com.kiwi.auready_ver2.data.Task;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +27,7 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
                     TasksFragment.newInstance(
                             member.getId(),
                             member.getName(),
-                            mTaskFragmentListener));
+                            mTaskViewListener));
         }
     }
 
@@ -52,30 +51,4 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
     public List<Member> getMembers() {
         return mMembers;
     }
-
-    interface TaskFragmentListener {
-        void onAddTaskButtonClicked(Task task);
-
-        void onTaskDeleteButtonClicked(String taskId);
-
-        void onEditedTask(Task task);
-    }
-
-    private TaskFragmentListener mTaskFragmentListener = new TaskFragmentListener() {
-
-        @Override
-        public void onAddTaskButtonClicked(Task task) {
-            mTaskViewListener.onTaskAddButtonClicked(task);
-        }
-
-        @Override
-        public void onTaskDeleteButtonClicked(String taskId) {
-            mTaskViewListener.onTaskDeleteButtonClicked(taskId);
-        }
-
-        @Override
-        public void onEditedTask(Task task) {
-            mTaskViewListener.onEditedTask(task);
-        }
-    };
 }

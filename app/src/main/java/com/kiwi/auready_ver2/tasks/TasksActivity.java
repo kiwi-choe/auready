@@ -124,9 +124,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     interface TaskViewListener {
         void onCreateViewCompleted(String memberId);
 
-        void onTaskAddButtonClicked(Task task);
+        void onAddTaskButtonClicked(Task task);
 
-        void onTaskDeleteButtonClicked(String taskId);
+        void onDeleteTaskButtonClicked(String taskId);
 
         void onEditedTask(Task task);
     }
@@ -139,12 +139,12 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         }
 
         @Override
-        public void onTaskAddButtonClicked(Task task) {
+        public void onAddTaskButtonClicked(Task task) {
             mPresenter.createTask(task.getMemberId(), task.getDescription(), task.getOrder());
         }
 
         @Override
-        public void onTaskDeleteButtonClicked(String taskId) {
+        public void onDeleteTaskButtonClicked(String taskId) {
             ArrayList<String> deleteTask = new ArrayList<>();
             deleteTask.add(taskId);
             mPresenter.deleteTasks(deleteTask);

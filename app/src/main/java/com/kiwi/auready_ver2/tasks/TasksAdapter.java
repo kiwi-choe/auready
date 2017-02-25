@@ -109,7 +109,7 @@ public class TasksAdapter extends BaseAdapter {
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTaskItemListener.onTaskDeleteButtonClicked(task.getId());
+                mTaskItemListener.onDeleteTaskButtonClicked(task.getId());
             }
         });
 
@@ -146,7 +146,6 @@ public class TasksAdapter extends BaseAdapter {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("test_addtaskbt", "entered getAddButton");
                 mTaskItemListener.OnAddTaskButtonClicked(position);
             }
         });

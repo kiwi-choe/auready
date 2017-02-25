@@ -29,16 +29,16 @@ public class TasksFragment extends Fragment {
     private DragSortListView mListview;
     private TasksAdapter mTasksAdapter;
 
-    private static TasksFragmentPagerAdapter.TaskFragmentListener mTaskFragmentListener;
+    private static TasksActivity.TaskViewListener mTaskViewListener;
 
     public TasksFragment() {
         // Required empty public constructor
     }
 
     public static TasksFragment newInstance(String memberId, String memberName,
-                                            TasksFragmentPagerAdapter.TaskFragmentListener taskFragmentListener) {
+                                            TasksActivity.TaskViewListener taskViewListener) {
 
-        mTaskFragmentListener = taskFragmentListener;
+        mTaskViewListener = taskViewListener;
         TasksFragment fragment = new TasksFragment();
 
         Bundle bundle = new Bundle();
@@ -130,7 +130,7 @@ public class TasksFragment extends Fragment {
     interface TaskItemListener {
         void OnAddTaskButtonClicked(int position);
 
-        void onTaskDeleteButtonClicked(String taskId);
+        void onDeleteTaskButtonClicked(String taskId);
 
         void onEditedTask(String taskId, int order, boolean checked, String text);
     }
@@ -139,18 +139,18 @@ public class TasksFragment extends Fragment {
         @Override
         public void OnAddTaskButtonClicked(int position) {
             Task task = new Task(mMemberId, "new Item " + position, position);
-            mTaskFragmentListener.onAddTaskButtonClicked(task);
+            mTaskViewListener.onAddTaskButtonClicked(task);
         }
 
         @Override
-        public void onTaskDeleteButtonClicked(String taskId) {
-            mTaskFragmentListener.onTaskDeleteButtonClicked(taskId);
+        public void onDeleteTaskButtonClicked(String taskId) {
+            mTaskViewListener.onDeleteTaskButtonClicked(taskId);
         }
 
         @Override
         public void onEditedTask(String taskId, int order, boolean checked, String text) {
             Task task = new Task(taskId, mMemberId, text, checked, order);
-            mTaskFragmentListener.onEditedTask(task);
+            mTaskViewListener.onEditedTask(task);
         }
     };
 
