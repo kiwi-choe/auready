@@ -4,8 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/taskhead_background_color"
     android:orientation="vertical"
-    android:paddingEnd="@dimen/listview_padding_to_make_card_view"
-    android:paddingStart="@dimen/listview_padding_to_make_card_view"
     tools:context=".taskheads.TaskHeadsFragment">
 
     <com.kiwi.auready_ver2.util.view.DragSortListView
