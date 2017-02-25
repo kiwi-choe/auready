@@ -13,7 +13,6 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -91,12 +90,6 @@ class FriendsAdapter extends BaseAdapter {
                 }
             }
         });
-
-        if (mSelectedFriends[position]) {
-            viewHolder.friendCheckbox.setChecked(true);
-        } else {
-            viewHolder.friendCheckbox.setChecked(false);
-        }
 
         for (int i = 0; i < mFriends.size(); i++) {
             if (friend.getId().equals(mFriends.get(i).getId())) {
