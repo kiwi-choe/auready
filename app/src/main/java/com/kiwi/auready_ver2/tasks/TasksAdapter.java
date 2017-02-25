@@ -25,7 +25,7 @@ public class TasksAdapter extends BaseAdapter {
     private final static int SECTION_LIST_VIEW = 1;
 
     private LayoutInflater mInflater;
-    private ArrayList<Task> mTasksList = new ArrayList<>();
+    private ArrayList<Task> mTasks = new ArrayList<>();
     private TasksFragment.TaskItemListener mTaskItemListener;
 
     public TasksAdapter(Context context, TasksFragment.TaskItemListener taskItemListener) {
@@ -34,14 +34,14 @@ public class TasksAdapter extends BaseAdapter {
     }
 
     public void updateTasks(List<Task> tasks) {
-        mTasksList.clear();
-        mTasksList.addAll(tasks);
+        mTasks.clear();
+        mTasks.addAll(tasks);
 
         notifyDataSetChanged();
     }
 
     public int getAddButtonPosition() {
-        return mTasksList.size();
+        return mTasks.size();
     }
 
     @Override
@@ -56,7 +56,8 @@ public class TasksAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return mTasksList.size() + 1;
+        System.out.println(mTasks.size());
+        return mTasks.size() + 1;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class TasksAdapter extends BaseAdapter {
             return "Add button";
         }
 
-        return mTasksList.get(position);
+        return mTasks.get(position);
     }
 
     @Override
@@ -102,7 +103,7 @@ public class TasksAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final Task task = mTasksList.get(position);
+        final Task task = mTasks.get(position);
 
         viewHolder.deleteButton.setVisibility(View.GONE);
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -154,8 +155,8 @@ public class TasksAdapter extends BaseAdapter {
     }
 
     public void reorder(int from, int to) {
-        Task fromTask = mTasksList.remove(from);
-        mTasksList.add(to, fromTask);
+        Task fromTask = mTasks.remove(from);
+        mTasks.add(to, fromTask);
 
         notifyDataSetChanged();
     }

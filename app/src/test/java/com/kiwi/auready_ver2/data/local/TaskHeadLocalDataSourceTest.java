@@ -86,7 +86,7 @@ public class TaskHeadLocalDataSourceTest {
         // Save 3 taskHeads
         saveStubbedTaskHeads(TASKHEADS);
 
-        // Verify that returned taskHeadsCount is 2
+        // Verify that returned taskHeadsCount is 3
         int actualTaskHeadsCount = mTaskLocalDataSource.getTaskHeadsCount();
         assertThat(actualTaskHeadsCount, is(3));
 
