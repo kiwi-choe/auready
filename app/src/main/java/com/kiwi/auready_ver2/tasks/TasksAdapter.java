@@ -1,11 +1,13 @@
 package com.kiwi.auready_ver2.tasks;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -19,9 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TasksAdapter extends BaseAdapter {
-
-    private final static int SECTION_ADD_BUTTON = 0;
-    private final static int SECTION_LIST_VIEW = 1;
 
     private LayoutInflater mInflater;
     private ArrayList<Task> mTasksList = new ArrayList<>();
@@ -39,31 +38,17 @@ public class TasksAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public int getAddButtonPosition() {
-        return mTasksList.size();
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        int buttonPosition = getAddButtonPosition();
-        if (position == buttonPosition) {
-            return SECTION_ADD_BUTTON;
-        } else {
-            return SECTION_LIST_VIEW;
-        }
+    public List<Task> getItems() {
+        return mTasksList;
     }
 
     @Override
     public int getCount() {
-        return mTasksList.size() + 1;
+        return mTasksList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        if (position == getAddButtonPosition()) {
-            return "Add button";
-        }
-
         return mTasksList.get(position);
     }
 
@@ -78,36 +63,30 @@ public class TasksAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        final int type = getItemViewType(position);
-        if (type == SECTION_ADD_BUTTON) {
-            return getAddButton(position);
-        }
+    public View getView(final int position, View convertView, final ViewGroup parent) {
 
         final ViewHolder viewHolder;
         if (convertView == null || convertView.getTag() == null) {
-            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            convertView = inflater.inflate(R.layout.tasks_listview_item, parent, false);
+            convertView = mInflater.inflate(R.layout.tasks_listview_item, parent, false);
 
             viewHolder = new ViewHolder();
             viewHolder.reorderImage = (ImageView) convertView.findViewById(R.id.reorder_task);
             viewHolder.checkBox = (CheckBox) convertView.findViewById(R.id.task_checkbox);
             viewHolder.editText = (EditText) convertView.findViewById(R.id.task_edittext);
             viewHolder.deleteButton = (ImageButton) convertView.findViewById(R.id.task_delete_button);
-
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        viewHolder.ref = position;
         final Task task = mTasksList.get(position);
 
         viewHolder.deleteButton.setVisibility(View.GONE);
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTaskItemListener.onTaskDeleteButtonClicked(task.getId());
+                mTaskItemListener.onTaskDeleteButtonClicked(task.getMemberId(), task.getId());
             }
         });
 
@@ -122,33 +101,46 @@ public class TasksAdapter extends BaseAdapter {
             }
         });
 
+        viewHolder.editText.setText(task.getDescription());
+        viewHolder.editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mTasksList.get(viewHolder.ref).setDescription(s.toString());
+            }
+        });
+
+        viewHolder.checkBox.setChecked(task.isCompleted());
+        viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CheckBox checkBox = (CheckBox) v;
+
+                task.setCompleted(checkBox.isChecked());
+                mTaskItemListener.onEditedTask(
+                        position,
+                        checkBox.isChecked());
+            }
+        });
+
+
         viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                viewHolder.checkBox.setChecked(isChecked);
-                mTaskItemListener.onEditedTask(task.getId(),
-                        task.getOrder(),
-                        viewHolder.checkBox.isChecked(),
-                        viewHolder.editText.getText().toString());
+
             }
         });
-
-        viewHolder.editText.setText(task.getDescription());
 
         return convertView;
-    }
-
-    private View getAddButton(final int position) {
-        View view = mInflater.inflate(R.layout.task_add_button, null);
-        Button addButton = (Button) view.findViewById(R.id.add_task_btn);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mTaskItemListener.OnAddTaskButtonClicked(position);
-            }
-        });
-
-        return view;
     }
 
     public void reorder(int from, int to) {
@@ -163,5 +155,7 @@ public class TasksAdapter extends BaseAdapter {
         CheckBox checkBox;
         EditText editText;
         ImageButton deleteButton;
+
+        int ref;
     }
 }

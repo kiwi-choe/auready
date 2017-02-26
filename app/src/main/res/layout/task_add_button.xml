@@ -3,11 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/task_header_view_background"
+    android:descendantFocusability="blocksDescendants"
     android:orientation="vertical">
 
     <Button
         android:id="@+id/add_task_btn"
         style="@style/add_button_style"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/lsitview_item_height"
         android:background="@null"
         android:text="+ Add Task" />
 </LinearLayout>

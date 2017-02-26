@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:splitview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/tasksview_background_color"
@@ -36,16 +37,54 @@
             android:textSize="15dp" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <com.kiwi.auready_ver2.util.view.SplitView
+        android:id="@+id/split_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:orientation="vertical"
+        splitview:handle="@+id/add_task_move_image"
+        splitview:primarycontent="@+id/tasks_listview"
+        splitview:secondarycontent="@+id/complete_tasks_listview">
 
         <com.kiwi.auready_ver2.util.view.DragSortListView
             android:id="@+id/tasks_listview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/task_header_view_background"
-            android:divider="@null"/>
+            android:divider="@null" />
 
-    </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/add_task_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/lsitview_item_height"
+            android:background="@drawable/task_header_view_background">
+
+            <TextView
+                android:id="@+id/add_task_btn"
+                style="@style/add_button_style"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:gravity="start"
+                android:text="+ Add Task" />
+
+            <ImageView
+                android:id="@+id/add_task_move_image"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:paddingEnd="@dimen/listview_item_start_end_margin"
+                android:src="@drawable/re_order_icon" />
+        </RelativeLayout>
+
+        <com.kiwi.auready_ver2.util.view.DragSortListView
+            android:id="@+id/complete_tasks_listview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/task_header_view_background"
+            android:divider="@null" />
+    </com.kiwi.auready_ver2.util.view.SplitView>
 </LinearLayout>

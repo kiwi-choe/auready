@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -160,7 +161,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void deleteTasks(@NonNull List<String> taskIds) {
+    public void deleteTasks(@NonNull final String memberId, @NonNull List<String> taskIds) {
         checkNotNull(taskIds);
 
         mUseCaseHandler.execute(mDeleteTasks, new DeleteTasks.RequestValues(taskIds),
@@ -168,7 +169,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTasks.ResponseValue response) {
-
+                        getTasksOfMember(memberId);
                     }
 
                     @Override
@@ -179,13 +180,14 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void editTasks(@NonNull List<Task> tasks) {
+    public void editTasks(@NonNull final String memberId, @NonNull List<Task> tasks) {
+
         mUseCaseHandler.execute(mEditTasks, new EditTasks.RequestValues(tasks),
                 new UseCase.UseCaseCallback<EditTasks.ResponseValue>() {
 
                     @Override
                     public void onSuccess(EditTasks.ResponseValue response) {
-
+//                        getTasksOfMember(memberId);
                     }
 
                     @Override

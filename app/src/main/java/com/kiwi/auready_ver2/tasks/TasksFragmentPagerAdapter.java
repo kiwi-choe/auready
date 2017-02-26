@@ -57,9 +57,9 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
     interface TaskFragmentListener {
         void onAddTaskButtonClicked(Task task);
 
-        void onTaskDeleteButtonClicked(String taskId);
+        void onTaskDeleteButtonClicked(String memberId, String taskId);
 
-        void onEditedTask(Task task);
+        void onEditedTask(String memberId, List<Task> tasks);
     }
 
     private TaskFragmentListener mTaskFragmentListener = new TaskFragmentListener() {
@@ -70,13 +70,13 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
         }
 
         @Override
-        public void onTaskDeleteButtonClicked(String taskId) {
-            mTaskViewListner.onTaskDeleteButtonClicked(taskId);
+        public void onTaskDeleteButtonClicked(String memberId, String taskId) {
+            mTaskViewListner.onTaskDeleteButtonClicked(memberId, taskId);
         }
 
         @Override
-        public void onEditedTask(Task task) {
-            mTaskViewListner.onEditedTask(task);
+        public void onEditedTask(String memberId, List<Task> tasks) {
+            mTaskViewListner.onEditedTask(memberId, tasks);
         }
     };
 }
