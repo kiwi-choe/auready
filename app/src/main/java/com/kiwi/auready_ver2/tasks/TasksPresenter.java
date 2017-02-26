@@ -86,7 +86,6 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onError() {
-
                     }
                 });
     }
@@ -99,33 +98,13 @@ public class TasksPresenter implements TasksContract.Presenter {
                 new UseCase.UseCaseCallback<GetTasksOfMember.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
-                        mTasksView.showTasks(memberId, response.getTasks());
-                    }
-
-                    @Override
-                    public void onError() {
-                        mTasksView.showNoTasks(memberId);
-                    }
-                });
-    }
-
-    @Override
-    public void getTasksOfTaskHead(@NonNull final String taskHeadId) {
-        checkNotNull(taskHeadId);
-        mUseCaseHandler.execute(mGetTasksOfTaskHead, new GetTasksOfTaskHead.RequestValues(taskHeadId),
-                new UseCase.UseCaseCallback<GetTasksOfTaskHead.ResponseValue>() {
-                    @Override
-                    public void onSuccess(GetTasksOfTaskHead.ResponseValue response) {
                         if(response.getTasks().size() != 0) {
-                            mTasksView.showTasks(response.getTasks());
-                        } else {
-                            mTasksView.showNoTasks(taskHeadId);
+                            mTasksView.showTasks(memberId, response.getTasks());
                         }
                     }
 
                     @Override
                     public void onError() {
-                        mTasksView.showNoTasks(taskHeadId);
                     }
                 });
     }
@@ -195,5 +174,17 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     }
                 });
+    }
+
+    @Override
+    public void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted) {
+        for(Task task:tasks) {
+            if(task.getCompleted()) {
+                completed.add(task);
+            } else {
+                uncompleted.add(task);
+            }
+        }
+        mTasksView.showFilteredTasks(completed, uncompleted);
     }
 }

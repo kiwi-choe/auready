@@ -90,6 +90,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                 ServiceGenerator.createService(ILoginService.class);
 
         ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_SECRET,
                 ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 email,

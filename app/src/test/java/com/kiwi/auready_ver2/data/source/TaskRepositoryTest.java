@@ -455,6 +455,13 @@ public class TaskRepositoryTest {
         assertThat(mRepository.mCachedMembers.size(), is(MEMBERS.size()));
     }
 
+    @Test
+    public void getTaskHeadsCount() {
+        List<TaskHeadDetail> taskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
+        int count = mRepository.getTaskHeadsCount();
+        assertThat(count, is(taskHeadDetails.size()));
+        assertThat(taskHeadDetails.size(), is(mRepository.mCachedTaskHeads.size()));
+    }
     /*
     * convenience methods
     * */

@@ -5,7 +5,6 @@ import android.support.test.espresso.core.deps.guava.collect.Lists;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
@@ -19,9 +18,10 @@ import java.util.List;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.kiwi.auready_ver2.StubbedData_forView.*;
+import static com.kiwi.auready_ver2.StubbedData_forView.MEMBERS;
+import static com.kiwi.auready_ver2.StubbedData_forView.TASKHEAD;
+import static com.kiwi.auready_ver2.StubbedData_forView.TASKS;
 
 /**
  * Tasks view test

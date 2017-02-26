@@ -1,9 +1,10 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
@@ -29,18 +30,16 @@ public class TasksFragment extends Fragment {
     private DragSortListView mNotCompleteListview;
     private DragSortListView mCompleteListview;
 
-    private boolean isFirstLaunch = true;
-
-    private static TasksFragmentPagerAdapter.TaskFragmentListener mTaskFragmentListener;
+    private static TasksActivity.TaskViewListener mTaskViewListener;
 
     public TasksFragment() {
         // Required empty public constructor
     }
 
     public static TasksFragment newInstance(String memberId, String memberName,
-                                            TasksFragmentPagerAdapter.TaskFragmentListener taskFragmentListener) {
+                                            TasksActivity.TaskViewListener taskViewListener) {
 
-        mTaskFragmentListener = taskFragmentListener;
+        mTaskViewListener = taskViewListener;
         TasksFragment fragment = new TasksFragment();
 
         Bundle bundle = new Bundle();
@@ -84,7 +83,7 @@ public class TasksFragment extends Fragment {
             public void onClick(View v) {
                 int position = mNotCompleteListview.getInputAdapter().getCount();
                 Task task = new Task(mMemberId, "new Item " + position, position);
-                mTaskFragmentListener.onAddTaskButtonClicked(task);
+                mTaskViewListener.onAddTaskButtonClicked(task);
             }
         });
 
@@ -141,7 +140,7 @@ public class TasksFragment extends Fragment {
         super.onPause();
 
         ArrayList<Task> tasks = (ArrayList<Task>) getAllTasks();
-        mTaskFragmentListener.onEditedTask(mMemberId, tasks);
+        mTaskViewListener.onEditedTask(mMemberId, tasks);
     }
 
     private List<Task> getAllTasks(){
@@ -172,8 +171,8 @@ public class TasksFragment extends Fragment {
 
         ((TasksAdapter) mNotCompleteListview.getInputAdapter()).updateTasks(notCompleteTasks);
         ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(completeTasks);
+        mNotCompleteListview.smoothScrollToPosition(mNotCompleteListview.getInputAdapter().getCount());
 
-        if (isFirstLaunch) {
 //            View splitView = getView().findViewById(R.id.split_view);
 //            splitView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
 //            int splitViewHeight = splitView.getMeasuredHeight();
@@ -181,9 +180,7 @@ public class TasksFragment extends Fragment {
 //            params.height = splitViewHeight;
 //            mNotCompleteListview.setLayoutParams(params);
 //            mNotCompleteListview.requestLayout();
-        }
 
-        mNotCompleteListview.smoothScrollToPosition(mNotCompleteListview.getInputAdapter().getCount());
 
 
 //        if(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview) - 100 < splitViewHeight){
@@ -209,8 +206,8 @@ public class TasksFragment extends Fragment {
         public void onTaskDeleteButtonClicked(String memberId, String taskId) {
             ArrayList<Task> tasks = (ArrayList<Task>) getAllTasks();
 
-            mTaskFragmentListener.onEditedTask(memberId, tasks);
-            mTaskFragmentListener.onTaskDeleteButtonClicked(memberId, taskId);
+            mTaskViewListener.onEditedTask(memberId, tasks);
+            mTaskViewListener.onDeleteTaskButtonClicked(memberId, taskId);
         }
 
         @Override

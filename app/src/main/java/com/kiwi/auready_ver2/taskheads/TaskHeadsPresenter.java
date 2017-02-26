@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.taskheads;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -72,14 +73,13 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     @Override
     public void addNewTaskHead() {
-        // Get count of taskheads
-        final int[] tmpArr = new int[1];
         mUseCaseHandler.execute(mGetTaskHeadCount, new GetTaskHeadsCount.RequestValues(),
                 new UseCase.UseCaseCallback<GetTaskHeadsCount.ResponseValue>() {
 
                     @Override
                     public void onSuccess(GetTaskHeadsCount.ResponseValue response) {
-                        tmpArr[0] = response.getTaskHeadsCount();
+                        int cntOfTaskHeads = response.getTaskHeadsCount();
+                        mTaskHeadView.showTaskHeadDetail(cntOfTaskHeads);
                     }
 
                     @Override
@@ -87,9 +87,6 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     }
                 });
-
-        int cntOfTaskHeads = tmpArr[0];
-        mTaskHeadView.showTaskHeadDetail(cntOfTaskHeads);
     }
 
     @Override

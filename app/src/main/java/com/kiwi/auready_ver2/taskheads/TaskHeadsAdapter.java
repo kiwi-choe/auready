@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.util.view.CircleProgressBar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -121,6 +120,9 @@ public class TaskHeadsAdapter extends BaseAdapter {
     }
 
     public List<TaskHead> getTaskHeads() {
+        for(int i = 0;i<mTaskHeads.size();i++) {
+            Log.d("test_reorder", mTaskHeads.get(i).getTitle() + ", order: " + mTaskHeads.get(i).getOrder());
+        }
         return mTaskHeads;
     }
 
@@ -136,6 +138,8 @@ public class TaskHeadsAdapter extends BaseAdapter {
     public void reorder(int from, int to) {
         TaskHead fromTaskHead = mTaskHeads.remove(from);
         mTaskHeads.add(to, fromTaskHead);
+
+        Log.d("test_reorder", "to: " + to + " from: " + from);
 
         notifyDataSetChanged();
     }

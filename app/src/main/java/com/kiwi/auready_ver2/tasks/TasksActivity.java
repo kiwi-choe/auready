@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -52,7 +51,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         }
 
         // Create the presenter
-        String mTaskHeadId = null;
+        mTaskHeadId = null;
         if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
             mTaskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
         }
@@ -125,9 +124,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     interface TaskViewListener {
         void onCreateViewCompleted(String memberId);
 
-        void onTaskAddButtonClicked(Task task);
+        void onAddTaskButtonClicked(Task task);
 
-        void onTaskDeleteButtonClicked(String memberId, String taskId);
+        void onDeleteTaskButtonClicked(String memberId, String taskId);
 
         void onEditedTask(String memberId, List<Task> tasks);
     }
@@ -140,12 +139,12 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         }
 
         @Override
-        public void onTaskAddButtonClicked(Task task) {
+        public void onAddTaskButtonClicked(Task task) {
             mPresenter.createTask(task.getMemberId(), task.getDescription(), task.getOrder());
         }
 
         @Override
-        public void onTaskDeleteButtonClicked(String memberId, String taskId) {
+        public void onDeleteTaskButtonClicked(String memberId, String taskId) {
             ArrayList<String> deleteTask = new ArrayList<>();
             deleteTask.add(taskId);
             mPresenter.deleteTasks(memberId, deleteTask);
@@ -160,24 +159,18 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     };
 
     @Override
-    public void showTasks(List<Task> tasks) {
-
-    }
-
-    @Override
     public void showTasks(String memberId, List<Task> tasks) {
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         fragment.showTasks(tasks);
     }
 
     @Override
-    public void showNoTasks(String memberId) {
-        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
-        fragment.showNoTasks();
+    public void scrollToAddButton() {
+
     }
 
     @Override
-    public void scrollToAddButton() {
+    public void showFilteredTasks(List<Task> completed, List<Task> uncompleted) {
 
     }
 

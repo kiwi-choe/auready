@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import java.util.List;
 public class TasksAdapter extends BaseAdapter {
 
     private LayoutInflater mInflater;
-    private ArrayList<Task> mTasksList = new ArrayList<>();
+    private ArrayList<Task> mTasks = new ArrayList<>();
     private TasksFragment.TaskItemListener mTaskItemListener;
 
     public TasksAdapter(Context context, TasksFragment.TaskItemListener taskItemListener) {
@@ -32,29 +31,24 @@ public class TasksAdapter extends BaseAdapter {
     }
 
     public void updateTasks(List<Task> tasks) {
-        mTasksList.clear();
-        mTasksList.addAll(tasks);
+        mTasks.clear();
+        mTasks.addAll(tasks);
 
         notifyDataSetChanged();
     }
 
     public List<Task> getItems() {
-        return mTasksList;
+        return mTasks;
     }
 
     @Override
     public int getCount() {
-        return mTasksList.size();
+        return mTasks.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return mTasksList.get(position);
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 2;
+        return mTasks.get(position);
     }
 
     @Override
@@ -80,7 +74,7 @@ public class TasksAdapter extends BaseAdapter {
         }
 
         viewHolder.ref = position;
-        final Task task = mTasksList.get(position);
+        final Task task = mTasks.get(position);
 
         viewHolder.deleteButton.setVisibility(View.GONE);
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +109,7 @@ public class TasksAdapter extends BaseAdapter {
 
             @Override
             public void afterTextChanged(Editable s) {
-                mTasksList.get(viewHolder.ref).setDescription(s.toString());
+                mTasks.get(viewHolder.ref).setDescription(s.toString());
             }
         });
 
@@ -144,8 +138,8 @@ public class TasksAdapter extends BaseAdapter {
     }
 
     public void reorder(int from, int to) {
-        Task fromTask = mTasksList.remove(from);
-        mTasksList.add(to, fromTask);
+        Task fromTask = mTasks.remove(from);
+        mTasks.add(to, fromTask);
 
         notifyDataSetChanged();
     }

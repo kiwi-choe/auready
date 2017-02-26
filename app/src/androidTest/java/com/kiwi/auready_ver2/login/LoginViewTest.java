@@ -90,9 +90,17 @@ public class LoginViewTest {
         };
     }
 
-//    /*
-//    * Login Button
-//    * */
+    /*
+    * Login Button
+    * */
+    @Test
+    public void clickLoginButton() {
+        // Launch Activity
+        Intent intent = new Intent();
+        mLoginActivityTestRule.launchActivity(intent);
+
+        clickLoginWith("kiwi@kiwi.kiwi", "123");
+    }
 //    @Test
 //    public void showEmailFormatError_whenClickLoginButton() {
 //        // Try to login with wrong email
@@ -161,6 +169,7 @@ public class LoginViewTest {
 
         // Create the loginInfo stub
         ClientCredential newCredentials = new ClientCredential(
+                ClientCredential.CLIENT_SECRET,
                 ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 loggedInEmail,

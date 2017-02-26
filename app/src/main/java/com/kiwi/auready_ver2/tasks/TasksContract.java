@@ -18,6 +18,7 @@ class TasksContract {
     interface View extends BaseView<Presenter> {
 
         void setTitle(String titleOfTaskHead);
+
         /*
         * Member
         * */
@@ -26,13 +27,11 @@ class TasksContract {
         /*
         * Tasks
         * */
-        void showTasks(List<Task> tasks);
-
         void showTasks(String memberId, List<Task> tasks);
 
-        void showNoTasks(String memberId);
-
         void scrollToAddButton();
+
+        void showFilteredTasks(List<Task> completed, List<Task> uncompleted);
     }
 
     interface Presenter extends BasePresenter {
@@ -41,9 +40,6 @@ class TasksContract {
 
         // Get tasks by memberId
         void getTasksOfMember(@NonNull String memberId);
-        // Get tasks of all members
-        void getTasksOfTaskHead(@NonNull String taskHeadId);
-
 
         void createTask(@NonNull String memberId,
                         @NonNull String description, @NonNull int order);
@@ -53,5 +49,7 @@ class TasksContract {
         void deleteTasks(@NonNull final String memberId, @NonNull List<String> taskIds);
 
         void editTasks(@NonNull final String memberId, @NonNull List<Task> tasks);
+
+        void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted);
     }
 }
