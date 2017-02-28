@@ -15,6 +15,7 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.util.view.DragSortController;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TasksFragment extends Fragment {
@@ -26,8 +27,8 @@ public class TasksFragment extends Fragment {
     private String mMemberId;
     private String mMemberName;
 
-    private DragSortListView mListview;
-    private TasksAdapter mTasksAdapter;
+    private DragSortListView mNotCompleteListview;
+    private DragSortListView mCompleteListview;
 
     private static TasksActivity.TaskViewListener mTaskViewListener;
 
@@ -64,57 +65,69 @@ public class TasksFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
 
-        setListView(root);
+        // set listview
+        mNotCompleteListview = (DragSortListView) root.findViewById(R.id.tasks_listview);
+        setListView(mNotCompleteListview);
+
+        mCompleteListview = (DragSortListView) root.findViewById(R.id.complete_tasks_listview);
+        setListView(mCompleteListview);
 
         // add header view
         TextView memberText = (TextView) root.findViewById(R.id.member_name);
         memberText.setText(mMemberName);
 
+        // set add button
+        View view = root.findViewById(R.id.add_task_button_layout);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = mNotCompleteListview.getInputAdapter().getCount();
+                Task task = new Task(mMemberId, "new Item " + position, position);
+                mTaskViewListener.onAddTaskButtonClicked(task);
+            }
+        });
+
         setHasOptionsMenu(true);
         return root;
     }
 
-    private void setListView(View root) {
+    private void setListView(final DragSortListView listView) {
         // Set ListView
-        mListview = (DragSortListView) root.findViewById(R.id.tasks_listview);
-        mListview.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-
-        mTasksAdapter = new TasksAdapter(getContext(), mTaskItemListener);
-        mListview.setAdapter(mTasksAdapter);
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        TasksAdapter tasksAdapter = new TasksAdapter(getContext(), mTaskItemListener);
+        listView.setAdapter(tasksAdapter);
 
         // for drag and drop
-        mListview.setFloatViewManager(mController);
-        mListview.setOnTouchListener(mController);
-        mListview.setDragEnabled(true);
+        DragSortController controller = buildController(listView);
+        listView.setFloatViewManager(controller);
+        listView.setOnTouchListener(controller);
+        listView.setDragEnabled(true);
 
-        mController = buildController(mListview);
-        mListview.setFloatViewManager(mController);
-        mListview.setOnTouchListener(mController);
-        mListview.setDragEnabled(true);
-        mListview.setDropListener(mDropListener);
+        listView.setFloatViewManager(controller);
+        listView.setOnTouchListener(controller);
+        listView.setDragEnabled(true);
+        listView.setDropListener(new DragSortListView.DragSortListener() {
+            @Override
+            public void drag(int from, int to) {
+
+            }
+
+            @Override
+            public void drop(int from, int to) {
+                TasksAdapter tasksAdapter = (TasksAdapter) listView.getInputAdapter();
+                tasksAdapter.reorder(from, to);
+//                mPresenter.updateOrders(mTaskHeadsAdapter.getTaskHeads());
+            }
+
+            @Override
+            public void remove(int which) {
+
+            }
+        });
     }
 
-    private DragSortListView.DropListener mDropListener =
-            new DragSortListView.DragSortListener() {
-                @Override
-                public void drag(int from, int to) {
-                }
-
-                @Override
-                public void drop(int from, int to) {
-                    mTasksAdapter.reorder(from, to);
-//                    mPresenter.updateOrders(mTaskHeadsAdapter.getTaskHeads());
-                }
-
-                @Override
-                public void remove(int which) {
-                }
-            };
-
-    private DragSortController mController;
-
     private DragSortController buildController(DragSortListView list) {
-        DragSortController controller = new SectionController(list, mTasksAdapter);
+        DragSortController controller = new DragSortController(list);
         controller.setDragHandleId(R.id.reorder_task);
         controller.setSortEnabled(true);
         controller.setDragInitMode(DragSortController.ON_DOWN);
@@ -122,128 +135,103 @@ public class TasksFragment extends Fragment {
         return controller;
     }
 
-    public void showTasks(List<Task> tasks) {
-        mListview.setVisibility(View.VISIBLE);
-        mTasksAdapter.updateTasks(tasks);
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ArrayList<Task> tasks = (ArrayList<Task>) getAllTasks();
+        mTaskViewListener.onEditedTask(mMemberId, tasks);
     }
 
-    interface TaskItemListener {
-        void OnAddTaskButtonClicked(int position);
+    private List<Task> getAllTasks(){
 
-        void onDeleteTaskButtonClicked(String taskId);
+        ArrayList<Task> tasks = new ArrayList<>();
 
-        void onEditedTask(String taskId, int order, boolean checked, String text);
+        TasksAdapter notCompleteAdapter = (TasksAdapter) mNotCompleteListview.getInputAdapter();
+        tasks.addAll(notCompleteAdapter.getItems());
+
+        TasksAdapter completeAdapter = (TasksAdapter) mCompleteListview.getInputAdapter();
+        tasks.addAll(completeAdapter.getItems());
+
+        return tasks;
+    }
+
+    public void showTasks(List<Task> tasks) {
+
+        ArrayList<Task> completeTasks = new ArrayList<>();
+        ArrayList<Task> notCompleteTasks = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.isCompleted()) {
+                completeTasks.add(task);
+            } else {
+                notCompleteTasks.add(task);
+            }
+        }
+
+        ((TasksAdapter) mNotCompleteListview.getInputAdapter()).updateTasks(notCompleteTasks);
+        ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(completeTasks);
+        mNotCompleteListview.smoothScrollToPosition(mNotCompleteListview.getInputAdapter().getCount());
+
+//            View splitView = getView().findViewById(R.id.split_view);
+//            splitView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+//            int splitViewHeight = splitView.getMeasuredHeight();
+//            ViewGroup.LayoutParams params = mNotCompleteListview.getLayoutParams();
+//            params.height = splitViewHeight;
+//            mNotCompleteListview.setLayoutParams(params);
+//            mNotCompleteListview.requestLayout();
+
+
+
+//        if(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview) - 100 < splitViewHeight){
+//            ViewGroup.LayoutParams params = mNotCompleteListview.getLayoutParams();
+//            params.height = ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview);
+//            mNotCompleteListview.setLayoutParams(params);
+//            mNotCompleteListview.requestLayout();
+//        }
+    }
+
+    public void showNoTasks() {
+
+    }
+
+    public interface TaskItemListener {
+        void onTaskDeleteButtonClicked(String memberId, String taskId);
+
+        void onEditedTask(int position, boolean checked);
     }
 
     private TaskItemListener mTaskItemListener = new TaskItemListener() {
         @Override
-        public void OnAddTaskButtonClicked(int position) {
-            Task task = new Task(mMemberId, "new Item " + position, position);
-            mTaskViewListener.onAddTaskButtonClicked(task);
+        public void onTaskDeleteButtonClicked(String memberId, String taskId) {
+            ArrayList<Task> tasks = (ArrayList<Task>) getAllTasks();
+
+            mTaskViewListener.onEditedTask(memberId, tasks);
+            mTaskViewListener.onDeleteTaskButtonClicked(memberId, taskId);
         }
 
         @Override
-        public void onDeleteTaskButtonClicked(String taskId) {
-            mTaskViewListener.onDeleteTaskButtonClicked(taskId);
-        }
+        public void onEditedTask(int position, boolean checked) {
 
-        @Override
-        public void onEditedTask(String taskId, int order, boolean checked, String text) {
-            Task task = new Task(taskId, mMemberId, text, checked, order);
-            mTaskViewListener.onEditedTask(task);
+            TasksAdapter notCompleteAdapter = (TasksAdapter) mNotCompleteListview.getInputAdapter();
+            ArrayList<Task> notCompleteTasks = new ArrayList<>();
+            notCompleteTasks.addAll(notCompleteAdapter.getItems());
+
+            TasksAdapter completeAdapter = (TasksAdapter) mCompleteListview.getInputAdapter();
+            ArrayList<Task> completeTasks = new ArrayList<>();
+            completeTasks.addAll(completeAdapter.getItems());
+
+            if (checked) {
+                Task removedTask = notCompleteTasks.remove(position);
+                completeTasks.add(removedTask);
+            } else {
+                Task removedTask = completeTasks.remove(position);
+                notCompleteTasks.add(removedTask);
+            }
+
+            notCompleteAdapter.updateTasks(notCompleteTasks);
+            completeAdapter.updateTasks(completeTasks);
         }
     };
-
-    private class SectionController extends DragSortController {
-
-        private int mPos;
-
-        private TasksAdapter mAdapter;
-
-        DragSortListView mDslv;
-
-        public SectionController(DragSortListView dslv, TasksAdapter adapter) {
-            super(dslv, R.id.text, DragSortController.ON_DOWN, 0);
-            setRemoveEnabled(false);
-            mDslv = dslv;
-            mAdapter = adapter;
-        }
-
-        @Override
-        public int startDragPosition(MotionEvent ev) {
-            int res = super.dragHandleHitPosition(ev);
-            if (res == mAdapter.getAddButtonPosition()) {
-                return DragSortController.MISS;
-            }
-
-            int width = mDslv.getWidth();
-
-            if ((int) ev.getX() < width / 3) {
-                return res;
-            } else {
-                return DragSortController.MISS;
-            }
-        }
-
-        @Override
-        public View onCreateFloatView(int position) {
-            mPos = position;
-
-            View v = mAdapter.getView(position, null, mDslv);
-//            if (position < mDivPos) {
-//                v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section1));
-//            } else {
-//                v.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_handle_section2));
-//            }
-            v.getBackground().setLevel(10000);
-            return v;
-        }
-
-        private int origHeight = -1;
-
-        @Override
-        public void onDragFloatView(View floatView, Point floatPoint, Point touchPoint) {
-            final int first = mDslv.getFirstVisiblePosition();
-            final int lvDivHeight = mDslv.getDividerHeight();
-
-            if (origHeight == -1) {
-                origHeight = floatView.getHeight();
-            }
-
-            View div = mDslv.getChildAt(mAdapter.getAddButtonPosition() - first);
-
-            if (touchPoint.x > mDslv.getWidth() / 2) {
-                float scale = touchPoint.x - mDslv.getWidth() / 2;
-                scale /= (float) (mDslv.getWidth() / 5);
-                ViewGroup.LayoutParams lp = floatView.getLayoutParams();
-                lp.height = Math.max(origHeight, (int) (scale * origHeight));
-                floatView.setLayoutParams(lp);
-            }
-
-            if (div != null) {
-                if (mPos > mAdapter.getAddButtonPosition()) {
-                    // don't allow floating View to go above
-                    // section divider
-                    final int limit = div.getBottom() + lvDivHeight;
-                    if (floatPoint.y < limit) {
-                        floatPoint.y = limit;
-                    }
-                } else {
-                    // don't allow floating View to go below
-                    // section divider
-                    final int limit = div.getTop() - lvDivHeight - floatView.getHeight();
-                    if (floatPoint.y > limit) {
-                        floatPoint.y = limit;
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onDestroyFloatView(View floatView) {
-            //do nothing; block super from crashing
-        }
-
-    }
 }
 

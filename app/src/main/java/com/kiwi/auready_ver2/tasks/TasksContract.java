@@ -46,9 +46,9 @@ class TasksContract {
 
         void result(int requestCode, int resultCode, Intent data);
 
-        void deleteTasks(@NonNull List<String> taskIds);
+        void deleteTasks(@NonNull final String memberId, @NonNull List<String> taskIds);
 
-        void editTasks(@NonNull List<Task> tasks);
+        void editTasks(@NonNull final String memberId, @NonNull List<Task> tasks);
 
         void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted);
     }

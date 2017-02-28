@@ -124,4 +124,12 @@ public class Task {
         return "id: " + mId + " memberId: " + mMemberId +
                 " description: " + mDescription + " completed: " + mCompleted + " order: " + mOrder;
     }
+
+    public void setCompleted(boolean completed) {
+        mCompleted = completed;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
 }
