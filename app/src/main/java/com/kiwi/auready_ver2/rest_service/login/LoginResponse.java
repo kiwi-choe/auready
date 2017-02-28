@@ -3,34 +3,35 @@ package com.kiwi.auready_ver2.rest_service.login;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by kiwi on 8/2/16.
+ * response of '/auth/token' api
  */
 public class LoginResponse {
 
-    @SerializedName("name")
-    private final String name;
+    // Token Info
+    @SerializedName("access_token")
+    private final String accessToken;
+    @SerializedName("refresh_token")
+    private final String refreshToken;
 
-    @SerializedName("tokenInfo")
-    private final TokenInfo tokenInfo;
+    // User Info
+    @SerializedName("user_name")
+    private final String userName;
 
-    @SerializedName("friendId")
-    private final String friendId;
-
-    public LoginResponse(String name, TokenInfo tokenInfo, String friendId) {
-        this.name = name;
-        this.tokenInfo = tokenInfo;
-        this.friendId = friendId;
+    public LoginResponse(String accessToken, String refreshToken, String userName) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.userName = userName;
     }
 
-    public TokenInfo getTokenInfo() {
-        return tokenInfo;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getName() {
-        return name;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public String getFriendId() {
-        return friendId;
+    public String getRefreshToken() {
+        return refreshToken;
     }
 }

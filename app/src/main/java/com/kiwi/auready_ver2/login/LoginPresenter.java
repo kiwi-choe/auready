@@ -122,15 +122,15 @@ public class LoginPresenter implements LoginContract.Presenter {
     public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail) {
 
         // send logged in email to MainView
-        mLoginView.setLoginSuccessUI(loggedInEmail, loginResponse.getName());
+        String name = loginResponse.getUserName();
+        mLoginView.setLoginSuccessUI(loggedInEmail, name);
 
         // Set LoggedInUser info to SharedPreferences
 //        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
         mLoginView.setLoggedInUserInfo(
-                loginResponse.getTokenInfo(),
+                loginResponse.getAccessToken(),
                 loggedInEmail,
-                loginResponse.getName(),
-                loginResponse.getFriendId());
+                name);
     }
 
     @Override

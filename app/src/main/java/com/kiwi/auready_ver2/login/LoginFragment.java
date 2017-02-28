@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
-import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 import com.kiwi.auready_ver2.util.LoginUtils;
@@ -143,11 +142,12 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend) {
+    public void setLoggedInUserInfo(String accessToken, String email, String name) {
 
         // Save tokenInfo to SharedPreferences
-//        mAccessTokenStore.save(tokenInfo, email, name, myIdOfFriend);
+        mAccessTokenStore.save(accessToken, email, name);
     }
+
 
     @Override
     public void setPresenter(@NonNull LoginContract.Presenter presenter) {

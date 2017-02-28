@@ -2,7 +2,6 @@ package com.kiwi.auready_ver2.login;
 
 import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
 import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
-import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 
 import retrofit2.Call;
@@ -14,11 +13,13 @@ import retrofit2.mock.BehaviorDelegate;
  */
 public class MockSuccessLoginService_viewtest implements ILoginService {
 
+
+    public static final String STUB_ACCESSTOKEN = "stub_accessToken";
+    public static final String STUB_REFRESHTOKEN = "stub_refreshToken";
     public static final String STUB_NAME = "loggedInName";
-    public static final String STUB_FRIEND_ID = "friendIdOfUser";
 
     public static final LoginResponse RESPONSE =
-            new LoginResponse(STUB_NAME, new TokenInfo("access token1", "token type1"), STUB_FRIEND_ID);
+            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME);
 
     private final BehaviorDelegate<ILoginService> delegate;
 

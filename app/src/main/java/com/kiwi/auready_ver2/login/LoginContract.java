@@ -3,10 +3,9 @@ package com.kiwi.auready_ver2.login;
 import com.kiwi.auready_ver2.BasePresenter;
 import com.kiwi.auready_ver2.BaseView;
 import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
-import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 
 /**
- * Created by kiwi on 6/11/16.
+ * Contract of LoginView and Presenter
  */
 public interface LoginContract {
 
@@ -23,7 +22,7 @@ public interface LoginContract {
         void setLogoutSuccessResult();
         void setLogoutFailResult();
 
-        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
+        void setLoggedInUserInfo(String accessToken, String email, String name);
     }
 
     interface Presenter extends BasePresenter {

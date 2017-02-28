@@ -52,7 +52,7 @@ public class LoginPresenterTest {
         LoginResponse loginResponse = MockSuccessLoginService.RESPONSE;
         mLoginPresenter.onLoginSuccess(loginResponse, EMAIL);
 
-        verify(mLoginView).setLoginSuccessUI(eq(EMAIL), eq(loginResponse.getName()));
+        verify(mLoginView).setLoginSuccessUI(eq(EMAIL), eq(loginResponse.getUserName()));
     }
 
 
@@ -63,10 +63,9 @@ public class LoginPresenterTest {
         mLoginPresenter.onLoginSuccess(successResponse, EMAIL);
 
         verify(mLoginView).setLoggedInUserInfo(
-                eq(successResponse.getTokenInfo()),
+                eq(successResponse.getAccessToken()),
                 eq(EMAIL),
-                eq(successResponse.getName()),
-                eq(successResponse.getFriendId()));
+                eq(successResponse.getUserName()));
     }
 
     @Test

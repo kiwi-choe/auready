@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,7 +28,6 @@ public class AccessTokenStore {
 
     // Access Token info key
     public static final String ACCESS_TOKEN = "access_token";
-    private static final String TOKEN_TYPE = "token_type";
     public static final String USER_EMAIL = "userEmail";
     public static final String USER_NAME = "userName";
     public static final String MY_ID_OF_FRIEND = "myIdOfFriend";
@@ -64,16 +62,14 @@ public class AccessTokenStore {
     }
 
     // Save Access token
-    public void save(TokenInfo tokenInfo, String userEmail, String userName, String myIdOfFriend) {
+    public void save(String accessToken, String userEmail, String userName) {
         // Set login status, accessToken
         mEditor = mPref.edit();
         mEditor.putBoolean(IS_LOGIN, true);
 
-        mEditor.putString(ACCESS_TOKEN, tokenInfo.getAccessToken());
-        mEditor.putString(TOKEN_TYPE, tokenInfo.getTokenType());
+        mEditor.putString(ACCESS_TOKEN, accessToken);
         mEditor.putString(USER_EMAIL, userEmail);
         mEditor.putString(USER_NAME, userName);
-        mEditor.putString(MY_ID_OF_FRIEND, myIdOfFriend);
 
         // commit changes
         mEditor.apply();

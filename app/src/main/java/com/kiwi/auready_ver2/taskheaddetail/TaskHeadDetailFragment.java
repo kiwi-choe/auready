@@ -30,7 +30,6 @@ import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
-import com.kiwi.auready_ver2.rest_service.login.TokenInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -235,8 +234,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         // Add the current user to members
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(getActivity().getApplicationContext());
         // testing
-        TokenInfo tokenInfo = new TokenInfo("stubAccessToken", "tokenType");
-        accessTokenStore.save(tokenInfo, "userEmail", "userName", "myIdOfFriend");
+        accessTokenStore.save("stubAccessToken", "userEmail", "userName");
 
         String myIdOfFriend = accessTokenStore.getStringValue(AccessTokenStore.MY_ID_OF_FRIEND, "");
         String myEmail = accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "");
