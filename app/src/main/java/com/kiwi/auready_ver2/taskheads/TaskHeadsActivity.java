@@ -31,7 +31,8 @@ public class TaskHeadsActivity extends AppCompatActivity
     public static final int REQ_ADD_TASKHEAD = 2;
 
     private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
+    private View mMemberNavHeader;
+    private View mGuestNavHeader;
 
     private TaskHeadsPresenter mPresenter;
 
@@ -91,24 +92,26 @@ public class TaskHeadsActivity extends AppCompatActivity
         mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
 
         // Set Navigation view
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        checkNotNull(mNavigationView, "mNavigationView cannot be null");
-        setupDrawerContent(mNavigationView);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        checkNotNull(navigationView, "mNavigationView cannot be null");
+        setupDrawerContent(navigationView);
+        mGuestNavHeader = navigationView.inflateHeaderView(R.layout.nav_header_guest);
+        mMemberNavHeader = navigationView.inflateHeaderView(R.layout.nav_header);
 
         // Set Navigation header as login status
         if (mAccessTokenStore.isLoggedIn()) {
-            setMemberNavView(mNavigationView);
+            setMemberNavView();
         } else {
-            setGuestNavView(mNavigationView);
+            setGuestNavView();
         }
     }
 
-    private void setGuestNavView(NavigationView navView) {
+    private void setGuestNavView() {
 
-        View navHeader = navView.inflateHeaderView(R.layout.nav_header_guest);
-//        View navHeader = navView.getHeaderView(0);
+        mMemberNavHeader.setVisibility(View.GONE);
+        mGuestNavHeader.setVisibility(View.VISIBLE);
 
-        Button accountSettingsButton = (Button) navHeader.findViewById(R.id.bt_account_settings);
+        Button accountSettingsButton = (Button) mGuestNavHeader.findViewById(R.id.bt_account_settings);
         accountSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,20 +120,20 @@ public class TaskHeadsActivity extends AppCompatActivity
         });
     }
 
-    private void setMemberNavView(NavigationView navView) {
+    private void setMemberNavView() {
 
-        View navHeader = navView.inflateHeaderView(R.layout.nav_header);
-//         = navView.getHeaderView(0);
+        mGuestNavHeader.setVisibility(View.GONE);
+        mMemberNavHeader.setVisibility(View.VISIBLE);
 
-        TextView name = (TextView) navHeader.findViewById(R.id.nav_name);
-        TextView email = (TextView) navHeader.findViewById(R.id.nav_email);
+        TextView name = (TextView) mMemberNavHeader.findViewById(R.id.nav_name);
+        TextView email = (TextView) mMemberNavHeader.findViewById(R.id.nav_email);
 
         String loggedInName = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name");
         String loggedInEmail = mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email");
         name.setText(loggedInName);
         email.setText(loggedInEmail);
 
-        Button logoutButton = (Button) navHeader.findViewById(R.id.bt_logout);
+        Button logoutButton = (Button) mMemberNavHeader.findViewById(R.id.bt_logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -138,7 +141,7 @@ public class TaskHeadsActivity extends AppCompatActivity
             }
         });
 
-        Button friendButton = (Button) navHeader.findViewById(R.id.bt_manage_friend);
+        Button friendButton = (Button) mMemberNavHeader.findViewById(R.id.bt_manage_friend);
         friendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,9 +209,9 @@ public class TaskHeadsActivity extends AppCompatActivity
     @Override
     public void onUpdatingNavHeaderUI(boolean isLogin) {
         if(isLogin) {
-            setMemberNavView(mNavigationView);
+            setMemberNavView();
         } else {
-            setGuestNavView(mNavigationView);
+            setGuestNavView();
         }
 
         mDrawerLayout.openDrawer(GravityCompat.START);

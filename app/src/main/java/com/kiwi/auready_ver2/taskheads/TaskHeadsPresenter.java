@@ -177,7 +177,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
         ILoginService loginService =
                 ServiceGenerator.createService(ILoginService.class, accessToken);
 
-        Call<Void> call = loginService.logout();
+        Call<Void> call = loginService.logout(accessToken);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
