@@ -8,7 +8,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -65,7 +64,6 @@ public class TaskHeadsActivity extends AppCompatActivity
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
         }
-
 
         // Create Singleton AccessTokenStore
         mAccessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
@@ -147,8 +145,10 @@ public class TaskHeadsActivity extends AppCompatActivity
         mNavHeaderEmail.setVisibility(View.VISIBLE);
         mNavFriendButton.setVisibility(View.VISIBLE);
 
-        mNavHeaderName.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name"));
-        mNavHeaderEmail.setText(mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email"));
+        String loggedInName = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name");
+        String loggedInEmail = mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email");
+        mNavHeaderName.setText(loggedInName);
+        mNavHeaderEmail.setText(loggedInEmail);
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -199,18 +199,18 @@ public class TaskHeadsActivity extends AppCompatActivity
         startActivityForResult(intent, REQ_LOGINOUT);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mPresenter.result(requestCode, resultCode, data);
+    }
+
     /*
-    * TaskHeadsFragment listener
-    * */
+        * TaskHeadsFragment listener
+        * */
     @Override
     public void onUpdatingNavHeaderUI() {
-        Log.d("LoginTest", "entered into onUpdatingNavHeaderUI");
-        String loggedInName = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name");
-        String loggedInEmail = mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email");
-        mNavHeaderName.setText(loggedInName);
-        mNavHeaderEmail.setText(loggedInEmail);
+        setMemberNavView();
 
-        Log.d("LoginTest", "name and email: " + loggedInName + " " + loggedInEmail);
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
 }

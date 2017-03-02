@@ -98,9 +98,15 @@ public class LoginViewTest {
         // Launch Activity
         Intent intent = new Intent();
         mLoginActivityTestRule.launchActivity(intent);
-
-        clickLoginWith("kiwi@kiwi.kiwi", "123");
+        String email = "kiwi@kiwi.kiwi";
+        clickLoginWith(email, "123");
         // Verify that login is succeeded
+
+        onView(withText("Login succeed")).check(matches(isDisplayed()));
+
+        // Verify that send result to taskHeadsView
+        onView(withId(R.id.nav_email)).check(matches(isDisplayed()));
+        onView(withText(email)).check(matches(isDisplayed()));
     }
 //    @Test
 //    public void showEmailFormatError_whenClickLoginButton() {

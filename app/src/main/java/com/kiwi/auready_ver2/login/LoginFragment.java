@@ -106,7 +106,6 @@ public class LoginFragment extends Fragment implements
     }
 
     private void sendResult(boolean loginOrOut, boolean isSuccess) {
-
         Intent intent = new Intent();
         if (loginOrOut == LOGIN) {
             intent.putExtra(LOGIN_LOGOUT, LOGIN);

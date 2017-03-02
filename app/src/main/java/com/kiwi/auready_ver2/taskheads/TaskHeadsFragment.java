@@ -174,7 +174,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     @Override
     public void setLoginSuccessUI() {
-
         if (mListener != null) {
             mListener.onUpdatingNavHeaderUI();
         }
@@ -221,12 +220,6 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void setLogoutSuccessUI() {
 
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Snackbar.make(mTaskHeadsView, "CANCELED", Snackbar.LENGTH_LONG).show();
-        mPresenter.result(requestCode, resultCode, data);
     }
 
     // Interface with TaskHeadsActivity
