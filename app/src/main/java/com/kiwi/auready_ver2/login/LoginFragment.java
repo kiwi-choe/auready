@@ -99,8 +99,8 @@ public class LoginFragment extends Fragment implements
     @Override
     public void setLoginSuccessUI(String email, String name) {
 
-        // Popup message
-        Snackbar.make(getView(), getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
+        // Popup message - getView() is null?
+        Snackbar.make(mEmail, getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
         // Send result OK and the logged in email to TasksView
         sendResult(LOGIN, true);
     }

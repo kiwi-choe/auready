@@ -9,8 +9,8 @@ import android.widget.EditText;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
-import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 import com.kiwi.auready_ver2.rest_service.login.ILoginService;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -100,6 +100,7 @@ public class LoginViewTest {
         mLoginActivityTestRule.launchActivity(intent);
 
         clickLoginWith("kiwi@kiwi.kiwi", "123");
+        // Verify that login is succeeded
     }
 //    @Test
 //    public void showEmailFormatError_whenClickLoginButton() {
@@ -163,14 +164,11 @@ public class LoginViewTest {
 
 //        clickLoginWith(loggedInEmail, loggedInPassword);
 
-
         BehaviorDelegate<ILoginService> delegate = mockRetrofit.create(ILoginService.class);
         ILoginService mockLoginService = new MockSuccessLoginService_viewtest(delegate);
 
         // Create the loginInfo stub
         ClientCredential newCredentials = new ClientCredential(
-                ClientCredential.CLIENT_SECRET,
-                ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 loggedInEmail,
                 loggedInPassword);

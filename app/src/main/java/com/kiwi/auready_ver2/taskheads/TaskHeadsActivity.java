@@ -69,6 +69,8 @@ public class TaskHeadsActivity extends AppCompatActivity
 
         // Create Singleton AccessTokenStore
         mAccessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
+        // testing
+//        mAccessTokenStore.logoutUser();
 
         initView();
     }
@@ -201,12 +203,14 @@ public class TaskHeadsActivity extends AppCompatActivity
     * TaskHeadsFragment listener
     * */
     @Override
-    public void onLoginSuccess() {
+    public void onUpdatingNavHeaderUI() {
+        Log.d("LoginTest", "entered into onUpdatingNavHeaderUI");
         String loggedInName = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name");
         String loggedInEmail = mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email");
         mNavHeaderName.setText(loggedInName);
         mNavHeaderEmail.setText(loggedInEmail);
 
+        Log.d("LoginTest", "name and email: " + loggedInName + " " + loggedInEmail);
         mDrawerLayout.openDrawer(GravityCompat.START);
     }
 }

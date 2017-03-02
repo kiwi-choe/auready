@@ -1,9 +1,12 @@
 package com.kiwi.auready_ver2.rest_service;
 
+import android.support.annotation.NonNull;
+
 import com.kiwi.auready_ver2.login.IBaseUrl;
 
 import java.io.IOException;
 
+import okhttp3.Credentials;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -48,6 +51,22 @@ public class ServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
+    // Basic Authentication
+    public static <S> S createService(Class<S> serviceClass,
+                                      @NonNull String clientId, @NonNull String clientSecret) {
+        String authToken = Credentials.basic(clientId, clientSecret);
+        AuthenticationInterceptor interceptor =
+                new AuthenticationInterceptor(authToken);
+
+        Retrofit retrofit = null;
+        if(!httpClient.interceptors().contains(interceptor)) {
+            httpClient.addInterceptor(interceptor);
+
+            baseBuilder.client(httpClient.build());
+            retrofit = baseBuilder.build();
+        }
+        return retrofit.create(serviceClass);
+    }
 
     public static <S> S createService(Class<S> serviceClass, final String accessToken) {
         if (accessToken != null) {
@@ -72,5 +91,25 @@ public class ServiceGenerator {
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = baseBuilder.client(client).build();
         return retrofit.create(serviceClass);
+    }
+
+    private static class AuthenticationInterceptor implements Interceptor{
+        private String authToken;
+        AuthenticationInterceptor(String token) {
+            this.authToken = token;
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request original = chain.request();
+            Request.Builder builder = original.newBuilder()
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
+                    .header("Authorization", authToken)
+                    .method(original.method(), original.body());
+
+            Request request = builder.build();
+            return chain.proceed(request);
+        }
     }
 }

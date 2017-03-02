@@ -87,11 +87,10 @@ public class LoginPresenter implements LoginContract.Presenter {
     private void requestLogin(final String email, String password) {
 
         ILoginService loginService =
-                ServiceGenerator.createService(ILoginService.class);
+                ServiceGenerator.createService(ILoginService.class,
+                        ClientCredential.CLIENT_ID, ClientCredential.CLIENT_SECRET);
 
         ClientCredential newCredentials = new ClientCredential(
-                ClientCredential.CLIENT_SECRET,
-                ClientCredential.CLIENT_ID,
                 ClientCredential.GRANT_TYPE,
                 email,
                 password);

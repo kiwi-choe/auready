@@ -156,7 +156,7 @@ public class TasksPresenterTest {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         // Update a taskTextView
-        mTasksPresenter.editTasks(TASKS);
+        mTasksPresenter.editTasks(TASKS.get(0).getMemberId(), TASKS);
         verify(mTaskRepository).editTasks(eq(TASKS));
     }
 
@@ -168,7 +168,7 @@ public class TasksPresenterTest {
         for(Task task:TASKS) {
             taskIds.add(task.getId());
         }
-        mTasksPresenter.deleteTasks(taskIds);
+        mTasksPresenter.deleteTasks(TASKS.get(0).getMemberId(), taskIds);
         verify(mTaskRepository).deleteTasks(anyListOf(String.class));
     }
 

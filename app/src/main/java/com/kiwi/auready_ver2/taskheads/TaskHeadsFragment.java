@@ -176,7 +176,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     public void setLoginSuccessUI() {
 
         if (mListener != null) {
-            mListener.onLoginSuccess();
+            mListener.onUpdatingNavHeaderUI();
         }
     }
 
@@ -231,7 +231,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
     // Interface with TaskHeadsActivity
     public interface TaskHeadsFragmentListener {
-        void onLoginSuccess();
+        void onUpdatingNavHeaderUI();
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)
