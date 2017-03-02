@@ -137,41 +137,6 @@ public class LoginPresenter implements LoginContract.Presenter {
         mLoginView.showLoginFailMessage(stringResource);
     }
 
-    @Override
-    public void requestLogout(String accessToken) {
-
-        ILoginService loginService =
-                ServiceGenerator.createService(ILoginService.class, accessToken);
-
-        Call<Void> call = loginService.logout();
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    onLogoutSuccess();
-                } else {
-                    onLogoutFail();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Exception in Logout: ", "onFailure()", t);
-                onLogoutFail();
-            }
-        });
-    }
-
-    @Override
-    public void onLogoutSuccess() {
-        mLoginView.setLogoutSuccessResult();
-    }
-
-    @Override
-    public void onLogoutFail() {
-        mLoginView.setLogoutFailResult();
-    }
-
     private void showSaveError() {
         // Show error, log, etc when save is failed.
         Log.d("ErrorInLoginPresenter", "Failed to save the friends");

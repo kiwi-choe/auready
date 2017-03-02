@@ -26,6 +26,8 @@ public interface TaskHeadsContract {
         void showTasksView(String taskHeadId, String title);
 
         void setLogoutSuccessUI();
+
+        void setLogoutFailResult();
     }
 
     interface Presenter extends BasePresenter {
@@ -39,5 +41,11 @@ public interface TaskHeadsContract {
         void deleteTaskHeads(List<TaskHead> taskheads);
 
         void updateOrders(List<TaskHead> taskheads);
+
+        // Logout
+        void logout(String accessToken);
+
+        void onLogoutSuccess();
+        void onLogoutFail();
     }
 }

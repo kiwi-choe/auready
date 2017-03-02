@@ -33,11 +33,11 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:gravity="bottom" />
         <Button
-            android:id="@+id/bt_account_settings"
+            android:id="@+id/bt_logout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="@string/nav_account_settings" />
+            android:text="@string/nav_logout" />
     </RelativeLayout>
 
     <RelativeLayout

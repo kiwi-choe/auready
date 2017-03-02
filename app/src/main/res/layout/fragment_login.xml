@@ -55,14 +55,4 @@
             android:onClick="onClick" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/bt_logout_complete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:text="@string/logout_button"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
-
 </LinearLayout>

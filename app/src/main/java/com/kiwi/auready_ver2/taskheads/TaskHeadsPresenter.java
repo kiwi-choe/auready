@@ -9,6 +9,8 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.login.LoginFragment;
+import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
@@ -17,6 +19,10 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -162,5 +168,41 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     }
                 });
+    }
+
+    @Override
+    public void logout(@NonNull String accessToken) {
+        checkNotNull(accessToken);
+
+        ILoginService loginService =
+                ServiceGenerator.createService(ILoginService.class, accessToken);
+
+        Call<Void> call = loginService.logout();
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    onLogoutSuccess();
+                } else {
+                    onLogoutFail();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Exception in Logout: ", "onFailure()", t);
+                onLogoutFail();
+            }
+        });
+    }
+
+    @Override
+    public void onLogoutSuccess() {
+        mTaskHeadView.setLogoutSuccessUI();
+    }
+
+    @Override
+    public void onLogoutFail() {
+        mTaskHeadView.setLogoutFailResult();
     }
 }

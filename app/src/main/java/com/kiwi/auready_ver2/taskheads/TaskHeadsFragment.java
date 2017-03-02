@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -21,8 +22,10 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
+import com.kiwi.auready_ver2.util.LoginUtils;
 import com.kiwi.auready_ver2.util.view.DragSortController;
 import com.kiwi.auready_ver2.util.view.DragSortItemView;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
@@ -175,7 +178,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void setLoginSuccessUI() {
         if (mListener != null) {
-            mListener.onUpdatingNavHeaderUI();
+            mListener.onUpdatingNavHeaderUI(LoginUtils.LOGIN);
         }
     }
 
@@ -220,11 +223,23 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void setLogoutSuccessUI() {
 
+        // init SharedPreferences
+        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance();
+        accessTokenStore.logoutUser();
+
+        if(mListener!=null) {
+            mListener.onUpdatingNavHeaderUI(LoginUtils.LOGOUT);
+        }
+    }
+
+    @Override
+    public void setLogoutFailResult() {
+        Snackbar.make(mTaskHeadsView, getString(R.string.logout_fail_msg), Snackbar.LENGTH_SHORT).show();
     }
 
     // Interface with TaskHeadsActivity
     public interface TaskHeadsFragmentListener {
-        void onUpdatingNavHeaderUI();
+        void onUpdatingNavHeaderUI(boolean isLogin);
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)

@@ -18,10 +18,6 @@ public interface LoginContract {
 
         void showLoginFailMessage(int stringResource);
 
-        // Logout
-        void setLogoutSuccessResult();
-        void setLogoutFailResult();
-
         void setLoggedInUserInfo(String accessToken, String email, String name);
     }
 
@@ -37,11 +33,5 @@ public interface LoginContract {
         void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail);
 
         void onLoginFail(int stringResource);
-
-        // Logout
-        void requestLogout(String accessToken);
-
-        void onLogoutSuccess();
-        void onLogoutFail();
     }
 }

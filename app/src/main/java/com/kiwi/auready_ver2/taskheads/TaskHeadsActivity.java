@@ -31,9 +31,7 @@ public class TaskHeadsActivity extends AppCompatActivity
     public static final int REQ_ADD_TASKHEAD = 2;
 
     private DrawerLayout mDrawerLayout;
-    private TextView mNavHeaderName;
-    private TextView mNavHeaderEmail;
-    private Button mNavFriendButton;
+    private NavigationView mNavigationView;
 
     private TaskHeadsPresenter mPresenter;
 
@@ -67,8 +65,6 @@ public class TaskHeadsActivity extends AppCompatActivity
 
         // Create Singleton AccessTokenStore
         mAccessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
-        // testing
-//        mAccessTokenStore.logoutUser();
 
         initView();
     }
@@ -95,60 +91,60 @@ public class TaskHeadsActivity extends AppCompatActivity
         mDrawerLayout.setStatusBarBackground(R.color.colorPrimaryDark);
 
         // Set Navigation view
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        checkNotNull(navigationView, "navigationView cannot be null");
-        setupDrawerContent(navigationView);
-        // Set Navigation header
-        View navHeader = navigationView.getHeaderView(0);
-        mNavHeaderName = (TextView) navHeader.findViewById(R.id.nav_name);
-        mNavHeaderEmail = (TextView) navHeader.findViewById(R.id.nav_email);
-        mNavFriendButton = (Button) navHeader.findViewById(R.id.bt_manage_friend);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        checkNotNull(mNavigationView, "mNavigationView cannot be null");
+        setupDrawerContent(mNavigationView);
 
-        // if member or guest
+        // Set Navigation header as login status
         if (mAccessTokenStore.isLoggedIn()) {
-            setMemberNavView();
+            setMemberNavView(mNavigationView);
         } else {
-            setGuestNavView();
+            setGuestNavView(mNavigationView);
         }
-        setupNavHeaderContent(navHeader);
     }
 
-    private void setupNavHeaderContent(View navHeader) {
-        // clicked account settings button
-        Button btAccountSettings = (Button) navHeader.findViewById(R.id.bt_account_settings);
-        btAccountSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startLoginActivity();
-            }
-        });
+    private void setGuestNavView(NavigationView navView) {
 
-        // clicked friend button
-        mNavFriendButton.setOnClickListener(new View.OnClickListener() {
+        View navHeader = navView.inflateHeaderView(R.layout.nav_header_guest);
+//        View navHeader = navView.getHeaderView(0);
+
+        Button accountSettingsButton = (Button) navHeader.findViewById(R.id.bt_account_settings);
+        accountSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startFriendActivity();
+                startLoginView();
             }
         });
     }
 
-    private void setGuestNavView() {
-        // Set Nav header
-        mNavHeaderEmail.setVisibility(View.GONE);
-        mNavHeaderName.setText(getString(R.string.nav_header_name_guest));
+    private void setMemberNavView(NavigationView navView) {
 
-        mNavFriendButton.setVisibility(View.GONE);
-    }
+        View navHeader = navView.inflateHeaderView(R.layout.nav_header);
+//         = navView.getHeaderView(0);
 
-    private void setMemberNavView() {
-        // Set Nav header
-        mNavHeaderEmail.setVisibility(View.VISIBLE);
-        mNavFriendButton.setVisibility(View.VISIBLE);
+        TextView name = (TextView) navHeader.findViewById(R.id.nav_name);
+        TextView email = (TextView) navHeader.findViewById(R.id.nav_email);
 
         String loggedInName = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "Not saved name");
         String loggedInEmail = mAccessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "Not saved email");
-        mNavHeaderName.setText(loggedInName);
-        mNavHeaderEmail.setText(loggedInEmail);
+        name.setText(loggedInName);
+        email.setText(loggedInEmail);
+
+        Button logoutButton = (Button) navHeader.findViewById(R.id.bt_logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.logout(mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, ""));
+            }
+        });
+
+        Button friendButton = (Button) navHeader.findViewById(R.id.bt_manage_friend);
+        friendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startFriendView();
+            }
+        });
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -158,11 +154,11 @@ public class TaskHeadsActivity extends AppCompatActivity
                 int id = item.getItemId();
                 switch (id) {
                     case R.id.friend_navigation_menu_item:
-                        startFriendActivity();
+                        startFriendView();
                         break;
 
                     case R.id.item_group:
-                        startLoginActivity();
+                        startLoginView();
                         break;
 
                     default:
@@ -188,13 +184,13 @@ public class TaskHeadsActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void startFriendActivity() {
+    private void startFriendView() {
         Intent intent =
                 new Intent(TaskHeadsActivity.this, FriendsActivity.class);
         startActivity(intent);
     }
 
-    private void startLoginActivity() {
+    private void startLoginView() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivityForResult(intent, REQ_LOGINOUT);
     }
@@ -208,8 +204,12 @@ public class TaskHeadsActivity extends AppCompatActivity
         * TaskHeadsFragment listener
         * */
     @Override
-    public void onUpdatingNavHeaderUI() {
-        setMemberNavView();
+    public void onUpdatingNavHeaderUI(boolean isLogin) {
+        if(isLogin) {
+            setMemberNavView(mNavigationView);
+        } else {
+            setGuestNavView(mNavigationView);
+        }
 
         mDrawerLayout.openDrawer(GravityCompat.START);
     }

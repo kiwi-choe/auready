@@ -34,7 +34,6 @@ public class LoginFragment extends Fragment implements
     private EditText mPassword;
     private Button mBtLoginComplete;
     private TextView mBtSignupOpen;
-    private Button mBtLogoutComplete;
     private LinearLayout mSocialLoginLayout;
 
     private LoginContract.Presenter mPresenter;
@@ -61,7 +60,6 @@ public class LoginFragment extends Fragment implements
 
         mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
         mBtSignupOpen = (TextView) root.findViewById(R.id.bt_signup_open);
-        mBtLogoutComplete = (Button) root.findViewById(R.id.bt_logout_complete);
 
         mSocialLoginLayout = (LinearLayout) root.findViewById(R.id.social_login_layout);
         return root;
@@ -75,7 +73,6 @@ public class LoginFragment extends Fragment implements
 
         mBtLoginComplete.setOnClickListener(this);
         mBtSignupOpen.setOnClickListener(this);
-        mBtLogoutComplete.setOnClickListener(this);
     }
 
     @Override
@@ -129,18 +126,6 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLogoutSuccessResult() {
-        // init SharedPreferences
-        mAccessTokenStore.logoutUser();
-        sendResult(LOGOUT, true);
-    }
-
-    @Override
-    public void setLogoutFailResult() {
-        sendResult(LOGOUT, false);
-    }
-
-    @Override
     public void setLoggedInUserInfo(String accessToken, String email, String name) {
 
         // Save tokenInfo to SharedPreferences
@@ -172,8 +157,6 @@ public class LoginFragment extends Fragment implements
                         mPassword.getText().toString());
                 break;
 
-            case R.id.bt_logout_complete:
-                mPresenter.requestLogout(mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, ""));
             default:
                 break;
         }

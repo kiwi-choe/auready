@@ -28,7 +28,7 @@
 
     <!-- Tasks Activity -->
     <string name="logged_in_user_name">user name</string>
-    <string name="logged_in_user_email">user name</string>
+    <string name="logged_in_user_email">user email</string>
 
     <!-- Friend Fragment -->
     <string name="no_searched_email_msg">Nobody who you are searching</string>
@@ -81,5 +81,7 @@
     <string name="color_swatch_description_selected">Color selected</string>
     <string name="color_swatch_description">color</string>
     <string name="addfriend_fail_msg_onfailure">Fail to request friending</string>
+    <string name="nav_logout">LOGOUT</string>
+    <string name="logout_fail_msg">Failed to logout</string>
 
 </resources>
