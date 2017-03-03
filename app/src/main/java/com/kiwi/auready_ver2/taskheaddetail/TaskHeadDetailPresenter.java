@@ -141,7 +141,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 // Make new member List
                 ArrayList<Member> members = new ArrayList<>();
                 for (Friend friend : friends) {
-                    Member newMember = new Member(friend.getId(), friend.getName());
+                    Member newMember = new Member(friend.getId(), friend.getName(), friend.getEmail());
                     members.add(newMember);
                 }
 

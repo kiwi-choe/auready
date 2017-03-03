@@ -268,6 +268,19 @@ public class TaskLocalDataSourceTest {
         String taskheadId = TASKHEAD.getId();
         mLocalDataSource.getTasksOfTaskHead(taskheadId, loadTasksCallback);
         verify(loadTasksCallback).onTasksLoaded(anyListOf(Task.class));
+//        mLocalDataSource.getTasksOfTaskHead(taskheadId, new TaskDataSource.LoadTasksCallback() {
+//            @Override
+//            public void onTasksLoaded(List<Task> tasks) {
+//                assertNotNull(tasks);
+//                assertTrue(tasks.size() == 2);
+//
+//            }
+//
+//            @Override
+//            public void onDataNotAvailable() {
+//                fail();
+//            }
+//        });
 
         deleteAll();
     }
@@ -291,7 +304,7 @@ public class TaskLocalDataSourceTest {
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName()));
+            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();

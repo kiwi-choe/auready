@@ -12,29 +12,33 @@ public class Member {
     private final String mTaskHeadId;
     private final String mFriendId;
     private final String mName;
+    private final String mEmail;
 
     /*
     * when Create new taskHead
     * */
-    public Member(String friendId, String name) {
+    public Member(String friendId, String name, String email) {
         mId = UUID.randomUUID().toString();
         mTaskHeadId = null;
         mFriendId = friendId;
         mName = name;
+        mEmail = email;
     }
 
-    public Member(String taskHeadId, String friendId, String name) {
+    public Member(String taskHeadId, String friendId, String name, String email) {
         mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
         mFriendId = friendId;
         mName = name;
+        mEmail = email;
     }
 
-    public Member(@NonNull String id, String taskHeadId, String friendId, String name) {
+    public Member(@NonNull String id, String taskHeadId, String friendId, String name, String email) {
         mId = id;
         mTaskHeadId = taskHeadId;
         mFriendId = friendId;
         mName = name;
+        mEmail = email;
     }
 
     public String getName() {
@@ -53,10 +57,13 @@ public class Member {
         return mFriendId;
     }
 
+    public String getEmail() {
+        return mEmail;
+    }
+
     @Override
     public String toString() {
         return "id: " + mId + " taskHeadId: " + mTaskHeadId +
-                " friendId: " + mFriendId + " name: " + mName;
-
+                " friendId: " + mFriendId + " name: " + mName + " email: " + mEmail;
     }
 }

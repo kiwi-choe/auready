@@ -58,12 +58,12 @@ public class TaskHeadDetailLocalDataSourceTest {
         // Save new members without taskHeadId_fk
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> tmpMembers = new ArrayList<>();
-        tmpMembers.add(new Member("memberId0", null, "friendId", "memberName0"));
-        tmpMembers.add(new Member("memberId1", null, "friendId", "memberName1"));
+        tmpMembers.add(new Member("memberId0", null, "friendId", "memberName0", "memberEmail0"));
+        tmpMembers.add(new Member("memberId1", null, "friendId", "memberName1", "memberEmail1"));
         // Set taskHeadId to the new members
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), TASKHEAD.getId(), member.getFriendId(), member.getName()));
+            members.add(new Member(member.getId(), TASKHEAD.getId(), member.getFriendId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();
@@ -205,8 +205,8 @@ public class TaskHeadDetailLocalDataSourceTest {
         TaskDataSource.EditTaskHeadDetailCallback editCallback = Mockito.mock(TaskDataSource.EditTaskHeadDetailCallback.class);
         // Add 2 members
         List<Member> addingMembers = new ArrayList<>(0);
-        addingMembers.add(new Member("addingMemberId1", taskHeadId, "friendId", "addingMemberName1"));
-        addingMembers.add(new Member("addingMemberId2", taskHeadId, "friendId", "addingMemberName2"));
+        addingMembers.add(new Member("addingMemberId1", taskHeadId, "friendId", "addingMemberName1", "addingMemberEmail1"));
+        addingMembers.add(new Member("addingMemberId2", taskHeadId, "friendId", "addingMemberName2", "addingMemberEmail2"));
         mLocalDataSource.editTaskHeadDetail(TASKHEAD_DETAIL.getTaskHead(), addingMembers, new ArrayList<String>(0), editCallback);
         verify(editCallback).onEditSuccess();
 
@@ -252,7 +252,7 @@ public class TaskHeadDetailLocalDataSourceTest {
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName()));
+            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();

@@ -38,6 +38,8 @@ public class TaskRepositoryTest {
 
     @Mock
     private TaskDataSource mLocalDataSource;
+    @Mock
+    private TaskDataSource mRemoteDataSource;
 
     @Mock
     private TaskDataSource.LoadTaskHeadsCallback mLoadTaskHeadsCallback;
@@ -72,7 +74,7 @@ public class TaskRepositoryTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        mRepository = TaskRepository.getInstance(mLocalDataSource);
+        mRepository = TaskRepository.getInstance(mRemoteDataSource, mLocalDataSource);
     }
 
     @After
@@ -150,6 +152,15 @@ public class TaskRepositoryTest {
         for (Member member : members) {
             assertThat(mRepository.mCachedMembers.containsKey(member.getId()), is(true));
         }
+    }
+
+    @Test
+    public void saveTaskHeadDetail_savesToServiceAPI() {
+        mRepository.saveTaskHeadDetail(TASKHEAD_DETAIL, mSaveCallback);
+
+        // Then the service API and persistent repository are called
+        saveTaskHeadDetailSucceed(mRemoteDataSource, TASKHEAD_DETAIL);
+        verify(mSaveCallback).onSaveSuccess();
     }
 
     /*
@@ -240,9 +251,9 @@ public class TaskRepositoryTest {
         // and Add 2 members
         List<Member> editMembers = new ArrayList<>();
         editMembers.addAll(MEMBERS);
-        Member newMember1 = new Member(taskHead.getId(), "friendid", "newMember1");
+        Member newMember1 = new Member(taskHead.getId(), "friendid", "newMember1", "newMember1_email");
         editMembers.add(newMember1);
-        Member newMember2 = new Member(taskHead.getId(), "friendid", "newMember2");
+        Member newMember2 = new Member(taskHead.getId(), "friendid", "newMember2", "newMember2_email");
         editMembers.add(newMember2);
 
         TaskHeadDetail editTaskHeadDetail = new TaskHeadDetail(editTaskHead, editMembers);

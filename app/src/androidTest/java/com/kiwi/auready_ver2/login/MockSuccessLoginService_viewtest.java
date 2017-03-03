@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Path;
 import retrofit2.mock.BehaviorDelegate;
 
 /**
@@ -34,7 +35,7 @@ public class MockSuccessLoginService_viewtest implements ILoginService {
     }
 
     @Override
-    public Call<Void> logout() {
+    public Call<Void> logout(@Path("token") String accessToken) {
         return null;
     }
 }

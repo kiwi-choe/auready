@@ -75,15 +75,6 @@ public class LoginPresenterTest {
         verify(mLoginView).showLoginFailMessage(R.string.login_fail_message_400);
     }
 
-    @Test
-    public void setLogoutUi_whenLogoutSuccess() {
-        String accessToken = "accesstoken stub";
-        mLoginPresenter.requestLogout(accessToken);
-        // succeed to request requestLogout
-        mLoginPresenter.onLogoutSuccess();
-        verify(mLoginView).setLogoutSuccessResult();
-    }
-
     private LoginPresenter givenLoginPresenter() {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());

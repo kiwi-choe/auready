@@ -9,6 +9,7 @@ import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
 import com.kiwi.auready_ver2.data.source.remote.FriendRemoteDataSource;
+import com.kiwi.auready_ver2.data.source.remote.TaskRemoteDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
@@ -66,7 +67,7 @@ public class Injection {
     * */
     public static TaskRepository provideTaskRepository(@NonNull Context context) {
         checkNotNull(context);
-        return TaskRepository.getInstance(TaskLocalDataSource.getInstance(context));
+        return TaskRepository.getInstance(TaskRemoteDataSource.getInstance(context), TaskLocalDataSource.getInstance(context));
     }
 
     public static GetTaskHeads provideGetTaskHeads(@NonNull Context context) {

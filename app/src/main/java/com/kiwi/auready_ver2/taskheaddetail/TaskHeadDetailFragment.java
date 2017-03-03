@@ -234,14 +234,11 @@ public class TaskHeadDetailFragment extends Fragment implements
         // Add the current user to members
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(getActivity().getApplicationContext());
         // testing
-        accessTokenStore.save("stubAccessToken", "userEmail", "userName");
-
-        String myIdOfFriend = accessTokenStore.getStringValue(AccessTokenStore.MY_ID_OF_FRIEND, "");
         String myEmail = accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "");
         String myName = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
-
+        String myIdOfFriend = "stub_friendId";
         Friend meOfFriend = new Friend(myIdOfFriend, myEmail, myName);
-        Member me = new Member(meOfFriend.getId(), meOfFriend.getName());
+        Member me = new Member(meOfFriend.getId(), meOfFriend.getName(), meOfFriend.getEmail());
         mMembers.add(0, me);
     }
 

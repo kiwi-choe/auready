@@ -23,6 +23,7 @@ public class TaskRepository implements TaskDataSource {
     private static TaskRepository INSTANCE = null;
 
     private TaskDataSource mLocalDataSource;
+    private TaskDataSource mRemoteDataSource;
 
     private boolean mCacheIsDirty;
 
@@ -40,14 +41,16 @@ public class TaskRepository implements TaskDataSource {
     Map<String, Task> mCachedTasks = null;
 
     // Prevent direct instantiation
-    private TaskRepository(TaskDataSource taskLocalDataSource) {
-
+    private TaskRepository(@NonNull TaskDataSource taskRemoteDataSource,
+                           @NonNull TaskDataSource taskLocalDataSource) {
+        mRemoteDataSource = taskRemoteDataSource;
         mLocalDataSource = taskLocalDataSource;
     }
 
-    public static TaskRepository getInstance(@NonNull TaskDataSource taskLocalDataSource) {
+    public static TaskRepository getInstance(@NonNull TaskDataSource taskRemoteDataSource,
+                                             @NonNull TaskDataSource taskLocalDataSource) {
         if (INSTANCE == null) {
-            INSTANCE = new TaskRepository(checkNotNull(taskLocalDataSource));
+            INSTANCE = new TaskRepository(checkNotNull(taskRemoteDataSource), checkNotNull(taskLocalDataSource));
         }
         return INSTANCE;
     }
@@ -116,9 +119,20 @@ public class TaskRepository implements TaskDataSource {
             @Override
             public void onSaveSuccess() {
                 refreshCachesOfTaskHeadDetail(taskHeadDetail);
-                Log.d("TEST_NOW", "after saveTaskHeadDetail");
                 showMembersCacheOf(taskHeadDetail.getTaskHead().getId());
-                callback.onSaveSuccess();
+                // Save into Remote asynchronously with Local
+                mRemoteDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+                    @Override
+                    public void onSaveSuccess() {
+                        Log.d("test_SaveTaskHead", "success of saving into Remote");
+                        callback.onSaveSuccess();
+                    }
+
+                    @Override
+                    public void onSaveFailed() {
+
+                    }
+                });
             }
 
             @Override
@@ -126,6 +140,8 @@ public class TaskRepository implements TaskDataSource {
                 callback.onSaveFailed();
             }
         });
+
+
     }
 
     @Override
@@ -253,7 +269,7 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(task);
         mLocalDataSource.saveTask(task);
 
-        if(mCachedTasks == null) {
+        if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
         }
         mCachedTasks.put(task.getId(), task);
@@ -265,8 +281,8 @@ public class TaskRepository implements TaskDataSource {
 
         mLocalDataSource.deleteTasks(taskIds);
 
-        if(mCachedTasks != null) {
-            for(String id: taskIds) {
+        if (mCachedTasks != null) {
+            for (String id : taskIds) {
                 mCachedTasks.remove(id);
             }
         }
@@ -280,10 +296,10 @@ public class TaskRepository implements TaskDataSource {
     }
 
     private void showMembersCacheOf(String taskHeadId) {
-        if(mCachedMembersOfTaskHead != null) {
+        if (mCachedMembersOfTaskHead != null) {
             List<Member> members = mCachedMembersOfTaskHead.get(taskHeadId);
-            if(members != null) {
-                for(Member member: members) {
+            if (members != null) {
+                for (Member member : members) {
                     Log.d("TEST_NOW", member.toString());
                 }
             }
@@ -377,6 +393,7 @@ public class TaskRepository implements TaskDataSource {
         mCachedMembersOfTaskHead.put(taskHeadId, members);
 
     }
+
     private void refreshMembersCache(List<Member> members) {
         // Save members by member id
         if (mCachedMembers == null) {
