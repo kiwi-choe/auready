@@ -73,7 +73,8 @@ public class SignupMockAdapterTest {
         // Create the signupInfo stub
         String email = STUB_EMAIL;
         String password = "123";
-        SignupInfo signupInfo = new SignupInfo(email, password);
+        String name = STUB_NAME;
+        SignupInfo signupInfo = new SignupInfo(email, name, password);
 
         // Actual Test
         Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
@@ -91,8 +92,9 @@ public class SignupMockAdapterTest {
 
         // Create the signupInfo stub
         String email = "bbb@bbb.bbb";
+        String name = "";
         String password = "123";
-        SignupInfo signupInfo = new SignupInfo(email, password);
+        SignupInfo signupInfo = new SignupInfo(email, name, password);
 
         Call<SignupResponse> signupCall = mockSignupService.signupLocal(signupInfo);
         retrofit2.Response<SignupResponse> signupResponse = signupCall.execute();

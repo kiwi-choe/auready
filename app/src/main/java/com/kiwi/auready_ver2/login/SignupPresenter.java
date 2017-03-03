@@ -75,7 +75,7 @@ public class SignupPresenter implements SignupContract.Presenter {
     @Override
     public void requestSignup(String email, String password, String name) {
 
-        SignupInfo signupInfo = new SignupInfo(email, password);
+        SignupInfo signupInfo = new SignupInfo(email, name, password);
 
         ISignupService signupService =
                 ServiceGenerator.createService(ISignupService.class);
