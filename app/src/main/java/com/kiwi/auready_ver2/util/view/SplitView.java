@@ -144,13 +144,20 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
         return true;
     }
 
+    public int getHeightSize() {
+        if (getOrientation() == VERTICAL) {
+            return getMeasuredHeight();
+        } else {
+            return getMeasuredWidth();
+        }
+    }
+
     public int getPrimaryContentSize() {
         if (getOrientation() == VERTICAL) {
             return mPrimaryContent.getMeasuredHeight();
         } else {
             return mPrimaryContent.getMeasuredWidth();
         }
-
     }
 
     public boolean setPrimaryContentSize(int newSize) {
@@ -161,31 +168,35 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
         }
     }
 
-
     private boolean setPrimaryContentHeight(int newHeight) {
         // the new primary content height should not be less than 0 to make the
         // handler always visible
         newHeight = Math.max(0, newHeight);
         // the new primary content height should not be more than the SplitView
         // height minus handler height to make the handler always visible
-        newHeight = Math.min(newHeight, getMeasuredHeight() - mHandle.getMeasuredHeight());
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPrimaryContent.getLayoutParams();
-        if (mSecondaryContent.getMeasuredHeight() < 1 && newHeight > params.height) {
-            return false;
-        }
+//        newHeight = Math.min(newHeight, getMeasuredHeight() - mHandle.getMeasuredHeight());
 
-        if(mPrimaryContent instanceof ListView){
-            if(newHeight >= ViewUtils.getListViewHeightBasedOnChildren((ListView) mPrimaryContent)){
-                newHeight = ViewUtils.getListViewHeightBasedOnChildren((ListView) mPrimaryContent);
+
+//        if (mSecondaryContent.getMeasuredHeight() < 1 && newHeight > params.height) {
+//            return false;
+//        }
+
+        if (mPrimaryContent instanceof ListView) {
+            int maxHeight = Math.min(getMeasuredHeight() - mHandle.getMeasuredHeight(),
+                    ViewUtils.getListViewHeightBasedOnChildren((ListView) mPrimaryContent));
+            if (newHeight >= maxHeight) {
+                newHeight = maxHeight;
             }
         }
 
+        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPrimaryContent.getLayoutParams();
         if (newHeight >= 0) {
             params.height = newHeight;
             // set the primary content parameter to do not stretch anymore and
             // use the height specified in the layout params
             params.weight = 0;
         }
+
         unMinimizeSecondaryContent();
         mPrimaryContent.setLayoutParams(params);
 
@@ -201,7 +212,6 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
         newWidth = Math.min(newWidth, getMeasuredWidth() - mHandle.getMeasuredWidth());
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPrimaryContent
                 .getLayoutParams();
-
 
         if (mSecondaryContent.getMeasuredWidth() < 1 && newWidth > params.width) {
             return false;
@@ -275,7 +285,5 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
         // set the secondary content parameter to use all the available space
         secondaryParams.weight = 1;
         mSecondaryContent.setLayoutParams(secondaryParams);
-
     }
-
 };

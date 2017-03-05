@@ -86,5 +86,13 @@
             android:layout_height="wrap_content"
             android:background="@drawable/task_header_view_background"
             android:divider="@null" />
+
+        <View
+            android:id="@+id/dummy_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:visibility="gone"/>
+
     </com.kiwi.auready_ver2.util.view.SplitView>
 </LinearLayout>

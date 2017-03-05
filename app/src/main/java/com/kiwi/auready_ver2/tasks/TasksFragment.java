@@ -1,12 +1,12 @@
 package com.kiwi.auready_ver2.tasks;
 
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -14,6 +14,8 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.util.view.DragSortController;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
+import com.kiwi.auready_ver2.util.view.SplitView;
+import com.kiwi.auready_ver2.util.view.ViewUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,10 @@ public class TasksFragment extends Fragment {
 
     private DragSortListView mNotCompleteListview;
     private DragSortListView mCompleteListview;
+    private View mDummyView;
+    private SplitView mSplitView;
 
+    private boolean mIsFirstLaunch = true;
     private static TasksActivity.TaskViewListener mTaskViewListener;
 
     public TasksFragment() {
@@ -65,12 +70,16 @@ public class TasksFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_tasks, container, false);
 
+        mSplitView = (SplitView) root.findViewById(R.id.split_view);
+
         // set listview
         mNotCompleteListview = (DragSortListView) root.findViewById(R.id.tasks_listview);
         setListView(mNotCompleteListview);
 
         mCompleteListview = (DragSortListView) root.findViewById(R.id.complete_tasks_listview);
         setListView(mCompleteListview);
+
+        mDummyView = root.findViewById(R.id.dummy_view);
 
         // add header view
         TextView memberText = (TextView) root.findViewById(R.id.member_name);
@@ -143,7 +152,7 @@ public class TasksFragment extends Fragment {
         mTaskViewListener.onEditedTask(mMemberId, tasks);
     }
 
-    private List<Task> getAllTasks(){
+    private List<Task> getAllTasks() {
 
         ArrayList<Task> tasks = new ArrayList<>();
 
@@ -171,24 +180,26 @@ public class TasksFragment extends Fragment {
 
         ((TasksAdapter) mNotCompleteListview.getInputAdapter()).updateTasks(notCompleteTasks);
         ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(completeTasks);
-        mNotCompleteListview.smoothScrollToPosition(mNotCompleteListview.getInputAdapter().getCount());
 
-//            View splitView = getView().findViewById(R.id.split_view);
-//            splitView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-//            int splitViewHeight = splitView.getMeasuredHeight();
-//            ViewGroup.LayoutParams params = mNotCompleteListview.getLayoutParams();
-//            params.height = splitViewHeight;
-//            mNotCompleteListview.setLayoutParams(params);
-//            mNotCompleteListview.requestLayout();
+        // it need to move splitview when there is no completed Item
+        if(mCompleteListview.getInputAdapter().getCount() == 0){
+            mDummyView.setVisibility(View.VISIBLE);
+        }
 
-
-
-//        if(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview) - 100 < splitViewHeight){
-//            ViewGroup.LayoutParams params = mNotCompleteListview.getLayoutParams();
-//            params.height = ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview);
-//            mNotCompleteListview.setLayoutParams(params);
-//            mNotCompleteListview.requestLayout();
-//        }
+        if (mIsFirstLaunch) {
+            mIsFirstLaunch = false;
+            getView().getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+                @Override
+                public void onDraw() {
+                    getView().getViewTreeObserver().removeOnDrawListener(this);
+                    if (mSplitView.getPrimaryContentSize() <= ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview)) {
+                        mSplitView.setPrimaryContentSize(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview));
+                    }
+                }
+            });
+        } else {
+            mNotCompleteListview.smoothScrollToPosition(mNotCompleteListview.getInputAdapter().getCount());
+        }
     }
 
     public void showNoTasks() {
@@ -231,6 +242,10 @@ public class TasksFragment extends Fragment {
 
             notCompleteAdapter.updateTasks(notCompleteTasks);
             completeAdapter.updateTasks(completeTasks);
+
+            if (mSplitView.getPrimaryContentSize() > ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview)) {
+                mSplitView.setPrimaryContentSize(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview));
+            }
         }
     };
 }
