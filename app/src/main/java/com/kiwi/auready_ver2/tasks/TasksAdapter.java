@@ -3,15 +3,16 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Task;
@@ -39,6 +40,24 @@ public class TasksAdapter extends BaseAdapter {
 
     public List<Task> getItems() {
         return mTasks;
+    }
+
+    private void setOrder() {
+        for (int i = 0; i < mTasks.size(); i++) {
+            mTasks.get(i).setOrder(i);
+        }
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        setOrder();
+        super.notifyDataSetChanged();
+    }
+
+    @Override
+    public void notifyDataSetInvalidated() {
+        setOrder();
+        super.notifyDataSetInvalidated();
     }
 
     @Override
@@ -87,6 +106,7 @@ public class TasksAdapter extends BaseAdapter {
         viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
+                Log.d("MY_LOG", "setOnFocusChangeListener : " + hasFocus + ", " + position);
                 if (hasFocus) {
                     viewHolder.deleteButton.setVisibility(View.VISIBLE);
                 } else {
@@ -113,38 +133,59 @@ public class TasksAdapter extends BaseAdapter {
             }
         });
 
-        viewHolder.checkBox.setChecked(task.isCompleted());
         viewHolder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Task removedTask = removeItem(position);
+                if (removedTask == null) {
+                    Toast.makeText(v.getContext(), "Fail to edit task, position : "
+                            + viewHolder.ref, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 CheckBox checkBox = (CheckBox) v;
-
-                task.setCompleted(checkBox.isChecked());
+                removedTask.setCompleted(checkBox.isChecked());
                 mTaskItemListener.onEditedTask(
-                        position,
+                        removedTask,
                         checkBox.isChecked());
-            }
-        });
-
-
-        viewHolder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
             }
         });
 
         return convertView;
     }
 
+    public void addItem(Task task) {
+        if (task == null) {
+            return;
+        }
+
+        mTasks.add(task);
+        notifyDataSetChanged();
+    }
+
+    public Task removeItem(int position) {
+        if (position >= mTasks.size()) {
+            return null;
+        }
+
+        Task task = mTasks.remove(position);
+        notifyDataSetChanged();
+
+        return task;
+    }
+
     public void reorder(int from, int to) {
+        if (from >= mTasks.size() || to >= mTasks.size()) {
+            return;
+        }
+
         Task fromTask = mTasks.remove(from);
         mTasks.add(to, fromTask);
 
         notifyDataSetChanged();
     }
 
-    private static class ViewHolder {
+    static class ViewHolder {
         ImageView reorderImage;
         CheckBox checkBox;
         EditText editText;

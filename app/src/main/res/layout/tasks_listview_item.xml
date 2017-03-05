@@ -6,7 +6,7 @@
     android:layout_marginStart="@dimen/list_item_padding"
     android:background="@drawable/task_list_item_background"
     android:elevation="3dp"
-    android:minHeight="30dp"
+    android:minHeight="50dp"
     android:paddingEnd="@dimen/list_item_padding"
     android:paddingStart="@dimen/list_item_padding">
 
@@ -32,6 +32,7 @@
         style="@style/listview_sub_textview_style"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_centerVertical="true"
         android:layout_toRightOf="@id/task_checkbox"
         android:background="@null"
         android:minHeight="30dp" />

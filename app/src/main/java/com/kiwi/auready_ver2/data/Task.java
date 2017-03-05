@@ -95,6 +95,10 @@ public class Task {
         mOrder = order;
     }
 
+    public void setCompleted(boolean isCompleted) {
+        mCompleted = isCompleted;
+    }
+
     public void increaseOrder() {
         mOrder++;
     }
@@ -125,11 +129,17 @@ public class Task {
                 " description: " + mDescription + " completed: " + mCompleted + " order: " + mOrder;
     }
 
-    public void setCompleted(boolean completed) {
-        mCompleted = completed;
-    }
-
     public void setDescription(String description) {
         mDescription = description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Task)) {
+            return false;
+        }
+
+        Task task = (Task) o;
+        return task.getId() == ((Task) o).getId();
     }
 }

@@ -118,7 +118,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
                         getTasksOfMember(memberId);
-                        mTasksView.scrollToAddButton();
+//                        mTasksView.scrollToAddButton();
                     }
 
                     @Override
@@ -166,7 +166,7 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(EditTasks.ResponseValue response) {
-//                        getTasksOfMember(memberId);
+                        getTasksOfMember(memberId);
                     }
 
                     @Override

@@ -12,8 +12,6 @@ import android.widget.ListView;
 
 import com.kiwi.auready_ver2.R;
 
-import java.util.List;
-
 public class SplitView extends LinearLayout implements View.OnTouchListener {
 
     private int mHandleId;
@@ -28,6 +26,7 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
     private int mLastPrimaryContentSize;
 
     private boolean mDragging;
+    private boolean mIsDragged = false;
     private long mDraggingStarted;
     private float mDragStartX;
     private float mDragStartY;
@@ -99,6 +98,9 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
         mHandle.setOnTouchListener(this);
     }
 
+    public boolean isDragged(){
+        return mIsDragged;
+    }
 
     @Override
     public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -120,6 +122,7 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
             return true;
         } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
             mDragging = false;
+            mIsDragged = true;
             if (
                     mDragStartX < (motionEvent.getX() + TAP_DRIFT_TOLERANCE) &&
                             mDragStartX > (motionEvent.getX() - TAP_DRIFT_TOLERANCE) &&
