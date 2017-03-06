@@ -21,4 +21,12 @@ public class TaskHead_remote {
         this.title = title;
         this.members = members;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

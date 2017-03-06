@@ -75,9 +75,24 @@ public class TaskRepository implements TaskDataSource {
 
             @Override
             public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
+                // get taskheads, members and tasks at once from Remote
+                mRemoteDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
+                    @Override
+                    public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
+                        refreshLocalDataSource(taskHeads);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        callback.onDataNotAvailable();
+                    }
+                });
             }
         });
+    }
+
+    private void refreshLocalDataSource(List<TaskHead> taskHeads) {
+
     }
 
     @Override

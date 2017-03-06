@@ -31,11 +31,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class TaskRemoteDataSource implements TaskDataSource {
 
     private static TaskRemoteDataSource INSTANCE;
+    private final AccessTokenStore mAccessTokenStore;
     private final String mAccessToken;
 
     private TaskRemoteDataSource(Context context) {
-        mAccessToken =
-                AccessTokenStore.getInstance(context).getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        mAccessTokenStore = AccessTokenStore.getInstance(context);
+        mAccessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
     }
 
     public static TaskDataSource getInstance(@NonNull Context context) {
@@ -47,8 +48,42 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
+    public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
+        String name = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
+        Call<List<TaskHead_remote>> call = taskService.getTaskHeads(name);
+        call.enqueue(new Callback<List<TaskHead_remote>>() {
+            @Override
+            public void onResponse(Call<List<TaskHead_remote>> call, Response<List<TaskHead_remote>> response) {
+                if (response.isSuccessful()) {
+                    Log.d("test_SaveTaskHead", "response.isSuccessful()");
+                    List<TaskHead> taskHeads = filterTaskHeadFromRemote(response.body());
+                    if(taskHeads.isEmpty()) {
+                        callback.onDataNotAvailable();
+                    } else {
+                        callback.onTaskHeadsLoaded(taskHeads);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<TaskHead_remote>> call, Throwable t) {
+                callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    private List<TaskHead> filterTaskHeadFromRemote(List<TaskHead_remote> taskHeads_remote) {
+
+        List<TaskHead> taskHeads = new ArrayList<>(0);
+        for(TaskHead_remote taskHeadRemote : taskHeads_remote) {
+            // Set default orders; 0
+            TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(), taskHeadRemote.getTitle(), 0);
+            taskHeads.add(newTaskHead);
+        }
+        return taskHeads;
     }
 
     @Override
@@ -76,7 +111,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         // Make Object for remote
         List<Member_remote> memberRemotes = new ArrayList<>();
         List<Member> members = taskHeadDetail.getMembers();
-        for(Member member:members) {
+        for (Member member : members) {
             Member_remote memberRemote = new Member_remote(
                     member.getId(),
                     member.getName(),
@@ -91,8 +126,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
-                    Log.d("test_SaveTaskHead", "response.isSuccessful()");
+                if (response.isSuccessful()) {
                     callback.onSaveSuccess();
                 } else {
                     callback.onSaveFailed();
