@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.tasks.domain.usecase;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Task;
@@ -21,6 +22,10 @@ public class GetTasksOfMember extends UseCase<GetTasksOfMember.RequestValues, Ge
 
     public GetTasksOfMember(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
+    }
+
+    public GetTasksOfMember(@NonNull GetTasksOfMember getTasksOfMember){
+        mTaskRepository = getTasksOfMember.mTaskRepository;
     }
 
     @Override

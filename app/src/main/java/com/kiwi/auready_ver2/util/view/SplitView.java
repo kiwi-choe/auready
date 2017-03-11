@@ -123,6 +123,7 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
         } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
             mDragging = false;
             mIsDragged = true;
+            // expand splitView when clicking the handler
             if (
                     mDragStartX < (motionEvent.getX() + TAP_DRIFT_TOLERANCE) &&
                             mDragStartX > (motionEvent.getX() - TAP_DRIFT_TOLERANCE) &&
@@ -130,9 +131,9 @@ public class SplitView extends LinearLayout implements View.OnTouchListener {
                             mDragStartY > (motionEvent.getY() - TAP_DRIFT_TOLERANCE) &&
                             ((SystemClock.elapsedRealtime() - mDraggingStarted) < SINGLE_TAP_MAX_TIME)) {
                 if (isPrimaryContentMaximized() || isSecondaryContentMaximized()) {
-                    setPrimaryContentSize(mLastPrimaryContentSize);
+//                    setPrimaryContentSize(mLastPrimaryContentSize);
                 } else {
-                    maximizeSecondaryContent();
+//                    maximizeSecondaryContent();
                 }
             }
             return true;

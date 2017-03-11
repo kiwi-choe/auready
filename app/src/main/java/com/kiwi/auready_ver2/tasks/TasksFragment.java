@@ -1,13 +1,10 @@
 package com.kiwi.auready_ver2.tasks;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -31,7 +28,7 @@ public class TasksFragment extends Fragment {
     private String mMemberId;
     private String mMemberName;
 
-    private DragSortListView mNotCompleteListview;
+    private DragSortListView mUnCompleteListview;
     private DragSortListView mCompleteListview;
     private View mDummyView;
     private SplitView mSplitView;
@@ -81,8 +78,8 @@ public class TasksFragment extends Fragment {
         mSplitView = (SplitView) root.findViewById(R.id.split_view);
 
         // set listview
-        mNotCompleteListview = (DragSortListView) root.findViewById(R.id.tasks_listview);
-        setListView(mNotCompleteListview, new NotCompleteTasksAdapter(getContext(), mTaskItemListener));
+        mUnCompleteListview = (DragSortListView) root.findViewById(R.id.tasks_listview);
+        setListView(mUnCompleteListview, new NotCompleteTasksAdapter(getContext(), mTaskItemListener));
 
         mCompleteListview = (DragSortListView) root.findViewById(R.id.complete_tasks_listview);
         setListView(mCompleteListview, new CompleteTasksAdapter(getContext(), mTaskItemListener));
@@ -101,7 +98,7 @@ public class TasksFragment extends Fragment {
                 // Todo : There is a timing issue between Edit and Add
                 saveAllEditedDataInMemory();
 
-                int position = mNotCompleteListview.getInputAdapter().getCount();
+                int position = mUnCompleteListview.getInputAdapter().getCount();
                 Task task = new Task(mMemberId, "new Item " + position, position);
                 mTaskViewListener.onAddTaskButtonClicked(task);
                 mLastOperation = ADD_TASK;
@@ -173,7 +170,7 @@ public class TasksFragment extends Fragment {
 
         ArrayList<Task> tasks = new ArrayList<>();
 
-        TasksAdapter notCompleteAdapter = (TasksAdapter) mNotCompleteListview.getInputAdapter();
+        TasksAdapter notCompleteAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
         tasks.addAll(notCompleteAdapter.getItems());
 
         TasksAdapter completeAdapter = (TasksAdapter) mCompleteListview.getInputAdapter();
@@ -182,29 +179,9 @@ public class TasksFragment extends Fragment {
         return tasks;
     }
 
-    public void showTasks(List<Task> tasks) {
-
-        ArrayList<Task> completeTasks = new ArrayList<>();
-        ArrayList<Task> notCompleteTasks = new ArrayList<>();
-
-        for (Task task : tasks) {
-            if (task.isCompleted()) {
-                if (task.getOrder() >= completeTasks.size()) {
-                    completeTasks.add(task);
-                } else {
-                    completeTasks.add(task.getOrder(), task);
-                }
-            } else {
-                if (task.getOrder() >= notCompleteTasks.size()) {
-                    notCompleteTasks.add(task);
-                } else {
-                    notCompleteTasks.add(task.getOrder(), task);
-                }
-            }
-        }
-
-        ((TasksAdapter) mNotCompleteListview.getInputAdapter()).updateTasks(notCompleteTasks);
-        ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(completeTasks);
+    public void showFilteredTasks(List<Task> completed, List<Task> uncompleted) {
+        ((TasksAdapter) mUnCompleteListview.getInputAdapter()).updateTasks(completed);
+        ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(uncompleted);
 
         // it needs to move splitview when there is no completed Item
         if (mCompleteListview.getInputAdapter().getCount() == 0) {
@@ -212,25 +189,56 @@ public class TasksFragment extends Fragment {
         } else {
             mDummyView.setVisibility(View.GONE);
         }
+    }
 
-        if (mIsFirstLaunch) {
-            mIsFirstLaunch = false;
-            getView().getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
-                @Override
-                public void onDraw() {
-                    getView().getViewTreeObserver().removeOnDrawListener(this);
-                    if (mSplitView.getPrimaryContentSize() <= ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview)) {
-                        mSplitView.setPrimaryContentSize(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview));
-                    }
-                }
-            });
-        } else {
-            invalidateSplitViewToFitWithUpperView();
-            if (mLastOperation == ADD_TASK) {
-                mNotCompleteListview.smoothScrollToPosition(mNotCompleteListview.getInputAdapter().getCount());
-                mLastOperation = NONE;
-            }
-        }
+    public void showTasks(List<Task> tasks) {
+//        ArrayList<Task> completeTasks = new ArrayList<>();
+//        ArrayList<Task> notCompleteTasks = new ArrayList<>();
+//
+//        for (Task task : tasks) {
+//            if (task.isCompleted()) {
+//                if (task.getOrder() >= completeTasks.size()) {
+//                    completeTasks.add(task);
+//                } else {
+//                    completeTasks.add(task.getOrder(), task);
+//                }
+//            } else {
+//                if (task.getOrder() >= notCompleteTasks.size()) {
+//                    notCompleteTasks.add(task);
+//                } else {
+//                    notCompleteTasks.add(task.getOrder(), task);
+//                }
+//            }
+//        }
+//
+//        ((TasksAdapter) mUnCompleteListview.getInputAdapter()).updateTasks(notCompleteTasks);
+//        ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(completeTasks);
+//
+//        // it needs to move splitview when there is no completed Item
+//        if (mCompleteListview.getInputAdapter().getCount() == 0) {
+//            mDummyView.setVisibility(View.VISIBLE);
+//        } else {
+//            mDummyView.setVisibility(View.GONE);
+//        }
+
+//        if (mIsFirstLaunch) {
+//            mIsFirstLaunch = false;
+//            getView().getViewTreeObserver().addOnDrawListener(new ViewTreeObserver.OnDrawListener() {
+//                @Override
+//                public void onDraw() {
+//                    getView().getViewTreeObserver().removeOnDrawListener(this);
+//                    if (mSplitView.getPrimaryContentSize() <= ViewUtils.getListViewHeightBasedOnChildren(mUnCompleteListview)) {
+//                        mSplitView.setPrimaryContentSize(ViewUtils.getListViewHeightBasedOnChildren(mUnCompleteListview));
+//                    }
+//                }
+//            });
+//        } else {
+//            invalidateSplitViewToFitWithUpperView();
+//            if (mLastOperation == ADD_TASK) {
+//                mUnCompleteListview.smoothScrollToPosition(mUnCompleteListview.getInputAdapter().getCount());
+//                mLastOperation = NONE;
+//            }
+//        }
     }
 
     public interface TaskItemListener {
@@ -265,14 +273,14 @@ public class TasksFragment extends Fragment {
             }
 
             TasksAdapter completeAdapter = (TasksAdapter) mCompleteListview.getInputAdapter();
-            TasksAdapter notCompleteAdapter = (TasksAdapter) mNotCompleteListview.getInputAdapter();
+            TasksAdapter notCompleteAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
 
             if (checked) {
                 completeAdapter.addItem(editedTask);
                 mCompleteListview.smoothScrollToPosition(completeAdapter.getCount());
             } else {
                 notCompleteAdapter.addItem(editedTask);
-                mNotCompleteListview.smoothScrollToPosition(notCompleteAdapter.getCount());
+                mUnCompleteListview.smoothScrollToPosition(notCompleteAdapter.getCount());
             }
 
             invalidateSplitViewToFitWithUpperView();
@@ -281,9 +289,9 @@ public class TasksFragment extends Fragment {
 
     private void invalidateSplitViewToFitWithUpperView() {
 
-        if (mSplitView.getPrimaryContentSize() >= ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview)
+        if (mSplitView.getPrimaryContentSize() >= ViewUtils.getListViewHeightBasedOnChildren(mUnCompleteListview)
                 || !mSplitView.isDragged()) {
-            mSplitView.setPrimaryContentSize(ViewUtils.getListViewHeightBasedOnChildren(mNotCompleteListview));
+            mSplitView.setPrimaryContentSize(ViewUtils.getListViewHeightBasedOnChildren(mUnCompleteListview));
         }
 
         // it needs to move splitview when there is no completed Item

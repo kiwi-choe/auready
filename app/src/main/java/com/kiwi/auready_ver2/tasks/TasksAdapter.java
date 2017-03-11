@@ -106,7 +106,6 @@ public class TasksAdapter extends BaseAdapter {
         viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                Log.d("MY_LOG", "setOnFocusChangeListener : " + hasFocus + ", " + position);
                 if (hasFocus) {
                     viewHolder.deleteButton.setVisibility(View.VISIBLE);
                 } else {

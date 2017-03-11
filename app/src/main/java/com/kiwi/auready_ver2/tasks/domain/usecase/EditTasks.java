@@ -21,6 +21,10 @@ public class EditTasks extends UseCase<EditTasks.RequestValues, EditTasks.Respon
         mTaskRepository = checkNotNull(taskRepository);
     }
 
+    public EditTasks(@NonNull EditTasks editTasks) {
+        mTaskRepository = editTasks.mTaskRepository;
+    }
+
     @Override
     protected void executeUseCase(RequestValues values) {
         mTaskRepository.editTasks(values.getTasks());
@@ -40,5 +44,6 @@ public class EditTasks extends UseCase<EditTasks.RequestValues, EditTasks.Respon
     }
 
     public static final class ResponseValue implements UseCase.ResponseValue {
+
     }
 }

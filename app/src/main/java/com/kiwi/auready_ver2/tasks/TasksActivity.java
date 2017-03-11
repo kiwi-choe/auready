@@ -160,8 +160,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showTasks(String memberId, List<Task> tasks) {
-        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
-        fragment.showTasks(tasks);
+//        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+//        fragment.showTasks(tasks);
     }
 
     @Override
@@ -170,8 +170,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     }
 
     @Override
-    public void showFilteredTasks(List<Task> completed, List<Task> uncompleted) {
-
+    public void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
+        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+        if (fragment != null) {
+            fragment.showFilteredTasks(completed, uncompleted);
+        }
     }
 
     @Override

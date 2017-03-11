@@ -124,7 +124,7 @@ public class TasksPresenterTest {
         assertThat(completed.size(), is(2));
         assertThat(uncompleted.size(), is(1));
 
-        verify(mTasksView).showFilteredTasks(completed, uncompleted);
+        verify(mTasksView).showFilteredTasks(memberId, completed, uncompleted);
     }
     @Test
     public void getTasksOfMember_whenTasksIsEmpty() {
