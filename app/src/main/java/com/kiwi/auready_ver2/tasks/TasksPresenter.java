@@ -70,6 +70,10 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void start() {
+        if (mTasksView != null) {
+            mTasksView.showLoadProgressBar();
+        }
+
         if (mTaskHeadId != null) {
             populateMembers();
         }
@@ -101,15 +105,15 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
                         if (response.getTasks().size() != 0) {
-//                            String memberId = response.getTasks().get(0).getMemberId();
-//                            mTasksView.showTasks(memberId, response.getTasks());
-
                             filterTasks(response.getTasks(), new ArrayList<Task>(), new ArrayList<Task>());
+                        } else {
+                            mTasksView.showNoTask();
                         }
                     }
 
                     @Override
                     public void onError() {
+                        mTasksView.showNoTask();
                     }
                 });
     }
@@ -123,7 +127,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
                         getTasksOfMember(memberId);
-//                        mTasksView.scrollToAddButton();
+//                        mTasksView.showLoadProgressBar();
                     }
 
                     @Override

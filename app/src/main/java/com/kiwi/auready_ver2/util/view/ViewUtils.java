@@ -49,4 +49,21 @@ public class ViewUtils {
 
         return totalHeight;
     }
+
+    public static int getListItemHeight(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return 0;
+        }
+
+        if (listAdapter.getCount() == 0) {
+            return 0;
+        }
+
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.AT_MOST);
+        View listItem = listAdapter.getView(0, null, listView);
+        listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+        return listItem.getMeasuredHeight();
+    }
 }

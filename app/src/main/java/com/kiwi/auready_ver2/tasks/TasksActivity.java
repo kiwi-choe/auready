@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
@@ -26,9 +29,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     public static final String ARG_TITLE = "TITLE";
     public static final int REQ_EDIT_TASKHEAD = 0;
 
+    public static final int OFF_SCREEN_PAGE_LIMIT = 5;
+
+
     // tasks fragment view pager
     private ViewPager mViewPager;
     private TasksFragmentPagerAdapter mPagerAdapter;
+    private ProgressBar mProgressBar;
 
     private String mTaskHeadId;
 
@@ -66,6 +73,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
                 Injection.provideGetTasksOfTaskHead(getApplicationContext()));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -119,6 +131,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         mViewPager = (ViewPager) findViewById(R.id.tasks_fragment_pager);
         mPagerAdapter = new TasksFragmentPagerAdapter(getSupportFragmentManager(), members, mTaskViewListener);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
+
+        mViewPager.setVisibility(View.INVISIBLE);
     }
 
     interface TaskViewListener {
@@ -165,15 +180,39 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     }
 
     @Override
-    public void scrollToAddButton() {
+    public void showLoadProgressBar() {
+        if (mProgressBar == null) {
+            mProgressBar = (ProgressBar) findViewById(R.id.tasks_data_load_progress_bar);
+        }
 
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        if (mViewPager != null) {
+            mViewPager.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+
+        mViewPager.setVisibility(View.VISIBLE);
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         if (fragment != null) {
             fragment.showFilteredTasks(completed, uncompleted);
+        }
+    }
+
+    @Override
+    public void showNoTask() {
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+
+        if (mViewPager != null) {
+            mViewPager.setVisibility(View.VISIBLE);
         }
     }
 
@@ -182,4 +221,3 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         mPresenter = (TasksPresenter) checkNotNull(presenter);
     }
 }
-

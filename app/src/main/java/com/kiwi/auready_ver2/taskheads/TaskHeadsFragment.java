@@ -227,7 +227,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance();
         accessTokenStore.logoutUser();
 
-        if(mListener!=null) {
+        if (mListener != null) {
             mListener.onUpdatingNavHeaderUI(LoginUtils.LOGOUT);
         }
     }

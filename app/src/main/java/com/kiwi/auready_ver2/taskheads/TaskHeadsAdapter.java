@@ -171,7 +171,5 @@ public class TaskHeadsAdapter extends BaseAdapter {
         for (View animatedView : viewList) {
             animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
         }
-
-
     }
 }

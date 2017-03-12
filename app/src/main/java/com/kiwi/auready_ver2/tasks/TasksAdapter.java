@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -25,6 +26,15 @@ public class TasksAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private ArrayList<Task> mTasks = new ArrayList<>();
     private TasksFragment.TaskItemListener mTaskItemListener;
+
+    private boolean mIsReorderDisplayed = false;
+    private boolean mIsDeleteDisplayed = false;
+
+    private int mViewWidth = -1;
+    private int mReorderWidth = -1;
+    private int mDeleteWidth = -1;
+    private int mCheckBoxWidth = -1;
+
 
     public TasksAdapter(Context context, TasksFragment.TaskItemListener taskItemListener) {
         mInflater = LayoutInflater.from(context);
@@ -95,22 +105,10 @@ public class TasksAdapter extends BaseAdapter {
         viewHolder.ref = position;
         final Task task = mTasks.get(position);
 
-        viewHolder.deleteButton.setVisibility(View.GONE);
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mTaskItemListener.onTaskDeleteButtonClicked(task.getMemberId(), task.getId());
-            }
-        });
-
-        viewHolder.editText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    viewHolder.deleteButton.setVisibility(View.VISIBLE);
-                } else {
-                    viewHolder.deleteButton.setVisibility(View.GONE);
-                }
             }
         });
 
@@ -149,6 +147,31 @@ public class TasksAdapter extends BaseAdapter {
                         checkBox.isChecked());
             }
         });
+
+        if (mReorderWidth == -1) {
+            viewHolder.reorderImage.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mReorderWidth = viewHolder.reorderImage.getMeasuredWidth();
+        }
+
+        if (mDeleteWidth == -1) {
+            viewHolder.deleteButton.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mDeleteWidth = viewHolder.deleteButton.getMeasuredWidth();
+        }
+
+        if (mCheckBoxWidth == -1) {
+            viewHolder.checkBox.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            mCheckBoxWidth = viewHolder.checkBox.getMeasuredWidth();
+        }
+
+        float reorderEndPos = mIsReorderDisplayed ? 0 : -mReorderWidth;
+        viewHolder.reorderImage.setTranslationX(reorderEndPos);
+        viewHolder.checkBox.setTranslationX(reorderEndPos);
+        viewHolder.editText.setTranslationX(reorderEndPos);
+
+        float deleteEndPos = mIsDeleteDisplayed ? 0 : mDeleteWidth;
+        viewHolder.deleteButton.setTranslationX(deleteEndPos);
+
+        viewHolder.editText.setPaddingRelative(0, 0, (mIsDeleteDisplayed ? mDeleteWidth : 0) + (mIsReorderDisplayed ? mReorderWidth : 0), 0);
 
         return convertView;
     }
@@ -191,5 +214,72 @@ public class TasksAdapter extends BaseAdapter {
         ImageButton deleteButton;
 
         int ref;
+    }
+
+    // animation
+    public void startReorderAnimation(View view, long duration, Interpolator interpolator) {
+        if (view == null || view.getTag() == null) {
+            return;
+        }
+
+        if (view.getTag() instanceof ViewHolder == false) {
+            return;
+        }
+
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        float startPos = mIsReorderDisplayed ? -mReorderWidth : 0;
+        float endPos = mIsReorderDisplayed ? 0 : -mReorderWidth;
+
+        ArrayList<View> viewList = new ArrayList<>();
+        viewHolder.reorderImage.setTranslationX(startPos);
+        viewHolder.reorderImage.animate().translationX(endPos);
+        viewList.add(viewHolder.reorderImage);
+
+        viewHolder.checkBox.setTranslationX(startPos);
+        viewHolder.checkBox.animate().translationX(endPos);
+        viewList.add(viewHolder.checkBox);
+
+        viewHolder.editText.setTranslationX(startPos);
+        viewHolder.editText.animate().translationX(endPos);
+        viewList.add(viewHolder.editText);
+
+        for (View animatedView : viewList) {
+            animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
+        }
+
+        viewHolder.editText.setPaddingRelative(0, 0, (mIsDeleteDisplayed ? mDeleteWidth : 0) + (mIsReorderDisplayed ? mReorderWidth : 0), 0);
+    }
+
+    public void starDeleteAnimation(View view, long duration, Interpolator interpolator) {
+        if (view == null || view.getTag() == null) {
+            return;
+        }
+
+        if (view.getTag() instanceof ViewHolder == false) {
+            return;
+        }
+
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        float startPos = mIsDeleteDisplayed ? mDeleteWidth : 0;
+        float endPos = mIsDeleteDisplayed ? 0 : mDeleteWidth;
+
+        ArrayList<View> viewList = new ArrayList<>();
+        viewHolder.deleteButton.setTranslationX(startPos);
+        viewHolder.deleteButton.animate().translationX(endPos);
+        viewList.add(viewHolder.deleteButton);
+
+        for (View animatedView : viewList) {
+            animatedView.animate().setDuration(duration).setInterpolator(interpolator).start();
+        }
+
+        viewHolder.editText.setPaddingRelative(0, 0, (mIsDeleteDisplayed ? mDeleteWidth : 0) + (mIsReorderDisplayed ? mReorderWidth : 0), 0);
+    }
+
+    public void toggleReorderDisplayed() {
+        mIsReorderDisplayed = !mIsReorderDisplayed;
+    }
+
+    public void toggleDeleteDisplayed() {
+        mIsDeleteDisplayed = !mIsDeleteDisplayed;
     }
 }

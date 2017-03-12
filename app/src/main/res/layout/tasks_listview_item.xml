@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/list_item_padding"
     android:layout_marginStart="@dimen/list_item_padding"
     android:background="@drawable/task_list_item_background"
     android:elevation="3dp"
-    android:minHeight="50dp"
-    android:paddingEnd="@dimen/list_item_padding"
     android:paddingStart="@dimen/list_item_padding">
 
     <ImageView
