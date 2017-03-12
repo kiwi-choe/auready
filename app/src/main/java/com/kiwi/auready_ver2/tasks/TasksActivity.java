@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -129,11 +128,58 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     private void initFragments(List<Member> members) {
         mViewPager = (ViewPager) findViewById(R.id.tasks_fragment_pager);
-        mPagerAdapter = new TasksFragmentPagerAdapter(getSupportFragmentManager(), members, mTaskViewListener);
+        mPagerAdapter = new TasksFragmentPagerAdapter(this, getSupportFragmentManager(), members, mTaskViewListener);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
 
+        mViewPager.setClipToPadding(false);
+        mViewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding));
+
         mViewPager.setVisibility(View.INVISIBLE);
+
+        mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                R.dimen.viewpager_end_padding),
+                mViewPager.getPaddingTop(),
+                mViewPager.getPaddingRight(),
+                mViewPager.getPaddingBottom());
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
+                    if (mViewPager.getPaddingStart() == startPadding) {
+                        return;
+                    }
+
+                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                            R.dimen.viewpager_end_padding),
+                            mViewPager.getPaddingTop(),
+                            mViewPager.getPaddingRight(),
+                            mViewPager.getPaddingBottom());
+                } else {
+                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
+                    if (mViewPager.getPaddingStart() == startPadding) {
+                        return;
+                    }
+
+                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                            R.dimen.viewpager_start_padding),
+                            mViewPager.getPaddingTop(),
+                            mViewPager.getPaddingRight(),
+                            mViewPager.getPaddingBottom());
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     interface TaskViewListener {
@@ -220,4 +266,5 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     public void setPresenter(TasksContract.Presenter presenter) {
         mPresenter = (TasksPresenter) checkNotNull(presenter);
     }
+
 }

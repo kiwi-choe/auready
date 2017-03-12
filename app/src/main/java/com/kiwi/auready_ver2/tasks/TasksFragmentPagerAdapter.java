@@ -1,10 +1,12 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.util.Log;
+import android.util.DisplayMetrics;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Member;
 
 import java.util.HashMap;
@@ -14,10 +16,11 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     // key : Member ID, value : TasksFragment
     private HashMap<String, TasksFragment> mTasksFragments;
-    List<Member> mMembers;
-    TasksActivity.TaskViewListener mTaskViewListener;
+    private List<Member> mMembers;
+    private TasksActivity.TaskViewListener mTaskViewListener;
+    private Context mContext;
 
-    public TasksFragmentPagerAdapter(FragmentManager fm, List<Member> members, TasksActivity.TaskViewListener taskViewListener) {
+    public TasksFragmentPagerAdapter(Context context, FragmentManager fm, List<Member> members, TasksActivity.TaskViewListener taskViewListener) {
         super(fm);
         mMembers = members;
         mTaskViewListener = taskViewListener;
@@ -30,6 +33,8 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
                             member.getName(),
                             mTaskViewListener));
         }
+
+        mContext = context;
     }
 
     @Override
@@ -51,5 +56,17 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     public List<Member> getMembers() {
         return mMembers;
+    }
+
+    @Override
+    public float getPageWidth(int position) {
+        if (getMembers().size() == 1) {
+            return super.getPageWidth(position);
+        }
+
+        DisplayMetrics displayMetrics = mContext.getResources().getDisplayMetrics();
+        float smallestWidth = displayMetrics.widthPixels;
+        float margin = mContext.getResources().getDimension(R.dimen.viewpager_end_padding);
+        return (smallestWidth - margin) / smallestWidth;
     }
 }

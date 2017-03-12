@@ -29,15 +29,19 @@
         </android.support.design.widget.AppBarLayout>
 
         <!-- fragments -->
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/tasksview_background_color">
+            android:background="@color/tasksview_background_color"
+            android:orientation="horizontal">
 
             <android.support.v4.view.ViewPager
                 android:id="@+id/tasks_fragment_pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingEnd="@dimen/viewpager_end_padding"
+                android:paddingStart="@dimen/viewpager_start_padding" />
 
             <ProgressBar
                 android:id="@+id/tasks_data_load_progress_bar"
@@ -46,7 +50,7 @@
                 android:layout_centerInParent="true"
                 android:visibility="gone" />
 
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
