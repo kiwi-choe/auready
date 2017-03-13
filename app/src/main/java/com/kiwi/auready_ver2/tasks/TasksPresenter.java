@@ -16,6 +16,7 @@ import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -69,6 +70,10 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void start() {
+        if (mTasksView != null) {
+            mTasksView.showLoadProgressBar();
+        }
+
         if (mTaskHeadId != null) {
             populateMembers();
         }
@@ -94,17 +99,21 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void getTasksOfMember(@NonNull final String memberId) {
         checkNotNull(memberId);
 
-        mUseCaseHandler.execute(mGetTasksOfMember, new GetTasksOfMember.RequestValues(memberId),
+        // we need copy of GetTasksOfMember instance to support asynchronous getTasksOfMember method call
+        mUseCaseHandler.execute(new GetTasksOfMember(mGetTasksOfMember), new GetTasksOfMember.RequestValues(memberId),
                 new UseCase.UseCaseCallback<GetTasksOfMember.ResponseValue>() {
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
-                        if(response.getTasks().size() != 0) {
-                            mTasksView.showTasks(memberId, response.getTasks());
+                        if (response.getTasks().size() != 0) {
+                            filterTasks(response.getTasks(), new ArrayList<Task>(), new ArrayList<Task>());
+                        } else {
+                            mTasksView.showNoTask();
                         }
                     }
 
                     @Override
                     public void onError() {
+                        mTasksView.showNoTask();
                     }
                 });
     }
@@ -112,13 +121,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void createTask(@NonNull final String memberId, @NonNull String description, @NonNull int order) {
         Task newTask = new Task(memberId, description, order);
-        mUseCaseHandler.execute(mSaveTask, new SaveTask.RequestValues(newTask),
+        mUseCaseHandler.execute(new SaveTask(mSaveTask), new SaveTask.RequestValues(newTask),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
                         getTasksOfMember(memberId);
-                        mTasksView.scrollToAddButton();
+//                        mTasksView.showLoadProgressBar();
                     }
 
                     @Override
@@ -143,7 +152,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     public void deleteTasks(@NonNull final String memberId, @NonNull List<String> taskIds) {
         checkNotNull(taskIds);
 
-        mUseCaseHandler.execute(mDeleteTasks, new DeleteTasks.RequestValues(taskIds),
+        mUseCaseHandler.execute(new DeleteTasks(mDeleteTasks), new DeleteTasks.RequestValues(taskIds),
                 new UseCase.UseCaseCallback<DeleteTasks.ResponseValue>() {
 
                     @Override
@@ -161,12 +170,12 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void editTasks(@NonNull final String memberId, @NonNull List<Task> tasks) {
 
-        mUseCaseHandler.execute(mEditTasks, new EditTasks.RequestValues(tasks),
+        mUseCaseHandler.execute(new EditTasks(mEditTasks), new EditTasks.RequestValues(tasks),
                 new UseCase.UseCaseCallback<EditTasks.ResponseValue>() {
 
                     @Override
                     public void onSuccess(EditTasks.ResponseValue response) {
-//                        getTasksOfMember(memberId);
+                        getTasksOfMember(memberId);
                     }
 
                     @Override
@@ -178,13 +187,26 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted) {
-        for(Task task:tasks) {
-            if(task.getCompleted()) {
-                completed.add(task);
+        if (tasks.size() <= 0) {
+            return;
+        }
+
+        for (Task task : tasks) {
+            if (task.isCompleted()) {
+                if (task.getOrder() >= completed.size()) {
+                    completed.add(task);
+                } else {
+                    completed.add(task.getOrder(), task);
+                }
             } else {
-                uncompleted.add(task);
+                if (task.getOrder() >= uncompleted.size()) {
+                    uncompleted.add(task);
+                } else {
+                    uncompleted.add(task.getOrder(), task);
+                }
             }
         }
-        mTasksView.showFilteredTasks(completed, uncompleted);
+
+        mTasksView.showFilteredTasks(tasks.get(0).getMemberId(), completed, uncompleted);
     }
 }

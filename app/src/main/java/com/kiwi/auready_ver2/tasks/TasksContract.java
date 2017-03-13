@@ -29,9 +29,11 @@ class TasksContract {
         * */
         void showTasks(String memberId, List<Task> tasks);
 
-        void scrollToAddButton();
+        void showLoadProgressBar();
 
-        void showFilteredTasks(List<Task> completed, List<Task> uncompleted);
+        void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted);
+
+        void showNoTask();
     }
 
     interface Presenter extends BasePresenter {

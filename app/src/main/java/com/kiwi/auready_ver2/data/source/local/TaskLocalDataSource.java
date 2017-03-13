@@ -477,6 +477,7 @@ public class TaskLocalDataSource implements TaskDataSource {
                 ContentValues values = new ContentValues();
                 values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
                 values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
+                values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
                 String[] whereArgs = {task.getId()};
                 numOfRows += db.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);

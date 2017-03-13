@@ -2,89 +2,116 @@
     xmlns:splitview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/tasksview_background_color"
-    android:orientation="vertical"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin">
+    android:orientation="vertical">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@drawable/task_header_view_background"
-        android:minHeight="50dp"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin">
-
-        <TextView
-            android:id="@+id/member_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:fontFamily="sans-serif"
-            android:textColor="@color/listview_text_title"
-            android:textSize="20dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:fontFamily="sans-serif"
-            android:text="AU Ready?"
-            android:textColor="#511381"
-            android:textSize="15dp" />
-    </RelativeLayout>
-
-    <com.kiwi.auready_ver2.util.view.SplitView
-        android:id="@+id/split_view"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:orientation="vertical"
-        splitview:handle="@+id/add_task_move_image"
-        splitview:primarycontent="@+id/tasks_listview"
-        splitview:secondarycontent="@+id/complete_tasks_listview">
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="@drawable/task_header_view_background"
+        android:elevation="3dp"
+        android:orientation="vertical">
 
-        <com.kiwi.auready_ver2.util.view.DragSortListView
-            android:id="@+id/tasks_listview"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/task_header_view_background"
-            android:divider="@null" />
-
-        <RelativeLayout
-            android:id="@+id/add_task_button_layout"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/lsitview_item_height"
-            android:background="@drawable/task_header_view_background">
+            android:elevation="4dp"
+            android:minHeight="50dp"
+            android:paddingEnd="@dimen/list_item_padding"
+            android:paddingStart="@dimen/list_item_padding">
 
             <TextView
-                android:id="@+id/add_task_btn"
-                style="@style/add_button_style"
+                android:id="@+id/member_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:gravity="start"
-                android:text="+ Add Task" />
+                android:fontFamily="sans-serif"
+                android:textColor="@color/listview_text_title"
+                android:textSize="20dp" />
 
-            <ImageView
-                android:id="@+id/add_task_move_image"
+            <TextView
+                style="@style/add_button_style"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:paddingEnd="@dimen/listview_item_start_end_margin"
-                android:src="@drawable/re_order_icon" />
+                android:text="AU Ready?" />
         </RelativeLayout>
 
-        <com.kiwi.auready_ver2.util.view.DragSortListView
-            android:id="@+id/complete_tasks_listview"
+        <com.kiwi.auready_ver2.util.view.SplitView
+            android:id="@+id/split_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/task_header_view_background"
-            android:divider="@null" />
-    </com.kiwi.auready_ver2.util.view.SplitView>
+            android:elevation="3dp"
+            android:orientation="vertical"
+            splitview:handle="@+id/add_task_move_image"
+            splitview:primarycontent="@+id/tasks_listview"
+            splitview:secondarycontent="@+id/complete_tasks_listview">
+
+            <com.kiwi.auready_ver2.util.view.DragSortListView
+                android:id="@+id/tasks_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:divider="@null"
+                android:elevation="-3dp" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/lsitview_item_height"
+                android:background="@drawable/task_header_view_background"
+                android:elevation="3dp">
+
+                <TextView
+                    android:id="@+id/add_task_btn"
+                    style="@style/add_button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:gravity="start"
+                    android:text="ADD" />
+
+                <TextView
+                    android:id="@+id/delete_task_btn"
+                    style="@style/add_button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/add_task_btn"
+                    android:text="DEL" />
+
+                <TextView
+                    android:id="@+id/reorder_task_btn"
+                    style="@style/add_button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/delete_task_btn"
+                    android:text="ORDER" />
+
+                <ImageView
+                    android:id="@+id/add_task_move_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:paddingEnd="@dimen/listview_item_start_end_margin"
+                    android:src="@drawable/re_order_icon" />
+            </RelativeLayout>
+
+            <com.kiwi.auready_ver2.util.view.DragSortListView
+                android:id="@+id/complete_tasks_listview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                android:divider="@null" />
+
+        </com.kiwi.auready_ver2.util.view.SplitView>
+    </LinearLayout>
 </LinearLayout>

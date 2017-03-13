@@ -20,6 +20,10 @@ public class DeleteTasks extends UseCase<DeleteTasks.RequestValues, DeleteTasks.
         mTaskRepository = checkNotNull(taskRepository);
     }
 
+    public DeleteTasks(@NonNull DeleteTasks deleteTasks) {
+        mTaskRepository = deleteTasks.mTaskRepository;
+    }
+
     @Override
     protected void executeUseCase(RequestValues values) {
         mTaskRepository.deleteTasks(values.getTaskIds());

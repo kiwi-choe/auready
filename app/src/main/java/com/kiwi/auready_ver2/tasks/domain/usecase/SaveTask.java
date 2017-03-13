@@ -19,6 +19,10 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
         mTaskRepository = checkNotNull(taskRepository, "taskRepository cannot be null");
     }
 
+    public SaveTask(@NonNull SaveTask saveTask) {
+        mTaskRepository = saveTask.mTaskRepository;
+    }
+
     @Override
     protected void executeUseCase(RequestValues requestValue) {
         final Task newTask = requestValue.getTask();

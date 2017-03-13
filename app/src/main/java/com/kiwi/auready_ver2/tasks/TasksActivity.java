@@ -8,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
@@ -26,9 +28,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     public static final String ARG_TITLE = "TITLE";
     public static final int REQ_EDIT_TASKHEAD = 0;
 
+    public static final int OFF_SCREEN_PAGE_LIMIT = 5;
+
+
     // tasks fragment view pager
     private ViewPager mViewPager;
     private TasksFragmentPagerAdapter mPagerAdapter;
+    private ProgressBar mProgressBar;
 
     private String mTaskHeadId;
 
@@ -66,6 +72,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
                 Injection.provideGetTasksOfTaskHead(getApplicationContext()));
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -117,8 +128,58 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     private void initFragments(List<Member> members) {
         mViewPager = (ViewPager) findViewById(R.id.tasks_fragment_pager);
-        mPagerAdapter = new TasksFragmentPagerAdapter(getSupportFragmentManager(), members, mTaskViewListener);
+        mPagerAdapter = new TasksFragmentPagerAdapter(this, getSupportFragmentManager(), members, mTaskViewListener);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
+
+        mViewPager.setClipToPadding(false);
+        mViewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding));
+
+        mViewPager.setVisibility(View.INVISIBLE);
+
+        mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                R.dimen.viewpager_end_padding),
+                mViewPager.getPaddingTop(),
+                mViewPager.getPaddingRight(),
+                mViewPager.getPaddingBottom());
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 0) {
+                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
+                    if (mViewPager.getPaddingStart() == startPadding) {
+                        return;
+                    }
+
+                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                            R.dimen.viewpager_end_padding),
+                            mViewPager.getPaddingTop(),
+                            mViewPager.getPaddingRight(),
+                            mViewPager.getPaddingBottom());
+                } else {
+                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
+                    if (mViewPager.getPaddingStart() == startPadding) {
+                        return;
+                    }
+
+                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                            R.dimen.viewpager_start_padding),
+                            mViewPager.getPaddingTop(),
+                            mViewPager.getPaddingRight(),
+                            mViewPager.getPaddingBottom());
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     interface TaskViewListener {
@@ -160,23 +221,50 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showTasks(String memberId, List<Task> tasks) {
+//        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+//        fragment.showTasks(tasks);
+    }
+
+    @Override
+    public void showLoadProgressBar() {
+        if (mProgressBar == null) {
+            mProgressBar = (ProgressBar) findViewById(R.id.tasks_data_load_progress_bar);
+        }
+
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        if (mViewPager != null) {
+            mViewPager.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    public void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
+
+        mViewPager.setVisibility(View.VISIBLE);
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
-        fragment.showTasks(tasks);
+        if (fragment != null) {
+            fragment.showFilteredTasks(completed, uncompleted);
+        }
     }
 
     @Override
-    public void scrollToAddButton() {
+    public void showNoTask() {
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
 
-    }
-
-    @Override
-    public void showFilteredTasks(List<Task> completed, List<Task> uncompleted) {
-
+        if (mViewPager != null) {
+            mViewPager.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void setPresenter(TasksContract.Presenter presenter) {
         mPresenter = (TasksPresenter) checkNotNull(presenter);
     }
-}
 
+}
