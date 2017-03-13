@@ -25,10 +25,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class TaskHeadsActivity extends AppCompatActivity
         implements TaskHeadsFragment.TaskHeadsFragmentListener {
 
-    private static final String TAG = "Tag_MainActivity";
-
     public static final int REQ_LOGINOUT = 1;
     public static final int REQ_ADD_TASKHEAD = 2;
+    private static final String TAG = "Tag_TaskHeadsActivity";
 
     private DrawerLayout mDrawerLayout;
     private View mMemberNavHeader;
@@ -74,7 +73,21 @@ public class TaskHeadsActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         supportInvalidateOptionsMenu();
+
+//        checkGooglePlayService();
     }
+
+//    private boolean checkGooglePlayService() {
+//        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+//        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
+//        if (status != ConnectionResult.SUCCESS) {
+//            if (googleApiAvailability.isUserResolvableError(status)) {
+//                googleApiAvailability.getErrorDialog(this, status, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+//            }
+//            return false;
+//        }
+//        return true;
+//    }
 
     private void initView() {
 
@@ -208,7 +221,7 @@ public class TaskHeadsActivity extends AppCompatActivity
         * */
     @Override
     public void onUpdatingNavHeaderUI(boolean isLogin) {
-        if(isLogin) {
+        if (isLogin) {
             setMemberNavView();
         } else {
             setGuestNavView();

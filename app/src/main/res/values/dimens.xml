@@ -10,6 +10,8 @@
     <dimen name="fragment_login_ed_margin">5dp</dimen>
     <dimen name="fragment_login_signup_margin">10dp</dimen>
 
+    <dimen name="standard_field_width">200dp</dimen>
+
     <!--listview style-->
     <dimen name="taskhead_list_item_height">100dp</dimen>
     <dimen name="lsitview_item_height">48dp</dimen>

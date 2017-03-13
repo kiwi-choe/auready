@@ -103,7 +103,9 @@ dependencies {
     compile 'com.android.support:support-v4:23.4.0'
 
     // Google service
-    compile 'com.google.android.gms:play-services-auth:9.8.0'
+    // Google Sign In SDK (only required for Google Sign In)
+    compile 'com.google.android.gms:play-services-auth:10.2.0'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
 
     // Converting
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.+'

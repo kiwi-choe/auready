@@ -83,5 +83,7 @@
     <string name="addfriend_fail_msg_onfailure">Fail to request friending</string>
     <string name="nav_logout">LOGOUT</string>
     <string name="logout_fail_msg">Failed to logout</string>
+    <string name="log_token">Log Token</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
 
 </resources>
