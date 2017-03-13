@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "851140601460",
-    "project_id": "auready-ver2"
+    "firebase_url": "https://auready-ver2.firebaseio.com",
+    "project_id": "auready-ver2",
+    "storage_bucket": "auready-ver2.appspot.com"
   },
   "client": [
     {
@@ -13,11 +15,15 @@
       },
       "oauth_client": [
         {
+          "client_id": "851140601460-v4c2uoa2nl2pq6jejaaj3jscjhbcd1ul.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
           "client_id": "851140601460-4kqjf0l3s2gj3odebm1av0ue29ncl8o7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.kiwi.auready_ver2",
-            "certificate_hash": "9B2D35035CFF8BBEC50AA42FBB0B71AE4DAD88B0"
+            "certificate_hash": "9b2d35035cff8bbec50aa42fbb0b71ae4dad88b0"
           }
         },
         {
@@ -35,11 +41,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "851140601460-v4c2uoa2nl2pq6jejaaj3jscjhbcd1ul.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
