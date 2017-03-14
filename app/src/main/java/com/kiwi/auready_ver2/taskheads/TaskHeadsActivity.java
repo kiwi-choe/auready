@@ -8,11 +8,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
@@ -28,6 +31,7 @@ public class TaskHeadsActivity extends AppCompatActivity
     public static final int REQ_LOGINOUT = 1;
     public static final int REQ_ADD_TASKHEAD = 2;
     private static final String TAG = "Tag_TaskHeadsActivity";
+    private static final int REQ_PLAY_SERVICES_RESOLUTION_REQUEST = 0;
 
     private DrawerLayout mDrawerLayout;
     private View mMemberNavHeader;
@@ -71,23 +75,24 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        checkGooglePlayService();
+
         super.onResume();
         supportInvalidateOptionsMenu();
-
-//        checkGooglePlayService();
     }
 
-//    private boolean checkGooglePlayService() {
-//        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-//        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
-//        if (status != ConnectionResult.SUCCESS) {
-//            if (googleApiAvailability.isUserResolvableError(status)) {
-//                googleApiAvailability.getErrorDialog(this, status, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-//            }
-//            return false;
-//        }
-//        return true;
-//    }
+    private void checkGooglePlayService() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            if (googleApiAvailability.isUserResolvableError(status)) {
+                googleApiAvailability.getErrorDialog(this, status, REQ_PLAY_SERVICES_RESOLUTION_REQUEST).show();
+                Log.d("Check_googleplay", "googlePlayService cannot be used");
+            }
+            // download google play service
+        }
+        Log.d("Check_googleplay", "googlePlayService can be used");
+    }
 
     private void initView() {
 
