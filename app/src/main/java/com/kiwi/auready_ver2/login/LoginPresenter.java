@@ -4,12 +4,14 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
-import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
-import com.kiwi.auready_ver2.rest_service.login.ILoginService;
+import com.kiwi.auready_ver2.notification.NotificationService;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
+import com.kiwi.auready_ver2.rest_service.login.ILoginService;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.regex.Matcher;
@@ -117,19 +119,31 @@ public class LoginPresenter implements LoginContract.Presenter {
         });
     }
 
+    /*
+    * after login succeeded, update 3 parts
+    * 1. UI
+    * 2. SharedPreferences
+    * 3. register instanceID for FCM
+    * */
     @Override
     public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail) {
 
-        // send logged in email to MainView
+        // 1. send logged in email to MainView
         String name = loginResponse.getUserName();
         mLoginView.setLoginSuccessUI(loggedInEmail, name);
 
-        // Set LoggedInUser info to SharedPreferences
+        // 2. Set LoggedInUser info to SharedPreferences
 //        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
+        String accessToken = loginResponse.getAccessToken();
         mLoginView.setLoggedInUserInfo(
-                loginResponse.getAccessToken(),
+                accessToken,
                 loggedInEmail,
                 name);
+
+        // 3. Send instanceID to the app server
+        String token = FirebaseInstanceId.getInstance().getToken();
+        NotificationService.getInstance(accessToken).
+                sendRegistrationToServer(token);
     }
 
     @Override

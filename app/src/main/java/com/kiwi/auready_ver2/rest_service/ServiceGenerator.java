@@ -14,6 +14,8 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Created by kiwi on 6/16/16.
  */
@@ -25,8 +27,8 @@ public class ServiceGenerator {
 
     private static Retrofit.Builder baseBuilder =
             new Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create());
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create());
 
     // Request Auth to access Server
     public static <S> S createService(Class<S> serviceClass) {
@@ -59,7 +61,7 @@ public class ServiceGenerator {
                 new AuthenticationInterceptor(authToken);
 
         Retrofit retrofit = null;
-        if(!httpClient.interceptors().contains(interceptor)) {
+        if (!httpClient.interceptors().contains(interceptor)) {
             httpClient.addInterceptor(interceptor);
 
             baseBuilder.client(httpClient.build());
@@ -68,33 +70,33 @@ public class ServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
-    public static <S> S createService(Class<S> serviceClass, final String accessToken) {
-        if (accessToken != null) {
-            httpClient.interceptors().clear();
-            httpClient.interceptors().add(new Interceptor() {
-                @Override
-                public Response intercept(Chain chain) throws IOException {
+    public static <S> S createService(Class<S> serviceClass, @NonNull final String accessToken) {
+        checkNotNull(accessToken, "accessToken is null");
+        httpClient.interceptors().clear();
+        httpClient.interceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
 
-                    Request original = chain.request();
-                    Request request = original.newBuilder()
-                            .header("Content-Type", "application/json")
-                            .header("Accept", "application/json")
-                            .header("Authorization", "Bearer" + " " + accessToken)
-                            .method(original.method(), original.body())
-                            .build();
+                Request original = chain.request();
+                Request request = original.newBuilder()
+                        .header("Content-Type", "application/json")
+                        .header("Accept", "application/json")
+                        .header("Authorization", "Bearer" + " " + accessToken)
+                        .method(original.method(), original.body())
+                        .build();
 
-                    Response response = chain.proceed(request);
-                    return response;
-                }
-            });
-        }
+                Response response = chain.proceed(request);
+                return response;
+            }
+        });
         OkHttpClient client = httpClient.build();
         Retrofit retrofit = baseBuilder.client(client).build();
         return retrofit.create(serviceClass);
     }
 
-    private static class AuthenticationInterceptor implements Interceptor{
+    private static class AuthenticationInterceptor implements Interceptor {
         private String authToken;
+
         AuthenticationInterceptor(String token) {
             this.authToken = token;
         }

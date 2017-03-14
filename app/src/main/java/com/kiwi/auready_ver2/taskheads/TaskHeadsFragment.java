@@ -42,7 +42,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View, AbsListView.MultiChoiceModeListener {
 
-    public static final String TAG_TASKHEADSFRAGMENT = "TAG_TasksFragment";
+    public static final String TAG_TASKHEADSFRAGMENT = "TAG_TaskHeadsFragment";
 
     private TaskHeadsContract.Presenter mPresenter;
 
@@ -148,17 +148,21 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         logTokenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Get token
-                String token = FirebaseInstanceId.getInstance().getToken();
-
-                // Log and toast
-                String msg = getString(R.string.msg_token_fmt, token);
-                Log.d(TAG_TASKHEADSFRAGMENT, msg);
-                Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                getToken();
             }
         });
 
         return root;
+    }
+
+    private void getToken() {
+        // Get token
+        String token = FirebaseInstanceId.getInstance().getToken();
+
+        // Log and toast
+        String msg = getString(R.string.msg_token_fmt, token);
+        Log.d(TAG_TASKHEADSFRAGMENT, msg);
+        Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
