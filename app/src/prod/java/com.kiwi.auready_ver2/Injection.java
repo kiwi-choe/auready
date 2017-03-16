@@ -3,13 +3,12 @@ package com.kiwi.auready_ver2;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
-import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
 import com.kiwi.auready_ver2.data.source.remote.FriendRemoteDataSource;
+import com.kiwi.auready_ver2.data.source.remote.TaskRemoteDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
@@ -23,14 +22,14 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
+import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Enables injection of production implementations for
- * {@link FriendDataSource}, {@link TaskDataSource} at compile time.
+ *
  */
 public class Injection {
 
@@ -61,11 +60,11 @@ public class Injection {
 
 
     /*
-    * Task - TaskHead, Member, Task
+    * Task
     * */
     public static TaskRepository provideTaskRepository(@NonNull Context context) {
         checkNotNull(context);
-        return TaskRepository.getInstance(TaskLocalDataSource.getInstance(context));
+        return TaskRepository.getInstance(TaskRemoteDataSource.getInstance(context), TaskLocalDataSource.getInstance(context));
     }
 
     public static GetTaskHeads provideGetTaskHeads(@NonNull Context context) {
@@ -100,8 +99,8 @@ public class Injection {
         return new GetMembers(Injection.provideTaskRepository(context));
     }
 
-    public static GetTasks provideGetTasks(@NonNull Context context) {
-        return new GetTasks(Injection.provideTaskRepository(context));
+    public static GetTasksOfMember provideGetTasksOfMember(@NonNull Context context) {
+        return new GetTasksOfMember(Injection.provideTaskRepository(context));
     }
 
     public static SaveTask provideSaveTask(@NonNull Context context) {
@@ -114,5 +113,9 @@ public class Injection {
 
     public static EditTasks provideEditTasks(@NonNull Context context) {
         return new EditTasks(Injection.provideTaskRepository(context));
+    }
+
+    public static GetTasksOfTaskHead provideGetTasksOfTaskHead(@NonNull Context context) {
+        return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
     }
 }

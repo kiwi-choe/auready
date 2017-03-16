@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -74,9 +75,10 @@ public class GoogleSignInFragment extends Fragment implements
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d("test IdToken", "clicked onactivityresult()");
         if(requestCode == RC_GET_TOKEN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+
+            Log.d("test IdToken", String.valueOf(result.getStatus().getStatusCode()));
             if(result.isSuccess()) {
                 String idToken = result.getSignInAccount().getIdToken();
                 String email = result.getSignInAccount().getEmail();
@@ -88,5 +90,6 @@ public class GoogleSignInFragment extends Fragment implements
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d("test idToken", "Connection is failed.");
+        Toast.makeText(this.getActivity(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }
