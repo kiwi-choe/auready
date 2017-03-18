@@ -54,7 +54,7 @@ public class LoginActivity extends AppCompatActivity implements
         if(googleSignInFragment == null) {
             googleSignInFragment = GoogleSignInFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    googleSignInFragment, R.id.google_signin_frame, GoogleSignInFragment.TAG_GOOGLE_SIGNIN_FRAG);
+                    googleSignInFragment, R.id.google_signin_frame, GoogleSignInFragment.TAG);
         }
 
     }

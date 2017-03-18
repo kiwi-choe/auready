@@ -20,7 +20,7 @@ import com.kiwi.auready_ver2.R;
 public class GoogleSignInFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG_GOOGLE_SIGNIN_FRAG = "tag_GoogleSignInFragment";
+    public static final String TAG = "GoogleSignInFragment";
 
     private static final int RC_GET_TOKEN = 9002;
 
@@ -77,14 +77,40 @@ public class GoogleSignInFragment extends Fragment implements
 
         if(requestCode == RC_GET_TOKEN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            Log.d(TAG, "onActivityResult:GET_TOKEN:success:" + result.getStatus().isSuccess());
 
-            Log.d("test IdToken", String.valueOf(result.getStatus().getStatusCode()));
-            if(result.isSuccess()) {
-                String idToken = result.getSignInAccount().getIdToken();
-                String email = result.getSignInAccount().getEmail();
-                Log.d("test idToken", "IdToken: " + idToken + " email:" + email);
-            }
+            handleSignInResult(result);
         }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()) {
+            String idToken = result.getSignInAccount().getIdToken();
+            // 1. SignIn-social; with idToken, email
+            // URI; POST social-signin/:type
+            requestSocialSignIn();
+            // 2. Get accessToken
+            // URI; POST auth/token
+            // 3. Update UI
+            updateUI(true);
+        } else {
+            updateUI(false);
+        }
+    }
+
+    private void updateUI(boolean signedIn) {
+        if(signedIn) {
+            // Display user info
+            // Set signOut button VISIBLE
+            // Set others GONE
+        }
+        else {
+
+        }
+    }
+
+    private void requestSocialSignIn() {
+        // Request to my app server
     }
 
     @Override
