@@ -2,11 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/list_item_padding"
-    android:layout_marginStart="@dimen/list_item_padding"
     android:background="@drawable/task_list_item_background"
-    android:elevation="3dp"
-    android:paddingStart="@dimen/list_item_padding">
+    android:elevation="3dp">
 
     <ImageView
         android:id="@+id/reorder_task"
@@ -14,6 +11,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:paddingStart="@dimen/list_item_padding"
         android:src="@drawable/re_order_icon"
         android:tint="@color/icon_gray" />
 
@@ -23,7 +21,10 @@
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
-        android:layout_toRightOf="@+id/reorder_task" />
+        android:layout_marginEnd="@dimen/list_item_padding"
+        android:layout_marginStart="@dimen/list_item_padding"
+        android:layout_toEndOf="@+id/reorder_task"
+        android:button="@drawable/custom_checkbox" />
 
     <EditText
         android:id="@+id/task_edittext"

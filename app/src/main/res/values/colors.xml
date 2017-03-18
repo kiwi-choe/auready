@@ -19,7 +19,7 @@
     <color name="tasksview_background_color">#e700ff8c</color>
     <color name="tasksview_list_header_view">#cacaca</color>
     <color name="tasks_listview_background">#bababa</color>
-    <color name="tasks_item_background">#fafafa</color>
+    <color name="tasks_item_background">#f2f2f2</color>
     <color name="tasks_item_description_dim_color">#8e8e8e</color>
 
 
