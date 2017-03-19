@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -40,7 +39,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View, AbsListView.MultiChoiceModeListener {
+public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View {
 
     public static final String TAG_TASKHEADSFRAGMENT = "TAG_TaskHeadsFragment";
 
@@ -109,8 +108,8 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
 
         mNoTaskHeadTxt = (TextView) root.findViewById(R.id.no_taskhead_txt);
         mTaskHeadsView = (DragSortListView) root.findViewById(R.id.taskheads);
-        mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        mTaskHeadsView.setMultiChoiceModeListener(this);
+        mTaskHeadsView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+//        mTaskHeadsView.setMultiChoiceModeListener(this);
 
 //        View dummyFooterView = inflater.inflate(R.layout.task_head_dummy_view_for_padding, null);
 ////        mTaskHeadsView.addHeaderView(dummyFooterView);
@@ -122,14 +121,31 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                 final TaskHead taskHead = mTaskHeadsAdapter.getItem(position);
                 if (!mIsActionMode) {
                     showTasksView(taskHead.getId(), taskHead.getTitle());
+                    return;
                 }
+
+                if (mActionMode == null) {
+                    return;
+                }
+
+                if (position >= 0 && position < mTaskHeadsAdapter.getCount()) {
+                    mTaskHeadsAdapter.toggleSelectedItem(position - mTaskHeadsView.getHeaderViewsCount());
+                }
+
+                mActionMode.setTitle(mTaskHeadsAdapter.getSelectedCount() + " " + getContext().getResources().getString(R.string.item_selected));
             }
         });
 
         mTaskHeadsView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-                mTaskHeadsView.setItemChecked(position, true);
+                if (mIsActionMode) {
+                    return false;
+                }
+
+                getActivity().startActionMode(mActionmodeCallback);
+                mTaskHeadsAdapter.toggleSelectedItem(position - mTaskHeadsView.getHeaderViewsCount());
+                mActionMode.setTitle(mTaskHeadsAdapter.getSelectedCount() + " " + getContext().getResources().getString(R.string.item_selected));
                 return true;
             }
         });
@@ -193,7 +209,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         switch (item.getItemId()) {
             case R.id.delete_menu:
                 // start Action mode to delete items
-                mTaskHeadsView.setItemChecked(-1, true);
+                getActivity().startActionMode(mActionmodeCallback);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -293,60 +309,51 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         });
     }
 
-    @Override
-    public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
-        if (position >= 0 && position < mTaskHeadsAdapter.getCount()) {
-            if (checked) {
-                mTaskHeadsAdapter.setNewSelection(position - mTaskHeadsView.getHeaderViewsCount(), checked);
-            } else {
-                mTaskHeadsAdapter.removeSelection(position - mTaskHeadsView.getHeaderViewsCount());
+    private ActionMode.Callback mActionmodeCallback = new ActionMode.Callback() {
+
+        @Override
+        public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
+            mActionMode = actionMode;
+            MenuInflater inflater = actionMode.getMenuInflater();
+            inflater.inflate(R.menu.contextual_menu_delete, menu);
+
+            startAnimation(true);
+            mIsActionMode = true;
+            mTaskHeadsAdapter.setActionMode(mIsActionMode);
+
+            mActionMode.setTitle(mTaskHeadsAdapter.getSelectedCount() + " " + getContext().getResources().getString(R.string.item_selected));
+
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.item_delete:
+                    mPresenter.deleteTaskHeads(mTaskHeadsAdapter.getCurrentCheckedTaskHeads());
+                    actionMode.finish();
+                    return true;
+                default:
+                    break;
             }
+            return false;
         }
 
-        actionMode.setTitle(mTaskHeadsAdapter.getSelectedCount() + " " + getContext().getResources().getString(R.string.item_selected));
-    }
+        @Override
+        public void onDestroyActionMode(ActionMode actionMode) {
+            mActionMode = null;
+            mTaskHeadsAdapter.clearSelection();
 
-    @Override
-    public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
-        mActionMode = actionMode;
-        MenuInflater inflater = actionMode.getMenuInflater();
-        inflater.inflate(R.menu.contextual_menu_delete, menu);
-
-        startAnimation(true);
-        mIsActionMode = true;
-        mTaskHeadsAdapter.setActionMode(mIsActionMode);
-
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareActionMode(ActionMode actionMode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case R.id.item_delete:
-                mPresenter.deleteTaskHeads(mTaskHeadsAdapter.getCurrentCheckedTaskHeads());
-                actionMode.finish();
-                return true;
-            default:
-                break;
+            startAnimation(false);
+            mIsActionMode = false;
+            mTaskHeadsAdapter.setActionMode(mIsActionMode);
         }
-        return false;
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode actionMode) {
-        mActionMode = null;
-        mTaskHeadsAdapter.clearSelection();
-
-        startAnimation(false);
-        mIsActionMode = false;
-        mTaskHeadsAdapter.setActionMode(mIsActionMode);
-    }
-
+    };
 
     private DragSortListView.DropListener mDropListener =
             new DragSortListView.DragSortListener() {

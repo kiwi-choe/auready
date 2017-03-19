@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -92,6 +93,16 @@ public class TaskHeadsActivity extends AppCompatActivity
             // download google play service
         }
         Log.d("Check_googleplay", "googlePlayService can be used");
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(Gravity.LEFT);
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     private void initView() {

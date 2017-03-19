@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +38,11 @@ public class TasksAdapter extends BaseAdapter {
     public TasksAdapter(Context context, TasksFragment.TaskItemListener taskItemListener) {
         mInflater = LayoutInflater.from(context);
         mTaskItemListener = taskItemListener;
+    }
+
+    public void clearTasks() {
+        mTasks.clear();
+        notifyDataSetChanged();
     }
 
     public void updateTasks(List<Task> tasks) {

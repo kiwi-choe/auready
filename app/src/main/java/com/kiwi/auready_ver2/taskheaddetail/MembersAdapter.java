@@ -75,8 +75,6 @@ public class MembersAdapter extends ArrayAdapter<Member> {
             viewHolder.checkBox.setChecked(false);
         }
 
-        rowView.setBackground(rowView.getResources().getDrawable(R.drawable.listview_state_drawable));
-
         return rowView;
     }
 

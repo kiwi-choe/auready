@@ -107,13 +107,13 @@ public class TasksPresenter implements TasksContract.Presenter {
                         if (response.getTasks().size() != 0) {
                             filterTasks(response.getTasks(), new ArrayList<Task>(), new ArrayList<Task>());
                         } else {
-                            mTasksView.showNoTask();
+                            mTasksView.showNoTask(memberId);
                         }
                     }
 
                     @Override
                     public void onError() {
-                        mTasksView.showNoTask();
+                        mTasksView.showNoTask(memberId);
                     }
                 });
     }

@@ -18,7 +18,7 @@
     <CheckBox
         android:id="@+id/task_checkbox"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_gravity="center"
         android:layout_marginEnd="@dimen/list_item_padding"

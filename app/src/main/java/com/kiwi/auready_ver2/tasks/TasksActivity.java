@@ -146,11 +146,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         mViewPager.setVisibility(View.INVISIBLE);
 
-        mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-                R.dimen.viewpager_end_padding),
-                mViewPager.getPaddingTop(),
-                mViewPager.getPaddingRight(),
-                mViewPager.getPaddingBottom());
+        if (members != null && members.size() == 1) {
+            mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                    R.dimen.viewpager_end_padding),
+                    mViewPager.getPaddingTop(),
+                    mViewPager.getPaddingRight(),
+                    mViewPager.getPaddingBottom());
+        }
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -159,29 +161,29 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
-                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
-                    if (mViewPager.getPaddingStart() == startPadding) {
-                        return;
-                    }
-
-                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-                            R.dimen.viewpager_end_padding),
-                            mViewPager.getPaddingTop(),
-                            mViewPager.getPaddingRight(),
-                            mViewPager.getPaddingBottom());
-                } else {
-                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
-                    if (mViewPager.getPaddingStart() == startPadding) {
-                        return;
-                    }
-
-                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-                            R.dimen.viewpager_start_padding),
-                            mViewPager.getPaddingTop(),
-                            mViewPager.getPaddingRight(),
-                            mViewPager.getPaddingBottom());
-                }
+//                if (position == 0) {
+//                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
+//                    if (mViewPager.getPaddingStart() == startPadding) {
+//                        return;
+//                    }
+//
+//                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+//                            R.dimen.viewpager_end_padding),
+//                            mViewPager.getPaddingTop(),
+//                            mViewPager.getPaddingRight(),
+//                            mViewPager.getPaddingBottom());
+//                } else {
+//                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
+//                    if (mViewPager.getPaddingStart() == startPadding) {
+//                        return;
+//                    }
+//
+//                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+//                            R.dimen.viewpager_start_padding),
+//                            mViewPager.getPaddingTop(),
+//                            mViewPager.getPaddingRight(),
+//                            mViewPager.getPaddingBottom());
+//                }
             }
 
             @Override
@@ -261,13 +263,18 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     }
 
     @Override
-    public void showNoTask() {
+    public void showNoTask(String memberId) {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }
 
         if (mViewPager != null) {
             mViewPager.setVisibility(View.VISIBLE);
+        }
+
+        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+        if (fragment != null) {
+            fragment.showNoTask();
         }
     }
 

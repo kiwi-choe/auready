@@ -2,21 +2,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginStart="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
     tools:context="com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment">
 
+    <TextView
+        android:id="@+id/title"
+        style="@style/title_textview_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="@string/taskheaddetail_title" />
+
     <EditText
         android:id="@+id/taskheaddetail_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/dark_background"
-        android:drawableStart="@drawable/title_drawable"
+        android:layout_marginBottom="20dp"
         android:hint="@string/taskheaddetail_title"
-        android:paddingBottom="10dp"
         android:paddingStart="10dp"
         android:paddingTop="10dp" />
+
+    <TextView
+        android:id="@+id/color_picker"
+        style="@style/title_textview_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Background" />
+
+    <Button
+        android:id="@+id/color_picker_btn"
+        style="@style/add_button_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="select color" />
+
+    <TextView
+        android:id="@+id/member_list"
+        style="@style/title_textview_style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Member List" />
 
     <ListView
         android:id="@+id/taskheaddetail_member_list"
