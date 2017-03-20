@@ -64,6 +64,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:paddingStart">@dimen/listview_item_start_end_margin</item>
+        <item name="android:paddingEnd">@dimen/listview_item_start_end_margin</item>
         <item name="android:textSize">20sp</item>
     </style>
 

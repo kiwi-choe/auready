@@ -33,7 +33,7 @@ class TasksContract {
 
         void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted);
 
-        void showNoTask();
+        void showNoTask(String memberId);
     }
 
     interface Presenter extends BasePresenter {

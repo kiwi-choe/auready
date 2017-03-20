@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:background="@drawable/task_header_view_background"
+        android:background="@color/tasks_item_background"
         android:elevation="3dp"
         android:orientation="vertical">
 
@@ -55,10 +55,23 @@
                 android:id="@+id/tasks_listview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
-                android:divider="@null"
-                android:elevation="-3dp" />
+                android:divider="@null" />
+
+            <ImageView
+                android:id="@+id/no_tasks"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:src="@drawable/add_list_icon"
+                android:tint="@color/cardview_dark_background"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/complete_tasks"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:src="@drawable/check_icon"
+                android:tint="@color/cardview_dark_background"
+                android:visibility="gone" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -73,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
+                    android:background="@drawable/ripple_background"
                     android:gravity="start"
                     android:text="ADD" />
 
@@ -83,6 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/add_task_btn"
+                    android:background="@drawable/ripple_background"
                     android:text="DEL" />
 
                 <TextView
@@ -92,6 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_toEndOf="@id/delete_task_btn"
+                    android:background="@drawable/ripple_background"
                     android:text="ORDER" />
 
                 <ImageView
@@ -108,8 +124,6 @@
                 android:id="@+id/complete_tasks_listview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="10dp"
-                android:layout_marginStart="10dp"
                 android:divider="@null" />
 
         </com.kiwi.auready_ver2.util.view.SplitView>

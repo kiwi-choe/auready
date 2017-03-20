@@ -25,6 +25,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
     private HashMap<Integer, Boolean> mSelection = new HashMap<>();
 
     private boolean mIsActionMode = false;
+    private int mReorderWidth = -1;
 
     public TaskHeadsAdapter(List<TaskHead> taskHeads) {
         setList(taskHeads);
@@ -63,6 +64,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.titleTextView = (TextView) view.findViewById(R.id.taskhead_title);
             viewHolder.reorderImage = (ImageView) view.findViewById(R.id.reorder);
+            viewHolder.pickerColorImage = (ImageView) view.findViewById(R.id.taskhead_picker_color);
 
             view.setTag(viewHolder);
         } else {
@@ -74,10 +76,17 @@ public class TaskHeadsAdapter extends BaseAdapter {
         viewHolder.titleTextView.setText(taskHead.getTitle());
 
         if (mSelection.get(position) != null) {
-            view.setSelected(true);
+            viewHolder.pickerColorImage.setSelected(true);
         } else {
-            view.setSelected(false);
+            viewHolder.pickerColorImage.setSelected(false);
         }
+
+        if (mReorderWidth == -1) {
+            mReorderWidth = (int) view.getResources().getDimension(R.dimen.reorder_start_trans_x);
+        }
+
+        float reorderEndPos = mIsActionMode ? mReorderWidth : 0;
+        viewHolder.reorderImage.setTranslationX(reorderEndPos);
 
         return view;
     }
@@ -88,13 +97,13 @@ public class TaskHeadsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void setNewSelection(int position, boolean checked) {
-        mSelection.put(position, checked);
-        notifyDataSetChanged();
-    }
+    public void toggleSelectedItem(int position) {
+        if (mSelection.get(position) == null) {
+            mSelection.put(position, true);
+        } else {
+            mSelection.remove(position);
+        }
 
-    public void removeSelection(int position) {
-        mSelection.remove(position);
         notifyDataSetChanged();
     }
 
@@ -120,7 +129,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
     }
 
     public List<TaskHead> getTaskHeads() {
-        for(int i = 0;i<mTaskHeads.size();i++) {
+        for (int i = 0; i < mTaskHeads.size(); i++) {
             Log.d("test_reorder", mTaskHeads.get(i).getTitle() + ", order: " + mTaskHeads.get(i).getOrder());
         }
         return mTaskHeads;
@@ -131,6 +140,7 @@ public class TaskHeadsAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
+        ImageView pickerColorImage;
         TextView titleTextView;
         ImageView reorderImage;
     }

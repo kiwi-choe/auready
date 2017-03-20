@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
@@ -38,7 +41,7 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
             }
             // New
             else {
-                if(getIntent().hasExtra(ARG_CNT_OF_TASKHEADS)) {
+                if (getIntent().hasExtra(ARG_CNT_OF_TASKHEADS)) {
                     int cntOfTaskheads = getIntent().getIntExtra(ARG_CNT_OF_TASKHEADS, 0);
                     bundle.putInt(ARG_CNT_OF_TASKHEADS, cntOfTaskheads);
                 }

@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.tasks;
 
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +21,8 @@ import com.kiwi.auready_ver2.util.view.DragSortItemView;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
 import com.kiwi.auready_ver2.util.view.SplitView;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +39,9 @@ public class TasksFragment extends Fragment {
     private DragSortListView mUnCompleteListview;
     private DragSortListView mCompleteListview;
     private SplitView mSplitView;
+
+    private ImageView mNoIteImageView;
+    private ImageView mCompleteImageView;
 
     private static TasksActivity.TaskViewListener mTaskViewListener;
 
@@ -98,6 +105,9 @@ public class TasksFragment extends Fragment {
         mCompleteListview = (DragSortListView) root.findViewById(R.id.complete_tasks_listview);
         setListView(mCompleteListview, new CompleteTasksAdapter(getContext(), mTaskItemListener));
 
+        mNoIteImageView = (ImageView) root.findViewById(R.id.no_tasks);
+        mCompleteImageView = (ImageView) root.findViewById(R.id.complete_tasks);
+
         // add header view
         TextView memberText = (TextView) root.findViewById(R.id.member_name);
         memberText.setText(mMemberName);
@@ -117,22 +127,42 @@ public class TasksFragment extends Fragment {
         });
 
         // set task delete button
-        TextView taskDeleteButton = (TextView) root.findViewById(R.id.delete_task_btn);
+        final TextView taskDeleteButton = (TextView) root.findViewById(R.id.delete_task_btn);
         taskDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startDeleteAnimation(mUnCompleteListview);
                 startDeleteAnimation(mCompleteListview);
+
+                if (!(v instanceof TextView)) {
+                    return;
+                }
+
+                if (((TextView) v).getPaintFlags() == Paint.FAKE_BOLD_TEXT_FLAG) {
+                    taskDeleteButton.setPaintFlags(0);
+                } else {
+                    taskDeleteButton.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
+                }
             }
         });
 
         // set task reorder button
-        TextView taskReorderButton = (TextView) root.findViewById(R.id.reorder_task_btn);
+        final TextView taskReorderButton = (TextView) root.findViewById(R.id.reorder_task_btn);
         taskReorderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startReorderAnimation(mUnCompleteListview);
                 startReorderAnimation(mCompleteListview);
+
+                if (!(v instanceof TextView)) {
+                    return;
+                }
+
+                if (((TextView) v).getPaintFlags() == Paint.FAKE_BOLD_TEXT_FLAG) {
+                    taskReorderButton.setPaintFlags(0);
+                } else {
+                    taskReorderButton.setPaintFlags(Paint.FAKE_BOLD_TEXT_FLAG);
+                }
             }
         });
 
@@ -274,10 +304,37 @@ public class TasksFragment extends Fragment {
             return;
         }
 
+        controlTasksVisibility(uncompleted.size(), completed.size());
+
         ((TasksAdapter) mUnCompleteListview.getInputAdapter()).updateTasks(uncompleted);
         ((TasksAdapter) mCompleteListview.getInputAdapter()).updateTasks(completed);
 
         invalidateSplitView();
+    }
+
+    private void controlTasksVisibility(int unCompletedTaskCount, int completedTaskCount) {
+        if (unCompletedTaskCount == 0 && completedTaskCount == 0) {
+            mUnCompleteListview.setVisibility(View.GONE);
+            mCompleteImageView.setVisibility(View.GONE);
+            mNoIteImageView.setVisibility(View.VISIBLE);
+        } else if (unCompletedTaskCount == 0) {
+            mUnCompleteListview.setVisibility(View.GONE);
+            mCompleteImageView.setVisibility(View.VISIBLE);
+            mNoIteImageView.setVisibility(View.GONE);
+        } else {
+            mUnCompleteListview.setVisibility(View.VISIBLE);
+            mCompleteImageView.setVisibility(View.GONE);
+            mNoIteImageView.setVisibility(View.GONE);
+        }
+
+        invalidateSplitView();
+    }
+
+    public void showNoTask() {
+        controlTasksVisibility(0, 0);
+
+        ((TasksAdapter) mUnCompleteListview.getInputAdapter()).clearTasks();
+        ((TasksAdapter) mCompleteListview.getInputAdapter()).clearTasks();
     }
 
     public interface TaskItemListener {
@@ -310,17 +367,19 @@ public class TasksFragment extends Fragment {
             }
 
             TasksAdapter completeAdapter = (TasksAdapter) mCompleteListview.getInputAdapter();
-            TasksAdapter notCompleteAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
+            TasksAdapter unCompleteAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
 
             if (checked) {
                 completeAdapter.addItem(editedTask);
                 mCompleteListview.smoothScrollToPosition(completeAdapter.getCount());
             } else {
-                notCompleteAdapter.addItem(editedTask);
-                mUnCompleteListview.smoothScrollToPosition(notCompleteAdapter.getCount());
+                unCompleteAdapter.addItem(editedTask);
+                mUnCompleteListview.smoothScrollToPosition(unCompleteAdapter.getCount());
             }
 
-            invalidateSplitView();
+            controlTasksVisibility(unCompleteAdapter.getCount(), completeAdapter.getCount());
+
+//            invalidateSplitView();
         }
     };
 

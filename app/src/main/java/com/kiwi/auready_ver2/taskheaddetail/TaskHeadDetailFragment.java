@@ -30,6 +30,9 @@ import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
+import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
+import com.kiwi.auready_ver2.util.view.ColorPickerPalette;
+import com.kiwi.auready_ver2.util.view.ColorPickerSwatch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,6 +55,9 @@ public class TaskHeadDetailFragment extends Fragment implements
     private TextView mCancelBt;
     private TextView mCreateBt;
     private TextView mDoneBt;
+
+    private Button mColorPickerBtn;
+    ColorPickerDialog mColorPickerDialog;
 
     private String mTaskHeadId;
     private int mOrderOfTaskHead;
@@ -89,6 +95,8 @@ public class TaskHeadDetailFragment extends Fragment implements
         }
 
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
+
+        setHasOptionsMenu(true);
     }
 
 
@@ -111,19 +119,40 @@ public class TaskHeadDetailFragment extends Fragment implements
 
         // Set custom actionbar views
         ActionBar ab = ((TaskHeadDetailActivity) getActivity()).getSupportActionBar();
-        ab.setDisplayShowHomeEnabled(false);
-        ab.setDisplayShowTitleEnabled(false);
-        View customView = inflater.inflate(
-                R.layout.taskheaddetail_actionbar, null);
-        mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
-        mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
-        mDoneBt = (TextView) customView.findViewById(R.id.done_taskhead);
+        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setDisplayShowTitleEnabled(false);
+//        View customView = inflater.inflate(
+//                R.layout.taskheaddetail_actionbar, null);
+//        mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
+//        mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
+//        mDoneBt = (TextView) customView.findViewById(R.id.done_taskhead);
 
-        ab.setCustomView(customView);
-        ab.setDisplayShowCustomEnabled(true);
+//        ab.setCustomView(customView);
+//        ab.setDisplayShowCustomEnabled(true);
 
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
 
+
+        // set color picker
+        mColorPickerBtn = (Button) root.findViewById(R.id.color_picker_btn);
+        mColorPickerBtn.setBackgroundColor(getResources().getColor(R.color.color_picker_default_color));
+        mColorPickerDialog = new ColorPickerDialog();
+        int[] pickerColors = getContext().getResources().getIntArray(R.array.color_picker);
+        mColorPickerDialog.initialize(
+                R.string.color_picker_default_title,
+                pickerColors,
+                getContext().getResources().getColor(R.color.color_picker_default_color),
+                5,
+                pickerColors.length);
+
+        mColorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(int color) {
+                mColorPickerBtn.setBackgroundColor(color);
+            }
+        });
+
+        // member listview
         mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
         View memberAddBtLayout = inflater.inflate(R.layout.member_add_bt, null, false);
         mMemberListView.addFooterView(memberAddBtLayout);
@@ -177,22 +206,29 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mCancelBt.setOnClickListener(new View.OnClickListener() {
+//        mCancelBt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                cancelCreateTaskHead();
+//            }
+//        });
+//        mCreateBt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+//            }
+//        });
+//        mDoneBt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+//            }
+//        });
+
+        mColorPickerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelCreateTaskHead();
-            }
-        });
-        mCreateBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
-            }
-        });
-        mDoneBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+                mColorPickerDialog.show(getFragmentManager(), "color picker tag");
             }
         });
     }
@@ -242,17 +278,37 @@ public class TaskHeadDetailFragment extends Fragment implements
         mMembers.add(0, me);
     }
 
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.taskhead_detail_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.done_menu:
+                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+                break;
+
+            case android.R.id.home:
+                cancelCreateTaskHead();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void setNewTaskHeadView() {
-        mCreateBt.setVisibility(View.VISIBLE);
-        mDoneBt.setVisibility(View.GONE);
+//        mCreateBt.setVisibility(View.VISIBLE);
+//        mDoneBt.setVisibility(View.GONE);
         mTitle.requestFocus();
     }
 
     @Override
     public void setEditTaskHeadView() {
-        mDoneBt.setVisibility(View.VISIBLE);
-        mCreateBt.setVisibility(View.GONE);
+//        mDoneBt.setVisibility(View.VISIBLE);
+//        mCreateBt.setVisibility(View.GONE);
     }
 
     @Override

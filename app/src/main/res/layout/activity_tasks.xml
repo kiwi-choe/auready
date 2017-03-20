@@ -25,7 +25,8 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorAccent"
                 android:gravity="start"
-                android:minHeight="?attr/actionBarSize" />
+                android:minHeight="?attr/actionBarSize"
+                android:theme="@style/Toolbar" />
         </android.support.design.widget.AppBarLayout>
 
         <!-- fragments -->

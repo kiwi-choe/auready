@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -49,6 +50,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         // Set up the toolbar.
         Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
         setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         // set Title
         if (getIntent().hasExtra(ARG_TITLE)) {
@@ -104,7 +108,12 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
             case R.id.edit_menu:
                 showTaskHeadDetail();
                 break;
+
+            case android.R.id.home:
+                finish();
+                return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -137,11 +146,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         mViewPager.setVisibility(View.INVISIBLE);
 
-        mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-                R.dimen.viewpager_end_padding),
-                mViewPager.getPaddingTop(),
-                mViewPager.getPaddingRight(),
-                mViewPager.getPaddingBottom());
+        if (members != null && members.size() == 1) {
+            mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+                    R.dimen.viewpager_end_padding),
+                    mViewPager.getPaddingTop(),
+                    mViewPager.getPaddingRight(),
+                    mViewPager.getPaddingBottom());
+        }
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -150,29 +161,29 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
-                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
-                    if (mViewPager.getPaddingStart() == startPadding) {
-                        return;
-                    }
-
-                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-                            R.dimen.viewpager_end_padding),
-                            mViewPager.getPaddingTop(),
-                            mViewPager.getPaddingRight(),
-                            mViewPager.getPaddingBottom());
-                } else {
-                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
-                    if (mViewPager.getPaddingStart() == startPadding) {
-                        return;
-                    }
-
-                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-                            R.dimen.viewpager_start_padding),
-                            mViewPager.getPaddingTop(),
-                            mViewPager.getPaddingRight(),
-                            mViewPager.getPaddingBottom());
-                }
+//                if (position == 0) {
+//                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
+//                    if (mViewPager.getPaddingStart() == startPadding) {
+//                        return;
+//                    }
+//
+//                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+//                            R.dimen.viewpager_end_padding),
+//                            mViewPager.getPaddingTop(),
+//                            mViewPager.getPaddingRight(),
+//                            mViewPager.getPaddingBottom());
+//                } else {
+//                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
+//                    if (mViewPager.getPaddingStart() == startPadding) {
+//                        return;
+//                    }
+//
+//                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
+//                            R.dimen.viewpager_start_padding),
+//                            mViewPager.getPaddingTop(),
+//                            mViewPager.getPaddingRight(),
+//                            mViewPager.getPaddingBottom());
+//                }
             }
 
             @Override
@@ -252,13 +263,18 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     }
 
     @Override
-    public void showNoTask() {
+    public void showNoTask(String memberId) {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }
 
         if (mViewPager != null) {
             mViewPager.setVisibility(View.VISIBLE);
+        }
+
+        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
+        if (fragment != null) {
+            fragment.showNoTask();
         }
     }
 
