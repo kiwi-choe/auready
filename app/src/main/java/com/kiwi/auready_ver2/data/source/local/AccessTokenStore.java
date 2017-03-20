@@ -22,12 +22,12 @@ public class AccessTokenStore {
     private Editor mEditor;
 
     // SharedPref file name
-    private static final String PREF_NAME = "localAccessToken";
+    private static final String PREF_NAME = "userInfoInLocal";
     // All Shared Preferences Keys
     private static final String IS_LOGIN = "isLogin";
-
     // Access Token info key
     public static final String ACCESS_TOKEN = "access_token";
+    // User info key
     public static final String USER_EMAIL = "userEmail";
     public static final String USER_NAME = "userName";
     public static final String MY_ID_OF_FRIEND = "myIdOfFriend";

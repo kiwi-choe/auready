@@ -99,17 +99,11 @@ public class LoginFragment extends Fragment implements
         // Popup message - getView() is null?
         Snackbar.make(mEmail, getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
         // Send result OK and the logged in email to TasksView
-        sendResult(LOGIN, true);
+        sendResult(true);
     }
 
-    private void sendResult(boolean loginOrOut, boolean isSuccess) {
+    private void sendResult(boolean isSuccess) {
         Intent intent = new Intent();
-        if (loginOrOut == LOGIN) {
-            intent.putExtra(LOGIN_LOGOUT, LOGIN);
-        }
-        else {
-            intent.putExtra(LOGIN_LOGOUT, LOGOUT);
-        }
         intent.putExtra(IS_SUCCESS, isSuccess);
 
         getActivity().setResult(Activity.RESULT_OK, intent);
@@ -122,7 +116,7 @@ public class LoginFragment extends Fragment implements
             Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
 
         // and send result
-        sendResult(LOGIN, false);
+        sendResult(false);
     }
 
     @Override

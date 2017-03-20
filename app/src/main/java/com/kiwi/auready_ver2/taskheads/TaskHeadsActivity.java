@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class TaskHeadsActivity extends AppCompatActivity
         implements TaskHeadsFragment.TaskHeadsFragmentListener {
 
-    public static final int REQ_LOGINOUT = 1;
+    public static final int REQ_LOGIN = 1;
     public static final int REQ_ADD_TASKHEAD = 2;
     private static final String TAG = "Tag_TaskHeadsActivity";
     private static final int REQ_PLAY_SERVICES_RESOLUTION_REQUEST = 0;
@@ -224,7 +224,7 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     private void startLoginView() {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, REQ_LOGINOUT);
+        startActivityForResult(intent, REQ_LOGIN);
     }
 
     @Override

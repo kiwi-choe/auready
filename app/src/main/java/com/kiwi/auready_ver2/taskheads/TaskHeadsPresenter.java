@@ -112,14 +112,11 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
             // Canceled create taskhead, Open TaskHeadsView
         }
-        if (TaskHeadsActivity.REQ_LOGINOUT == requestCode && Activity.RESULT_OK == resultCode) {
+        if (TaskHeadsActivity.REQ_LOGIN == requestCode && Activity.RESULT_OK == resultCode) {
 
-            boolean login = data.getBooleanExtra(LoginFragment.LOGIN_LOGOUT, false);
             boolean isSuccess = data.getBooleanExtra(LoginFragment.IS_SUCCESS, false);
-            if (login && isSuccess) {
+            if (isSuccess) {
                 mTaskHeadView.setLoginSuccessUI();
-            } else if (!login && isSuccess) {
-                mTaskHeadView.setLogoutSuccessUI();
             }
         }
     }

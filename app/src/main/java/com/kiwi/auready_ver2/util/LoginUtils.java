@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
  */
 public interface LoginUtils {
 
-    String LOGIN_LOGOUT = "Login or Logout";
     boolean LOGIN = true;
     boolean LOGOUT = false;
     String IS_SUCCESS = "isSuccess";
