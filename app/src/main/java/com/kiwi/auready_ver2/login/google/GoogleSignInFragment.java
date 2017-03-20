@@ -1,8 +1,10 @@
 package com.kiwi.auready_ver2.login.google;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.login.ISignupService;
+import com.kiwi.auready_ver2.rest_service.login.SocialSignupInfo;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class GoogleSignInFragment extends Fragment implements
         GoogleApiClient.OnConnectionFailedListener {
@@ -25,6 +34,7 @@ public class GoogleSignInFragment extends Fragment implements
     private static final int RC_GET_TOKEN = 9002;
 
     private GoogleApiClient mGoogleApiClient;
+    private GoogleSignInFragmentListener mListener;
 
     public GoogleSignInFragment() {
         // Required empty public constructor
@@ -67,6 +77,8 @@ public class GoogleSignInFragment extends Fragment implements
     }
 
     private void getIdToken() {
+        // Start progressBar
+
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_GET_TOKEN);
     }
@@ -86,36 +98,71 @@ public class GoogleSignInFragment extends Fragment implements
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             String idToken = result.getSignInAccount().getIdToken();
-            // 1. SignIn-social; with idToken, email
-            // URI; POST social-signin/:type
-            requestSocialSignIn();
-            // 2. Get accessToken
-            // URI; POST auth/token
-            // 3. Update UI
-            updateUI(true);
-        } else {
-            updateUI(false);
+            // Signup social account; with idToken, email
+            // URI; POST social-account/signup/:socialapp
+            requestSocialSignUp(idToken);
         }
     }
 
-    private void updateUI(boolean signedIn) {
-        if(signedIn) {
-            // Display user info
-            // Set signOut button VISIBLE
-            // Set others GONE
-        }
-        else {
-
-        }
-    }
-
-    private void requestSocialSignIn() {
+    private void requestSocialSignUp(final String idToken) {
         // Request to my app server
+        ISignupService signupService =
+                ServiceGenerator.createService(ISignupService.class);
+
+        SocialSignupInfo socialSignupInfo =
+                new SocialSignupInfo(SocialSignupInfo.GOOGLE, idToken);
+        Call<Void> call = signupService.signupGoogle(socialSignupInfo);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    onSignUpSuccess(SocialSignupInfo.GOOGLE, idToken);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                onSignUpFail(getString(R.string.social_signup_fail_msg, SocialSignupInfo.GOOGLE));
+            }
+        });
+    }
+
+    private void onSignUpFail(String failMessage) {
+        Snackbar.make(getView(), failMessage, Snackbar.LENGTH_SHORT).show();
+    }
+
+    private void onSignUpSuccess(String socialapp, String idToken) {
+        // Pass the role of login processing after social-account signup to LoginView
+        if(mListener != null) {
+            mListener.onGoogleSignupSuccess(socialapp, idToken);
+        }
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d("test idToken", "Connection is failed.");
         Toast.makeText(this.getActivity(), "Google Play Services error.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof GoogleSignInFragmentListener) {
+            mListener = (GoogleSignInFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement GoogleSignInFragmentListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    // Interface with LoginActivity
+    public interface GoogleSignInFragmentListener {
+        void onGoogleSignupSuccess(String socialapp, String idToken);
     }
 }

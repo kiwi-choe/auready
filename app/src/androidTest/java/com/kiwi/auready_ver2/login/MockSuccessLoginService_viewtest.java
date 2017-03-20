@@ -20,7 +20,7 @@ public class MockSuccessLoginService_viewtest implements ILoginService {
     public static final String STUB_NAME = "loggedInName";
 
     public static final LoginResponse RESPONSE =
-            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME);
+            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME, userEmail);
 
     private final BehaviorDelegate<ILoginService> delegate;
 

@@ -14,7 +14,8 @@ import com.kiwi.auready_ver2.util.ActivityUtils;
 //import com.kiwi.auready_ver2.login.google.GoogleSignInFragment;
 
 public class LoginActivity extends AppCompatActivity implements
-        SignupFragment.SignupFragmentListener {
+        SignupFragment.SignupFragmentListener,
+        GoogleSignInFragment.GoogleSignInFragmentListener {
 
     public static final String REGISTERED_EMAIL = "registeredEmail";
 
@@ -51,7 +52,7 @@ public class LoginActivity extends AppCompatActivity implements
         // Google Sign-In
         GoogleSignInFragment googleSignInFragment = (GoogleSignInFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.google_signin_frame);
-        if(googleSignInFragment == null) {
+        if (googleSignInFragment == null) {
             googleSignInFragment = GoogleSignInFragment.newInstance();
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
                     googleSignInFragment, R.id.google_signin_frame, GoogleSignInFragment.TAG);
@@ -104,10 +105,28 @@ public class LoginActivity extends AppCompatActivity implements
         mListener.onSendData(email, name);
     }
 
+    @Override
+    public void onGoogleSignupSuccess(String socialapp, String idToken) {
+        // pop GoogleSignInFragment in backStack
+        getSupportFragmentManager().popBackStack();
+
+        LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(LoginFragment.TAG_LOGINFRAGMENT);
+        if (loginFragment == null) {
+            loginFragment = LoginFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
+                    loginFragment, R.id.content_frame, LoginFragment.TAG_LOGINFRAGMENT);
+        }
+
+        mListener = loginFragment;
+        mListener.onSocialSignupSuccess(socialapp, idToken);
+    }
+
     /*
     * Interface with LoginFragment
     * */
     public interface LoginActivityListener {
         void onSendData(String registeredEmail, String registeredName);
+
+        void onSocialSignupSuccess(String socialapp, String idToken);
     }
 }

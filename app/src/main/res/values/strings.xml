@@ -86,5 +86,6 @@
     <string name="log_token">Log Token</string>
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
     <string name="id_token_fmt">ID Token: %s</string>
+    <string name="social_signup_fail_msg">%s Signup Failed</string>
 
 </resources>

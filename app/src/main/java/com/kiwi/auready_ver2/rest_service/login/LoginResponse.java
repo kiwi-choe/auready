@@ -16,11 +16,14 @@ public class LoginResponse {
     // User Info
     @SerializedName("user_name")
     private final String userName;
+    @SerializedName("user_email")
+    private final String userEmail;
 
-    public LoginResponse(String accessToken, String refreshToken, String userName) {
+    public LoginResponse(String accessToken, String refreshToken, String userName, String userEmail) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.userName = userName;
+        this.userEmail = userEmail;
     }
 
     public String getUserName() {
@@ -33,5 +36,9 @@ public class LoginResponse {
 
     public String getRefreshToken() {
         return refreshToken;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
     }
 }

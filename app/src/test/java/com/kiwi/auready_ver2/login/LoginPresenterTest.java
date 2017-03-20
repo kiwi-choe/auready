@@ -50,7 +50,7 @@ public class LoginPresenterTest {
 
         // Succeed to request login
         LoginResponse loginResponse = MockSuccessLoginService.RESPONSE;
-        mLoginPresenter.onLoginSuccess(loginResponse, EMAIL);
+        mLoginPresenter.onLoginSuccess(loginResponse);
 
         verify(mLoginView).setLoginSuccessUI(eq(EMAIL), eq(loginResponse.getUserName()));
     }
@@ -60,7 +60,7 @@ public class LoginPresenterTest {
     public void setLoggedInUserInfo_whenLoginSuccess() {
 
         LoginResponse successResponse = MockSuccessLoginService.RESPONSE;
-        mLoginPresenter.onLoginSuccess(successResponse, EMAIL);
+        mLoginPresenter.onLoginSuccess(successResponse);
 
         verify(mLoginView).setLoggedInUserInfo(
                 eq(successResponse.getAccessToken()),

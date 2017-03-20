@@ -5,10 +5,13 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 
 /**
- * Created by kiwi on 6/24/16.
+ * Signup
  */
 public interface ISignupService {
 
     @POST("/local-account/signup")
     Call<SignupResponse> signupLocal(@Body SignupInfo signupInfo);
+
+    @POST("/social-account/signup")
+    Call<Void> signupGoogle(@Body SocialSignupInfo socialSignupInfo);
 }

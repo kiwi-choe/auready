@@ -184,4 +184,9 @@ public class LoginFragment extends Fragment implements
             }
         });
     }
+
+    @Override
+    public void onSocialSignupSuccess(String socialapp, String idToken) {
+        mPresenter.attemptSocialLogin(socialapp, idToken);
+    }
 }

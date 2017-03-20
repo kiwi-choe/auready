@@ -104,7 +104,7 @@ public class LoginPresenter implements LoginContract.Presenter {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.isSuccessful()) {
                     // Save tokenInfo to sharedPreferences
-                    onLoginSuccess(response.body(), email);
+                    onLoginSuccess(response.body());
                 } else if (response.code() == 400) {
                     onLoginFail(R.string.login_fail_message_400);
                 }
@@ -126,18 +126,21 @@ public class LoginPresenter implements LoginContract.Presenter {
     * 3. register instanceID for FCM
     * */
     @Override
-    public void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail) {
+    public void onLoginSuccess(LoginResponse loginResponse) {
+
+        // Stop progressBar
 
         // 1. send logged in email to MainView
         String name = loginResponse.getUserName();
-        mLoginView.setLoginSuccessUI(loggedInEmail, name);
+        String email = loginResponse.getUserEmail();
+        mLoginView.setLoginSuccessUI(email, name);
 
         // 2. Set LoggedInUser info to SharedPreferences
 //        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
         String accessToken = loginResponse.getAccessToken();
         mLoginView.setLoggedInUserInfo(
                 accessToken,
-                loggedInEmail,
+                email,
                 name);
 
         // 3. Send instanceID to the app server
@@ -149,6 +152,13 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void onLoginFail(int stringResource) {
         mLoginView.showLoginFailMessage(stringResource);
+    }
+
+    @Override
+    public void attemptSocialLogin(String socialapp, String idToken) {
+        if(socialapp != null && idToken != null) {
+            requestLogin(socialapp, idToken);
+        }
     }
 
     private void showSaveError() {

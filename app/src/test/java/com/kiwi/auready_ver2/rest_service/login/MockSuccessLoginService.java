@@ -10,12 +10,13 @@ import retrofit2.mock.BehaviorDelegate;
  */
 public class MockSuccessLoginService implements ILoginService {
 
-    public static final String STUB_ACCESSTOKEN = "stub_accessToken";
-    public static final String STUB_REFRESHTOKEN = "stub_refreshToken";
-    public static final String STUB_NAME = "loggedInName";
+    private static final String STUB_ACCESSTOKEN = "stub_accessToken";
+    private static final String STUB_REFRESHTOKEN = "stub_refreshToken";
+    static final String STUB_NAME = "loggedInName";
+    private static final String STUB_EMAIL = "stub_email";
 
     public static final LoginResponse RESPONSE =
-            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME);
+            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME, STUB_EMAIL);
 
     private final BehaviorDelegate<ILoginService> delegate;
 

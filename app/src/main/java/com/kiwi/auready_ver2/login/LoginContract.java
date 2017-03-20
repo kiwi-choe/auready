@@ -30,8 +30,10 @@ public interface LoginContract {
         void onEmailError(int stringResource);
         void onPasswordError(int stringResource);
 
-        void onLoginSuccess(LoginResponse loginResponse, String loggedInEmail);
+        void onLoginSuccess(LoginResponse loginResponse);
 
         void onLoginFail(int stringResource);
+
+        void attemptSocialLogin(String socialapp, String idToken);
     }
 }
