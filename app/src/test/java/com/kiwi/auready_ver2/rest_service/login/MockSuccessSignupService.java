@@ -20,4 +20,9 @@ public class MockSuccessSignupService implements ISignupService {
         SignupResponse response = new SignupResponse(SignupMockAdapterTest.STUB_EMAIL, SignupMockAdapterTest.STUB_NAME);
         return delegate.returningResponse(response).signupLocal(signupInfo);
     }
+
+    @Override
+    public Call<Void> signupGoogle(@Body SocialSignupInfo socialSignupInfo) {
+        return null;
+    }
 }

@@ -98,6 +98,7 @@ public class GoogleSignInFragment extends Fragment implements
     private void handleSignInResult(GoogleSignInResult result) {
         if (result.isSuccess()) {
             String idToken = result.getSignInAccount().getIdToken();
+            Log.d(TAG, idToken);
             // Signup social account; with idToken, email
             // URI; POST social-account/signup/:socialapp
             requestSocialSignUp(idToken);

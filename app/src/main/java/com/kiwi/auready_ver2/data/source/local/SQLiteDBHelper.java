@@ -13,11 +13,11 @@ import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.MemberEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry;
 
 import java.util.List;
 
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.INSERT_ERROR;
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.TAG_SQLITE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.*;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.*;
 
 /*
@@ -63,6 +63,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_TASKHEAD_TABLE);
         db.execSQL(SQL_CREATE_MEMBER_TABLE);
         db.execSQL(SQL_CREATE_TASK_TABLE);
+        db.execSQL(SQL_CREATE_NOTIFICATION_TABLE);
     }
 
     @Override
@@ -72,6 +73,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             db.execSQL("DROP TABLE IF EXISTS " + TaskHeadEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + MemberEntry.TABLE_NAME);
             db.execSQL("DROP TABLE IF EXISTS " + TaskEntry.TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + NotificationEntry.TABLE_NAME);
 
             onCreate(db);
         }
