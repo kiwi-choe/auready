@@ -69,7 +69,6 @@ dependencies {
     compile "com.squareup.retrofit2:retrofit:$rootProject.ext.retrofit"
     compile "com.squareup.retrofit2:converter-gson:$rootProject.ext.converterGson"
     compile "com.squareup.okhttp3:okhttp:$rootProject.ext.okhttp"
-    compile 'com.squareup.retrofit2:retrofit-mock:2.0.2'
 
     // Dependencies for local unit tests
     testCompile "junit:junit:$rootProject.ext.junitVersion"
@@ -88,8 +87,6 @@ dependencies {
     // Dependencies for Android unit tests
     androidTestCompile "junit:junit:$rootProject.ext.junitVersion"
     androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
-    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
 
     // Espresso UI Testing dependencies.
     androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.ext.espressoVersion"

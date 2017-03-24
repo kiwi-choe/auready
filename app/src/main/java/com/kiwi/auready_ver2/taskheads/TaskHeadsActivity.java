@@ -22,6 +22,7 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.login.LoginActivity;
+import com.kiwi.auready_ver2.notification.NotificationPresenter;
 import com.kiwi.auready_ver2.util.ActivityUtils;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -63,6 +64,12 @@ public class TaskHeadsActivity extends AppCompatActivity
                 Injection.provideDeleteTaskHeads(getApplicationContext()),
                 Injection.provideGetTaskHeadsCount(getApplicationContext()),
                 Injection.provideUpdateTaskHeadsOrder(getApplicationContext()));
+
+        // Create the notification presenter for menu
+        NotificationPresenter notificationPresenter = new NotificationPresenter(
+                Injection.provideUseCaseHandler(),
+                taskHeadsFragment,
+                Injection.provideGetNewNotificationsCount(getApplicationContext()));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

@@ -27,8 +27,12 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.UseCase;
+import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Notification;
+import com.kiwi.auready_ver2.notification.domain.usecase.SaveNotification;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -106,7 +110,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String contents = message.getData().get(Notification.CONTENTS);
         Notification notification = new Notification(dataType, contents);
         // Save to local repository
+        // Todo ; needs refactoring
+        UseCaseHandler useCaseHandler = Injection.provideUseCaseHandler();
+        SaveNotification saveNotification = Injection.provideSaveNotification(getApplicationContext());
+        useCaseHandler.execute(saveNotification, new SaveNotification.RequestValues(notification),
+                new UseCase.UseCaseCallback<SaveNotification.ResponseValue>() {
 
+                    @Override
+                    public void onSuccess(SaveNotification.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+                        Log.d(TAG, "Fail to save a new notification.");
+                    }
+                });
     }
 
 

@@ -3,7 +3,7 @@
     package="com.kiwi.auready_ver2">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -25,21 +25,19 @@
             android:name=".tasks.TasksActivity"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".taskheaddetail.TaskHeadDetailActivity"></activity>
+        <activity android:name=".taskheaddetail.TaskHeadDetailActivity" />
 
         <!-- [START firebase_service] -->
-        <service
-            android:name=".notification.MyFirebaseMessagingService">
+        <service android:name=".notification.MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <!-- [END firebase_service] -->
         <!-- [START firebase_iid_service] -->
-        <service
-            android:name=".notification.MyFirebaseInstanceIDService">
+        <service android:name=".notification.MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->

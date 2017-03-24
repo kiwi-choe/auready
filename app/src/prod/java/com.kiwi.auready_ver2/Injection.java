@@ -6,12 +6,17 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.data.source.local.FriendLocalDataSource;
+import com.kiwi.auready_ver2.data.source.local.NotificationLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.TaskLocalDataSource;
 import com.kiwi.auready_ver2.data.source.remote.FriendRemoteDataSource;
 import com.kiwi.auready_ver2.data.source.remote.TaskRemoteDataSource;
 import com.kiwi.auready_ver2.friend.domain.usecase.DeleteFriend;
 import com.kiwi.auready_ver2.friend.domain.usecase.GetFriends;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
+import com.kiwi.auready_ver2.notification.domain.usecase.GetNewNotificationsCount;
+import com.kiwi.auready_ver2.notification.domain.usecase.GetNotifications;
+import com.kiwi.auready_ver2.notification.domain.usecase.ReadNotification;
+import com.kiwi.auready_ver2.notification.domain.usecase.SaveNotification;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHeadDetail;
@@ -117,5 +122,26 @@ public class Injection {
 
     public static GetTasksOfTaskHead provideGetTasksOfTaskHead(@NonNull Context context) {
         return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
+    }
+
+    public static SaveNotification provideSaveNotification(@NonNull Context context) {
+        return new SaveNotification(Injection.provideNotificationRepository(context));
+    }
+
+    private static NotificationLocalDataSource provideNotificationRepository(@NonNull Context context) {
+        checkNotNull(context);
+        return NotificationLocalDataSource.getInstance(context);
+    }
+
+    public static GetNotifications provideGetNotifications(@NonNull Context context) {
+        return new GetNotifications(Injection.provideNotificationRepository(context));
+    }
+
+    public static GetNewNotificationsCount provideGetNewNotificationsCount(@NonNull Context context) {
+        return new GetNewNotificationsCount(Injection.provideNotificationRepository(context));
+    }
+
+    public static ReadNotification provideReadNotification(@NonNull Context context) {
+        return new ReadNotification(Injection.provideNotificationRepository(context));
     }
 }

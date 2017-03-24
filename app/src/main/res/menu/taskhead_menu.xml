@@ -3,6 +3,10 @@
     <item
         android:id="@+id/delete_menu"
         android:title="@string/delete"
-        android:showAsAction="ifRoom"
-        />
+        android:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/item_notification"
+        android:icon="@drawable/notification_icon"
+        android:title="@string/notification"
+        android:showAsAction="ifRoom" />
 </menu>

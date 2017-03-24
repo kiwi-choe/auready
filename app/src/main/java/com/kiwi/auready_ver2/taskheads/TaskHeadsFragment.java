@@ -26,6 +26,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
+import com.kiwi.auready_ver2.notification.NotificationContract;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.LoginUtils;
@@ -39,7 +40,9 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.View {
+public class TaskHeadsFragment extends Fragment implements
+        TaskHeadsContract.View ,
+        NotificationContract.MenuView {
 
     public static final String TAG_TASKHEADSFRAGMENT = "TAG_TaskHeadsFragment";
 
@@ -52,6 +55,9 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     private TextView mNoTaskHeadTxt;
     private DragSortListView mTaskHeadsView;
     private ActionMode mActionMode;
+
+    // for noti menu
+    private NotificationContract.MenuPresenter mNotificationPresenter;
 
     public TaskHeadsFragment() {
         // Required empty public constructor
@@ -73,6 +79,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         // Destroy all menu and recall onCreateOptionsMenu
 //        getActivity().supportInvalidateOptionsMenu();
         mPresenter.start();
+        mNotificationPresenter.getNewNotificationsCount();
     }
 
     @Override
@@ -96,6 +103,11 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     @Override
     public void setPresenter(TaskHeadsContract.Presenter tasksPresenter) {
         mPresenter = checkNotNull(tasksPresenter);
+    }
+
+    @Override
+    public void setMenuPresenter(NotificationContract.MenuPresenter presenter) {
+        mNotificationPresenter = presenter;
     }
 
     @Override
@@ -204,12 +216,27 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem notificationItem = menu.findItem(R.id.item_notification);
+
+        // has new notifications
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.delete_menu:
                 // start Action mode to delete items
                 getActivity().startActionMode(mActionmodeCallback);
+                break;
+
+            case R.id.item_notification:
+                showNotificationsView();
+                break;
+
+            default:
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -277,6 +304,11 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
         Snackbar.make(mTaskHeadsView, getString(R.string.logout_fail_msg), Snackbar.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void showNewSign(int numOfNewNotifications) {
+
+    }
+
     // Interface with TaskHeadsActivity
     public interface TaskHeadsFragmentListener {
         void onUpdatingNavHeaderUI(boolean isLogin);
@@ -338,6 +370,7 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
                     mPresenter.deleteTaskHeads(mTaskHeadsAdapter.getCurrentCheckedTaskHeads());
                     actionMode.finish();
                     return true;
+
                 default:
                     break;
             }
@@ -354,6 +387,10 @@ public class TaskHeadsFragment extends Fragment implements TaskHeadsContract.Vie
             mTaskHeadsAdapter.setActionMode(mIsActionMode);
         }
     };
+
+    private void showNotificationsView() {
+
+    }
 
     private DragSortListView.DropListener mDropListener =
             new DragSortListView.DragSortListener() {

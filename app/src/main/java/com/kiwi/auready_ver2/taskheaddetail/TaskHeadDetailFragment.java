@@ -31,7 +31,6 @@ import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.friend.FriendsFragment;
 import com.kiwi.auready_ver2.util.view.ColorPickerDialog;
-import com.kiwi.auready_ver2.util.view.ColorPickerPalette;
 import com.kiwi.auready_ver2.util.view.ColorPickerSwatch;
 
 import java.util.ArrayList;

@@ -27,7 +27,7 @@ import retrofit2.Response;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by kiwi on 6/26/16.
+ *  TaskHead presenter
  */
 public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 

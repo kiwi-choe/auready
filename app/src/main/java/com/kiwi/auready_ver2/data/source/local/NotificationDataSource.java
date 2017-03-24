@@ -23,9 +23,15 @@ public interface NotificationDataSource {
         void onDataNotAvailable();
     }
 
-    void getNotifications(@NonNull LoadNotificationsCallback callback);
+    void loadNotifications(@NonNull LoadNotificationsCallback callback);
 
-    void editNotification(@NonNull Notification notification);
+    void readNotification();
 
     void deleteNotification(@NonNull int id);
+
+    public interface GetNewCountCallback {
+        void onLoaded(int newNotificationCount);
+        void onDataNotAvailable();
+    }
+    void getNewNotificationsCount(@NonNull GetNewCountCallback callback);
 }
