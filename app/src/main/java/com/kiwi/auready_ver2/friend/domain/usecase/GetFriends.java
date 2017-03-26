@@ -7,6 +7,7 @@ import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -25,6 +26,14 @@ public class GetFriends extends UseCase<GetFriends.RequestValues, GetFriends.Res
     @Override
     protected void executeUseCase(RequestValues requestValues) {
 
+//        List<Friend> friends = new ArrayList<>();
+//        for(int i=0; i<100; i++){
+//            friends.add(new Friend("abc"+i+"@naver.com", "MY_Friend " + i));
+//        }
+//
+//        ResponseValue responseValue = new ResponseValue(friends);
+//        getUseCaseCallback().onSuccess(responseValue);
+
         mFriendRepository.getFriends(new FriendDataSource.LoadFriendsCallback() {
             @Override
             public void onFriendsLoaded(List<Friend> friends) {
@@ -40,7 +49,8 @@ public class GetFriends extends UseCase<GetFriends.RequestValues, GetFriends.Res
     }
 
 
-    public static class RequestValues implements UseCase.RequestValues { }
+    public static class RequestValues implements UseCase.RequestValues {
+    }
 
     public class ResponseValue implements UseCase.ResponseValue {
 

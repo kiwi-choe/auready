@@ -1,6 +1,8 @@
 package com.kiwi.auready_ver2.friend;
 
 import android.app.Activity;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,7 +29,6 @@ import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -87,7 +87,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListAdapter.toggle(position);
+                mListAdapter.setCheck(position);
             }
         });
 
@@ -96,26 +96,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         // Set up no friends and searching user view
         mNoFriendsView = (LinearLayout) root.findViewById(R.id.no_friends_layout);
         mLoadingIndicator = (TextView) root.findViewById(R.id.loading_indicator);
-
-        // Set up search editText
-        final EditText searchEditText = (EditText) root.findViewById(R.id.ed_search_friend);
-        searchEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                String searchText = searchEditText.getText().toString().toLowerCase(Locale.getDefault());
-                mListAdapter.inputSearchText(searchText);
-            }
-        });
 
         return root;
     }
@@ -132,6 +112,56 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
                 openFindView();
             }
         });
+    }
+
+    SearchView mSearchView;
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        // Configure the search info and add any event listeners...
+        mSearchView.setQueryHint("Search...");
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                mListAdapter.inputSearchText(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                mListAdapter.inputSearchText(newText);
+                return false;
+            }
+        });
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        if (searchManager != null) {
+            mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        }
+
+        // Define the listener
+        MenuItemCompat.OnActionExpandListener expandListener = new MenuItemCompat.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                // Do something when action item collapses
+                return true;  // Return true to collapse action view
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                // Do something when expanded
+                return true;  // Return true to expand action view
+            }
+        };
+
+        // Get the MenuItem for the action item
+        MenuItem actionMenuItem = menu.findItem(R.id.action_search);
+
+        // Assign the listener to that action item
+        MenuItemCompat.setOnActionExpandListener(actionMenuItem, expandListener);
     }
 
     @Override
