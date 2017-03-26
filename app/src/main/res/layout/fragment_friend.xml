@@ -5,32 +5,6 @@
     android:orientation="vertical"
     tools:context="com.kiwi.auready_ver2.friend.FriendsFragment">
 
-    <!-- Searching layout -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="horizontal"
-        android:weightSum="1">
-
-        <EditText
-            android:id="@+id/ed_search_friend"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="6dp"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="6dp"
-            android:layout_weight="0.95" />
-
-        <ImageButton
-            android:id="@+id/bt_search_friend"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:src="@android:drawable/ic_menu_search" />
-    </LinearLayout>
-
     <!-- Loading indicator -->
     <TextView
         android:id="@+id/loading_indicator"
@@ -47,7 +21,9 @@
         <ListView
             android:id="@+id/friend_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"
+            android:dividerHeight="1dp" />
     </LinearLayout>
 
     <!-- Show no friends message -->

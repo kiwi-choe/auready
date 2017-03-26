@@ -313,6 +313,10 @@ public class TasksFragment extends Fragment {
     }
 
     private void controlTasksVisibility(int unCompletedTaskCount, int completedTaskCount) {
+        if (mUnCompleteListview == null || mCompleteImageView == null) {
+            return;
+        }
+
         if (unCompletedTaskCount == 0 && completedTaskCount == 0) {
             mUnCompleteListview.setVisibility(View.GONE);
             mCompleteImageView.setVisibility(View.GONE);
@@ -331,6 +335,10 @@ public class TasksFragment extends Fragment {
     }
 
     public void showNoTask() {
+        if (mUnCompleteListview == null || mCompleteImageView == null) {
+            return;
+        }
+
         controlTasksVisibility(0, 0);
 
         ((TasksAdapter) mUnCompleteListview.getInputAdapter()).clearTasks();

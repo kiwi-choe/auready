@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,20 +24,20 @@ class FriendsAdapter extends BaseAdapter {
 
     private FriendsFragment.FriendItemListener mItemListener;
 
-    private boolean[] mSelectedFriends;
+    private HashMap<Friend, Boolean> mSelectedFriends = new HashMap<>();
 
     private List<Friend> mSearchedFriends = new ArrayList<>();
 
     public FriendsAdapter(List<Friend> friends, FriendsFragment.FriendItemListener itemListener) {
         setList(friends);
         mItemListener = itemListener;
+        mSelectedFriends.clear();
     }
 
     private void setList(List<Friend> friends) {
         mFriends = checkNotNull(friends);
         mSearchedFriends.clear();
         mSearchedFriends.addAll(mFriends);
-        mSelectedFriends = new boolean[friends.size()];
     }
 
     @Override
@@ -77,27 +77,7 @@ class FriendsAdapter extends BaseAdapter {
         // bind views
         final Friend friend = getItem(position);
         viewHolder.friendName.setText(friend.getName());
-        viewHolder.friendCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-
-                String checkedItemId = mSearchedFriends.get(position).getId();
-                for (int i = 0; i < mFriends.size(); i++) {
-                    Friend friend = mFriends.get(i);
-                    if (friend.getId().equals(checkedItemId)) {
-                        mSelectedFriends[i] = isChecked;
-                        break;
-                    }
-                }
-            }
-        });
-
-        for (int i = 0; i < mFriends.size(); i++) {
-            if (friend.getId().equals(mFriends.get(i).getId())) {
-                viewHolder.friendCheckbox.setChecked(mSelectedFriends[i]);
-                break;
-            }
-        }
+        viewHolder.friendCheckbox.setChecked(mSelectedFriends.get(friend) == null ? false : true);
 
         return rowView;
     }
@@ -110,9 +90,9 @@ class FriendsAdapter extends BaseAdapter {
     public List<Friend> getCheckedItems() {
         List<Friend> checkedItems = new ArrayList<>();
 
-        for (int i = 0; i < mFriends.size(); i++) {
-            if (mSelectedFriends[i]) {
-                checkedItems.add(mFriends.get(i));
+        for (Friend friend : mFriends) {
+            if (mSelectedFriends.get(friend) != null) {
+                checkedItems.add(friend);
             }
         }
 
@@ -127,7 +107,8 @@ class FriendsAdapter extends BaseAdapter {
             mSearchedFriends.addAll(mFriends);
         } else {
             for (Friend friend : mFriends) {
-                if (friend.getName().contains(searchText)) {
+//                if (friend.getName().toLowerCase().matches(".*" + searchText + ".*")) {
+                if (friend.getName().toLowerCase().contains(searchText)) {
                     mSearchedFriends.add(friend);
                 }
             }
@@ -142,8 +123,14 @@ class FriendsAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void toggle(int position) {
-        mSelectedFriends[position] = !mSelectedFriends[position];
+    public void setCheck(int position) {
+        Friend friend = getItem(position);
+        if (mSelectedFriends.get(friend) == null) {
+            mSelectedFriends.put(friend, true);
+        } else {
+            mSelectedFriends.remove(friend);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -152,7 +139,5 @@ class FriendsAdapter extends BaseAdapter {
         TextView friendName;
         Button deleteFriendBtn;
     }
-
-
 }
 
