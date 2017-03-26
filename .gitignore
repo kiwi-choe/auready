@@ -6,6 +6,3 @@
 .DS_Store
 /build
 /captures
-/src/main/java/com/kiwi/auready_ver2/login/IBaseUrl.java
-/google-services.json
-/src/mock/google-services.json
