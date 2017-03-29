@@ -23,6 +23,8 @@ class FriendsAdapter extends BaseAdapter {
 
     private static final String TAG = "FriendsAdapter";
 
+    private final ArrayList<String> mAddedMemberIds;
+
     private List<Friend> mFriends;
 
     private FriendsFragment.FriendItemListener mItemListener;
@@ -31,8 +33,9 @@ class FriendsAdapter extends BaseAdapter {
 
     private List<Friend> mSearchedFriends = new ArrayList<>();
 
-    public FriendsAdapter(List<Friend> friends, FriendsFragment.FriendItemListener itemListener) {
+    public FriendsAdapter(List<Friend> friends, FriendsFragment.FriendItemListener itemListener, ArrayList<String> addedMembers) {
         setList(friends);
+        mAddedMemberIds = addedMembers;
         mItemListener = itemListener;
         mSelectedFriends.clear();
     }
@@ -89,6 +92,13 @@ class FriendsAdapter extends BaseAdapter {
                 setCheck(position);
             }
         });
+
+        // Set check to the added member already
+        for(String id:mAddedMemberIds) {
+            if(friend.getId().equals(id)) {
+                viewHolder.friendCheckbox.setEnabled(false);
+            }
+        }
 
         return rowView;
     }

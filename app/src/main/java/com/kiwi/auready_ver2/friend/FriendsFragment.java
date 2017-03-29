@@ -47,7 +47,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     private TextView mLoadingIndicator;
     private ListView mListView;
 
-    private ArrayList<String> mMembers = new ArrayList<>();
+    private ArrayList<String> mMemberIds = new ArrayList<>();
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -61,9 +61,9 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mMembers = getArguments().getStringArrayList(EXTRA_KEY_MEMBERS);
+            mMemberIds = getArguments().getStringArrayList(EXTRA_KEY_MEMBERS);
         }
-        mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0), mItemListener);
+        mListAdapter = new FriendsAdapter(new ArrayList<Friend>(0), mItemListener, mMemberIds);
 
         setHasOptionsMenu(true);
     }
