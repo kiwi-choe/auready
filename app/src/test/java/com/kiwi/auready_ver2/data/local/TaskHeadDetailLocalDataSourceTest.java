@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.local;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
@@ -166,6 +167,19 @@ public class TaskHeadDetailLocalDataSourceTest {
         deleteAllTaskHeadDetails();
     }
 
+    @Test
+    public void saveTaskHeadDetail_validateMemberIdIsUnique() {
+        TaskDataSource.SaveCallback saveCallback = Mockito.mock(TaskDataSource.SaveCallback.class);
+        List<Member> newMembers = Lists.newArrayList(
+                new Member(TASKHEAD.getId(), "stubbedFriendId0", "name1", "email1"),
+                new Member(TASKHEAD.getId(), "stubbedFriendId0", "name2", "email2"),
+                new Member(TASKHEAD.getId(), "stubbedFriendId0", "name3", "email3"));
+
+        TaskHeadDetail newTaskHeadDetail = new TaskHeadDetail(TASKHEAD, newMembers);
+        mLocalDataSource.saveTaskHeadDetail(newTaskHeadDetail, saveCallback);
+        verify(saveCallback).onSaveSuccess();
+        deleteAllTaskHeadDetails();
+    }
     @Test
     public void editTaskHeadDetail_updateTaskHead() {
         // Save the stubbed taskHeadDetail

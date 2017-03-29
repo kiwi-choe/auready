@@ -19,7 +19,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -84,12 +83,6 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         // Set up Friends view
         mListView = (ListView) root.findViewById(R.id.friend_list);
         mListView.setAdapter(mListAdapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mListAdapter.setCheck(position);
-            }
-        });
 
         mFriendsView = (LinearLayout) root.findViewById(R.id.friend_list_layout);
 

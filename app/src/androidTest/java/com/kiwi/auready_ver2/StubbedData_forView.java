@@ -26,9 +26,9 @@ public final class StubbedData_forView {
             new TaskHead("title3", 2));
 
     public static final List<Member> MEMBERS = Lists.newArrayList(
-            new Member(TASKHEAD.getId(), "name1", "email1"),
-            new Member(TASKHEAD.getId(), "name2", "email2"),
-            new Member(TASKHEAD.getId(), "name3", "email3"));
+            new Member(TASKHEAD.getId(), "stubFriendId1", "name1", "email1"),
+            new Member(TASKHEAD.getId(), "stubFriendId2", "name2", "email2"),
+            new Member(TASKHEAD.getId(), "stubFriendId3", "name3", "email3"));
 
     // 3 tasks, one active and two completed of MEMBER the index 0
     public static List<Task> TASKS = Lists.newArrayList(

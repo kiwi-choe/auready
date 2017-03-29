@@ -83,9 +83,10 @@ public class TaskHeadsActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        super.onResume();
+
         checkGooglePlayService();
 
-        super.onResume();
         supportInvalidateOptionsMenu();
     }
 

@@ -27,6 +27,8 @@ import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CR
  */
 public class TaskLocalDataSource implements TaskDataSource {
 
+    private static final String TAG = "TaskLocalDataSource";
+
     private static TaskLocalDataSource INSTANCE;
     private SQLiteDBHelper mDbHelper;
 
@@ -169,6 +171,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
             members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
+            Log.d(TAG, "member id - " + member.getId());
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();
@@ -185,6 +188,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         // insert two tables
         long isSuccess = mDbHelper.insertTaskHeadAndMembers(taskHeadValues, memberValuesList);
         if (isSuccess != DBExceptionTag.INSERT_ERROR) {
+            Log.d(TAG, "entered into saveTaskHeadDetail local saveSuccess");
             callback.onSaveSuccess();
         } else {
             callback.onSaveFailed();

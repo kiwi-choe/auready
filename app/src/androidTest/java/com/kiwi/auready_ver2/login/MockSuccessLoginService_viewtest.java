@@ -18,9 +18,10 @@ public class MockSuccessLoginService_viewtest implements ILoginService {
     public static final String STUB_ACCESSTOKEN = "stub_accessToken";
     public static final String STUB_REFRESHTOKEN = "stub_refreshToken";
     public static final String STUB_NAME = "loggedInName";
+    private static final String STUB_EMAIL = "loggedInEmail";
 
     public static final LoginResponse RESPONSE =
-            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME, userEmail);
+            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME, STUB_EMAIL);
 
     private final BehaviorDelegate<ILoginService> delegate;
 

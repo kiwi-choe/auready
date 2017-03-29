@@ -31,6 +31,11 @@ public final class StubbedData {
                 new TaskHead("stubbedTaskHeadId1", "title1", 1),
                 new TaskHead("stubbedTaskHeadId2", "title2", 2));
 
+        public static final List<Member> NEW_MEMBERS = Lists.newArrayList(
+                new Member(TASKHEAD.getId(), "stubbedFriendId0", "name1", "email1"),
+                new Member(TASKHEAD.getId(), "stubbedFriendId0", "name2", "email2"),
+                new Member(TASKHEAD.getId(), "stubbedFriendId0", "name3", "email3"));
+
         public static final List<Member> MEMBERS = Lists.newArrayList(
                 new Member("stubbedMember0", TASKHEAD.getId(), "stubbedFriendId0", "name1", "email1"),
                 new Member("stubbedMember1", TASKHEAD.getId(), "stubbedFriendId0", "name2", "email2"),

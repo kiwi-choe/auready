@@ -28,8 +28,6 @@ public interface TaskHeadDetailContract {
 
         void setNewTaskHeadView();
 
-        void setEditTaskHeadView();
-
         void showEditedTaskHead();
 
         void showSaveError();

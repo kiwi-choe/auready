@@ -16,7 +16,6 @@ import java.util.ArrayList;
 public class FriendsActivity extends AppCompatActivity {
 
     public static final int REQ_FRIENDS = 1;
-    public static final String ARG_SELECTED_FRIENDS = "arg_selected_friends";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

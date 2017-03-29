@@ -3,10 +3,6 @@ package com.kiwi.auready_ver2.taskheaddetail;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
@@ -49,7 +45,7 @@ public class TaskHeadDetailActivity extends AppCompatActivity {
             taskHeadDetailFragment.setArguments(bundle);
 
             ActivityUtils.addFragmentToActivity(getSupportFragmentManager(),
-                    taskHeadDetailFragment, R.id.content_frame, TaskHeadDetailFragment.TAG_TASKHEADDETAILFRAG);
+                    taskHeadDetailFragment, R.id.content_frame, TaskHeadDetailFragment.TAG);
         }
 
         // Create the presenter

@@ -257,7 +257,7 @@ public class TaskRepositoryTest {
         editMembers.add(newMember2);
 
         TaskHeadDetail editTaskHeadDetail = new TaskHeadDetail(editTaskHead, editMembers);
-        mRepository.editTaskHeadDetail(editTaskHeadDetail, mEditCallback);
+        mRepository.editTaskHeadDetailInRepo(editTaskHeadDetail, mEditCallback);
 
         // Compare members
         // and the result that members are added
@@ -285,7 +285,7 @@ public class TaskRepositoryTest {
         editMembers.remove(deletingMember);
 
         TaskHeadDetail editTaskHeadDetail = new TaskHeadDetail(taskHead, editMembers);
-        mRepository.editTaskHeadDetail(editTaskHeadDetail, mEditCallback);
+        mRepository.editTaskHeadDetailInRepo(editTaskHeadDetail, mEditCallback);
 
         // Compare members
         // and the result that members are deleted
@@ -301,7 +301,7 @@ public class TaskRepositoryTest {
 
     @Test
     public void whenEditTaskHeadDetailSucceed_toLocal_firesOnEditSuccess() {
-        mRepository.editTaskHeadDetail(TASKHEAD_DETAIL, mEditCallback);
+        mRepository.editTaskHeadDetailInRepo(TASKHEAD_DETAIL, mEditCallback);
 
         verify(mLocalDataSource).editTaskHeadDetail(
                 eq(TASKHEAD_DETAIL.getTaskHead()), any(List.class), any(List.class), mEditCallbackCaptor.capture());

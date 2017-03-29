@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -22,7 +21,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
@@ -39,8 +37,7 @@ import java.util.List;
 public class TaskHeadDetailFragment extends Fragment implements
         TaskHeadDetailContract.View, AbsListView.MultiChoiceModeListener {
 
-    public static final String TAG_TASKHEADDETAILFRAG = "tag_TaskHeadDetailFrag";
-    private static final String TAG_TASKHEADDETAILFRAG_DEBUG = "TaskHeadDetailView";
+    public static final String TAG = "tag_TaskHeadDetailFrag";
 
     public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
     public static final String EXTRA_TITLE = "extra_title";
@@ -49,11 +46,6 @@ public class TaskHeadDetailFragment extends Fragment implements
     private static final int DEFAULT_INT = 0;
 
     private TaskHeadDetailContract.Presenter mPresenter;
-
-    // Items of CustomActionBar
-    private TextView mCancelBt;
-    private TextView mCreateBt;
-    private TextView mDoneBt;
 
     private Button mColorPickerBtn;
     ColorPickerDialog mColorPickerDialog;
@@ -68,9 +60,9 @@ public class TaskHeadDetailFragment extends Fragment implements
     // q find the better way
     ListView mMemberListView;
     private List<Member> mAddedMembers = new ArrayList<>();
-//    private Button mDeleteBt;
 
     private ActionMode mActionMode;
+    private Button mMemberAddBt;
 
     public TaskHeadDetailFragment() {
         // Required empty public constructor
@@ -86,7 +78,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         mMembers = new ArrayList<>(0);
         if (getArguments() != null) {
             mTaskHeadId = getArguments().getString(TaskHeadDetailActivity.ARG_TASKHEAD_ID);
-            if (mTaskHeadId == null) {
+            if (isNewTaskHead()) {
                 initMembers();
                 // set order for new taskHead
                 mOrderOfTaskHead = getArguments().getInt(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS, DEFAULT_INT);
@@ -116,19 +108,6 @@ public class TaskHeadDetailFragment extends Fragment implements
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.fragment_taskhead_detail, container, false);
 
-        // Set custom actionbar views
-        ActionBar ab = ((TaskHeadDetailActivity) getActivity()).getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-//        ab.setDisplayShowTitleEnabled(false);
-//        View customView = inflater.inflate(
-//                R.layout.taskheaddetail_actionbar, null);
-//        mCancelBt = (TextView) customView.findViewById(R.id.cancel_taskhead);
-//        mCreateBt = (TextView) customView.findViewById(R.id.create_taskhead);
-//        mDoneBt = (TextView) customView.findViewById(R.id.done_taskhead);
-
-//        ab.setCustomView(customView);
-//        ab.setDisplayShowCustomEnabled(true);
-
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
 
 
@@ -151,36 +130,15 @@ public class TaskHeadDetailFragment extends Fragment implements
             }
         });
 
-        // member listview
+        // Set member view
         mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
         View memberAddBtLayout = inflater.inflate(R.layout.member_add_bt, null, false);
         mMemberListView.addFooterView(memberAddBtLayout);
         mMemberListView.setAdapter(mMemberListAdapter);
         mMemberListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         mMemberListView.setMultiChoiceModeListener(this);
-        mMemberListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
-                mMemberListView.setItemChecked(position, true);
-                return true;
-            }
-        });
 
-        Button memberAddBt = (Button) memberAddBtLayout.findViewById(R.id.member_add_bt);
-        memberAddBt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openFriendsView();
-            }
-        });
-
-//        mDeleteBt = (Button) memberAddBtLayout.findViewById(R.id.member_delete_bt);
-//        mDeleteBt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mMemberListView.setItemChecked(-1, true);
-//            }
-//        });
+        mMemberAddBt = (Button) memberAddBtLayout.findViewById(R.id.member_add_bt);
 
         return root;
     }
@@ -205,24 +163,21 @@ public class TaskHeadDetailFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        mCancelBt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                cancelCreateTaskHead();
-//            }
-//        });
-//        mCreateBt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
-//            }
-//        });
-//        mDoneBt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
-//            }
-//        });
+
+        mMemberListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
+                mMemberListView.setItemChecked(position, true);
+                return true;
+            }
+        });
+
+        mMemberAddBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFriendsView();
+            }
+        });
 
         mColorPickerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,6 +202,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void showAddedTaskHead(String taskHeadId, String title) {
+        Log.d(TAG, "entered into showAddedTasKHead");
         Intent intent = getActivity().getIntent();
         intent.putExtra(EXTRA_TASKHEAD_ID, taskHeadId);
         intent.putExtra(EXTRA_TITLE, title);
@@ -273,7 +229,7 @@ public class TaskHeadDetailFragment extends Fragment implements
         String myName = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
         String myIdOfFriend = "stub_friendId";
         Friend meOfFriend = new Friend(myIdOfFriend, myEmail, myName);
-        Member me = new Member(meOfFriend.getId(), meOfFriend.getName(), meOfFriend.getEmail());
+        Member me = new Member(null, meOfFriend.getId(), meOfFriend.getName(), meOfFriend.getEmail());
         mMembers.add(0, me);
     }
 
@@ -283,10 +239,34 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem createMenu = menu.findItem(R.id.create_menu);
+        MenuItem doneMenu = menu.findItem(R.id.done_menu);
+
+        if (isNewTaskHead()) {
+            doneMenu.setVisible(false);
+            createMenu.setVisible(true);
+        } else {
+            createMenu.setVisible(false);
+            doneMenu.setVisible(true);
+        }
+    }
+
+    boolean isNewTaskHead() {
+        return (mTaskHeadId == null);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.done_menu:
+            case R.id.create_menu:
                 mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+                break;
+
+            case R.id.done_menu:
+                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
                 break;
 
             case android.R.id.home:
@@ -299,15 +279,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void setNewTaskHeadView() {
-//        mCreateBt.setVisibility(View.VISIBLE);
-//        mDoneBt.setVisibility(View.GONE);
         mTitle.requestFocus();
-    }
-
-    @Override
-    public void setEditTaskHeadView() {
-//        mDoneBt.setVisibility(View.VISIBLE);
-//        mCreateBt.setVisibility(View.GONE);
     }
 
     @Override
@@ -319,15 +291,11 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void showSaveError() {
-        Log.d(TAG_TASKHEADDETAILFRAG_DEBUG, "taskhead cannot saved.");
         sendResult(Activity.RESULT_CANCELED, null);
     }
 
     @Override
     public void addMembers(ArrayList<Member> members) {
-        for (Member member : members) {
-            Log.d("TEST!", member.getName());
-        }
         mAddedMembers.addAll(members);
         mMembers.addAll(members);
         mMemberListAdapter.notifyDataSetChanged();

@@ -27,6 +27,8 @@ import java.util.List;
 
 public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter {
 
+    public static final String TAG = "TaskHeadDetailPresenter";
+
     @NonNull
     private final UseCaseHandler mUseCaseHandler;
     @Nullable
@@ -59,7 +61,6 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     public void start() {
         if (mTaskHeadId != null) {
             populateTaskHeadDetail();
-            mView.setEditTaskHeadView();
         } else {
             mView.setNewTaskHeadView();
         }
@@ -126,7 +127,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                     @Override
                     public void onError() {
-                        Log.d(TaskHeadDetailFragment.TAG_TASKHEADDETAILFRAG, "entered into onError");
+                        Log.d(TaskHeadDetailFragment.TAG, "entered into onError");
                     }
                 });
     }
@@ -141,7 +142,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
                 // Make new member List
                 ArrayList<Member> members = new ArrayList<>();
                 for (Friend friend : friends) {
-                    Member newMember = new Member(friend.getId(), friend.getName(), friend.getEmail());
+                    Member newMember = new Member(mTaskHeadId, friend.getId(), friend.getName(), friend.getEmail());
                     members.add(newMember);
                 }
 

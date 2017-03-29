@@ -83,7 +83,7 @@ public class TaskHeadDetailPresenterTest {
         mPresenter.editTaskHeadDetail("EDITTITLE", taskHead.getOrder(), MEMBERS);
 
         // Then a taskhead is updated from repo and the view updated
-        verify(mRepository).editTaskHeadDetail(any(TaskHeadDetail.class), mEditCallbackCaptor.capture());
+        verify(mRepository).editTaskHeadDetailInRepo(any(TaskHeadDetail.class), mEditCallbackCaptor.capture());
         mEditCallbackCaptor.getValue().onEditSuccess();
         verify(mView).showEditedTaskHead();
     }

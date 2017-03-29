@@ -4,6 +4,12 @@
 
     <item
         android:id="@+id/done_menu"
-        android:title="DONE"
+        android:title="@string/menu_done"
         app:showAsAction="ifRoom|withText" />
+
+    <item
+        android:id="@+id/create_menu"
+        android:title="@string/menu_create"
+        app:showAsAction="ifRoom|withText" />
+
 </menu>

@@ -22,7 +22,7 @@ public class EditTaskHeadDetail extends UseCase<EditTaskHeadDetail.RequestValues
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mTaskRepository.editTaskHeadDetail(requestValues.getTaskHeadDetail(), new TaskDataSource.EditTaskHeadDetailCallback() {
+        mTaskRepository.editTaskHeadDetailInRepo(requestValues.getTaskHeadDetail(), new TaskDataSource.EditTaskHeadDetailCallback() {
             @Override
             public void onEditSuccess() {
 

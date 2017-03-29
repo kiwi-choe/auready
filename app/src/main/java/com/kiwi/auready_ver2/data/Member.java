@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.UUID;
 
@@ -15,17 +16,10 @@ public class Member {
     private final String mEmail;
 
     /*
-    * when Create new taskHead
+    * 1. When Creating a new taskhead
+    * 2. edit the taskhead
     * */
-    public Member(String friendId, String name, String email) {
-        mId = UUID.randomUUID().toString();
-        mTaskHeadId = null;
-        mFriendId = friendId;
-        mName = name;
-        mEmail = email;
-    }
-
-    public Member(String taskHeadId, String friendId, String name, String email) {
+    public Member(@Nullable String taskHeadId, @NonNull String friendId, @NonNull String name, @NonNull String email) {
         mId = UUID.randomUUID().toString();
         mTaskHeadId = taskHeadId;
         mFriendId = friendId;
@@ -33,7 +27,7 @@ public class Member {
         mEmail = email;
     }
 
-    public Member(@NonNull String id, String taskHeadId, String friendId, String name, String email) {
+    public Member(@NonNull String id, @NonNull String taskHeadId, String friendId, String name, String email) {
         mId = id;
         mTaskHeadId = taskHeadId;
         mFriendId = friendId;

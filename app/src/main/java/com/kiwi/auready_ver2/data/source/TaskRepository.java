@@ -130,24 +130,15 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(taskHeadDetail);
         checkNotNull(callback);
 
+        final boolean[] successToSaveInLocal = {false};
         mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
             @Override
             public void onSaveSuccess() {
                 refreshCachesOfTaskHeadDetail(taskHeadDetail);
                 showMembersCacheOf(taskHeadDetail.getTaskHead().getId());
-                // Save into Remote asynchronously with Local
-                mRemoteDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
-                    @Override
-                    public void onSaveSuccess() {
-                        Log.d("test_SaveTaskHead", "success of saving into Remote");
-                        callback.onSaveSuccess();
-                    }
 
-                    @Override
-                    public void onSaveFailed() {
-
-                    }
-                });
+                successToSaveInLocal[0] = true;
+                callback.onSaveSuccess();
             }
 
             @Override
@@ -156,14 +147,31 @@ public class TaskRepository implements TaskDataSource {
             }
         });
 
-
+        // Save into Remote asynchronously with Local
+        if(successToSaveInLocal[0]) {
+            saveTaskHeadDetailToRemote(taskHeadDetail);
+        }
     }
 
-    @Override
+    private void saveTaskHeadDetailToRemote(TaskHeadDetail taskHeadDetail) {
+
+        mRemoteDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+            @Override
+            public void onSaveSuccess() {
+                Log.d("test_SaveTaskHead", "success of saving into Remote");
+            }
+
+            @Override
+            public void onSaveFailed() {
+                Log.d("test_SaveTaskHead", "fail of saving into Remote");
+            }
+        });
+    }
+
     public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
-                                   @NonNull List<Member> addingMembers,
-                                   @NonNull List<String> deletingMemberIds,
-                                   @NonNull final EditTaskHeadDetailCallback callback) {
+                                         @NonNull List<Member> addingMembers,
+                                         @NonNull List<String> deletingMemberIds,
+                                         @NonNull final EditTaskHeadDetailCallback callback) {
 
         checkNotNull(editTaskHead);
         checkNotNull(addingMembers);
@@ -175,7 +183,7 @@ public class TaskRepository implements TaskDataSource {
     /*
     * In Repository, comparing to cachedMembers first
     * */
-    public void editTaskHeadDetail(@NonNull TaskHeadDetail taskheadDetail, @NonNull final EditTaskHeadDetailCallback callback) {
+    public void editTaskHeadDetailInRepo(@NonNull TaskHeadDetail taskheadDetail, @NonNull final EditTaskHeadDetailCallback callback) {
         checkNotNull(taskheadDetail);
 
         TaskHead editTaskHead = taskheadDetail.getTaskHead();

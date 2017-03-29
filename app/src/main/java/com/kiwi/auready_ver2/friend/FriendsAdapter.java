@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.friend;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import java.util.Locale;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 class FriendsAdapter extends BaseAdapter {
+
+    private static final String TAG = "FriendsAdapter";
 
     private List<Friend> mFriends;
 
@@ -78,6 +81,14 @@ class FriendsAdapter extends BaseAdapter {
         final Friend friend = getItem(position);
         viewHolder.friendName.setText(friend.getName());
         viewHolder.friendCheckbox.setChecked(mSelectedFriends.get(friend) == null ? false : true);
+
+        viewHolder.friendCheckbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "entered into friendCheckbox setOnClickListener");
+                setCheck(position);
+            }
+        });
 
         return rowView;
     }
