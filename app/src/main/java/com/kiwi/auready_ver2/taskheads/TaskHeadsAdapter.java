@@ -1,5 +1,10 @@
 package com.kiwi.auready_ver2.taskheads;
 
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.DrawableContainer;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,9 +76,29 @@ public class TaskHeadsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) view.getTag();
         }
 
+        // Bind views
         final TaskHead taskHead = getItem(position);
 
         viewHolder.titleTextView.setText(taskHead.getTitle());
+
+        // Set color to SelectingImageView
+        int colorOfTaskHead = taskHead.getColor();
+        StateListDrawable pickerColorSelector = (StateListDrawable) viewHolder.pickerColorImage.getBackground();
+        DrawableContainer.DrawableContainerState dcs = (DrawableContainer.DrawableContainerState) pickerColorSelector.getConstantState();
+        Drawable[] children = dcs.getChildren();
+        for (Drawable child : children) {
+            // 1. selected status item
+            if (child instanceof LayerDrawable) {
+                LayerDrawable selectedDrawable = (LayerDrawable) child;
+                GradientDrawable pickerColor = (GradientDrawable) selectedDrawable.getDrawable(0);
+                pickerColor.setColor(colorOfTaskHead);
+            }
+            // 2. default status item
+            if (child instanceof GradientDrawable) {
+                GradientDrawable pickerColor = (GradientDrawable) child;
+                pickerColor.setColor(colorOfTaskHead);
+            }
+        }
 
         if (mSelection.get(position) != null) {
             viewHolder.pickerColorImage.setSelected(true);

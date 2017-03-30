@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.taskheaddetail;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.verify;
 public class TaskHeadDetailPresenterTest {
 
     private static final String MY_ID_OF_FRIEND = "stubbedId";
+    private static final int DEFAULT_COLOR = R.color.color_picker_default_color;
 
     @Mock
     private TaskRepository mRepository;
@@ -57,41 +59,44 @@ public class TaskHeadDetailPresenterTest {
         mPresenter = givenTaskHeadDetailPresenter(null);
         // When the presenter is asked to create a new taskHead coz of no taskheadId
         String title = "New Title";
-        mPresenter.createTaskHeadDetail(title, 0, MEMBERS);
+        int color = DEFAULT_COLOR;
+        mPresenter.createTaskHeadDetail(title, 0, MEMBERS, color);
 
         // Then a taskhead is saved in the repository
         verify(mRepository).saveTaskHeadDetail(any(TaskHeadDetail.class), mSaveCallbackCaptor.capture());
         mSaveCallbackCaptor.getValue().onSaveSuccess();
         // and the view updated.
         // TODO: 12/9/16 need a TaskHeadId instead of any(String)
-        verify(mView).showAddedTaskHead(any(String.class), eq(title));
+        verify(mView).showAddedTaskHead(any(String.class), eq(title), eq(color));
     }
 
     @Test
     public void createTaskHead_emptyTaskHeadShowsErrorUI() {
         mPresenter = givenTaskHeadDetailPresenter(null);
-        mPresenter.createTaskHeadDetail("", 0, null);
+        mPresenter.createTaskHeadDetail("", 0, null, DEFAULT_COLOR);
 
         verify(mView).showEmptyTaskHeadError();
     }
 
     @Test
     public void editTaskHeadDetail_toRepo() {
-        TaskHead taskHead = new TaskHead("title", 0);
+        TaskHead taskHead = new TaskHead("title", 0, DEFAULT_COLOR);
         mPresenter = givenTaskHeadDetailPresenter(taskHead.getId());
 
-        mPresenter.editTaskHeadDetail("EDITTITLE", taskHead.getOrder(), MEMBERS);
+        String editTitle = "title";
+        int editColor = DEFAULT_COLOR;
+        mPresenter.editTaskHeadDetail(editTitle, taskHead.getOrder(), MEMBERS, editColor);
 
         // Then a taskhead is updated from repo and the view updated
         verify(mRepository).editTaskHeadDetailInRepo(any(TaskHeadDetail.class), mEditCallbackCaptor.capture());
         mEditCallbackCaptor.getValue().onEditSuccess();
-        verify(mView).showEditedTaskHead();
+        verify(mView).showEditedTaskHead(eq(editTitle), eq(editColor));
     }
 
     @Test
     public void getTaskHeadDetail_fromRepo() {
 
-        TaskHead taskHead = new TaskHead("title", 0);
+        TaskHead taskHead = new TaskHead("title", 0, R.color.color_picker_default_color);
         mPresenter = givenTaskHeadDetailPresenter(taskHead.getId());
 
         // When the presenter is asked to populate an existing taskhead
@@ -103,6 +108,7 @@ public class TaskHeadDetailPresenterTest {
         // and update view
         verify(mView).setTitle(taskHeadDetail.getTaskHead().getTitle());
         verify(mView).setMembers(taskHeadDetail.getMembers());
+        verify(mView).setColor(taskHeadDetail.getTaskHead().getColor());
     }
 
     @Test

@@ -39,6 +39,7 @@ public final class PersistenceContract {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TITLE = "title";
         public static final String COLUMN_ORDER = "sequence";
+        public static final String COLUMN_COLOR = "color";
     }
 
     public static class TaskEntry {
@@ -87,7 +88,8 @@ public final class PersistenceContract {
                 "CREATE TABLE IF NOT EXISTS " + TaskHeadEntry.TABLE_NAME + " (" +
                         TaskHeadEntry.COLUMN_ID + TEXT_TYPE + PRIMARY_KEY + COMMA_SEP +
                         TaskHeadEntry.COLUMN_TITLE + TEXT_TYPE + COMMA_SEP +
-                        TaskHeadEntry.COLUMN_ORDER + INTEGER_TYPE +
+                        TaskHeadEntry.COLUMN_ORDER + INTEGER_TYPE + COMMA_SEP +
+                        TaskHeadEntry.COLUMN_COLOR + INTEGER_TYPE +
                         " )";
 
         static final String SQL_CREATE_MEMBER_TABLE =

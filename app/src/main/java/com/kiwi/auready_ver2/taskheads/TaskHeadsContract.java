@@ -23,7 +23,7 @@ public interface TaskHeadsContract {
 
         void showTaskHeadDetail(int cntOfTaskHeads);
 
-        void showTasksView(String taskHeadId, String title);
+        void showTasksView(String taskHeadId, String title, int color);
 
         void setLogoutSuccessUI();
 

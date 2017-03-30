@@ -132,7 +132,7 @@ public class TaskHeadsFragment extends Fragment implements
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 final TaskHead taskHead = mTaskHeadsAdapter.getItem(position);
                 if (!mIsActionMode) {
-                    showTasksView(taskHead.getId(), taskHead.getTitle());
+                    showTasksView(taskHead.getId(), taskHead.getTitle(), taskHead.getColor());
                     return;
                 }
 
@@ -275,7 +275,7 @@ public class TaskHeadsFragment extends Fragment implements
     }
 
     @Override
-    public void showTasksView(String taskHeadId, String title) {
+    public void showTasksView(String taskHeadId, String title, int color) {
         if (mActionMode != null) {
             mActionMode.finish();
         }
@@ -283,7 +283,7 @@ public class TaskHeadsFragment extends Fragment implements
         Intent intent = new Intent(getContext(), TasksActivity.class);
         intent.putExtra(TasksActivity.ARG_TASKHEAD_ID, taskHeadId);
         intent.putExtra(TasksActivity.ARG_TITLE, title);
-
+        intent.putExtra(TasksActivity.ARG_TASKHEAD_COLOR, color);
         startActivity(intent);
     }
 

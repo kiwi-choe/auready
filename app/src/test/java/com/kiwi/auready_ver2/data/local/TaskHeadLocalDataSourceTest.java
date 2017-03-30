@@ -131,9 +131,9 @@ public class TaskHeadLocalDataSourceTest {
         TaskHead taskHead1 = TASKHEADS.get(1);
 
         List<TaskHead> updatingTaskHeads = new ArrayList<>();
-        final TaskHead updating0 = new TaskHead(taskHead0.getId(), taskHead0.getTitle(), 100);
+        final TaskHead updating0 = new TaskHead(taskHead0.getId(), taskHead0.getTitle(), 100, taskHead0.getColor());
         updatingTaskHeads.add(updating0);
-        final TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200);
+        final TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200, taskHead1.getColor());
         updatingTaskHeads.add(updating1);
         mTaskLocalDataSource.updateTaskHeadOrders(updatingTaskHeads);
 
@@ -174,6 +174,7 @@ public class TaskHeadLocalDataSourceTest {
             values.put(PersistenceContract.TaskHeadEntry.COLUMN_ID, taskHead.getId());
             values.put(PersistenceContract.TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
             values.put(PersistenceContract.TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
+            values.put(PersistenceContract.TaskHeadEntry.COLUMN_COLOR, taskHead.getColor());
 
             mDbHelper.insert(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, values);
         }

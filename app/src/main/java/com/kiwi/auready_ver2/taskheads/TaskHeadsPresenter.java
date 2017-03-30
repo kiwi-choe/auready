@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -30,6 +31,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *  TaskHead presenter
  */
 public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
+
+    private static final int DEFAULT_COLOR = R.color.color_picker_default_color;
 
     private final TaskHeadsContract.View mTaskHeadView;
 
@@ -107,8 +110,12 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
             if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TITLE)) {
                 title = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TITLE);
             }
+            int color = DEFAULT_COLOR;
+            if(data.hasExtra(TaskHeadDetailFragment.EXTRA_COLOR)) {
+                color = data.getIntExtra(TaskHeadDetailFragment.EXTRA_COLOR, DEFAULT_COLOR);
+            }
 
-            mTaskHeadView.showTasksView(taskHeadId, title);
+            mTaskHeadView.showTasksView(taskHeadId, title, color);
 
             // Canceled create taskhead, Open TaskHeadsView
         }
@@ -149,7 +156,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
         int size = taskheads.size();
         for(int i = 0; i<size; i++) {
             TaskHead taskHead = taskheads.get(i);
-            updatingTaskHeads.add(new TaskHead(taskHead.getId(), taskHead.getTitle(), i));
+            updatingTaskHeads.add(new TaskHead(taskHead.getId(), taskHead.getTitle(), i, taskHead.getColor()));
         }
 
         mUseCaseHandler.execute(mUpdateTaskHeadOrders, new UpdateTaskHeadOrders.RequestValues(updatingTaskHeads),

@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.content.ContextCompat;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -41,9 +41,11 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     public static final String EXTRA_TASKHEAD_ID = "extra_taskhead_id";
     public static final String EXTRA_TITLE = "extra_title";
+    public static final String EXTRA_COLOR = "extra_color";
 
     // when getArguments().getInt()
     private static final int DEFAULT_INT = 0;
+    private static final int DEFAULT_COLOR = R.color.color_picker_default_color;
 
     private TaskHeadDetailContract.Presenter mPresenter;
 
@@ -56,6 +58,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     private EditText mTitle;
     private MembersAdapter mMemberListAdapter;
     private List<Member> mMembers;
+    private int mColor;
 
     // q find the better way
     ListView mMemberListView;
@@ -85,6 +88,8 @@ public class TaskHeadDetailFragment extends Fragment implements
             }
         }
 
+        // init member variables
+        mColor = DEFAULT_COLOR;
         mMemberListAdapter = new MembersAdapter(getActivity().getApplicationContext(), R.layout.member_item, mMembers);
 
         setHasOptionsMenu(true);
@@ -113,22 +118,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
         // set color picker
         mColorPickerBtn = (Button) root.findViewById(R.id.color_picker_btn);
-        mColorPickerBtn.setBackgroundColor(getResources().getColor(R.color.color_picker_default_color));
         mColorPickerDialog = new ColorPickerDialog();
-        int[] pickerColors = getContext().getResources().getIntArray(R.array.color_picker);
-        mColorPickerDialog.initialize(
-                R.string.color_picker_default_title,
-                pickerColors,
-                getContext().getResources().getColor(R.color.color_picker_default_color),
-                5,
-                pickerColors.length);
-
-        mColorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
-            @Override
-            public void onColorSelected(int color) {
-                mColorPickerBtn.setBackgroundColor(color);
-            }
-        });
 
         // Set member view
         mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
@@ -164,6 +154,31 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        // Set color event
+        mColorPickerBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mColorPickerDialog.show(getFragmentManager(), "color picker tag");
+            }
+        });
+
+        int[] pickerColors = getContext().getResources().getIntArray(R.array.color_picker);
+        mColorPickerDialog.initialize(
+                R.string.color_picker_default_title,
+                pickerColors,
+                ContextCompat.getColor(getActivity().getApplicationContext(), mColor),
+                5,
+                pickerColors.length);
+
+        mColorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
+            @Override
+            public void onColorSelected(int color) {
+                setColor(color);
+                notifyColorChanged();
+            }
+        });
+
+        // Set member view event
         mMemberListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -176,13 +191,6 @@ public class TaskHeadDetailFragment extends Fragment implements
             @Override
             public void onClick(View view) {
                 openFriendsView();
-            }
-        });
-
-        mColorPickerBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mColorPickerDialog.show(getFragmentManager(), "color picker tag");
             }
         });
     }
@@ -201,11 +209,24 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void showAddedTaskHead(String taskHeadId, String title) {
-        Log.d(TAG, "entered into showAddedTasKHead");
+    public void setColor(int color) {
+        mColor = color;
+        notifyColorChanged();
+    }
+
+    /*
+    * Process after color changing
+    * */
+    private void notifyColorChanged() {
+        mColorPickerBtn.setBackgroundColor(mColor);
+    }
+
+    @Override
+    public void showAddedTaskHead(String taskHeadId, String title, int color) {
         Intent intent = getActivity().getIntent();
         intent.putExtra(EXTRA_TASKHEAD_ID, taskHeadId);
         intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_COLOR, color);
         sendResult(Activity.RESULT_OK, intent);
     }
 
@@ -262,11 +283,11 @@ public class TaskHeadDetailFragment extends Fragment implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.create_menu:
-                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+                mPresenter.createTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers, mColor);
                 break;
 
             case R.id.done_menu:
-                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers);
+                mPresenter.editTaskHeadDetail(mTitle.getText().toString(), mOrderOfTaskHead, mMembers, mColor);
                 break;
 
             case android.R.id.home:
@@ -283,9 +304,10 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     @Override
-    public void showEditedTaskHead() {
+    public void showEditedTaskHead(String title, int color) {
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_TITLE, mTitle.getText().toString());
+        intent.putExtra(EXTRA_TITLE, title);
+        intent.putExtra(EXTRA_COLOR, color);
         sendResult(Activity.RESULT_OK, intent);
     }
 

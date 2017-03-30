@@ -53,7 +53,8 @@ public class TaskLocalDataSource implements TaskDataSource {
         String[] projection = {
                 TaskHeadEntry.COLUMN_ID,
                 TaskHeadEntry.COLUMN_TITLE,
-                TaskHeadEntry.COLUMN_ORDER
+                TaskHeadEntry.COLUMN_ORDER,
+                TaskHeadEntry.COLUMN_COLOR
         };
         String orderBy = TaskHeadEntry.COLUMN_ORDER + " asc";
 
@@ -64,8 +65,9 @@ public class TaskLocalDataSource implements TaskDataSource {
                 String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
                 String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
                 int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+                int color = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_COLOR));
 
-                TaskHead taskHead = new TaskHead(id, title, order);
+                TaskHead taskHead = new TaskHead(id, title, order, color);
                 taskHeads.add(taskHead);
             }
         }
@@ -162,6 +164,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         taskHeadValues.put(TaskHeadEntry.COLUMN_ID, taskHeadId);
         taskHeadValues.put(TaskHeadEntry.COLUMN_TITLE, taskHead.getTitle());
         taskHeadValues.put(TaskHeadEntry.COLUMN_ORDER, taskHead.getOrder());
+        taskHeadValues.put(TaskHeadEntry.COLUMN_COLOR, taskHead.getColor());
 
         // Save members
         List<Member> tmpMembers = taskHeadDetail.getMembers();
@@ -277,6 +280,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         // update taskHead with the existing id
         ContentValues taskHeadValues = new ContentValues();
         taskHeadValues.put(TaskHeadEntry.COLUMN_TITLE, editTaskHead.getTitle());
+        taskHeadValues.put(TaskHeadEntry.COLUMN_COLOR, editTaskHead.getColor());
         String selection = TaskHeadEntry.COLUMN_ID + " LIKE?";
         String[] selectionArgs = {editTaskHead.getId()};
         return db.update(TaskHeadEntry.TABLE_NAME, taskHeadValues, selection, selectionArgs);
@@ -312,8 +316,9 @@ public class TaskLocalDataSource implements TaskDataSource {
                 // Set TaskHead
                 String title = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
                 int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+                int color = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_COLOR));
                 if (taskHead == null) {
-                    taskHead = new TaskHead(taskHeadId_fk, title, order);
+                    taskHead = new TaskHead(taskHeadId_fk, title, order, color);
                 }
             }
         }

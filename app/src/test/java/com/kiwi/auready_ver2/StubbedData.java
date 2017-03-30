@@ -25,11 +25,11 @@ public final class StubbedData {
     public static abstract class TaskStub {
 
         private static final int ORDER = 0;
-        public static TaskHead TASKHEAD = new TaskHead("stubbedTaskHeadId", "title1", ORDER);
+        public static TaskHead TASKHEAD = new TaskHead("stubbedTaskHeadId", "title1", ORDER, R.color.color_picker_default_color);
         public static List<TaskHead> TASKHEADS = Lists.newArrayList(
-                new TaskHead("stubbedTaskHeadId0", "title0", 0),
-                new TaskHead("stubbedTaskHeadId1", "title1", 1),
-                new TaskHead("stubbedTaskHeadId2", "title2", 2));
+                new TaskHead("stubbedTaskHeadId0", "title0", 0, R.color.color_picker_default_color),
+                new TaskHead("stubbedTaskHeadId1", "title1", 1, R.color.color_picker_default_color),
+                new TaskHead("stubbedTaskHeadId2", "title2", 2, R.color.color_picker_default_color));
 
         public static final List<Member> NEW_MEMBERS = Lists.newArrayList(
                 new Member(TASKHEAD.getId(), "stubbedFriendId0", "name1", "email1"),

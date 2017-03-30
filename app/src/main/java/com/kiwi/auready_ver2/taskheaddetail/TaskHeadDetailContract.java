@@ -20,7 +20,9 @@ public interface TaskHeadDetailContract {
 
         void setMembers(List<Member> members);
 
-        void showAddedTaskHead(String taskHeadId, String title);
+        void setColor(int color);
+
+        void showAddedTaskHead(String taskHeadId, String title, int color);
 
         void showEmptyTaskHeadError();
 
@@ -28,7 +30,7 @@ public interface TaskHeadDetailContract {
 
         void setNewTaskHeadView();
 
-        void showEditedTaskHead();
+        void showEditedTaskHead(String title, int color);
 
         void showSaveError();
 
@@ -37,13 +39,13 @@ public interface TaskHeadDetailContract {
 
     interface Presenter extends BasePresenter {
 
-        void createTaskHeadDetail(String title, int order,  List<Member> members);
+        void createTaskHeadDetail(String title, int order, List<Member> members, int color);
 
         // Get TaskHead if exists the taskHeadId
         void populateTaskHeadDetail();
 
         void result(int requestCode, int resultCode, Intent data);
 
-        void editTaskHeadDetail(String editTitle, int order, List<Member> editMembers);
+        void editTaskHeadDetail(String editTitle, int order, List<Member> editMembers, int color);
     }
 }

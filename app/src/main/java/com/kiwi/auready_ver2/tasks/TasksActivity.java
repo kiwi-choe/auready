@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.Injection;
@@ -27,9 +28,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     public static final String ARG_TASKHEAD_ID = "TASKHEAD_ID";
     public static final String ARG_TITLE = "TITLE";
+    public static final String ARG_TASKHEAD_COLOR = "TASKHEAD_COLOR";
     public static final int REQ_EDIT_TASKHEAD = 0;
 
     public static final int OFF_SCREEN_PAGE_LIMIT = 5;
+    private static final int DEFAULT_COLOR = R.color.color_picker_default_color;
 
 
     // tasks fragment view pager
@@ -47,25 +50,14 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tasks);
 
-        // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
-        setSupportActionBar(toolbar);
+        initViews();
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        // set Title
-        if (getIntent().hasExtra(ARG_TITLE)) {
-            String title = getIntent().getStringExtra(ARG_TITLE);
-            setTitle(title);
-        }
-
-        // Create the presenter
         mTaskHeadId = null;
         if (getIntent().hasExtra(ARG_TASKHEAD_ID)) {
             mTaskHeadId = getIntent().getStringExtra(ARG_TASKHEAD_ID);
         }
 
+        // Create the presenter
         mPresenter = new TasksPresenter(
                 Injection.provideUseCaseHandler(),
                 mTaskHeadId,
@@ -76,6 +68,25 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
                 Injection.provideGetTasksOfTaskHead(getApplicationContext()));
+    }
+
+    private void initViews() {
+        // Set up the toolbar.
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        if (getIntent().hasExtra(ARG_TITLE)) {
+            String title = getIntent().getStringExtra(ARG_TITLE);
+            setTitle(title);
+        }
+
+        if(getIntent().hasExtra(ARG_TASKHEAD_COLOR)) {
+            int backgroundColor = getIntent().getIntExtra(ARG_TASKHEAD_COLOR, DEFAULT_COLOR);
+            setColor(backgroundColor);
+        }
     }
 
     @Override
@@ -275,6 +286,14 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         if (fragment != null) {
             fragment.showNoTask();
+        }
+    }
+
+    @Override
+    public void setColor(int color) {
+        LinearLayout baseLayoutOfFragments = (LinearLayout)findViewById(R.id.tasks_fragments_layout);
+        if (baseLayoutOfFragments != null) {
+            baseLayoutOfFragments.setBackgroundColor(color);
         }
     }
 

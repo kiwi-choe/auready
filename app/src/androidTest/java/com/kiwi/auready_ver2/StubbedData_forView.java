@@ -19,11 +19,11 @@ public final class StubbedData_forView {
     /*
     * This stub that is added to the fake service API layer.
     * */
-    public static final TaskHead TASKHEAD = new TaskHead("title1", 0);
+    public static final TaskHead TASKHEAD = new TaskHead("title1", 0, R.color.color_picker_default_color);
     public static List<TaskHead> TASKHEADS = Lists.newArrayList(
-            new TaskHead("title1", 0),
-            new TaskHead("title2", 1),
-            new TaskHead("title3", 2));
+            new TaskHead("title1", 0, R.color.color_picker_default_color),
+            new TaskHead("title2", 1, R.color.color_picker_default_color),
+            new TaskHead("title3", 2, R.color.color_picker_default_color));
 
     public static final List<Member> MEMBERS = Lists.newArrayList(
             new Member(TASKHEAD.getId(), "stubFriendId1", "name1", "email1"),

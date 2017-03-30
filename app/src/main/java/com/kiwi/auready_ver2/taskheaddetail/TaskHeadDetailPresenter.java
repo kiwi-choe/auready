@@ -67,8 +67,8 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     @Override
-    public void createTaskHeadDetail(final String title, int order, List<Member> members) {
-        final TaskHead newTaskHead = new TaskHead(title, order);
+    public void createTaskHeadDetail(final String title, int order, List<Member> members, final int color) {
+        final TaskHead newTaskHead = new TaskHead(title, order, color);
 
         TaskHeadDetail newTaskHeadDetail = new TaskHeadDetail(newTaskHead, members);
         if (newTaskHeadDetail.isEmpty()) {
@@ -79,7 +79,7 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
 
                         @Override
                         public void onSuccess(SaveTaskHeadDetail.ResponseValue response) {
-                            mView.showAddedTaskHead(newTaskHead.getId(), title);
+                            mView.showAddedTaskHead(newTaskHead.getId(), title, color);
                         }
 
                         @Override
@@ -91,18 +91,18 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     }
 
     @Override
-    public void editTaskHeadDetail(String editTitle, int order, List<Member> editMembers) {
+    public void editTaskHeadDetail(final String editTitle, int order, List<Member> editMembers, final int color) {
         if (mTaskHeadId == null) {
             throw new RuntimeException("editTaskHead() was called but taskHead is new.");
         }
-        TaskHead editTaskHead = new TaskHead(mTaskHeadId, editTitle, order);
+        TaskHead editTaskHead = new TaskHead(mTaskHeadId, editTitle, order, color);
         TaskHeadDetail taskHeadDetail = new TaskHeadDetail(editTaskHead, editMembers);
         mUseCaseHandler.execute(mEditTaskHeadDetail, new EditTaskHeadDetail.RequestValues(taskHeadDetail),
                 new UseCase.UseCaseCallback<EditTaskHeadDetail.ResponseValue>() {
 
                     @Override
                     public void onSuccess(EditTaskHeadDetail.ResponseValue response) {
-                        mView.showEditedTaskHead();
+                        mView.showEditedTaskHead(editTitle, color);
                     }
 
                     @Override
@@ -154,5 +154,6 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
     private void showTaskHead(TaskHeadDetail taskHeadDetail) {
         mView.setTitle(taskHeadDetail.getTaskHead().getTitle());
         mView.setMembers(taskHeadDetail.getMembers());
+        mView.setColor(taskHeadDetail.getTaskHead().getColor());
     }
 }

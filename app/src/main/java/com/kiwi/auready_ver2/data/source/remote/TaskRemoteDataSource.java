@@ -80,7 +80,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         List<TaskHead> taskHeads = new ArrayList<>(0);
         for(TaskHead_remote taskHeadRemote : taskHeads_remote) {
             // Set default orders; 0
-            TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(), taskHeadRemote.getTitle(), 0);
+            TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(), taskHeadRemote.getTitle(), 0, taskHeadRemote.getColor());
             taskHeads.add(newTaskHead);
         }
         return taskHeads;
@@ -121,6 +121,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         TaskHead_remote taskHeadRemote = new TaskHead_remote(
                 taskHeadDetail.getTaskHead().getId(),
                 taskHeadDetail.getTaskHead().getTitle(),
+                taskHeadDetail.getTaskHead().getColor(),
                 memberRemotes);
         Call<Void> call = taskService.saveTaskHeadDetail(taskHeadRemote);
         call.enqueue(new Callback<Void>() {

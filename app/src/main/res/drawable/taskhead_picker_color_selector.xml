@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/taskhead_picker_color_selected" android:state_selected="true" />
+    <!-- Selected status -->
+    <item android:state_selected="true">
+        <layer-list>
+            <item android:drawable="@drawable/taskhead_picker_color" />
+            <item android:drawable="@drawable/check_icon" />
+        </layer-list>
+    </item>
+    <!-- Default status -->
     <item android:drawable="@drawable/taskhead_picker_color" />
 </selector>

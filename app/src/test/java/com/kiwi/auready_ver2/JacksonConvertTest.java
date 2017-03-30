@@ -19,7 +19,7 @@ public class JacksonConvertTest {
     @Test
     public void givenJsonOfList_WhenDeserializing_thenCorrect()
             throws IOException {
-        TaskHead taskHead = new TaskHead("title", 0);
+        TaskHead taskHead = new TaskHead("title", 0, R.color.color_picker_default_color);
 //        String json = taskHead.getMembersString();
 
         String json = "{\"email\":\"email1\",\"name\":\"name1\",\"id\":\"48960d3b-9866-4272-b3dd-403a31886d37\"}";

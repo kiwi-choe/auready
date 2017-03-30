@@ -34,6 +34,8 @@ class TasksContract {
         void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted);
 
         void showNoTask(String memberId);
+
+        void setColor(int color);
     }
 
     interface Presenter extends BasePresenter {

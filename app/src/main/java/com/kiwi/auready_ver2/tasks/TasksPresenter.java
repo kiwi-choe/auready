@@ -3,8 +3,8 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
+import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
@@ -26,6 +26,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by kiwi on 8/26/16.
  */
 public class TasksPresenter implements TasksContract.Presenter {
+
+    private static final int DEFAULT_COLOR = R.color.color_picker_default_color;
 
     private final UseCaseHandler mUseCaseHandler;
     private final TasksContract.View mTasksView;
@@ -144,6 +146,10 @@ public class TasksPresenter implements TasksContract.Presenter {
             if (data.hasExtra(TaskHeadDetailFragment.EXTRA_TITLE)) {
                 String title = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TITLE);
                 mTasksView.setTitle(title);
+            }
+            if (data.hasExtra(TaskHeadDetailFragment.EXTRA_COLOR)) {
+                int color = data.getIntExtra(TaskHeadDetailFragment.EXTRA_COLOR, DEFAULT_COLOR);
+                mTasksView.setColor(color);
             }
         }
     }
