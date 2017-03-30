@@ -116,9 +116,17 @@ public class TaskHeadDetailFragment extends Fragment implements
         mTitle = (EditText) root.findViewById(R.id.taskheaddetail_title);
 
 
-        // set color picker
+        // set color picker views
         mColorPickerBtn = (Button) root.findViewById(R.id.color_picker_btn);
-        mColorPickerDialog = new ColorPickerDialog();
+
+        int[] pickerColors = getContext().getResources().getIntArray(R.array.color_picker);
+        mColorPickerDialog = ColorPickerDialog.newInstance(
+                R.string.color_picker_default_title,
+                pickerColors,
+                ContextCompat.getColor(getActivity().getApplicationContext(), mColor),
+                ColorPickerDialog.COLUMN_NUM,
+                pickerColors.length
+        );
 
         // Set member view
         mMemberListView = (ListView) root.findViewById(R.id.taskheaddetail_member_list);
@@ -154,21 +162,13 @@ public class TaskHeadDetailFragment extends Fragment implements
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // Set color event
+        // Set color view event
         mColorPickerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mColorPickerDialog.show(getFragmentManager(), "color picker tag");
             }
         });
-
-        int[] pickerColors = getContext().getResources().getIntArray(R.array.color_picker);
-        mColorPickerDialog.initialize(
-                R.string.color_picker_default_title,
-                pickerColors,
-                ContextCompat.getColor(getActivity().getApplicationContext(), mColor),
-                5,
-                pickerColors.length);
 
         mColorPickerDialog.setOnColorSelectedListener(new ColorPickerSwatch.OnColorSelectedListener() {
             @Override

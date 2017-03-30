@@ -36,6 +36,8 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
     public static final int SIZE_LARGE = 1;
     public static final int SIZE_SMALL = 2;
 
+    public static final int COLUMN_NUM = 5;
+
     protected AlertDialog mAlertDialog;
 
     protected static final String KEY_TITLE_ID = "title_id";
@@ -63,23 +65,22 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
 
     public static ColorPickerDialog newInstance(int titleResId, int[] colors, int selectedColor,
                                                 int columns, int size) {
-        ColorPickerDialog ret = new ColorPickerDialog();
-        ret.initialize(titleResId, colors, selectedColor, columns, size);
-        return ret;
-    }
-
-    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size) {
-        setArguments(titleResId, columns, size);
-        setColors(colors, selectedColor);
-    }
-
-    public void setArguments(int titleResId, int columns, int size) {
+        ColorPickerDialog colorPickerDialog = new ColorPickerDialog();
         Bundle bundle = new Bundle();
         bundle.putInt(KEY_TITLE_ID, titleResId);
+        bundle.putIntArray(KEY_COLORS, colors);
+        bundle.putInt(KEY_SELECTED_COLOR, selectedColor);
         bundle.putInt(KEY_COLUMNS, columns);
         bundle.putInt(KEY_SIZE, size);
-        setArguments(bundle);
+        colorPickerDialog.setArguments(bundle);
+
+        return colorPickerDialog;
     }
+
+//    public void initialize(int titleResId, int[] colors, int selectedColor, int columns, int size) {
+//        setArguments(titleResId, columns, size);
+//        setColors(colors, selectedColor);
+//    }
 
     public void setOnColorSelectedListener(ColorPickerSwatch.OnColorSelectedListener listener) {
         mListener = listener;
@@ -91,13 +92,15 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
 
         if (getArguments() != null) {
             mTitleResId = getArguments().getInt(KEY_TITLE_ID);
+            mColors = getArguments().getIntArray(KEY_COLORS);
+            mSelectedColor = getArguments().getInt(KEY_SELECTED_COLOR);
             mColumns = getArguments().getInt(KEY_COLUMNS);
             mSize = getArguments().getInt(KEY_SIZE);
         }
 
         if (savedInstanceState != null) {
             mColors = savedInstanceState.getIntArray(KEY_COLORS);
-            mSelectedColor = (Integer) savedInstanceState.getSerializable(KEY_SELECTED_COLOR);
+            mSelectedColor = savedInstanceState.getInt(KEY_SELECTED_COLOR);
             mColorContentDescriptions = savedInstanceState.getStringArray(
                     KEY_COLOR_CONTENT_DESCRIPTIONS);
         }
@@ -130,17 +133,8 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
             mListener.onColorSelected(color);
         }
 
-        if (getTargetFragment() instanceof ColorPickerSwatch.OnColorSelectedListener) {
-            final ColorPickerSwatch.OnColorSelectedListener listener =
-                    (ColorPickerSwatch.OnColorSelectedListener) getTargetFragment();
-            listener.onColorSelected(color);
-        }
-
-        if (color != mSelectedColor) {
-            mSelectedColor = color;
-            // Redraw palette to show checkmark on newly selected color before dismissing.
-            mPalette.drawPalette(mColors, mSelectedColor);
-        }
+        // Redraw palette to show checkmark on newly selected color before dismissing.
+        setSelectedColor(color);
 
         dismiss();
     }

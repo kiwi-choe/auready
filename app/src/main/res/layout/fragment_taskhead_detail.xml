@@ -29,7 +29,7 @@
         android:paddingTop="10dp" />
 
     <TextView
-        android:id="@+id/color_picker"
+        android:id="@+id/color_picker_layout_title"
         style="@style/title_textview_style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
