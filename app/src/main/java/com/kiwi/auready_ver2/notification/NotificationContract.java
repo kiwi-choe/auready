@@ -21,7 +21,7 @@ public interface NotificationContract {
     interface Presenter extends BasePresenter{
         void loadNotifications();
 
-        void readNotification(int id);
+        void readNotification(int id);  // Update 'isNew' field
     }
 
     // Menu View of TaskHeadsFragment

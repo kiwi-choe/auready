@@ -57,6 +57,7 @@ public final class PersistenceContract {
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_iSNEW = "isnew";
         public static final String COLUMN_CONTENTS = "contents";
+        public static final String COLUMN_CREATED_AT = "created_at";
     }
 
     static class SQL_CREATE_TABLE {
@@ -74,6 +75,9 @@ public final class PersistenceContract {
         private static final String ON_DELETE_CASCADE = " ON DELETE CASCADE";
         private static final String DEFAULT = " DEFAULT";
         private static final String AUTOINCREMENT = " AUTOINCREMENT";
+        private static final String DATETIME = " DATETIME";
+        private static final String CURRENT_TIMESTAMP = " CURRENT_TIMESTAMP";
+        private static final String NOTNULL = " NOT NULL";
 
         // insert, update, delete, execSQL, ...
 
@@ -123,7 +127,8 @@ public final class PersistenceContract {
                         NotificationEntry.COLUMN_ID + INTEGER_TYPE + PRIMARY_KEY + AUTOINCREMENT + COMMA_SEP +
                         NotificationEntry.COLUMN_TYPE + INTEGER_TYPE + COMMA_SEP +
                         NotificationEntry.COLUMN_iSNEW + INTEGER_TYPE + DEFAULT + " 0" + COMMA_SEP +
-                        NotificationEntry.COLUMN_CONTENTS + TEXT_TYPE +
+                        NotificationEntry.COLUMN_CONTENTS + TEXT_TYPE + COMMA_SEP +
+                        NotificationEntry.COLUMN_CREATED_AT + DATETIME + DEFAULT + CURRENT_TIMESTAMP + NOTNULL +
                         " )";
     }
 }
