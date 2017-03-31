@@ -25,11 +25,11 @@ public interface NotificationDataSource {
 
     void loadNotifications(@NonNull LoadNotificationsCallback callback);
 
-    void readNotification();
+    void readNotification(@NonNull int id);
 
     void deleteNotification(@NonNull int id);
 
-    public interface GetNewCountCallback {
+    interface GetNewCountCallback {
         void onLoaded(int newNotificationCount);
         void onDataNotAvailable();
     }

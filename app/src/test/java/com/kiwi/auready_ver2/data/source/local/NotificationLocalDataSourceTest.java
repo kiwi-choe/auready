@@ -6,6 +6,7 @@ import android.database.Cursor;
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Notification;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.Notifi
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_iSNEW;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.TABLE_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -59,15 +61,13 @@ public class NotificationLocalDataSourceTest {
     public void saveNotification_returnsSuccessCallback() {
         mLocalDataSource.saveNotification(NOTIFICATION, mSaveCallback);
         verify(mSaveCallback).onSaveSuccess();
-
-        deleteAllNotifications();
     }
 
     @Test
     public void saveNotification_queryTest() {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, NOTIFICATION.getType());
-        values.put(COLUMN_iSNEW, NOTIFICATION.isNew());
+        values.put(COLUMN_iSNEW, NOTIFICATION.getIsNewInteger());
         values.put(COLUMN_CONTENTS, NOTIFICATION.getContents());
 
         long isSuccessToInsert = mDbHelper.insert(TABLE_NAME, null, values);
@@ -89,15 +89,13 @@ public class NotificationLocalDataSourceTest {
                 int type = c.getType(c.getColumnIndexOrThrow(COLUMN_TYPE));
                 int isNew = c.getInt(c.getColumnIndexOrThrow(COLUMN_iSNEW));
                 String contents = c.getString(c.getColumnIndexOrThrow(COLUMN_CONTENTS));
-                
+
                 assertNotNull(id);
                 assertEquals(type, NOTIFICATION.getType());
-                assertEquals((isNew > 0), NOTIFICATION.isNew());
+                assertEquals(isNew, NOTIFICATION.getIsNewInteger());
                 assertEquals(contents, NOTIFICATION.getContents());
             }
         }
-
-        deleteAllNotifications();
     }
 
     @Test
@@ -109,9 +107,15 @@ public class NotificationLocalDataSourceTest {
             public void onLoaded(List<Notification> notifications) {
                 assertNotNull(notifications);
                 assertTrue(notifications.size() == 2);
-
-                assertEquals(NOTIFICATIONS.get(0).getId(), notifications.get(0).getId());
-                assertEquals(NOTIFICATIONS.get(1).getId(), notifications.get(1).getId());
+//                for(Notification notification:notifications) {
+//                    if(notification.getType() == NOTIFICATIONS.get(0).getType()) {
+//                        assertEquals(notification.getContents(), notifications.get(0).getContents());
+//                    }
+//
+//                    if(notification.getType() == NOTIFICATIONS.get(1).getType()) {
+//                        assertEquals(notification.getContents(), notifications.get(1).getContents());
+//                    }
+//                }
             }
 
             @Override
@@ -119,8 +123,6 @@ public class NotificationLocalDataSourceTest {
                 fail();
             }
         });
-
-        deleteAllNotifications();
     }
 
     @Test
@@ -130,19 +132,112 @@ public class NotificationLocalDataSourceTest {
         NotificationDataSource.LoadNotificationsCallback loadCallback = Mockito.mock(NotificationDataSource.LoadNotificationsCallback.class);
         mLocalDataSource.loadNotifications(loadCallback);
         verify(loadCallback).onLoaded(anyListOf(Notification.class));
-
-        deleteAllNotifications();
     }
+
     private void saveStubbedNotifications(List<Notification> notifications) {
         for (Notification notification : notifications) {
             saveNotification(notification);
         }
     }
 
+    /*
+    * Update notification - isNew field
+    * */
+    @Test
+    public void readNotification() {
+        saveNotification(NOTIFICATION);
+        final Notification[] original = new Notification[1];
+        mLocalDataSource.loadNotifications(new NotificationDataSource.LoadNotificationsCallback() {
+            @Override
+            public void onLoaded(List<Notification> notifications) {
+                if (!notifications.isEmpty()) {
+                    original[0] = notifications.get(0);
+                }
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        });
+
+        // Update the edited notification
+        mLocalDataSource.readNotification(original[0].getId());
+
+        // Retrieve the updated notification - isNew should be false
+        NotificationDataSource.LoadNotificationsCallback loadCallback = new NotificationDataSource.LoadNotificationsCallback() {
+            @Override
+            public void onLoaded(List<Notification> notifications) {
+                if (notifications.get(0).getId() == original[0].getId()) {
+
+                    assertFalse(notifications.get(0).isNew());
+                }
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                fail();
+            }
+        };
+        mLocalDataSource.loadNotifications(loadCallback);
+    }
+
+    @Test
+    public void delete_query() {
+        saveNotification(NOTIFICATION);
+
+        // Load a saved notification
+        final Notification[] notification = new Notification[1];
+        mLocalDataSource.loadNotifications(new NotificationDataSource.LoadNotificationsCallback() {
+            @Override
+            public void onLoaded(List<Notification> notifications) {
+                notification[0] = notifications.get(0);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+
+        String selection = COLUMN_ID + " LIKE?";
+        String[] selectionArgs = {String.valueOf(notification[0].getId())};
+        mDbHelper.delete(TABLE_NAME, selection, selectionArgs);
+
+        // Retrieve notifications - returns 0
+        Cursor c = mDbHelper.query(TABLE_NAME, null, null, null, null, null, null);
+        assertTrue(c.getCount() == 0);
+    }
+
+    @Test
+    public void deleteNotification_test() {
+        saveNotification(NOTIFICATION);
+
+        // Load a saved notification
+        final Notification[] notification = new Notification[1];
+        mLocalDataSource.loadNotifications(new NotificationDataSource.LoadNotificationsCallback() {
+            @Override
+            public void onLoaded(List<Notification> notifications) {
+                notification[0] = notifications.get(0);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+
+        mLocalDataSource.deleteNotification(notification[0].getId());
+
+        // Retrieve notifications - returns 0
+        Cursor c = mDbHelper.query(TABLE_NAME, null, null, null, null, null, null);
+        assertTrue(c.getCount() == 0);
+    }
+
     private void saveNotification(Notification notification) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, notification.getType());
-        values.put(COLUMN_iSNEW, notification.isNew());
+        values.put(COLUMN_iSNEW, notification.getIsNewInteger());
         values.put(COLUMN_CONTENTS, notification.getContents());
 
         mDbHelper.insert(TABLE_NAME, null, values);
@@ -150,5 +245,11 @@ public class NotificationLocalDataSourceTest {
 
     private void deleteAllNotifications() {
         mDbHelper.delete(TABLE_NAME, null, null);
+    }
+
+    @After
+    public void tearDown() {
+        deleteAllNotifications();
+        mDbHelper.close();
     }
 }

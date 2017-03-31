@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source.local;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.data.Notification;
@@ -46,7 +47,7 @@ public class NotificationLocalDataSource implements NotificationDataSource {
 
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, notification.getType());
-        values.put(COLUMN_iSNEW, notification.isNew());
+        values.put(COLUMN_iSNEW, notification.getIsNewInteger());
         values.put(COLUMN_CONTENTS, notification.getContents());
 
         long isSuccess = mDbHelper.insert(TABLE_NAME, null, values);
@@ -86,13 +87,23 @@ public class NotificationLocalDataSource implements NotificationDataSource {
     }
 
     @Override
-    public void readNotification() {
+    public void readNotification(@NonNull int id) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_iSNEW, 0);    // set isNew to false
+        String selection = COLUMN_ID + " LIKE?";
+        String[] selectionArgs = {String.valueOf(id)};
+        db.update(TABLE_NAME, values, selection, selectionArgs);
     }
 
     @Override
     public void deleteNotification(@NonNull int id) {
+        checkNotNull(id);
 
+        String selection = COLUMN_ID + " LIKE?";
+        String[] selectionArgs = {String.valueOf(id)};
+        mDbHelper.delete(TABLE_NAME, selection, selectionArgs);
     }
 
     @Override

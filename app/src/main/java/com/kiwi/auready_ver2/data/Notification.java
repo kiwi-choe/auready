@@ -22,6 +22,11 @@ public class Notification {
         return mIsNew;
     }
 
+    public int getIsNewInteger() {
+        return (mIsNew ? 1 : 0);
+    }
+
+
     public String getContents() {
         return mContents;
     }
