@@ -11,7 +11,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by kiwi on 7/1/16.
+ * Friend Repository
  */
 public class FriendRepository implements FriendDataSource {
 
@@ -67,6 +67,7 @@ public class FriendRepository implements FriendDataSource {
             public void onFriendsLoaded(List<Friend> friends) {
                 refreshCaches(friends);
                 refreshLocalDataSource(friends);
+                callback.onFriendsLoaded(friends);
             }
 
             @Override

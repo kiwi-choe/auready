@@ -44,7 +44,7 @@ public class Injection {
     public static FriendRepository provideFriendRepository(@NonNull Context context) {
         checkNotNull(context);
         return FriendRepository.getInstance(FriendLocalDataSource.getInstance(context),
-                FriendRemoteDataSource.getInstance());
+                FriendRemoteDataSource.getInstance(context));
     }
 
     public static UseCaseHandler provideUseCaseHandler() {

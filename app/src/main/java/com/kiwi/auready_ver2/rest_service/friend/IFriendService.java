@@ -14,7 +14,7 @@ import retrofit2.http.Path;
  */
 
 public interface IFriendService {
-    @GET("/friend")
+    @GET("/relationships/status/1")
     Call<FriendsResponse> getFriends();
 
     @GET("/user/{search}")

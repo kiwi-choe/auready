@@ -16,5 +16,7 @@ public final class HttpStatusCode {
         public static final int OK = 200;
         public static final int NO_USERS = 204;
         public static final int DB_ERROR = 400;
+
+        public static final int NO_FRIENDS = 204;
     }
 }

@@ -1,18 +1,26 @@
 package com.kiwi.auready_ver2.data.source.remote;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
+import com.kiwi.auready_ver2.rest_service.HttpStatusCode;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.friend.FriendsResponse;
 import com.kiwi.auready_ver2.rest_service.friend.IFriendService;
+import com.kiwi.auready_ver2.util.NetworkUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by kiwi on 1/18/17.
@@ -26,18 +34,19 @@ public class FriendRemoteDataSource implements FriendDataSource {
 
     private static FriendRemoteDataSource INSTANCE;
     private String mAccessToken;
+    private Context mContext;
 
-    private FriendRemoteDataSource() {
-
+    private FriendRemoteDataSource(@NonNull Context context) {
+        mContext = context.getApplicationContext();
         // Before entering here, AccessTokenStore static Instance should be created
-//        mAccessToken = null;
-        mAccessToken =
-                AccessTokenStore.getInstance().getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        mAccessToken = AccessTokenStore.getInstance(context)
+                .getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
     }
 
-    public static FriendRemoteDataSource getInstance() {
+    public static FriendRemoteDataSource getInstance(@NonNull Context context) {
+        checkNotNull(context);
         if (INSTANCE == null) {
-            INSTANCE = new FriendRemoteDataSource();
+            INSTANCE = new FriendRemoteDataSource(context);
         }
         return INSTANCE;
     }
@@ -55,6 +64,11 @@ public class FriendRemoteDataSource implements FriendDataSource {
     @Override
     public void getFriends(@NonNull final LoadFriendsCallback callback) {
 
+        // Check network
+        if(!NetworkUtils.isOnline(mContext)) {
+            callback.onDataNotAvailable();
+        }
+
         // Request to Server
         IFriendService friendService = ServiceGenerator.createService(
                 IFriendService.class, mAccessToken);
@@ -63,8 +77,13 @@ public class FriendRemoteDataSource implements FriendDataSource {
         call.enqueue(new Callback<FriendsResponse>() {
             @Override
             public void onResponse(Call<FriendsResponse> call, Response<FriendsResponse> response) {
-
-                callback.onFriendsLoaded(response.body().getFriends());
+                if(response.code() == HttpStatusCode.FriendStatusCode.OK) {
+                    callback.onFriendsLoaded(response.body().getFriends());
+                } else if(response.code() == HttpStatusCode.FriendStatusCode.NO_FRIENDS) {
+                    // There is no friend in Remote DB, so synchronize to Local DB
+                    List<Friend> noFriends = new ArrayList<Friend>(0);
+                    callback.onFriendsLoaded(noFriends);
+                }
             }
 
             @Override
