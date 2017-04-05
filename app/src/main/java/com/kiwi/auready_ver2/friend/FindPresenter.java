@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.friend;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
@@ -69,9 +70,12 @@ public class FindPresenter implements FindContract.Presenter {
 
     @Override
     public void findPeople(@NonNull String emailOrName) {
-        checkNotNull(emailOrName);
+        if(!validateEmailOrName(emailOrName)) {
+            mFindView.onEmailOrNameTextError();
+            return;
+        }
+
         // Find people by email or name
-        // request to Server
         IFriendService friendService =
                 ServiceGenerator.createService(IFriendService.class, mAccessToken);
 
@@ -94,6 +98,13 @@ public class FindPresenter implements FindContract.Presenter {
                 onFindPeopleFail();
             }
         });
+    }
+
+    private boolean validateEmailOrName(String emailOrName) {
+        if(emailOrName == null || TextUtils.isEmpty(emailOrName)) {
+            return false;
+        }
+        return true;
     }
 
     @Override

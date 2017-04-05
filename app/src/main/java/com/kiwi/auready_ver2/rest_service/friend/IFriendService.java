@@ -17,9 +17,9 @@ public interface IFriendService {
     @GET("/relationships/status/1")
     Call<FriendsResponse> getFriends();
 
-    @GET("/user/{search}")
+    @GET("/users/{search}")
     Call<List<SearchedUser>> getUsers(@Path("search") String emailOrName);
 
-    @POST("/relationship/{name}")
+    @POST("/relationships/{name}")
     Call<Void> addFriend(@Path("name") String name);
 }

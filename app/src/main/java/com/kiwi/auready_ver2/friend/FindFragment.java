@@ -2,12 +2,18 @@ package com.kiwi.auready_ver2.friend;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
@@ -31,6 +37,14 @@ public class FindFragment extends Fragment implements
     // testing
     private ArrayList<Friend> TEST_FRIENDS;
     private int TEST_FRIENDS_CNT;
+
+    private LinearLayout mSearchedUsersView;
+    private EditText mSearchPeopleEd;
+    private ImageButton mSearchPeopleBt;
+    private ListView mSearchedList;
+    private SearchedUsersAdapter mListAdapter;
+
+    private LinearLayout mNoUsersView;
 
     public FindFragment() {
         // Required empty public constructor
@@ -58,6 +72,8 @@ public class FindFragment extends Fragment implements
                 new Friend("email9", "name9"),
                 new Friend("email10", "name10"));
         TEST_FRIENDS_CNT = -1;
+
+        mListAdapter = new SearchedUsersAdapter(new ArrayList<SearchedUser>(0), mItemListener);
     }
 
     @Override
@@ -76,7 +92,30 @@ public class FindFragment extends Fragment implements
                 mPresenter.saveFriend(TEST_FRIENDS.get(TEST_FRIENDS_CNT));
             }
         });
+
+        // Searched users view
+        mSearchedUsersView = (LinearLayout) root.findViewById(R.id.searched_list_layout);
+        mSearchPeopleEd = (EditText) root.findViewById(R.id.ed_search_people);
+        mSearchPeopleBt = (ImageButton) root.findViewById(R.id.bt_search_people);
+
+        mSearchedList = (ListView) root.findViewById(R.id.searched_list);
+        mSearchedList.setAdapter(mListAdapter);
+
+        // No users view
+        mNoUsersView = (LinearLayout) root.findViewById(R.id.no_searched_email_layout);
         return root;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mSearchPeopleBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.findPeople(mSearchPeopleEd.getText().toString());
+            }
+        });
     }
 
     @Override
@@ -96,16 +135,46 @@ public class FindFragment extends Fragment implements
 
     @Override
     public void showSearchedPeople(List<SearchedUser> searchedPeople) {
+        mListAdapter.replaceData(searchedPeople);
 
+        mNoUsersView.setVisibility(View.GONE);
+        mSearchedUsersView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showNoSearchedPeople() {
-
+        mSearchedUsersView.setVisibility(View.GONE);
+        mNoUsersView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void setAddFriendFailMessage(int stringResource) {
 
     }
+
+    @Override
+    public void onEmailOrNameTextError() {
+        mSearchPeopleEd.requestFocus();
+        mSearchPeopleEd.setError(getString(R.string.find_email_empty_error));
+    }
+
+    public interface SearchedUserItemListener {
+        void onClickUserPendingStatus(String userName);
+        void onClickUser(String userName);
+    }
+
+    /*
+    * Listener for clicks on searched users in the Listview
+    * */
+    SearchedUserItemListener mItemListener = new SearchedUserItemListener() {
+        @Override
+        public void onClickUserPendingStatus(String userName) {
+            Toast.makeText(getContext(), userName + " 님의 수락을 기다리는 중입니다.", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onClickUser(String userName) {
+            mPresenter.addFriend(userName);
+        }
+    };
 }

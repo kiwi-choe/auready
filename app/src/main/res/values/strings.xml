@@ -89,5 +89,6 @@
     <string name="social_signup_fail_msg">%s Signup Failed</string>
     <string name="notification">notification</string>
     <string name="menu_done">DONE</string>
+    <string name="find_email_empty_error">Input Email or Name string</string>
 
 </resources>

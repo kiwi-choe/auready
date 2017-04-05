@@ -5,6 +5,7 @@ import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.SearchedUser;
+import com.kiwi.auready_ver2.data.User;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
@@ -82,11 +83,12 @@ public class FindPresenterTest {
 
     @Test
     public void addFriend_whenSucceed() {
-        SearchedUser user = new SearchedUser("username!", SearchedUser.NO_STATUS);
-        mFindPresenter.onAddFriendSucceed(user.getName());
+        User userInfo = new User("userid", "useremail", "username");
+        SearchedUser user = new SearchedUser(userInfo, SearchedUser.NO_STATUS);
+        mFindPresenter.onAddFriendSucceed(user.getUserInfo().getName());
         
         // Update view
-        verify(mFindView).setAddFriendSucceedUI(user.getName());
+        verify(mFindView).setAddFriendSucceedUI(user.getUserInfo().getName());
     }
     @Test
     public void addFriend_whenFail() {

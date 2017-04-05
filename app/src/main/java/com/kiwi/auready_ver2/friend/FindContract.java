@@ -23,6 +23,8 @@ public interface FindContract {
         void showNoSearchedPeople();
 
         void setAddFriendFailMessage(int stringResource);
+
+        void onEmailOrNameTextError();
     }
 
     interface Presenter {
