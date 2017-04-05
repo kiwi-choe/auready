@@ -34,7 +34,7 @@ public interface FindContract {
 
         void findPeople(@NonNull String emailOrName);
 
-        void addFriend(@NonNull String name);
+        void addFriend(@NonNull SearchedUser searchedUser);
 
         void onAddFriendSucceed(@NonNull String name);
 

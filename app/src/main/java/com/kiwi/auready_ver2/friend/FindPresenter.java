@@ -10,6 +10,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.friend.domain.usecase.SaveFriend;
+import com.kiwi.auready_ver2.rest_service.HttpStatusCode;
 import com.kiwi.auready_ver2.rest_service.HttpStatusCode.FriendStatusCode;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.friend.IFriendService;
@@ -108,18 +109,21 @@ public class FindPresenter implements FindContract.Presenter {
     }
 
     @Override
-    public void addFriend(@NonNull final String name) {
-        checkNotNull(name);
+    public void addFriend(@NonNull final SearchedUser searchedUser) {
+        checkNotNull(searchedUser);
 
         IFriendService friendService =
                 ServiceGenerator.createService(IFriendService.class, mAccessToken);
 
-        Call<Void> call = friendService.addFriend(name);
+        String id = searchedUser.getUserInfo().getId();
+        Call<Void> call = friendService.addFriend(id);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if(response.isSuccessful()) {
-                    onAddFriendSucceed(name);
+                    onAddFriendSucceed(searchedUser.getUserInfo().getName());
+                } else if(response.code() == HttpStatusCode.FriendStatusCode.EXIST_RELATIONSHIP){
+                    onAddFriendFail(R.string.addfriend_fail_msg_exist);
                 }
             }
 
@@ -131,7 +135,7 @@ public class FindPresenter implements FindContract.Presenter {
     }
 
     @Override
-    public void onAddFriendSucceed(String name) {
+    public void onAddFriendSucceed(@NonNull String name) {
         mFindView.setAddFriendSucceedUI(name);
     }
 

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class FindFragment extends Fragment implements
     private ArrayList<Friend> TEST_FRIENDS;
     private int TEST_FRIENDS_CNT;
 
+    private View mRoot;
     private LinearLayout mSearchedUsersView;
     private EditText mSearchPeopleEd;
     private ImageButton mSearchPeopleBt;
@@ -80,9 +82,9 @@ public class FindFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_find, container, false);
+        mRoot = inflater.inflate(R.layout.fragment_find, container, false);
 
-        Button btSaveFriend = (Button)root.findViewById(R.id.bt_test_save_friend);
+        Button btSaveFriend = (Button)mRoot.findViewById(R.id.bt_test_save_friend);
         btSaveFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,16 +96,16 @@ public class FindFragment extends Fragment implements
         });
 
         // Searched users view
-        mSearchedUsersView = (LinearLayout) root.findViewById(R.id.searched_list_layout);
-        mSearchPeopleEd = (EditText) root.findViewById(R.id.ed_search_people);
-        mSearchPeopleBt = (ImageButton) root.findViewById(R.id.bt_search_people);
+        mSearchedUsersView = (LinearLayout) mRoot.findViewById(R.id.searched_list_layout);
+        mSearchPeopleEd = (EditText) mRoot.findViewById(R.id.ed_search_people);
+        mSearchPeopleBt = (ImageButton) mRoot.findViewById(R.id.bt_search_people);
 
-        mSearchedList = (ListView) root.findViewById(R.id.searched_list);
+        mSearchedList = (ListView) mRoot.findViewById(R.id.searched_list);
         mSearchedList.setAdapter(mListAdapter);
 
         // No users view
-        mNoUsersView = (LinearLayout) root.findViewById(R.id.no_searched_email_layout);
-        return root;
+        mNoUsersView = (LinearLayout) mRoot.findViewById(R.id.no_searched_email_layout);
+        return mRoot;
     }
 
     @Override
@@ -127,10 +129,11 @@ public class FindFragment extends Fragment implements
     public void setAddFriendSucceedUI(@NonNull String name) {
         // Show message
         String successMsg = name + " " + getString(R.string.add_friend_success_msg);
-        Snackbar.make(getView(), successMsg, Snackbar.LENGTH_SHORT);
+        Log.d(TAG_FINDFRAG, successMsg);
+        Snackbar.make(mRoot, successMsg, Snackbar.LENGTH_SHORT).show();
 
-        // Set ADD button to GONE
-
+        // replace adapter data
+        mListAdapter.updateStatusOf(name);
     }
 
     @Override
@@ -149,7 +152,8 @@ public class FindFragment extends Fragment implements
 
     @Override
     public void setAddFriendFailMessage(int stringResource) {
-
+        Log.d(TAG_FINDFRAG, getString(stringResource));
+        Snackbar.make(mRoot, getString(stringResource), Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -160,7 +164,7 @@ public class FindFragment extends Fragment implements
 
     public interface SearchedUserItemListener {
         void onClickUserPendingStatus(String userName);
-        void onClickUser(String userName);
+        void onClickUser(SearchedUser searchedUser);
     }
 
     /*
@@ -169,12 +173,12 @@ public class FindFragment extends Fragment implements
     SearchedUserItemListener mItemListener = new SearchedUserItemListener() {
         @Override
         public void onClickUserPendingStatus(String userName) {
-            Toast.makeText(getContext(), userName + " 님의 수락을 기다리는 중입니다.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), userName + " 님의 수락을 기다리는 중입니다.", Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onClickUser(String userName) {
-            mPresenter.addFriend(userName);
+        public void onClickUser(SearchedUser searchedUser) {
+            mPresenter.addFriend(searchedUser);
         }
     };
 }

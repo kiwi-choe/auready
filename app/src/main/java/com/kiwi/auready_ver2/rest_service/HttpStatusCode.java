@@ -18,5 +18,6 @@ public final class HttpStatusCode {
         public static final int DB_ERROR = 400;
 
         public static final int NO_FRIENDS = 204;
+        public static final int EXIST_RELATIONSHIP = 409;
     }
 }

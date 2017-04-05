@@ -53,7 +53,7 @@ public class SearchedUsersAdapter extends BaseAdapter {
         View rowView = view;
         final ViewHolder viewHolder;
 
-        if(rowView == null) {
+        if (rowView == null) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             rowView = inflater.inflate(R.layout.searched_user_item, parent, false);
 
@@ -73,10 +73,9 @@ public class SearchedUsersAdapter extends BaseAdapter {
         // Filter 1. me, 2. status; PENDING
         String myEmail = AccessTokenStore.getInstance().
                 getStringValue(AccessTokenStore.USER_EMAIL, "");
-        if(myEmail.equals(user.getUserInfo().getEmail())) {
+        if (myEmail.equals(user.getUserInfo().getEmail())) {
             viewHolder.addFriendRequestBt.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             viewHolder.addFriendRequestBt.setVisibility(View.VISIBLE);
         }
 
@@ -85,11 +84,10 @@ public class SearchedUsersAdapter extends BaseAdapter {
         viewHolder.addFriendRequestBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String userName = user.getUserInfo().getName();
-                if(user.getStatus() == SearchedUser.PENDING) {
-                    mItemListener.onClickUserPendingStatus(userName);
+                if (user.getStatus() == SearchedUser.PENDING) {
+                    mItemListener.onClickUserPendingStatus(user.getUserInfo().getName());
                 } else {
-                    mItemListener.onClickUser(userName);
+                    mItemListener.onClickUser(user);
                 }
             }
         });
@@ -101,6 +99,18 @@ public class SearchedUsersAdapter extends BaseAdapter {
         setList(searchedUsers);
         notifyDataSetChanged();
     }
+
+    public void updateStatusOf(String name) {
+        int len = mSearchedUsers.size();
+        for (int i = 0; i < len; i++) {
+            if(mSearchedUsers.get(i).getUserInfo().getName().equals(name)) {
+                SearchedUser updatedUser = new SearchedUser(mSearchedUsers.get(i).getUserInfo(), SearchedUser.PENDING);
+                mSearchedUsers.set(i, updatedUser);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     private class ViewHolder {
         TextView name;
         TextView email;

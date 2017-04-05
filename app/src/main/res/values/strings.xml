@@ -90,5 +90,6 @@
     <string name="notification">notification</string>
     <string name="menu_done">DONE</string>
     <string name="find_email_empty_error">Input Email or Name string</string>
+    <string name="addfriend_fail_msg_exist">this relationship already exists</string>
 
 </resources>

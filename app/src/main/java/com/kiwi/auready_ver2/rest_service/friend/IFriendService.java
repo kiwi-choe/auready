@@ -20,6 +20,6 @@ public interface IFriendService {
     @GET("/users/{search}")
     Call<List<SearchedUser>> getUsers(@Path("search") String emailOrName);
 
-    @POST("/relationships/{name}")
-    Call<Void> addFriend(@Path("name") String name);
+    @POST("/relationships/{toUserId}")
+    Call<Void> addFriend(@Path("toUserId") String name);
 }
