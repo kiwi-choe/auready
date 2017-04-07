@@ -80,6 +80,14 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                 });
     }
 
+    private void processTaskHeads(List<TaskHead> taskHeads) {
+        if(taskHeads.isEmpty()) {
+            mTaskHeadView.showNoTaskHeads();
+        } else {
+            mTaskHeadView.showTaskHeads(taskHeads);
+        }
+    }
+
     @Override
     public void addNewTaskHead() {
         mUseCaseHandler.execute(mGetTaskHeadCount, new GetTaskHeadsCount.RequestValues(),

@@ -80,6 +80,7 @@ public class TaskRepository implements TaskDataSource {
                     @Override
                     public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
                         refreshLocalDataSource(taskHeads);
+                        callback.onTaskHeadsLoaded(taskHeads);
                     }
 
                     @Override

@@ -5,6 +5,8 @@ package com.kiwi.auready_ver2.rest_service;
  */
 
 public final class HttpStatusCode {
+
+
     // To prevent someone from accidentally instantiating the contract class,
     // give it an empty constructor.
     public HttpStatusCode() {}
@@ -19,5 +21,13 @@ public final class HttpStatusCode {
 
         public static final int NO_FRIENDS = 204;
         public static final int EXIST_RELATIONSHIP = 409;
+    }
+
+    /*
+    * TaskHead
+    * */
+    public static class TaskHeadStatusCode {
+        public static final int OK = 200;
+        public static final int NO_TASKHEADS = 204;
     }
 }

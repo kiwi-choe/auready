@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source.remote;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Member;
@@ -10,10 +11,12 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
+import com.kiwi.auready_ver2.rest_service.HttpStatusCode;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
 import com.kiwi.auready_ver2.rest_service.task.TaskHead_remote;
+import com.kiwi.auready_ver2.util.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +36,10 @@ public class TaskRemoteDataSource implements TaskDataSource {
     private static TaskRemoteDataSource INSTANCE;
     private final AccessTokenStore mAccessTokenStore;
     private final String mAccessToken;
+    private final Context mContext;
 
     private TaskRemoteDataSource(Context context) {
+        mContext = context.getApplicationContext();
         mAccessTokenStore = AccessTokenStore.getInstance(context);
         mAccessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
     }
@@ -49,6 +54,17 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
+
+        // Check network
+        if (!NetworkUtils.isOnline(mContext)) {
+            callback.onDataNotAvailable();
+        }
+
+        // Check accessToken
+        if(TextUtils.isEmpty(mAccessToken)) {
+            callback.onDataNotAvailable();
+        }
+
         ITaskService taskService =
                 ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
@@ -57,14 +73,12 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<List<TaskHead_remote>>() {
             @Override
             public void onResponse(Call<List<TaskHead_remote>> call, Response<List<TaskHead_remote>> response) {
-                if (response.isSuccessful()) {
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
                     Log.d("test_SaveTaskHead", "response.isSuccessful()");
                     List<TaskHead> taskHeads = filterTaskHeadFromRemote(response.body());
-                    if(taskHeads.isEmpty()) {
-                        callback.onDataNotAvailable();
-                    } else {
-                        callback.onTaskHeadsLoaded(taskHeads);
-                    }
+                    callback.onTaskHeadsLoaded(taskHeads);
+                } else if(response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS){
+                    callback.onDataNotAvailable();
                 }
             }
 
@@ -78,7 +92,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     private List<TaskHead> filterTaskHeadFromRemote(List<TaskHead_remote> taskHeads_remote) {
 
         List<TaskHead> taskHeads = new ArrayList<>(0);
-        for(TaskHead_remote taskHeadRemote : taskHeads_remote) {
+        for (TaskHead_remote taskHeadRemote : taskHeads_remote) {
             // Set default orders; 0
             TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(), taskHeadRemote.getTitle(), 0, taskHeadRemote.getColor());
             taskHeads.add(newTaskHead);
