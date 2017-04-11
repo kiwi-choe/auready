@@ -53,6 +53,13 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
+    public void initializeLocalData(@NonNull InitLocalDataCallback callback) {
+        /*
+        * Implementation for Local only
+        * */
+    }
+
+    @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
 
         // Check network

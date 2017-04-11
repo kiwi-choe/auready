@@ -8,6 +8,7 @@ import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import org.junit.Before;
@@ -27,7 +28,7 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 
 /**
- * Created by kiwi on 8/23/16.
+ * TaskHeadsPresenter test
  */
 public class TaskHeadsPresenterTest {
 
@@ -40,6 +41,9 @@ public class TaskHeadsPresenterTest {
 
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
+
+    @Captor
+    private ArgumentCaptor<TaskDataSource.InitLocalDataCallback> mInitLocalDataCallbackCaptor;
 
     @Before
     public void setup() {
@@ -55,9 +59,11 @@ public class TaskHeadsPresenterTest {
         DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mRepository);
         GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mRepository);
         UpdateTaskHeadOrders updateTaskHeadOrders = new UpdateTaskHeadOrders(mRepository);
+        InitializeLocalData initializeLocalData = new InitializeLocalData(mRepository);
 
         return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView,
-                getTaskHeads, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadOrders);
+                getTaskHeads, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadOrders,
+                initializeLocalData);
     }
 
     @Test
@@ -97,5 +103,15 @@ public class TaskHeadsPresenterTest {
         mTaskHeadsPresenter.updateOrders(TASKHEADS);
 
         verify(mRepository).updateTaskHeadOrders((List<TaskHead>) anyCollectionOf(TaskHead.class));
+    }
+
+    @Test
+    public void logoutIsSucceed_updateViews_andDeleteAllInRepo() {
+        mTaskHeadsPresenter.onLogoutSuccess();
+
+        verify(mTaskHeadView).setLogoutSuccessUI();
+
+        verify(mRepository).initializeLocalData(mInitLocalDataCallbackCaptor.capture());
+        mInitLocalDataCallbackCaptor.getValue().onInitSuccess();
     }
 }

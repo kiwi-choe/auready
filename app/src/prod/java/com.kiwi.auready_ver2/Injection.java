@@ -23,6 +23,7 @@ import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
@@ -146,5 +147,9 @@ public class Injection {
 
     public static ReadNotification provideReadNotification(@NonNull Context context) {
         return new ReadNotification(Injection.provideNotificationRepository(context));
+    }
+
+    public static InitializeLocalData provideInitializeLocalData(@NonNull Context context) {
+        return new InitializeLocalData(Injection.provideTaskRepository(context));
     }
 }

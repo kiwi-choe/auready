@@ -16,6 +16,7 @@ import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import java.util.ArrayList;
@@ -41,18 +42,22 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private final DeleteTaskHeads mDeleteTaskHeads;
     private final GetTaskHeadsCount mGetTaskHeadCount;
     private UpdateTaskHeadOrders mUpdateTaskHeadOrders;
+    private final InitializeLocalData mInitializeLocalData;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
                               @NonNull GetTaskHeads getTaskHeads,
                               @NonNull DeleteTaskHeads deleteTaskHeads,
                               @NonNull GetTaskHeadsCount getTaskHeadCount,
-                              @NonNull UpdateTaskHeadOrders updateTaskHeadOrders) {
+                              @NonNull UpdateTaskHeadOrders updateTaskHeadOrders,
+                              @NonNull InitializeLocalData initializeLocalData) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
         mDeleteTaskHeads = checkNotNull(deleteTaskHeads, "deleteTaskHeads cannot be null");
         mGetTaskHeadCount = checkNotNull(getTaskHeadCount);
         mUpdateTaskHeadOrders = updateTaskHeadOrders;
+
+        mInitializeLocalData = checkNotNull(initializeLocalData);
 
         mTaskHeadView.setPresenter(this);
     }
@@ -211,7 +216,22 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     @Override
     public void onLogoutSuccess() {
+
         mTaskHeadView.setLogoutSuccessUI();
+
+        mUseCaseHandler.execute(mInitializeLocalData, new InitializeLocalData.RequestValues(),
+                new UseCase.UseCaseCallback<InitializeLocalData.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(InitializeLocalData.ResponseValue response) {
+                        loadTaskHeads();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 
     @Override

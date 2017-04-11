@@ -19,9 +19,15 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
+    interface InitLocalDataCallback {
+        void onInitSuccess();
+        void onInitFail();
+    }
+    void initializeLocalData(@NonNull InitLocalDataCallback callback); // only in Local
+
     /*
-                                    * TaskHeadsView
-                                    * */
+                                        * TaskHeadsView
+                                        * */
     interface LoadTaskHeadsCallback {
 
         void onTaskHeadsLoaded(List<TaskHead> taskHeads);

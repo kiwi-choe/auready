@@ -44,6 +44,22 @@ public class TaskLocalDataSource implements TaskDataSource {
         return INSTANCE;
     }
 
+    @Override
+    public void initializeLocalData(@NonNull InitLocalDataCallback callback) {
+
+        boolean isDeletedTaskHead = mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
+        // cascade
+//        mDbHelper.delete(PersistenceContract.MemberEntry.TABLE_NAME, null, null);
+//        mDbHelper.delete(PersistenceContract.TaskEntry.TABLE_NAME, null, null);
+        boolean isDeletedFriend = mDbHelper.delete(PersistenceContract.FriendEntry.TABLE_NAME, null, null);
+        boolean isDeletedNotification = mDbHelper.delete(PersistenceContract.NotificationEntry.TABLE_NAME, null, null);
+
+        if(isDeletedTaskHead && isDeletedFriend && isDeletedNotification) {
+            callback.onInitSuccess();
+        } else {
+            callback.onInitFail();
+        }
+    }
 
     @Override
     public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {

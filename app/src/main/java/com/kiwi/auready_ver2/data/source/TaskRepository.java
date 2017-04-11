@@ -64,6 +64,21 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
+    public void initializeLocalData(@NonNull final InitLocalDataCallback callback) {
+        mLocalDataSource.initializeLocalData(new InitLocalDataCallback() {
+            @Override
+            public void onInitSuccess() {
+                callback.onInitSuccess();
+            }
+
+            @Override
+            public void onInitFail() {
+                callback.onInitFail();
+            }
+        });
+    }
+
+    @Override
     public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
         checkNotNull(callback);
 
@@ -449,5 +464,4 @@ public class TaskRepository implements TaskDataSource {
             mCachedTasks.put(task.getId(), task);
         }
     }
-
 }

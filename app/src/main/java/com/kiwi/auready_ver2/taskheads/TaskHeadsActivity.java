@@ -65,7 +65,8 @@ public class TaskHeadsActivity extends AppCompatActivity
                 Injection.provideGetTaskHeads(getApplicationContext()),
                 Injection.provideDeleteTaskHeads(getApplicationContext()),
                 Injection.provideGetTaskHeadsCount(getApplicationContext()),
-                Injection.provideUpdateTaskHeadsOrder(getApplicationContext()));
+                Injection.provideUpdateTaskHeadsOrder(getApplicationContext()),
+                Injection.provideInitializeLocalData(getApplicationContext()));
 
 
         // Create the notification presenter for menu

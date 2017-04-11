@@ -59,5 +59,4 @@ public final class StubbedData {
                 new Friend("stubbedFriendId1", "bb@bb.com", "bb"),
                 new Friend("stubbedFriendId2", "cc@cc.com", "cc"));
     }
-
 }
