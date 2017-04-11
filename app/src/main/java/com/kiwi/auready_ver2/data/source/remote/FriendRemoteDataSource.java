@@ -31,6 +31,7 @@ public class FriendRemoteDataSource implements FriendDataSource {
     // testing
     private static final String STUB_ACCESSTOKEN = "stubbedAccessToken";
     private static final String TAG = "tag_friendRemote";
+    private static final int STATUS_ACCEPTED = 1;
 
     private static FriendRemoteDataSource INSTANCE;
     private String mAccessToken;
@@ -73,7 +74,7 @@ public class FriendRemoteDataSource implements FriendDataSource {
         IFriendService friendService = ServiceGenerator.createService(
                 IFriendService.class, mAccessToken);
 
-        Call<FriendsResponse> call = friendService.getFriends();
+        Call<FriendsResponse> call = friendService.getFriends(STATUS_ACCEPTED);
         call.enqueue(new Callback<FriendsResponse>() {
             @Override
             public void onResponse(Call<FriendsResponse> call, Response<FriendsResponse> response) {

@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.friend;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.SearchedUser;
 import com.kiwi.auready_ver2.data.User;
 import com.kiwi.auready_ver2.data.source.FriendDataSource;
@@ -20,7 +19,6 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -54,16 +52,6 @@ public class FindPresenterTest {
         SaveFriend saveFriend = new SaveFriend(mFriendRepository);
 
         return new FindPresenter(accessToken, useCaseHandler, mFindView, saveFriend);
-    }
-
-    // for Testing
-    @Test
-    public void saveFriendAndShowSuccessMsg() {
-
-        // Given a new Friend
-        final Friend newFriend = new Friend(EMAIL, NAME);
-        mFindPresenter.saveFriend(newFriend);
-        verify(mFriendRepository).saveFriend(eq(newFriend), mSaveCallbackCaptor.capture());
     }
 
     @Test

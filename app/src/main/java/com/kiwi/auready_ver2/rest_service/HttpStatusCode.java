@@ -21,6 +21,7 @@ public final class HttpStatusCode {
 
         public static final int NO_FRIENDS = 204;
         public static final int EXIST_RELATIONSHIP = 409;
+        public static final int NOTIFICATION_FAIL = 500;
     }
 
     /*

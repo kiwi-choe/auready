@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.rest_service.friend;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.SearchedUser;
+import com.kiwi.auready_ver2.data.User;
 
 import java.util.List;
 
@@ -15,10 +16,11 @@ import static com.kiwi.auready_ver2.StubbedData.FriendStub.FRIENDS;
  * Mock Friend service
  */
 public class MockSuccessFriendService implements IFriendService {
-
+    private static final int STATUS_ACCEPTED = 1;
+    private static User userInfo = new User("userid", "useremail", "username");
     public static final List<SearchedUser> SEARCHED_PEOPLE = Lists.newArrayList(
-            new SearchedUser("name1", 0),
-            new SearchedUser("name2", 0));
+            new SearchedUser(userInfo, SearchedUser.NO_STATUS),
+            new SearchedUser(userInfo, SearchedUser.PENDING));
 
     private final BehaviorDelegate<IFriendService> delegate;
 
@@ -27,9 +29,9 @@ public class MockSuccessFriendService implements IFriendService {
     }
 
     @Override
-    public Call<FriendsResponse> getFriends() {
+    public Call<FriendsResponse> getFriends(@Path("status") int statusNum) {
         FriendsResponse friendsResponse = new FriendsResponse(FRIENDS);
-        return delegate.returningResponse(friendsResponse).getFriends();
+        return delegate.returningResponse(friendsResponse).getFriends(STATUS_ACCEPTED);
     }
 
     @Override
@@ -40,5 +42,15 @@ public class MockSuccessFriendService implements IFriendService {
     @Override
     public Call<Void> addFriend(@Path("name") String name) {
         return delegate.returningResponse(null).addFriend(name);
+    }
+
+    @Override
+    public Call<Void> acceptFriendRequest(@Path("fromUserId") String fromUserId) {
+        return null;
+    }
+
+    @Override
+    public Call<Void> deleteFriendRequest(@Path("fromUserId") String fromUserId) {
+        return null;
     }
 }

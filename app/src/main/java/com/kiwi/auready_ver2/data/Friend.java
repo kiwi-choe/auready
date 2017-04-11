@@ -4,36 +4,25 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.common.base.Objects;
-
-import java.util.UUID;
+import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by kiwi on 6/30/16.
- *
- * Immutable model class for a Friend
- * used by DB
+ * Model Friend for remote and local
  */
 public class Friend implements Parcelable {
 
     public static final String KEY = "friendList";
+    @SerializedName("_id")
     private String id;         // column id of Friend table
-
+    @SerializedName("email")
     private String email;
+    @SerializedName("name")
     private String name;
 
     public Friend() {
         // default constructor
         super();
     }
-    /*
-    * Use this constructor to create a new Friend.
-    * */
-    public Friend(String email, String name) {
-        id = UUID.randomUUID().toString();
-        this.email = email;
-        this.name = name;
-    }
-
     public String getEmail() {
         return this.email;
     }
@@ -42,9 +31,6 @@ public class Friend implements Parcelable {
         return this.name;
     }
 
-    /*
-    * Use this constructor to create a friend if the Friend already has an id.
-    * */
     public Friend(String id, String email, String name) {
         this.id = id;
         this.email = email;

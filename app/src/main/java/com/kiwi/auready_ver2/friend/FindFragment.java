@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Friend;
 import com.kiwi.auready_ver2.data.SearchedUser;
@@ -60,21 +59,6 @@ public class FindFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        // testing
-        TEST_FRIENDS = Lists.newArrayList(
-                new Friend("email1", "name1"),
-                new Friend("email2", "name2"),
-                new Friend("email3", "name3"),
-                new Friend("email4", "name4"),
-                new Friend("email5", "name5"),
-                new Friend("email6", "name6"),
-                new Friend("email7", "name7"),
-                new Friend("email8", "name8"),
-                new Friend("email9", "name9"),
-                new Friend("email10", "name10"));
-        TEST_FRIENDS_CNT = -1;
-
         mListAdapter = new SearchedUsersAdapter(new ArrayList<SearchedUser>(0), mItemListener);
     }
 

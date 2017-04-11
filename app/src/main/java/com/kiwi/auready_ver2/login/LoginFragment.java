@@ -95,11 +95,12 @@ public class LoginFragment extends Fragment implements
 
     @Override
     public void setLoginSuccessUI(String email, String name) {
-
-        // Popup message - getView() is null?
-        Snackbar.make(mEmail, getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
-        // Send result OK and the logged in email to TasksView
-        sendResult(true);
+        if (isAdded()) {
+            // Popup message - getView() is null?
+            Snackbar.make(mEmail, getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
+            // Send result OK and the logged in email to TasksView
+            sendResult(true);
+        }
     }
 
     private void sendResult(boolean isSuccess) {
@@ -112,11 +113,10 @@ public class LoginFragment extends Fragment implements
 
     @Override
     public void showLoginFailMessage(int stringResource) {
-        if (isAdded())
+        if (isAdded()) {
             Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
-
-        // and send result
-        sendResult(false);
+            sendResult(false);
+        }
     }
 
     @Override

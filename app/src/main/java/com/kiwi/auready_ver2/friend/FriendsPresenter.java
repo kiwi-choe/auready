@@ -54,7 +54,8 @@ public class FriendsPresenter implements FriendsContract.Presenter {
 
                     @Override
                     public void onError() {
-
+                        mFriendView.setLoadingIndicator(false);
+                        mFriendView.showNoFriends();
                     }
                 });
     }

@@ -124,6 +124,9 @@ public class Injection {
         return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
     }
 
+    /*
+    * Notification
+    * */
     public static SaveNotification provideSaveNotification(@NonNull Context context) {
         return new SaveNotification(Injection.provideNotificationRepository(context));
     }

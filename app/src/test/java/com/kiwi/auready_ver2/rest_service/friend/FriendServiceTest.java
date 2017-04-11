@@ -38,6 +38,7 @@ import static org.junit.Assert.assertThat;
 public class FriendServiceTest {
 
     private static final String STUB_ACCESSTOKEN = "stub_accessToken";
+    private static final int STATUS_ACCEPTED = 1;
 
     private MockRetrofit mMockRetrofit;
     private Retrofit mRetrofit;
@@ -83,7 +84,7 @@ public class FriendServiceTest {
         IFriendService mockFriendService = createMockSuccessService();
 
         // Actual test
-        Call<FriendsResponse> call = mockFriendService.getFriends();
+        Call<FriendsResponse> call = mockFriendService.getFriends(STATUS_ACCEPTED);
         Response<FriendsResponse> response = call.execute();
         // Asserting response
         assertTrue(response.isSuccessful());
@@ -95,7 +96,7 @@ public class FriendServiceTest {
 
         IFriendService mockFriendService = createMockFailedService();
 
-        Call<FriendsResponse> call = mockFriendService.getFriends();
+        Call<FriendsResponse> call = mockFriendService.getFriends(STATUS_ACCEPTED);
         Response<FriendsResponse> response = call.execute();
 
         assertFalse(response.isSuccessful());

@@ -42,7 +42,7 @@ public class Injection {
     public static FriendRepository provideFriendRepository(@NonNull Context context) {
         checkNotNull(context);
         return FriendRepository.getInstance(FriendLocalDataSource.getInstance(context),
-                FriendRemoteDataSource.getInstance());
+                FriendRemoteDataSource.getInstance(context));
     }
 
     public static UseCaseHandler provideUseCaseHandler() {
@@ -120,5 +120,29 @@ public class Injection {
 
     public static GetTasksOfTaskHead provideGetTasksOfTaskHead(@NonNull Context context) {
         return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
+    }
+
+    /*
+    * Notification
+    * */
+    public static SaveNotification provideSaveNotification(@NonNull Context context) {
+        return new SaveNotification(Injection.provideNotificationRepository(context));
+    }
+
+    private static NotificationLocalDataSource provideNotificationRepository(@NonNull Context context) {
+        checkNotNull(context);
+        return NotificationLocalDataSource.getInstance(context);
+    }
+
+    public static GetNotifications provideGetNotifications(@NonNull Context context) {
+        return new GetNotifications(Injection.provideNotificationRepository(context));
+    }
+
+    public static GetNewNotificationsCount provideGetNewNotificationsCount(@NonNull Context context) {
+        return new GetNewNotificationsCount(Injection.provideNotificationRepository(context));
+    }
+
+    public static ReadNotification provideReadNotification(@NonNull Context context) {
+        return new ReadNotification(Injection.provideNotificationRepository(context));
     }
 }

@@ -27,8 +27,8 @@ ext {
     // Sdk and tools
     minSdkVersion = 18
     targetSdkVersion = 23
-    compileSdkVersion = 23
-    buildToolsVersion = '23.0.3'
+    compileSdkVersion = 25
+    buildToolsVersion = '25.0.0'
 
     // App dependencies
     supportLibraryVersion = '24.0.0'
@@ -45,5 +45,5 @@ ext {
     okhttp = '3.3.1'
     retrofitMock = '2.0.2'
     mockwebserver = '3.3.1'
-    robolectric = '3.2.1'
+    robolectric = '3.3.2'
 }

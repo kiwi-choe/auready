@@ -26,7 +26,9 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
+import com.kiwi.auready_ver2.notification.NotificationActivity;
 import com.kiwi.auready_ver2.notification.NotificationContract;
+import com.kiwi.auready_ver2.notification.NotificationService;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.LoginUtils;
@@ -191,6 +193,8 @@ public class TaskHeadsFragment extends Fragment implements
         String msg = getString(R.string.msg_token_fmt, token);
         Log.d(TAG_TASKHEADSFRAGMENT, msg);
         Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        // testing
+        NotificationService.sendRegistrationToServer(token);
     }
 
     @Override
@@ -390,6 +394,8 @@ public class TaskHeadsFragment extends Fragment implements
 
     private void showNotificationsView() {
 
+        Intent intent = new Intent(getContext(), NotificationActivity.class);
+        startActivity(intent);
     }
 
     private DragSortListView.DropListener mDropListener =

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Notification;
 
@@ -13,7 +14,8 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag;
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_CONTENTS;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERNAME;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_ID;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_TYPE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_iSNEW;
@@ -25,7 +27,7 @@ import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.Notifi
 
 public class NotificationLocalDataSource implements NotificationDataSource {
 
-    private static NotificationLocalDataSource INSTANCE;
+    private static NotificationLocalDataSource INSTANCE = null;
     private SQLiteDBHelper mDbHelper;
 
     private NotificationLocalDataSource(Context context) {
@@ -48,7 +50,8 @@ public class NotificationLocalDataSource implements NotificationDataSource {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, notification.getType());
         values.put(COLUMN_iSNEW, notification.getIsNewInteger());
-        values.put(COLUMN_CONTENTS, notification.getContents());
+        values.put(COLUMN_FROM_USERID, notification.getFromUserId());
+        values.put(COLUMN_FROM_USERNAME, notification.getFromUserName());
 
         long isSuccess = mDbHelper.insert(TABLE_NAME, null, values);
         if (isSuccess != DBExceptionTag.INSERT_ERROR) {
@@ -67,11 +70,13 @@ public class NotificationLocalDataSource implements NotificationDataSource {
         if (c != null && c.getCount() > 0) {
             while (c.moveToNext()) {
                 int id = c.getInt(c.getColumnIndexOrThrow(COLUMN_ID));
-                int type = c.getType(c.getColumnIndexOrThrow(COLUMN_TYPE));
+                int type = c.getInt(c.getColumnIndexOrThrow(COLUMN_TYPE));
                 int isNew = c.getInt(c.getColumnIndexOrThrow(COLUMN_iSNEW));
-                String contents = c.getString(c.getColumnIndexOrThrow(COLUMN_CONTENTS));
+                String fromUserId = c.getString(c.getColumnIndexOrThrow(COLUMN_FROM_USERID));
+                String fromUserName = c.getString(c.getColumnIndexOrThrow(COLUMN_FROM_USERNAME));
 
-                Notification notification = new Notification(id, type, isNew, contents);
+                Notification notification = new Notification(id, type, isNew, fromUserId, fromUserName);
+                Log.d("TAG_notiLocal", notification.toString());
                 notifications.add(notification);
             }
         }
@@ -109,5 +114,13 @@ public class NotificationLocalDataSource implements NotificationDataSource {
     @Override
     public void getNewNotificationsCount(@NonNull GetNewCountCallback callback) {
 
+    }
+
+    /*
+    * Used to force {@link #getInstance(Context)} to create a new instance
+    * next time it's called.
+    * */
+    public static void destroyInstance() {
+        INSTANCE = null;
     }
 }

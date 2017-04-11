@@ -1,10 +1,13 @@
-package com.kiwi.auready_ver2.data.source.local;
+package com.kiwi.auready_ver2.data.local;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Notification;
+import com.kiwi.auready_ver2.data.source.local.NotificationDataSource;
+import com.kiwi.auready_ver2.data.source.local.NotificationLocalDataSource;
+import com.kiwi.auready_ver2.data.source.local.SQLiteDBHelper;
 
 import org.junit.After;
 import org.junit.Before;
@@ -19,7 +22,8 @@ import org.robolectric.RuntimeEnvironment;
 import java.util.List;
 
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.INSERT_ERROR;
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_CONTENTS;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERNAME;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_ID;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_TYPE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_iSNEW;
@@ -38,10 +42,15 @@ import static org.mockito.Mockito.verify;
 @RunWith(RobolectricTestRunner.class)
 public class NotificationLocalDataSourceTest {
 
-    private static final Notification NOTIFICATION = new Notification(Notification.TYPES.friend_request.name(), "userA requests friending to userB.");
+    private static String fromUserId0 = "A id";
+    private static String fromUserName0 = "A";
+    private static String fromUserId1 = "B id";
+    private static String fromUserName1 = "B";
+
+    private static final Notification NOTIFICATION = new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0);
     private static final List<Notification> NOTIFICATIONS = Lists.newArrayList(
-            new Notification(Notification.TYPES.friend_request.name(), "userA requests friending to userB"),
-            new Notification(Notification.TYPES.invite_new_member.name(), "userB invite userA")
+            new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0),
+            new Notification(Notification.TYPES.friend_request.name(), fromUserId1, fromUserName1)
     );
 
     private static SQLiteDBHelper mDbHelper;
@@ -68,7 +77,8 @@ public class NotificationLocalDataSourceTest {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, NOTIFICATION.getType());
         values.put(COLUMN_iSNEW, NOTIFICATION.getIsNewInteger());
-        values.put(COLUMN_CONTENTS, NOTIFICATION.getContents());
+        values.put(COLUMN_FROM_USERID, NOTIFICATION.getFromUserId());
+        values.put(COLUMN_FROM_USERNAME, NOTIFICATION.getFromUserName());
 
         long isSuccessToInsert = mDbHelper.insert(TABLE_NAME, null, values);
         assertTrue(isSuccessToInsert != INSERT_ERROR);
@@ -88,12 +98,14 @@ public class NotificationLocalDataSourceTest {
                 int id = c.getInt(c.getColumnIndexOrThrow(COLUMN_ID));
                 int type = c.getType(c.getColumnIndexOrThrow(COLUMN_TYPE));
                 int isNew = c.getInt(c.getColumnIndexOrThrow(COLUMN_iSNEW));
-                String contents = c.getString(c.getColumnIndexOrThrow(COLUMN_CONTENTS));
+                String fromUserId = c.getString(c.getColumnIndexOrThrow(COLUMN_FROM_USERID));
+                String fromUserName = c.getString(c.getColumnIndexOrThrow(COLUMN_FROM_USERNAME));
 
                 assertNotNull(id);
                 assertEquals(type, NOTIFICATION.getType());
                 assertEquals(isNew, NOTIFICATION.getIsNewInteger());
-                assertEquals(contents, NOTIFICATION.getContents());
+                assertEquals(fromUserId, NOTIFICATION.getFromUserId());
+                assertEquals(fromUserName, NOTIFICATION.getFromUserName());
             }
         }
     }
@@ -107,15 +119,16 @@ public class NotificationLocalDataSourceTest {
             public void onLoaded(List<Notification> notifications) {
                 assertNotNull(notifications);
                 assertTrue(notifications.size() == 2);
-//                for(Notification notification:notifications) {
-//                    if(notification.getType() == NOTIFICATIONS.get(0).getType()) {
-//                        assertEquals(notification.getContents(), notifications.get(0).getContents());
-//                    }
-//
-//                    if(notification.getType() == NOTIFICATIONS.get(1).getType()) {
-//                        assertEquals(notification.getContents(), notifications.get(1).getContents());
-//                    }
-//                }
+
+                // Check result values
+                for (Notification notification : notifications) {
+                    if (notification.getFromUserId().equals(NOTIFICATIONS.get(0).getFromUserId())) {
+                        assertEquals(notification.getType(), NOTIFICATIONS.get(0).getType());
+                    }
+                    if (notification.getFromUserId().equals(NOTIFICATIONS.get(1).getFromUserId())) {
+                        assertEquals(notification.getType(), NOTIFICATIONS.get(1).getType());
+                    }
+                }
             }
 
             @Override
@@ -238,7 +251,8 @@ public class NotificationLocalDataSourceTest {
         ContentValues values = new ContentValues();
         values.put(COLUMN_TYPE, notification.getType());
         values.put(COLUMN_iSNEW, notification.getIsNewInteger());
-        values.put(COLUMN_CONTENTS, notification.getContents());
+        values.put(COLUMN_FROM_USERID, notification.getFromUserId());
+        values.put(COLUMN_FROM_USERNAME, notification.getFromUserName());
 
         mDbHelper.insert(TABLE_NAME, null, values);
     }
@@ -251,5 +265,7 @@ public class NotificationLocalDataSourceTest {
     public void tearDown() {
         deleteAllNotifications();
         mDbHelper.close();
+
+        NotificationLocalDataSource.destroyInstance();
     }
 }

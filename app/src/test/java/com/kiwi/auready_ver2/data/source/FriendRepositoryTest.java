@@ -59,7 +59,7 @@ public class FriendRepositoryTest {
     @Test
     public void saveFriend() {
         // Given a stub friend with title and description
-        Friend newFriend = new Friend("aa@aa.com", "nameOfaa");
+        Friend newFriend = new Friend("stubId", "aa@aa.com", "nameOfaa");
 
         // When a friend is saved to the friend repository
         mRepository.saveFriend(newFriend , mSaveCallback);
@@ -70,7 +70,7 @@ public class FriendRepositoryTest {
     @Test
     public void saveFriend_addToCache_whenSaveToLocalIsSucceed() {
         // Given a stub friend with title and description
-        Friend newFriend = new Friend("aa@aa.com", "nameOfaa");
+        Friend newFriend = new Friend("stubId", "aa@aa.com", "nameOfaa");
 
         // Save to Local data source is succeed
         mRepository.saveFriend(newFriend , mSaveCallback);

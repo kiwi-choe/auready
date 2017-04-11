@@ -8,5 +8,5 @@
         android:id="@+id/item_notification"
         android:icon="@drawable/notification_icon"
         android:title="@string/notification"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always" />
 </menu>

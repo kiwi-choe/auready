@@ -10,10 +10,10 @@ public final class PersistenceContract {
     public PersistenceContract() {}
 
     /* TAG */
-    static class DBExceptionTag {
+    public static class DBExceptionTag {
         static final String TAG_SQLITE = "SQLiteException: ";
 
-        static final long INSERT_ERROR = -1;
+        public static final long INSERT_ERROR = -1;
         public static final long INSERT_NOTHING = 0;
         public static final int DELETE_NOTHING = 0;
     }
@@ -56,7 +56,8 @@ public final class PersistenceContract {
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_iSNEW = "isnew";
-        public static final String COLUMN_CONTENTS = "contents";
+        public static final String COLUMN_FROM_USERID = "from_userid";
+        public static final String COLUMN_FROM_USERNAME = "from_username";
         public static final String COLUMN_CREATED_AT = "created_at";
     }
 
@@ -127,7 +128,8 @@ public final class PersistenceContract {
                         NotificationEntry.COLUMN_ID + INTEGER_TYPE + PRIMARY_KEY + AUTOINCREMENT + COMMA_SEP +
                         NotificationEntry.COLUMN_TYPE + INTEGER_TYPE + COMMA_SEP +
                         NotificationEntry.COLUMN_iSNEW + INTEGER_TYPE + DEFAULT + " 0" + COMMA_SEP +
-                        NotificationEntry.COLUMN_CONTENTS + TEXT_TYPE + COMMA_SEP +
+                        NotificationEntry.COLUMN_FROM_USERID + TEXT_TYPE + COMMA_SEP +
+                        NotificationEntry.COLUMN_FROM_USERNAME + TEXT_TYPE + COMMA_SEP +
                         NotificationEntry.COLUMN_CREATED_AT + DATETIME + DEFAULT + CURRENT_TIMESTAMP + NOTNULL +
                         " )";
     }

@@ -144,9 +144,9 @@ public class LoginPresenter implements LoginContract.Presenter {
                 name);
 
         // 3. Send instanceID to the app server
+        Log.d(TAG, "entered into onLoginSuccess()");
         String token = FirebaseInstanceId.getInstance().getToken();
-        NotificationService.getInstance(accessToken).
-                sendRegistrationToServer(token);
+        NotificationService.sendRegistrationToServer(token);
     }
 
     @Override

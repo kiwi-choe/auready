@@ -40,9 +40,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
 
     /**
-     * Called when message is received.
+     * Called when mMessage is received.
      *
-     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
+     * @param remoteMessage Object representing the mMessage received from Firebase Cloud Messaging.
      */
     // [START receive_message]
     @Override
@@ -61,7 +61,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
-        // Check if message contains a data payload, a notification payload.
+        // Check if mMessage contains a data payload, a notification payload.
         if (remoteMessage.getData().size() > 0 &&
                 remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
@@ -70,14 +70,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             saveNotification(remoteMessage);
         }
         // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
+        // mMessage, here is where that should be initiated. See sendNotification method below.
     }
     // [END receive_message]
 
     /**
-     * Create and show a simple notification containing the received FCM message.
+     * Create and show a simple notification containing the received FCM mMessage.
      *
-     * @param messageBody FCM message body received.
+     * @param messageBody FCM mMessage body received.
      */
     private void sendNotification(String messageBody) {
         Intent intent = new Intent(this, TaskHeadsActivity.class);
@@ -101,14 +101,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     /*
-    * Save new notification message to Local storage
+    * Save new notification mMessage to Local storage
     * and update Notification UI
     * */
     private void saveNotification(RemoteMessage message) {
         // Data type = notification type
         String dataType = message.getData().get(Notification.TYPE);
-        String contents = message.getData().get(Notification.CONTENTS);
-        Notification notification = new Notification(dataType, contents);
+        String fromUserId = message.getData().get(Notification.FROM_USERID);
+        String fromUserName = message.getData().get(Notification.FROM_USERNAME);
+
+        final Notification notification = new Notification(dataType, fromUserId, fromUserName);
         // Save to local repository
         // Todo ; needs refactoring
         UseCaseHandler useCaseHandler = Injection.provideUseCaseHandler();
@@ -118,7 +120,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
                     @Override
                     public void onSuccess(SaveNotification.ResponseValue response) {
-
+                        Log.d(TAG, "saved notification - " + notification.toString());
                     }
 
                     @Override

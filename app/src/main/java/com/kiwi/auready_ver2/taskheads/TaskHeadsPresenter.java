@@ -186,6 +186,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     public void logout(@NonNull String accessToken) {
         checkNotNull(accessToken);
 
+        Log.d("Tag_logout", "accessToken - " + accessToken);
         ILoginService loginService =
                 ServiceGenerator.createService(ILoginService.class, accessToken);
 

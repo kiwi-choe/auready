@@ -23,7 +23,7 @@ class FriendsAdapter extends BaseAdapter {
 
     private static final String TAG = "FriendsAdapter";
 
-    private final ArrayList<String> mAddedMemberIds;
+    private ArrayList<String> mAddedMemberIds = new ArrayList<>(0);
 
     private List<Friend> mFriends;
 

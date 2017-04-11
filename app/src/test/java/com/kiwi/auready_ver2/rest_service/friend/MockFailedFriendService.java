@@ -31,13 +31,13 @@ public class MockFailedFriendService implements IFriendService {
     }
 
     @Override
-    public Call<FriendsResponse> getFriends() {
+    public Call<FriendsResponse> getFriends(@Path("status") int statusNum) {
 
         ErrorResponse error = new ErrorResponse(ERROR_CODE, ERROR_GETFRIENDS_MSG);
         Gson gson = new Gson();
         String json = gson.toJson(error);
         Response response = Response.error(ERROR_CODE, ResponseBody.create(MediaType.parse("application/json"), json));
-        return delegate.returning(Calls.response(response)).getFriends();
+        return delegate.returning(Calls.response(response)).getFriends(1);
     }
 
     @Override
@@ -57,5 +57,15 @@ public class MockFailedFriendService implements IFriendService {
         String json = gson.toJson(error);
         Response response = Response.error(ERROR_CODE, ResponseBody.create(MediaType.parse("application/json"), json));
         return delegate.returning(Calls.response(response)).addFriend(name);
+    }
+
+    @Override
+    public Call<Void> acceptFriendRequest(@Path("fromUserId") String fromUserId) {
+        return null;
+    }
+
+    @Override
+    public Call<Void> deleteFriendRequest(@Path("fromUserId") String fromUserId) {
+        return null;
     }
 }

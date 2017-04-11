@@ -178,7 +178,7 @@ public class TaskHeadsViewTest {
         startActivityWithStubbedTasks(TASKHEADS);
     }
     private void loadATaskHead() {
-        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, 0));
+        List<TaskHead> taskheads = Lists.newArrayList(new TaskHead(TITLE1, 0, R.color.color_picker_default_color));
         startActivityWithStubbedTasks(taskheads);
     }
     private void startActivityWithStubbedTasks(List<TaskHead> taskHeads) {

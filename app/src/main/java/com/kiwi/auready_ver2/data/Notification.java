@@ -7,8 +7,10 @@ package com.kiwi.auready_ver2.data;
 public class Notification {
 
     // String key
-    public static final String TYPE = "fcm_msg_type";
-    public static final String CONTENTS = "contents";
+    public static final String TYPE = "noti_type";
+
+    public static final String FROM_USERID = "fromUserId";
+    public static final String FROM_USERNAME = "fromUserName";
 
     public int getId() {
         return mId;
@@ -26,9 +28,12 @@ public class Notification {
         return (mIsNew ? 1 : 0);
     }
 
+    public String getFromUserId() {
+        return mFromUserId;
+    }
 
-    public String getContents() {
-        return mContents;
+    public String getFromUserName() {
+        return mFromUserName;
     }
 
     /*
@@ -38,7 +43,7 @@ public class Notification {
     * 3. Inviting new members to TaskHead
     * */
     public enum TYPES {
-        friend_request(1), res_friend_request(2), invite_new_member(3);
+        friend_request(0), res_friend_request(1), invite_new_member(2);
 
         private final int intType;
 
@@ -54,23 +59,33 @@ public class Notification {
     private int mId;
     private final int mType;
     private final boolean mIsNew;
-    private final String mContents;
+    private final String mFromUserId;
+    private final String mFromUserName;
 
     // Save new notification
-    public Notification(String type, String contents) {
+    public Notification(String type, String fromUserId, String fromUserName) {
         // mId is an autoincrement value
         mType = TYPES.valueOf(type).getIntType();
-        mContents = contents;
+        mFromUserId = fromUserId;
+        mFromUserName = fromUserName;
         mIsNew = true;
     }
 
     /*
     * Get from Local db
     * */
-    public Notification(int id, int type, int isNew, String contents) {
+    public Notification(int id, int type, int isNew, String fromUserId, String fromUserName) {
         mId = id;
         mType = type;
         mIsNew = (isNew > 0);
-        mContents = contents;
+
+        mFromUserId = fromUserId;
+        mFromUserName = fromUserName;
+    }
+    @Override
+    public String toString() {
+        return "id: " + mId + " type: " + mType +
+                " isNew: " + mIsNew + " fromUserId: " + mFromUserId +
+                " fromUserName: " + mFromUserName;
     }
 }

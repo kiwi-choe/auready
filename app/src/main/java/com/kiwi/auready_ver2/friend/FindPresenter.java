@@ -124,6 +124,9 @@ public class FindPresenter implements FindContract.Presenter {
                     onAddFriendSucceed(searchedUser.getUserInfo().getName());
                 } else if(response.code() == HttpStatusCode.FriendStatusCode.EXIST_RELATIONSHIP){
                     onAddFriendFail(R.string.addfriend_fail_msg_exist);
+                } else if(response.code() == HttpStatusCode.FriendStatusCode.NOTIFICATION_FAIL) {
+                    Log.d(TAG_FIND, "sending notification is failed");
+                    onAddFriendFail(R.string.addfriend_fail_msg_onfailure);
                 }
             }
 

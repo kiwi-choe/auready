@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.login.IBaseUrl;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Credentials;
 import okhttp3.Interceptor;
@@ -23,7 +24,14 @@ public class ServiceGenerator {
 
     public static final String BASE_URL = IBaseUrl.BASE_URL;
 
-    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+    private static final int CONNECT_TIMEOUT = 15;
+    private static final long WRITE_TIMEOUT = 15;
+    private static final long READ_TIMEOUT = 10;
+
+    private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder()
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS);
 
     private static Retrofit.Builder baseBuilder =
             new Retrofit.Builder()

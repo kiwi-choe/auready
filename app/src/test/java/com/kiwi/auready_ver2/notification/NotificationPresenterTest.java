@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 public class NotificationPresenterTest {
 
     private static final List<Notification> NOTIFICATIONS = Lists.newArrayList(
-            new Notification(Notification.TYPES.friend_request.name(), "userA requests friending to userB."));
+            new Notification(Notification.TYPES.friend_request.name(), "stubbed_fromUserId", "stubbed_fromUserName"));
 
     private NotificationPresenter mPresenter;
 
@@ -57,22 +57,25 @@ public class NotificationPresenterTest {
     }
 
     private NotificationPresenter givenMenuPresenter() {
+        String accessToken = "stubbedAccessToken";
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetNewNotificationsCount getNewNotificationsCount = new GetNewNotificationsCount(mLocalRepository);
 
-        return new NotificationPresenter(useCaseHandler, mMenuView, getNewNotificationsCount);
+        return new NotificationPresenter(accessToken, useCaseHandler, mMenuView, getNewNotificationsCount);
     }
 
     private NotificationPresenter givenNotificationPresenter() {
+        String accessToken = "stubbedAccessToken";
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetNotifications getNotifications = new GetNotifications(mLocalRepository);
         ReadNotification readNotification = new ReadNotification(mLocalRepository);
 
-        return new NotificationPresenter(useCaseHandler, mView, getNotifications, readNotification);
+        return new NotificationPresenter(accessToken, useCaseHandler, mView, getNotifications, readNotification);
     }
 
     @Test
     public void loadNotificationsFromRepository_updateView() {
+        mPresenter = givenNotificationPresenter();
         mPresenter.loadNotifications();
 
         verify(mLocalRepository).loadNotifications(mLoadNotificationsCallbackCaptor.capture());
@@ -85,6 +88,7 @@ public class NotificationPresenterTest {
 
     @Test
     public void getNewNotificationsCount_updateView() {
+        mMenuPresenter = givenMenuPresenter();
         mMenuPresenter.getNewNotificationsCount();
 
         int COUNT_OF_NEW = 0;
@@ -94,5 +98,16 @@ public class NotificationPresenterTest {
         ArgumentCaptor<Integer> showArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(mMenuView).showNewSign(showArgumentCaptor.capture());
         assertTrue(showArgumentCaptor.getValue() == COUNT_OF_NEW);
+    }
+
+    @Test
+    public void acceptFriendRequest_whenSucceed_updateUIAndDeleteTheNotification() {
+        mPresenter = givenNotificationPresenter();
+        String fromUserId = "stubbed_fromUserId";
+        int notificationId = 1;
+        mPresenter.onAcceptFriendRequestSucceed(fromUserId, notificationId);
+
+        verify(mView).showAcceptFriendRequestSuccessUI(fromUserId);
+        verify(mLocalRepository).deleteNotification(notificationId);
     }
 }

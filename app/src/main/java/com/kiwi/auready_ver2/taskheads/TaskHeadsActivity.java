@@ -20,7 +20,6 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.kiwi.auready_ver2.Injection;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
-import com.kiwi.auready_ver2.friend.FriendsActivity;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.notification.NotificationPresenter;
 import com.kiwi.auready_ver2.util.ActivityUtils;
@@ -56,6 +55,9 @@ public class TaskHeadsActivity extends AppCompatActivity
                     getSupportFragmentManager(), taskHeadsFragment, R.id.content_frame, TaskHeadsFragment.TAG_TASKHEADSFRAGMENT);
         }
 
+        // Create Singleton AccessTokenStore
+        mAccessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
+
         // Create the presenter
         mPresenter = new TaskHeadsPresenter(
                 Injection.provideUseCaseHandler(),
@@ -65,8 +67,10 @@ public class TaskHeadsActivity extends AppCompatActivity
                 Injection.provideGetTaskHeadsCount(getApplicationContext()),
                 Injection.provideUpdateTaskHeadsOrder(getApplicationContext()));
 
+
         // Create the notification presenter for menu
         NotificationPresenter notificationPresenter = new NotificationPresenter(
+                mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, null),
                 Injection.provideUseCaseHandler(),
                 taskHeadsFragment,
                 Injection.provideGetNewNotificationsCount(getApplicationContext()));
@@ -74,9 +78,6 @@ public class TaskHeadsActivity extends AppCompatActivity
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
         }
-
-        // Create Singleton AccessTokenStore
-        mAccessTokenStore = AccessTokenStore.getInstance(getApplicationContext());
 
         initView();
     }
@@ -106,7 +107,7 @@ public class TaskHeadsActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(Gravity.LEFT);
+            mDrawerLayout.closeDrawer(Gravity.START);
             return;
         }
 
@@ -177,14 +178,6 @@ public class TaskHeadsActivity extends AppCompatActivity
                 mPresenter.logout(mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, ""));
             }
         });
-
-        Button friendButton = (Button) mMemberNavHeader.findViewById(R.id.bt_manage_friend);
-        friendButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startFriendView();
-            }
-        });
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -193,10 +186,6 @@ public class TaskHeadsActivity extends AppCompatActivity
             public boolean onNavigationItemSelected(MenuItem item) {
                 int id = item.getItemId();
                 switch (id) {
-                    case R.id.friend_navigation_menu_item:
-                        startFriendView();
-                        break;
-
                     case R.id.item_group:
                         startLoginView();
                         break;
@@ -222,12 +211,6 @@ public class TaskHeadsActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void startFriendView() {
-        Intent intent =
-                new Intent(TaskHeadsActivity.this, FriendsActivity.class);
-        startActivity(intent);
     }
 
     private void startLoginView() {
