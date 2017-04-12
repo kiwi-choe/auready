@@ -3,7 +3,7 @@ package com.kiwi.auready_ver2.taskheads.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
-import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.TaskHeadDetail;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
@@ -12,24 +12,24 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Fetches the list of taskHead.
+ * Fetches the list of taskHeadDetail.
  */
-public class GetTaskHeads extends UseCase<GetTaskHeads.RequestValues, GetTaskHeads.ResponseValue> {
+public class GetTaskHeadDetails extends UseCase<GetTaskHeadDetails.RequestValues, GetTaskHeadDetails.ResponseValue> {
 
 
     private final TaskRepository mTaskRepository;
 
-    public GetTaskHeads(@NonNull TaskRepository taskRepository) {
+    public GetTaskHeadDetails(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository, "taskHeadRepository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues values) {
 
-        mTaskRepository.getTaskHeads(new TaskDataSource.LoadTaskHeadsCallback() {
+        mTaskRepository.getTaskHeadDetails(new TaskDataSource.LoadTaskHeadDetailsCallback() {
             @Override
-            public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                ResponseValue responseValue = new ResponseValue(taskHeads);
+            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                ResponseValue responseValue = new ResponseValue(taskHeadDetails);
                 getUseCaseCallback().onSuccess(responseValue);
             }
 
@@ -44,15 +44,14 @@ public class GetTaskHeads extends UseCase<GetTaskHeads.RequestValues, GetTaskHea
 
     public class ResponseValue implements UseCase.ResponseValue {
 
-        private final List<TaskHead> mTaskHeads;
+        private final List<TaskHeadDetail> mTaskHeadDetails;
 
-
-        public ResponseValue(@NonNull List<TaskHead> taskHeads) {
-            mTaskHeads = checkNotNull(taskHeads, "taskHeads cannot be null");
+        public ResponseValue(@NonNull List<TaskHeadDetail> taskHeadDetails) {
+            mTaskHeadDetails = checkNotNull(taskHeadDetails, "taskHeads cannot be null");
         }
 
-        public List<TaskHead> getTaskHeads() {
-            return mTaskHeads;
+        public List<TaskHeadDetail> getTaskHeadDetails() {
+            return mTaskHeadDetails;
         }
     }
 }

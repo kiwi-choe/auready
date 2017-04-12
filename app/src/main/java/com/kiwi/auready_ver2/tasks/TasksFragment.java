@@ -22,8 +22,6 @@ import com.kiwi.auready_ver2.util.view.DragSortListView;
 import com.kiwi.auready_ver2.util.view.SplitView;
 import com.kiwi.auready_ver2.util.view.ViewUtils;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -255,7 +253,7 @@ public class TasksFragment extends Fragment {
             public void drop(int from, int to) {
                 TasksAdapter tasksAdapter = (TasksAdapter) listView.getInputAdapter();
                 tasksAdapter.reorder(from, to);
-//                mPresenter.updateOrders(mTaskHeadsAdapter.getTaskHeads());
+//                mPresenter.updateOrders(mTaskHeadsAdapter.getTaskHeadDetails());
             }
 
             @Override

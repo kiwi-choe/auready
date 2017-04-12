@@ -14,8 +14,8 @@ import retrofit2.http.Path;
 
 public interface ITaskService {
 
-    @POST("/taskheads")
-    Call<Void> saveTaskHeadDetail(@Body TaskHead_remote taskHeadRemote);
+    @POST("/taskheads/")
+    Call<Void> saveTaskHeadDetail(@Body TaskHeadDetail_remote taskHeadRemote);
     @GET("/taskheads/{name}")
-    Call<List<TaskHead_remote>> getTaskHeads(@Path("name") String name);
+    Call<List<TaskHeadDetail_remote>> getTaskHeadDetails(@Path("name") String name);
 }

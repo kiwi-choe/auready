@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -45,6 +46,11 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
+    public void deleteAllTaskHeads() {
+        mDbHelper.delete(TaskHeadEntry.TABLE_NAME, null, null);
+    }
+
+    @Override
     public void initializeLocalData(@NonNull InitLocalDataCallback callback) {
 
         boolean isDeletedTaskHead = mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
@@ -62,39 +68,56 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTaskHeads(@NonNull LoadTaskHeadsCallback callback) {
+    public void getTaskHeadDetails(@NonNull LoadTaskHeadDetailsCallback callback) {
 
-        List<TaskHead> taskHeads = new ArrayList<>(0);
+        String sql = String.format(
+                "SELECT * FROM %s, %s WHERE %s.%s = %s.%s",
+                PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.MemberEntry.TABLE_NAME,
+                PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.TaskHeadEntry.COLUMN_ID,
+                PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK);
 
-        String[] projection = {
-                TaskHeadEntry.COLUMN_ID,
-                TaskHeadEntry.COLUMN_TITLE,
-                TaskHeadEntry.COLUMN_ORDER,
-                TaskHeadEntry.COLUMN_COLOR
-        };
-        String orderBy = TaskHeadEntry.COLUMN_ORDER + " asc";
+        Cursor cursor = mDbHelper.rawQuery(sql, null);
 
-        Cursor c = mDbHelper.query(
-                TaskHeadEntry.TABLE_NAME, projection, null, null, null, null, orderBy);
-        if (c != null && c.getCount() > 0) {
-            while (c.moveToNext()) {
-                String id = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ID));
-                String title = c.getString(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
-                int order = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
-                int color = c.getInt(c.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_COLOR));
+        List<TaskHeadDetail> taskHeadDetails = new ArrayList<>(0);
+        String taskHeadIdOfPreRow = "";
+        int i = -1;
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                // Set members
+                String memberId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_ID));
+                String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK));
+                String friendId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_FRIEND_ID_FK));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_NAME));
+                String email = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_EMAIL));
+                Member member = new Member(memberId, taskHeadId_fk, friendId, name, email);
 
-                TaskHead taskHead = new TaskHead(id, title, order, color);
-                taskHeads.add(taskHead);
+                if (!taskHeadId_fk.equals(taskHeadIdOfPreRow)) {
+                    i++;
+                    // Set TaskHead
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_TITLE));
+                    int order = cursor.getInt(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_ORDER));
+                    int color = cursor.getInt(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_COLOR));
+
+                    TaskHead taskHead = new TaskHead(taskHeadId_fk, title, order, color);
+                    List<Member> members = Lists.newArrayList(member);
+                    TaskHeadDetail taskHeadDetail = new TaskHeadDetail(taskHead, members);
+                    taskHeadDetails.add(taskHeadDetail);
+                } else {
+                    taskHeadDetails.get(i).getMembers().add(member);
+                }
+
+                taskHeadIdOfPreRow = taskHeadId_fk;
             }
         }
-        if (c != null) {
-            c.close();
+
+        if (cursor != null) {
+            cursor.close();
         }
 
-        if (taskHeads.isEmpty()) {
+        if (taskHeadDetails.isEmpty()) {
             callback.onDataNotAvailable();
         } else {
-            callback.onTaskHeadsLoaded(taskHeads);
+            callback.onTaskHeadDetailsLoaded(taskHeadDetails);
         }
     }
 

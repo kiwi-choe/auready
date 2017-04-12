@@ -8,7 +8,7 @@ import java.util.List;
  * Model for remote API
  */
 
-public class TaskHead_remote {
+public class TaskHeadDetail_remote {
     @SerializedName("id")
     private final String id;
     @SerializedName("title")
@@ -18,7 +18,7 @@ public class TaskHead_remote {
     @SerializedName("members")
     private final List<Member_remote> members;
 
-    public TaskHead_remote(String id, String title, int color, List<Member_remote> members) {
+    public TaskHeadDetail_remote(String id, String title, int color, List<Member_remote> members) {
         this.id = id;
         this.title = title;
         this.color = color;
@@ -35,5 +35,9 @@ public class TaskHead_remote {
 
     public int getColor() {
         return color;
+    }
+
+    public List<Member_remote> getMembers() {
+        return members;
     }
 }

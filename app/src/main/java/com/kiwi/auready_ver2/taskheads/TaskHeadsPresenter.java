@@ -9,12 +9,13 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.TaskHeadDetail;
 import com.kiwi.auready_ver2.login.LoginFragment;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
@@ -38,21 +39,21 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private final TaskHeadsContract.View mTaskHeadView;
 
     private UseCaseHandler mUseCaseHandler;
-    private final GetTaskHeads mGetTaskHeads;
+    private final GetTaskHeadDetails mGetTaskHeadDetails;
     private final DeleteTaskHeads mDeleteTaskHeads;
     private final GetTaskHeadsCount mGetTaskHeadCount;
     private UpdateTaskHeadOrders mUpdateTaskHeadOrders;
     private final InitializeLocalData mInitializeLocalData;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
-                              @NonNull GetTaskHeads getTaskHeads,
+                              @NonNull GetTaskHeadDetails getTaskHeadDetails,
                               @NonNull DeleteTaskHeads deleteTaskHeads,
                               @NonNull GetTaskHeadsCount getTaskHeadCount,
                               @NonNull UpdateTaskHeadOrders updateTaskHeadOrders,
                               @NonNull InitializeLocalData initializeLocalData) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
-        mGetTaskHeads = checkNotNull(getTaskHeads, "getTaskHeads cannot be null");
+        mGetTaskHeadDetails = checkNotNull(getTaskHeadDetails, "getTaskHeadDetails cannot be null");
         mDeleteTaskHeads = checkNotNull(deleteTaskHeads, "deleteTaskHeads cannot be null");
         mGetTaskHeadCount = checkNotNull(getTaskHeadCount);
         mUpdateTaskHeadOrders = updateTaskHeadOrders;
@@ -70,12 +71,14 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     @Override
     public void loadTaskHeads() {
 
-        mUseCaseHandler.execute(mGetTaskHeads, new GetTaskHeads.RequestValues(),
-                new UseCase.UseCaseCallback<GetTaskHeads.ResponseValue>() {
+        // Load taskHeadDetail and filter taskheads
+        mUseCaseHandler.execute(mGetTaskHeadDetails, new GetTaskHeadDetails.RequestValues(),
+                new UseCase.UseCaseCallback<GetTaskHeadDetails.ResponseValue>() {
 
                     @Override
-                    public void onSuccess(GetTaskHeads.ResponseValue response) {
-                        mTaskHeadView.showTaskHeads(response.getTaskHeads());
+                    public void onSuccess(GetTaskHeadDetails.ResponseValue response) {
+                        List<TaskHead> taskHeads = filterTaskHeads(response.getTaskHeadDetails());
+                        processTaskHeads(taskHeads);
                     }
 
                     @Override
@@ -83,6 +86,14 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                         mTaskHeadView.showNoTaskHeads();
                     }
                 });
+    }
+
+    private List<TaskHead> filterTaskHeads(List<TaskHeadDetail> taskHeadDetails) {
+        List<TaskHead> taskHeads = new ArrayList<>();
+        for(TaskHeadDetail taskHeadDetail: taskHeadDetails) {
+            taskHeads.add(taskHeadDetail.getTaskHead());
+        }
+        return taskHeads;
     }
 
     private void processTaskHeads(List<TaskHead> taskHeads) {
@@ -224,6 +235,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     @Override
                     public void onSuccess(InitializeLocalData.ResponseValue response) {
+                        Log.d("Tag_logout", "initializeLocalData is succeeded");
                         loadTaskHeads();
                     }
 

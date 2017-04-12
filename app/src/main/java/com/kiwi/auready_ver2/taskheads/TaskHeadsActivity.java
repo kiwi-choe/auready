@@ -62,7 +62,7 @@ public class TaskHeadsActivity extends AppCompatActivity
         mPresenter = new TaskHeadsPresenter(
                 Injection.provideUseCaseHandler(),
                 taskHeadsFragment,
-                Injection.provideGetTaskHeads(getApplicationContext()),
+                Injection.provideGetTaskHeadDetails(getApplicationContext()),
                 Injection.provideDeleteTaskHeads(getApplicationContext()),
                 Injection.provideGetTaskHeadsCount(getApplicationContext()),
                 Injection.provideUpdateTaskHeadsOrder(getApplicationContext()),

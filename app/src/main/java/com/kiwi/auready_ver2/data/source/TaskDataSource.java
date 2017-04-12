@@ -19,6 +19,8 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
+    void deleteAllTaskHeads();
+
     interface InitLocalDataCallback {
         void onInitSuccess();
         void onInitFail();
@@ -28,14 +30,14 @@ public interface TaskDataSource {
     /*
                                         * TaskHeadsView
                                         * */
-    interface LoadTaskHeadsCallback {
+    interface LoadTaskHeadDetailsCallback {
 
-        void onTaskHeadsLoaded(List<TaskHead> taskHeads);
+        void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails);
 
         void onDataNotAvailable();
     }
 
-    void getTaskHeads(@NonNull LoadTaskHeadsCallback callback);
+    void getTaskHeadDetails(@NonNull LoadTaskHeadDetailsCallback callback);
 
     void deleteTaskHeads(List<String> taskheadIds);
 

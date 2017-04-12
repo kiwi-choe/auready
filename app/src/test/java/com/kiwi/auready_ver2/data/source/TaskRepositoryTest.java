@@ -21,6 +21,7 @@ import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASK;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEADS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAIL;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAILS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -42,9 +43,9 @@ public class TaskRepositoryTest {
     private TaskDataSource mRemoteDataSource;
 
     @Mock
-    private TaskDataSource.LoadTaskHeadsCallback mLoadTaskHeadsCallback;
+    private TaskDataSource.LoadTaskHeadDetailsCallback mLoadTaskHeadDetailsCallback;
     @Captor
-    private ArgumentCaptor<TaskDataSource.LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
+    private ArgumentCaptor<TaskDataSource.LoadTaskHeadDetailsCallback> mLoadTaskHeadsCallbackCaptor;
 
     @Mock
     private TaskDataSource.SaveCallback mSaveCallback;
@@ -87,24 +88,24 @@ public class TaskRepositoryTest {
     * */
     @Test
     public void getTaskHeadsWithLocalUnavailable() {
-        mRepository.getTaskHeads(mLoadTaskHeadsCallback);
+        mRepository.getTaskHeadDetails(mLoadTaskHeadDetailsCallback);
         // Local data source has no data available
         setTaskHeadsNotAvailable(mLocalDataSource);
         // and Remote data source has no data available too
         setTaskHeadsNotAvailable(mRemoteDataSource);
 
-        verify(mLoadTaskHeadsCallback).onDataNotAvailable();
+        verify(mLoadTaskHeadDetailsCallback).onDataNotAvailable();
     }
 
     @Test
     public void getTaskHeads_requestsTaskHeadsFromLocal() {
-        mRepository.getTaskHeads(mLoadTaskHeadsCallback);
+        mRepository.getTaskHeadDetails(mLoadTaskHeadDetailsCallback);
 
-        setTaskHeadsAvailable(mLocalDataSource, TASKHEADS);
+//        setTaskHeadsAvailable(mLocalDataSource, TASKHEADS);
 
         // Then taskHeads are loaded from the local
-        verify(mLocalDataSource).getTaskHeads(any(TaskDataSource.LoadTaskHeadsCallback.class));
-        verify(mLoadTaskHeadsCallback).onTaskHeadsLoaded(TASKHEADS);
+        verify(mLocalDataSource).getTaskHeadDetails(any(TaskDataSource.LoadTaskHeadDetailsCallback.class));
+        verify(mLoadTaskHeadDetailsCallback).onTaskHeadDetailsLoaded(TASKHEAD_DETAILS);
     }
 
     /*
@@ -530,13 +531,13 @@ public class TaskRepositoryTest {
     }
 
     private void setTaskHeadsNotAvailable(TaskDataSource dataSource) {
-        verify(dataSource).getTaskHeads(mLoadTaskHeadsCallbackCaptor.capture());
+        verify(dataSource).getTaskHeadDetails(mLoadTaskHeadsCallbackCaptor.capture());
         mLoadTaskHeadsCallbackCaptor.getValue().onDataNotAvailable();
     }
 
     private void setTaskHeadsAvailable(TaskDataSource dataSource, List<TaskHead> taskHeads) {
-        verify(dataSource).getTaskHeads(mLoadTaskHeadsCallbackCaptor.capture());
-        mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(taskHeads);
+        verify(dataSource).getTaskHeadDetails(mLoadTaskHeadsCallbackCaptor.capture());
+//        mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadDetailsLoaded(taskHeads);
     }
 
     private void saveTaskHeadDetailSucceed(TaskDataSource dataSource, TaskHeadDetail taskHeadDetail) {

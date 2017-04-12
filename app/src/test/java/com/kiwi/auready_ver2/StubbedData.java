@@ -25,7 +25,7 @@ public final class StubbedData {
     public static abstract class TaskStub {
 
         private static final int ORDER = 0;
-        public static TaskHead TASKHEAD = new TaskHead("stubbedTaskHeadId", "title1", ORDER, R.color.color_picker_default_color);
+        public static TaskHead TASKHEAD = new TaskHead("stubbedTaskHeadId0", "title1", ORDER, R.color.color_picker_default_color);
         public static List<TaskHead> TASKHEADS = Lists.newArrayList(
                 new TaskHead("stubbedTaskHeadId0", "title0", 0, R.color.color_picker_default_color),
                 new TaskHead("stubbedTaskHeadId1", "title1", 1, R.color.color_picker_default_color),
@@ -37,9 +37,18 @@ public final class StubbedData {
                 new Member(TASKHEAD.getId(), "stubbedFriendId0", "name3", "email3"));
 
         public static final List<Member> MEMBERS = Lists.newArrayList(
-                new Member("stubbedMember0", TASKHEAD.getId(), "stubbedFriendId0", "name1", "email1"),
-                new Member("stubbedMember1", TASKHEAD.getId(), "stubbedFriendId0", "name2", "email2"),
-                new Member("stubbedMember2", TASKHEAD.getId(), "stubbedFriendId0", "name3", "email3"));
+                new Member("stubbedMember0", TASKHEADS.get(0).getId(), "stubbedFriendId0", "name1", "email1"),
+                new Member("stubbedMember1", TASKHEADS.get(0).getId(), "stubbedFriendId0", "name2", "email2"),
+                new Member("stubbedMember2", TASKHEADS.get(0).getId(), "stubbedFriendId0", "name3", "email3"));
+        public static final List<Member> MEMBERS1 = Lists.newArrayList(
+                new Member("stubbedMember3", TASKHEADS.get(1).getId(), "stubbedFriendId0", "name1", "email1"),
+                new Member("stubbedMember4", TASKHEADS.get(1).getId(), "stubbedFriendId0", "name2", "email2"),
+                new Member("stubbedMember5", TASKHEADS.get(1).getId(), "stubbedFriendId0", "name3", "email3"));
+
+        public static List<TaskHeadDetail> TASKHEAD_DETAILS = Lists.newArrayList(
+                new TaskHeadDetail(TASKHEADS.get(0), MEMBERS),
+                new TaskHeadDetail(TASKHEADS.get(1), MEMBERS1)
+        );
 
         public static TaskHeadDetail TASKHEAD_DETAIL =
                 new TaskHeadDetail(TASKHEAD, MEMBERS);

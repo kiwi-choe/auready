@@ -3,7 +3,6 @@ package com.kiwi.auready_ver2.data.source.remote;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
@@ -15,7 +14,7 @@ import com.kiwi.auready_ver2.rest_service.HttpStatusCode;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
-import com.kiwi.auready_ver2.rest_service.task.TaskHead_remote;
+import com.kiwi.auready_ver2.rest_service.task.TaskHeadDetail_remote;
 import com.kiwi.auready_ver2.util.NetworkUtils;
 
 import java.util.ArrayList;
@@ -53,6 +52,11 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
+    public void deleteAllTaskHeads() {
+
+    }
+
+    @Override
     public void initializeLocalData(@NonNull InitLocalDataCallback callback) {
         /*
         * Implementation for Local only
@@ -60,7 +64,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
+    public void getTaskHeadDetails(@NonNull final LoadTaskHeadDetailsCallback callback) {
 
         // Check network
         if (!NetworkUtils.isOnline(mContext)) {
@@ -68,7 +72,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         }
 
         // Check accessToken
-        if(TextUtils.isEmpty(mAccessToken)) {
+        if (TextUtils.isEmpty(mAccessToken)) {
             callback.onDataNotAvailable();
         }
 
@@ -76,35 +80,49 @@ public class TaskRemoteDataSource implements TaskDataSource {
                 ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
         String name = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
-        Call<List<TaskHead_remote>> call = taskService.getTaskHeads(name);
-        call.enqueue(new Callback<List<TaskHead_remote>>() {
+        Call<List<TaskHeadDetail_remote>> call = taskService.getTaskHeadDetails(name);
+        call.enqueue(new Callback<List<TaskHeadDetail_remote>>() {
             @Override
-            public void onResponse(Call<List<TaskHead_remote>> call, Response<List<TaskHead_remote>> response) {
+            public void onResponse(Call<List<TaskHeadDetail_remote>> call, Response<List<TaskHeadDetail_remote>> response) {
                 if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
-                    Log.d("test_SaveTaskHead", "response.isSuccessful()");
-                    List<TaskHead> taskHeads = filterTaskHeadFromRemote(response.body());
-                    callback.onTaskHeadsLoaded(taskHeads);
-                } else if(response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS){
+
+                    List<TaskHeadDetail> taskHeadDetails = filterTaskHeadFromRemote(response.body());
+                    callback.onTaskHeadDetailsLoaded(taskHeadDetails);
+                } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS) {
+
                     callback.onDataNotAvailable();
                 }
             }
 
             @Override
-            public void onFailure(Call<List<TaskHead_remote>> call, Throwable t) {
+            public void onFailure(Call<List<TaskHeadDetail_remote>> call, Throwable t) {
                 callback.onDataNotAvailable();
             }
         });
     }
 
-    private List<TaskHead> filterTaskHeadFromRemote(List<TaskHead_remote> taskHeads_remote) {
+    private List<TaskHeadDetail> filterTaskHeadFromRemote(List<TaskHeadDetail_remote> taskHeads_remote) {
 
-        List<TaskHead> taskHeads = new ArrayList<>(0);
-        for (TaskHead_remote taskHeadRemote : taskHeads_remote) {
+        List<TaskHeadDetail> taskheadDetails = new ArrayList<>(0);
+        for (TaskHeadDetail_remote taskHeadRemote : taskHeads_remote) {
+            // Make TaskHead model, Member model
+            List<Member> members = new ArrayList<>();
+
             // Set default orders; 0
-            TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(), taskHeadRemote.getTitle(), 0, taskHeadRemote.getColor());
-            taskHeads.add(newTaskHead);
+            TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(),
+                    taskHeadRemote.getTitle(), 0, taskHeadRemote.getColor());
+
+            List<Member_remote> member_remotes = taskHeadRemote.getMembers();
+            for (Member_remote member_remote : member_remotes) {
+                Member newMember = new Member(member_remote.getId(),
+                        newTaskHead.getId(), member_remote.getFriendId(),
+                        member_remote.getName(), member_remote.getEmail());
+                members.add(newMember);
+            }
+            TaskHeadDetail taskHeadDetail = new TaskHeadDetail(newTaskHead, members);
+            taskheadDetails.add(taskHeadDetail);
         }
-        return taskHeads;
+        return taskheadDetails;
     }
 
     @Override
@@ -135,11 +153,12 @@ public class TaskRemoteDataSource implements TaskDataSource {
         for (Member member : members) {
             Member_remote memberRemote = new Member_remote(
                     member.getId(),
+                    member.getFriendId(),
                     member.getName(),
                     member.getEmail());
             memberRemotes.add(memberRemote);
         }
-        TaskHead_remote taskHeadRemote = new TaskHead_remote(
+        TaskHeadDetail_remote taskHeadRemote = new TaskHeadDetail_remote(
                 taskHeadDetail.getTaskHead().getId(),
                 taskHeadDetail.getTaskHead().getTitle(),
                 taskHeadDetail.getTaskHead().getColor(),

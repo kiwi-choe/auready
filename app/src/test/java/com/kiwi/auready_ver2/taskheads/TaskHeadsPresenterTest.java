@@ -6,7 +6,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEADS;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAILS;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyInt;
@@ -40,7 +41,7 @@ public class TaskHeadsPresenterTest {
     private TaskHeadsContract.View mTaskHeadView;
 
     @Captor
-    private ArgumentCaptor<TaskDataSource.LoadTaskHeadsCallback> mLoadTaskHeadsCallbackCaptor;
+    private ArgumentCaptor<TaskDataSource.LoadTaskHeadDetailsCallback> mLoadTaskHeadsCallbackCaptor;
 
     @Captor
     private ArgumentCaptor<TaskDataSource.InitLocalDataCallback> mInitLocalDataCallbackCaptor;
@@ -55,14 +56,14 @@ public class TaskHeadsPresenterTest {
     private TaskHeadsPresenter givenTaskHeadsPresenter() {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
-        GetTaskHeads getTaskHeads = new GetTaskHeads(mRepository);
+        GetTaskHeadDetails getTaskHeadDetails = new GetTaskHeadDetails(mRepository);
         DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mRepository);
         GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mRepository);
         UpdateTaskHeadOrders updateTaskHeadOrders = new UpdateTaskHeadOrders(mRepository);
         InitializeLocalData initializeLocalData = new InitializeLocalData(mRepository);
 
         return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView,
-                getTaskHeads, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadOrders,
+                getTaskHeadDetails, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadOrders,
                 initializeLocalData);
     }
 
@@ -70,8 +71,8 @@ public class TaskHeadsPresenterTest {
     public void loadAllTaskHeadsFromRepository_andLoadIntoView() {
         mTaskHeadsPresenter.loadTaskHeads();
 
-        verify(mRepository).getTaskHeads(mLoadTaskHeadsCallbackCaptor.capture());
-        mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadsLoaded(TASKHEADS);
+        verify(mRepository).getTaskHeadDetails(mLoadTaskHeadsCallbackCaptor.capture());
+        mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadDetailsLoaded(TASKHEAD_DETAILS);
 
         ArgumentCaptor<List> showTaskHeadsArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mTaskHeadView).showTaskHeads(showTaskHeadsArgumentCaptor.capture());

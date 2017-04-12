@@ -21,7 +21,7 @@ import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.EditTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.SaveTaskHeadDetail;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeads;
+import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
@@ -73,8 +73,8 @@ public class Injection {
         return TaskRepository.getInstance(TaskRemoteDataSource.getInstance(context), TaskLocalDataSource.getInstance(context));
     }
 
-    public static GetTaskHeads provideGetTaskHeads(@NonNull Context context) {
-        return new GetTaskHeads(Injection.provideTaskRepository(context));
+    public static GetTaskHeadDetails provideGetTaskHeadDetails(@NonNull Context context) {
+        return new GetTaskHeadDetails(Injection.provideTaskRepository(context));
     }
 
     public static GetTaskHeadsCount provideGetTaskHeadsCount(@NonNull Context context) {

@@ -64,6 +64,14 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
+    public void deleteAllTaskHeads() {
+        mLocalDataSource.deleteAllTaskHeads();
+//        if(mCachedTaskHeads != null) {
+//            mCachedTaskHeads.clear();
+//        }
+    }
+
+    @Override
     public void initializeLocalData(@NonNull final InitLocalDataCallback callback) {
         mLocalDataSource.initializeLocalData(new InitLocalDataCallback() {
             @Override
@@ -78,24 +86,28 @@ public class TaskRepository implements TaskDataSource {
         });
     }
 
+    /*
+    * Load from Remote first
+    * */
     @Override
-    public void getTaskHeads(@NonNull final LoadTaskHeadsCallback callback) {
+    public void getTaskHeadDetails(@NonNull final LoadTaskHeadDetailsCallback callback) {
         checkNotNull(callback);
 
-        mLocalDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
+        // Get taskheads, members and tasks at once from Remote
+        mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
             @Override
-            public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                callback.onTaskHeadsLoaded(taskHeads);
+            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                refreshLocalDataSource(taskHeadDetails);
+                callback.onTaskHeadDetailsLoaded(taskHeadDetails);
             }
 
             @Override
             public void onDataNotAvailable() {
-                // get taskheads, members and tasks at once from Remote
-                mRemoteDataSource.getTaskHeads(new LoadTaskHeadsCallback() {
+
+                mLocalDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
                     @Override
-                    public void onTaskHeadsLoaded(List<TaskHead> taskHeads) {
-                        refreshLocalDataSource(taskHeads);
-                        callback.onTaskHeadsLoaded(taskHeads);
+                    public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                        callback.onTaskHeadDetailsLoaded(taskHeadDetails);
                     }
 
                     @Override
@@ -107,8 +119,21 @@ public class TaskRepository implements TaskDataSource {
         });
     }
 
-    private void refreshLocalDataSource(List<TaskHead> taskHeads) {
+    private void refreshLocalDataSource(List<TaskHeadDetail> taskHeadDetails) {
+        mLocalDataSource.deleteAllTaskHeads();
+        for(TaskHeadDetail taskHeadDetail: taskHeadDetails) {
+            mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+                @Override
+                public void onSaveSuccess() {
 
+                }
+
+                @Override
+                public void onSaveFailed() {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -146,14 +171,15 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(taskHeadDetail);
         checkNotNull(callback);
 
-        final boolean[] successToSaveInLocal = {false};
         mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
             @Override
             public void onSaveSuccess() {
                 refreshCachesOfTaskHeadDetail(taskHeadDetail);
                 showMembersCacheOf(taskHeadDetail.getTaskHead().getId());
 
-                successToSaveInLocal[0] = true;
+                // Save into Remote asynchronously with Local
+                saveTaskHeadDetailToRemote(taskHeadDetail);
+
                 callback.onSaveSuccess();
             }
 
@@ -162,11 +188,6 @@ public class TaskRepository implements TaskDataSource {
                 callback.onSaveFailed();
             }
         });
-
-        // Save into Remote asynchronously with Local
-        if(successToSaveInLocal[0]) {
-            saveTaskHeadDetailToRemote(taskHeadDetail);
-        }
     }
 
     private void saveTaskHeadDetailToRemote(TaskHeadDetail taskHeadDetail) {
@@ -185,9 +206,9 @@ public class TaskRepository implements TaskDataSource {
     }
 
     public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
-                                         @NonNull List<Member> addingMembers,
-                                         @NonNull List<String> deletingMemberIds,
-                                         @NonNull final EditTaskHeadDetailCallback callback) {
+                                   @NonNull List<Member> addingMembers,
+                                   @NonNull List<String> deletingMemberIds,
+                                   @NonNull final EditTaskHeadDetailCallback callback) {
 
         checkNotNull(editTaskHead);
         checkNotNull(addingMembers);
