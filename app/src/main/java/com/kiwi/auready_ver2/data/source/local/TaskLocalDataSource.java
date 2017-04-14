@@ -46,8 +46,14 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteAllTaskHeads() {
-        mDbHelper.delete(TaskHeadEntry.TABLE_NAME, null, null);
+    public void deleteAllTaskHeads(@NonNull DeleteAllCallback callback) {
+        boolean isSuccess = mDbHelper.delete(TaskHeadEntry.TABLE_NAME, null, null);
+
+        if(isSuccess) {
+            callback.onDeleteAllSuccess();
+        } else {
+            callback.onDeleteAllFail();
+        }
     }
 
     @Override
@@ -122,7 +128,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTaskHeads(List<String> taskHeadIds) {
+    public void deleteTaskHeads(List<String> taskHeadIds, @NonNull DeleteTaskHeadsCallback callback) {
 
         String args = "";
         String TOKEN = ", ";
@@ -141,7 +147,12 @@ public class TaskLocalDataSource implements TaskDataSource {
                 TaskHeadEntry.COLUMN_ID,
                 args);
 
-        mDbHelper.execSQL(sql);
+        boolean isSuccess = mDbHelper.execSQL(sql);
+        if(isSuccess) {
+            callback.onDeleteSuccess();
+        } else {
+            callback.onDeleteFail();
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.data.source.remote;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
@@ -12,6 +13,7 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.rest_service.HttpStatusCode;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.task.DeletingIds_remote;
 import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
 import com.kiwi.auready_ver2.rest_service.task.TaskHeadDetail_remote;
@@ -34,13 +36,11 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     private static TaskRemoteDataSource INSTANCE;
     private final AccessTokenStore mAccessTokenStore;
-    private final String mAccessToken;
     private final Context mContext;
 
     private TaskRemoteDataSource(Context context) {
         mContext = context.getApplicationContext();
         mAccessTokenStore = AccessTokenStore.getInstance(context);
-        mAccessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
     }
 
     public static TaskDataSource getInstance(@NonNull Context context) {
@@ -52,7 +52,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteAllTaskHeads() {
+    public void deleteAllTaskHeads(@NonNull DeleteAllCallback callback) {
 
     }
 
@@ -72,12 +72,14 @@ public class TaskRemoteDataSource implements TaskDataSource {
         }
 
         // Check accessToken
-        if (TextUtils.isEmpty(mAccessToken)) {
+        String accessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        if (TextUtils.isEmpty(accessToken)) {
+            Log.d("Tag_TaskRemoteData", "no accessToken");
             callback.onDataNotAvailable();
         }
 
         ITaskService taskService =
-                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+                ServiceGenerator.createService(ITaskService.class, accessToken);
 
         String name = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
         Call<List<TaskHeadDetail_remote>> call = taskService.getTaskHeadDetails(name);
@@ -97,6 +99,43 @@ public class TaskRemoteDataSource implements TaskDataSource {
             @Override
             public void onFailure(Call<List<TaskHeadDetail_remote>> call, Throwable t) {
                 callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    @Override
+    public void deleteTaskHeads(List<String> taskheadIds, @NonNull final DeleteTaskHeadsCallback callback) {
+
+        // Check network
+        if (!NetworkUtils.isOnline(mContext)) {
+            callback.onDeleteFail();
+        }
+
+        // Check accessToken
+        String accessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        if (TextUtils.isEmpty(accessToken)) {
+            Log.d("Tag_TaskRemoteData", "no accessToken");
+            callback.onDeleteFail();
+        }
+
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, accessToken);
+
+        DeletingIds_remote ids = new DeletingIds_remote(taskheadIds);
+        Call<Void> call = taskService.deleteTaskHeads(ids);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    Log.d("Tag_delete", "deleteTaskHeads success");
+                    callback.onDeleteSuccess();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Tag_delete", "deleteTaskHeads fail");
+                callback.onDeleteFail();
             }
         });
     }
@@ -125,11 +164,6 @@ public class TaskRemoteDataSource implements TaskDataSource {
         return taskheadDetails;
     }
 
-    @Override
-    public void deleteTaskHeads(List<String> taskheadIds) {
-
-    }
-
     // for Local
     @Override
     public int getTaskHeadsCount() {
@@ -144,8 +178,20 @@ public class TaskRemoteDataSource implements TaskDataSource {
     @Override
     public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull final SaveCallback callback) {
 
+        // Check network
+        if (!NetworkUtils.isOnline(mContext)) {
+            callback.onSaveFailed();
+        }
+
+        // Check accessToken
+        String accessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        if (TextUtils.isEmpty(accessToken)) {
+            Log.d("Tag_TaskRemoteData", "no accessToken");
+            callback.onSaveFailed();
+        }
+
         ITaskService taskService =
-                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+                ServiceGenerator.createService(ITaskService.class, accessToken);
 
         // Make Object for remote
         List<Member_remote> memberRemotes = new ArrayList<>();

@@ -19,7 +19,12 @@ import java.util.List;
  */
 public interface TaskDataSource {
 
-    void deleteAllTaskHeads();
+    interface  DeleteAllCallback {
+        void onDeleteAllSuccess();
+        void onDeleteAllFail();
+    }
+
+    void deleteAllTaskHeads(@NonNull DeleteAllCallback callback);
 
     interface InitLocalDataCallback {
         void onInitSuccess();
@@ -39,7 +44,11 @@ public interface TaskDataSource {
 
     void getTaskHeadDetails(@NonNull LoadTaskHeadDetailsCallback callback);
 
-    void deleteTaskHeads(List<String> taskheadIds);
+    interface DeleteTaskHeadsCallback {
+        void onDeleteSuccess();
+        void onDeleteFail();
+    }
+    void deleteTaskHeads(List<String> taskheadIds, @NonNull DeleteTaskHeadsCallback callback);
 
     int getTaskHeadsCount();
 

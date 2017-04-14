@@ -56,6 +56,20 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         }
         return sDbHelper;
     }
+//
+//    @Override
+//    public void onOpen(SQLiteDatabase db) {
+//        super.onOpen(db);
+//        if(!db.isReadOnly()) {
+//            db.execSQL("PRAGMA foreign_keys = ON;");
+//        }
+//    }
+
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -125,7 +139,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         return sDb.rawQuery(sql, selectionArgs);
     }
 
-    void execSQL(String sql) {
+    boolean execSQL(String sql) {
         sDb = sDbHelper.getWritableDatabase();
         sDb.beginTransaction();
         try {
@@ -133,9 +147,11 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             sDb.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(TAG_SQLITE, "Could not delete taskheads in ( " + DATABASE_NAME + "). ", e);
+            return false;
         } finally {
             sDb.endTransaction();
         }
+        return true;
     }
 
     public long insertTaskHeadAndMembers(ContentValues taskHeadValues, List<ContentValues> memberValuesList) {

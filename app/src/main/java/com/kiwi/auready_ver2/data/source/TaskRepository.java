@@ -64,8 +64,19 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void deleteAllTaskHeads() {
-        mLocalDataSource.deleteAllTaskHeads();
+    public void deleteAllTaskHeads(@NonNull DeleteAllCallback callback) {
+
+        mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
+            @Override
+            public void onDeleteAllSuccess() {
+
+            }
+
+            @Override
+            public void onDeleteAllFail() {
+
+            }
+        });
 //        if(mCachedTaskHeads != null) {
 //            mCachedTaskHeads.clear();
 //        }
@@ -119,33 +130,60 @@ public class TaskRepository implements TaskDataSource {
         });
     }
 
-    private void refreshLocalDataSource(List<TaskHeadDetail> taskHeadDetails) {
-        mLocalDataSource.deleteAllTaskHeads();
-        for(TaskHeadDetail taskHeadDetail: taskHeadDetails) {
-            mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
-                @Override
-                public void onSaveSuccess() {
-
-                }
-
-                @Override
-                public void onSaveFailed() {
-
-                }
-            });
-        }
-    }
-
     @Override
-    public void deleteTaskHeads(List<String> taskheadIds) {
-        mLocalDataSource.deleteTaskHeads(taskheadIds);
-
+    public void deleteTaskHeads(final List<String> taskheadIds, @NonNull final DeleteTaskHeadsCallback callback) {
         // Delete from cache
         if (mCachedTaskHeads != null) {
             for (String id : taskheadIds) {
                 mCachedTaskHeads.remove(id);
             }
         }
+
+        mRemoteDataSource.deleteTaskHeads(taskheadIds, new DeleteTaskHeadsCallback() {
+            @Override
+            public void onDeleteSuccess() {
+
+                mLocalDataSource.deleteTaskHeads(taskheadIds, new DeleteTaskHeadsCallback() {
+                    @Override
+                    public void onDeleteSuccess() {
+                        callback.onDeleteSuccess();
+                    }
+
+                    @Override
+                    public void onDeleteFail() {
+                        callback.onDeleteFail();
+                    }
+                });
+            }
+
+            @Override
+            public void onDeleteFail() {
+                callback.onDeleteFail();
+            }
+        });
+    }
+
+    private void refreshLocalDataSource(final List<TaskHeadDetail> taskHeadDetails) {
+        mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
+            @Override
+            public void onDeleteAllSuccess() {
+
+                for(TaskHeadDetail taskHeadDetail: taskHeadDetails) {
+                    mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+                        @Override
+                        public void onSaveSuccess() {}
+
+                        @Override
+                        public void onSaveFailed() {}
+                    });
+                }
+            }
+
+            @Override
+            public void onDeleteAllFail() {
+
+            }
+        });
     }
 
     @Override

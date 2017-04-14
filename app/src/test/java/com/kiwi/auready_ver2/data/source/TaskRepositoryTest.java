@@ -45,7 +45,7 @@ public class TaskRepositoryTest {
     @Mock
     private TaskDataSource.LoadTaskHeadDetailsCallback mLoadTaskHeadDetailsCallback;
     @Captor
-    private ArgumentCaptor<TaskDataSource.LoadTaskHeadDetailsCallback> mLoadTaskHeadsCallbackCaptor;
+    private ArgumentCaptor<TaskDataSource.LoadTaskHeadDetailsCallback> mLoadTaskHeadDetailsCallbackCaptor;
 
     @Mock
     private TaskDataSource.SaveCallback mSaveCallback;
@@ -71,6 +71,11 @@ public class TaskRepositoryTest {
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadMembersCallback> mLoadMembersCallbackCaptor;
 
+    @Mock
+    private TaskDataSource.DeleteTaskHeadsCallback mDeleteTaskHeadsCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.DeleteTaskHeadsCallback> mDeleteTaskHeadsCallbackCaptor;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -89,10 +94,11 @@ public class TaskRepositoryTest {
     @Test
     public void getTaskHeadsWithLocalUnavailable() {
         mRepository.getTaskHeadDetails(mLoadTaskHeadDetailsCallback);
-        // Local data source has no data available
-        setTaskHeadsNotAvailable(mLocalDataSource);
+
         // and Remote data source has no data available too
-        setTaskHeadsNotAvailable(mRemoteDataSource);
+        setTaskHeadDetailsNotAvailable(mRemoteDataSource);
+        // Local data source has no data available
+        setTaskHeadDetailsNotAvailable(mLocalDataSource);
 
         verify(mLoadTaskHeadDetailsCallback).onDataNotAvailable();
     }
@@ -101,7 +107,8 @@ public class TaskRepositoryTest {
     public void getTaskHeads_requestsTaskHeadsFromLocal() {
         mRepository.getTaskHeadDetails(mLoadTaskHeadDetailsCallback);
 
-//        setTaskHeadsAvailable(mLocalDataSource, TASKHEADS);
+        setTaskHeadDetailsNotAvailable(mRemoteDataSource);
+        setTaskHeadDetailsAvailable(mLocalDataSource, TASKHEAD_DETAILS);
 
         // Then taskHeads are loaded from the local
         verify(mLocalDataSource).getTaskHeadDetails(any(TaskDataSource.LoadTaskHeadDetailsCallback.class));
@@ -174,11 +181,24 @@ public class TaskRepositoryTest {
         List<String> taskHeadIds = new ArrayList<>();
         taskHeadIds.add(TASKHEADS.get(0).getId());
         taskHeadIds.add(TASKHEADS.get(1).getId());
-        mRepository.deleteTaskHeads(taskHeadIds);
+        mRepository.deleteTaskHeads(taskHeadIds, mDeleteTaskHeadsCallback);
 
-        verify(mLocalDataSource).deleteTaskHeads(eq(taskHeadIds));
+        verify(mLocalDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
     }
 
+    @Test
+    public void deleteTaskHeads_fromRemote_whenSucceedInLocal() {
+        List<String> taskHeadIds = new ArrayList<>();
+        taskHeadIds.add(TASKHEADS.get(0).getId());
+        taskHeadIds.add(TASKHEADS.get(1).getId());
+        mRepository.deleteTaskHeads(taskHeadIds, mDeleteTaskHeadsCallback);
+
+        verify(mRemoteDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
+        mDeleteTaskHeadsCallbackCaptor.getValue().onDeleteSuccess();
+
+        verify(mLocalDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
+        mDeleteTaskHeadsCallbackCaptor.getValue().onDeleteSuccess();
+    }
     @Test
     public void deleteTaskHeads_fromCache() {
         // Save the stubbed taskheadDetails
@@ -188,7 +208,7 @@ public class TaskRepositoryTest {
         // Delete taskHeads TASKHEADS index 1, 2nd
         List<String> taskheadIds = new ArrayList<>(0);
         taskheadIds.add(taskHeadDetails.get(0).getTaskHead().getId());
-        mRepository.deleteTaskHeads(taskheadIds);
+        mRepository.deleteTaskHeads(taskheadIds, mDeleteTaskHeadsCallback);
 
         assertThat(mRepository.mCachedTaskHeads.size(), is(1));
         TaskHead notDeletedTaskHead = taskHeadDetails.get(1).getTaskHead();
@@ -530,14 +550,14 @@ public class TaskRepositoryTest {
         return taskHeadDetails;
     }
 
-    private void setTaskHeadsNotAvailable(TaskDataSource dataSource) {
-        verify(dataSource).getTaskHeadDetails(mLoadTaskHeadsCallbackCaptor.capture());
-        mLoadTaskHeadsCallbackCaptor.getValue().onDataNotAvailable();
+    private void setTaskHeadDetailsNotAvailable(TaskDataSource dataSource) {
+        verify(dataSource).getTaskHeadDetails(mLoadTaskHeadDetailsCallbackCaptor.capture());
+        mLoadTaskHeadDetailsCallbackCaptor.getValue().onDataNotAvailable();
     }
 
-    private void setTaskHeadsAvailable(TaskDataSource dataSource, List<TaskHead> taskHeads) {
-        verify(dataSource).getTaskHeadDetails(mLoadTaskHeadsCallbackCaptor.capture());
-//        mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadDetailsLoaded(taskHeads);
+    private void setTaskHeadDetailsAvailable(TaskDataSource dataSource, List<TaskHeadDetail> taskHeadDetails) {
+        verify(dataSource).getTaskHeadDetails(mLoadTaskHeadDetailsCallbackCaptor.capture());
+        mLoadTaskHeadDetailsCallbackCaptor.getValue().onTaskHeadDetailsLoaded(taskHeadDetails);
     }
 
     private void saveTaskHeadDetailSucceed(TaskDataSource dataSource, TaskHeadDetail taskHeadDetail) {

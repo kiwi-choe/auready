@@ -78,6 +78,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                     @Override
                     public void onSuccess(GetTaskHeadDetails.ResponseValue response) {
                         List<TaskHead> taskHeads = filterTaskHeads(response.getTaskHeadDetails());
+                        Log.d("Tag_loadTaskHeads", String.valueOf(taskHeads.size()));
                         processTaskHeads(taskHeads);
                     }
 
@@ -164,6 +165,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     @Override
                     public void onSuccess(DeleteTaskHeads.ResponseValue response) {
+                        Log.d("Tag_delete_presenter", "success");
                         loadTaskHeads();
                     }
 

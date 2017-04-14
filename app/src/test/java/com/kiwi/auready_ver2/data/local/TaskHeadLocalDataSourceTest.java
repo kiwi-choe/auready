@@ -134,8 +134,6 @@ public class TaskHeadLocalDataSourceTest {
 
         assertEquals(taskHeadDetails.get(0).getMembers().size(), 3);
 //        assertEquals(taskHeadDetails.get(0).getMem);
-
-        deleteStubbedTaskHead();
     }
 
     @Test
@@ -154,9 +152,7 @@ public class TaskHeadLocalDataSourceTest {
 
         // Verify that returned taskHeadsCount is 3
         int actualTaskHeadsCount = mTaskLocalDataSource.getTaskHeadsCount();
-        assertThat(actualTaskHeadsCount, is(3));
-
-        deleteStubbedTaskHead();
+        assertThat(actualTaskHeadsCount, is(2));
     }
 
     @Test
@@ -167,26 +163,33 @@ public class TaskHeadLocalDataSourceTest {
         List<String> deletingTaskHeadIds = new ArrayList<>();
         deletingTaskHeadIds.add(TASKHEADS.get(0).getId());
         deletingTaskHeadIds.add(TASKHEADS.get(2).getId());
-        mTaskLocalDataSource.deleteTaskHeads(deletingTaskHeadIds);
 
-        // Verify if taskHeads are deleted
-        TaskDataSource.LoadTaskHeadDetailsCallback loadTaskHeadDetailsCallback = new TaskDataSource.LoadTaskHeadDetailsCallback() {
+        mTaskLocalDataSource.deleteTaskHeads(deletingTaskHeadIds, new TaskDataSource.DeleteTaskHeadsCallback() {
             @Override
-            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-                assertEquals(TASKHEADS.get(1).getId(), taskHeadDetails.get(0).getTaskHead().getId());
-                assertEquals(TASKHEADS.get(1).getTitle(), taskHeadDetails.get(0).getTaskHead().getTitle());
+            public void onDeleteSuccess() {
+                // Verify if taskHeads are deleted
+                TaskDataSource.LoadTaskHeadDetailsCallback loadTaskHeadDetailsCallback = new TaskDataSource.LoadTaskHeadDetailsCallback() {
+                    @Override
+                    public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                        assertEquals(TASKHEADS.get(1).getId(), taskHeadDetails.get(0).getTaskHead().getId());
+                        assertEquals(TASKHEADS.get(1).getTitle(), taskHeadDetails.get(0).getTaskHead().getTitle());
 
-                assertThat(taskHeadDetails.size(), is(1));
+                        assertThat(taskHeadDetails.size(), is(1));
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        fail();
+                    }
+                };
+                mTaskLocalDataSource.getTaskHeadDetails(loadTaskHeadDetailsCallback);
             }
 
             @Override
-            public void onDataNotAvailable() {
+            public void onDeleteFail() {
                 fail();
             }
-        };
-        mTaskLocalDataSource.getTaskHeadDetails(loadTaskHeadDetailsCallback);
-
-        deleteStubbedTaskHead();
+        });
     }
 
     @Test
@@ -224,8 +227,6 @@ public class TaskHeadLocalDataSourceTest {
             }
         };
         mTaskLocalDataSource.getTaskHeadDetails(loadTaskHeadDetailsCallback);
-
-        deleteStubbedTaskHead();
     }
 
     /*
@@ -248,6 +249,10 @@ public class TaskHeadLocalDataSourceTest {
         // Verify that no data in Local db
         List<Friend> friends = retrieveSavedFriends();
         assertEquals(friends.size(), 0);
+
+        // Verify that cascade is succeeded
+        Cursor c = mDbHelper.query(PersistenceContract.MemberEntry.TABLE_NAME, null, null, null, null, null, null);
+        assertEquals(c.getCount(), 0);
     }
 
     @Test
@@ -384,6 +389,7 @@ public class TaskHeadLocalDataSourceTest {
 
     @After
     public void tearDown() {
+        deleteStubbedTaskHead();
         mDbHelper.close();
     }
 

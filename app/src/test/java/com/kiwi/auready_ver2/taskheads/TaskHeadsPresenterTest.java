@@ -26,6 +26,7 @@ import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAILS;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -45,6 +46,9 @@ public class TaskHeadsPresenterTest {
 
     @Captor
     private ArgumentCaptor<TaskDataSource.InitLocalDataCallback> mInitLocalDataCallbackCaptor;
+
+    @Captor
+    private ArgumentCaptor<TaskDataSource.DeleteTaskHeadsCallback> mDeleteTaskHeadsCallbackCaptor;
 
     @Before
     public void setup() {
@@ -76,7 +80,7 @@ public class TaskHeadsPresenterTest {
 
         ArgumentCaptor<List> showTaskHeadsArgumentCaptor = ArgumentCaptor.forClass(List.class);
         verify(mTaskHeadView).showTaskHeads(showTaskHeadsArgumentCaptor.capture());
-        assertTrue(showTaskHeadsArgumentCaptor.getValue().size() == TASKHEADS.size());
+        assertTrue(showTaskHeadsArgumentCaptor.getValue().size() == TASKHEAD_DETAILS.size());
     }
 
     @Test
@@ -88,7 +92,7 @@ public class TaskHeadsPresenterTest {
 
         mTaskHeadsPresenter.deleteTaskHeads(TASKHEADS);
 
-        verify(mRepository).deleteTaskHeads(taskHeadIds);
+        verify(mRepository).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
     }
 
     @Test
