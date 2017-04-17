@@ -59,12 +59,12 @@ public class TaskHeadDetailLocalDataSourceTest {
         // Save new members without taskHeadId_fk
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> tmpMembers = new ArrayList<>();
-        tmpMembers.add(new Member("memberId0", null, "friendId", "memberName0", "memberEmail0"));
-        tmpMembers.add(new Member("memberId1", null, "friendId", "memberName1", "memberEmail1"));
+        tmpMembers.add(new Member("memberId0", null, "userId", "memberName0", "memberEmail0"));
+        tmpMembers.add(new Member("memberId1", null, "userId", "memberName1", "memberEmail1"));
         // Set taskHeadId to the new members
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), TASKHEAD.getId(), member.getFriendId(), member.getName(), member.getEmail()));
+            members.add(new Member(member.getId(), TASKHEAD.getId(), member.getUserId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();
@@ -72,7 +72,7 @@ public class TaskHeadDetailLocalDataSourceTest {
             ContentValues memberValues = new ContentValues();
             memberValues.put(MemberEntry.COLUMN_ID, member.getId());
             memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-            memberValues.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            memberValues.put(MemberEntry.COLUMN_USER_ID, member.getUserId());
             memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
             memberValuesList.add(memberValues);
         }
@@ -219,8 +219,8 @@ public class TaskHeadDetailLocalDataSourceTest {
         TaskDataSource.EditTaskHeadDetailCallback editCallback = Mockito.mock(TaskDataSource.EditTaskHeadDetailCallback.class);
         // Add 2 members
         List<Member> addingMembers = new ArrayList<>(0);
-        addingMembers.add(new Member("addingMemberId1", taskHeadId, "friendId", "addingMemberName1", "addingMemberEmail1"));
-        addingMembers.add(new Member("addingMemberId2", taskHeadId, "friendId", "addingMemberName2", "addingMemberEmail2"));
+        addingMembers.add(new Member("addingMemberId1", taskHeadId, "userId", "addingMemberName1", "addingMemberEmail1"));
+        addingMembers.add(new Member("addingMemberId2", taskHeadId, "userId", "addingMemberName2", "addingMemberEmail2"));
         mLocalDataSource.editTaskHeadDetail(TASKHEAD_DETAIL.getTaskHead(), addingMembers, new ArrayList<String>(0), editCallback);
         verify(editCallback).onEditSuccess();
 
@@ -266,7 +266,7 @@ public class TaskHeadDetailLocalDataSourceTest {
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
+            members.add(new Member(member.getId(), taskHeadId, member.getUserId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();
@@ -274,7 +274,7 @@ public class TaskHeadDetailLocalDataSourceTest {
             ContentValues memberValues = new ContentValues();
             memberValues.put(MemberEntry.COLUMN_ID, member.getId());
             memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-            memberValues.put(MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            memberValues.put(MemberEntry.COLUMN_USER_ID, member.getUserId());
             memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
             memberValuesList.add(memberValues);
         }

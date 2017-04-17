@@ -78,10 +78,10 @@ public class FriendsPresenterTest {
     @Test
     public void deleteFriendFromRepo_updateView() {
         Friend friend = FRIENDS.get(0);
-        mFriendsPresenter.deleteFriend(friend.getId());
+        mFriendsPresenter.deleteFriend(friend.getUserId());
 
         // Verify deleteFriend is called
-        verify(mFriendRepository).deleteFriend((eq(friend.getId())));
+        verify(mFriendRepository).deleteFriend((eq(friend.getUserId())));
         // Update view
     }
 }

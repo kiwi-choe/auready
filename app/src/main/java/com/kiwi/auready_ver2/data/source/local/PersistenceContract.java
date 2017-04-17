@@ -29,7 +29,7 @@ public final class PersistenceContract {
         public static final String TABLE_NAME = "member";
         public static final String COLUMN_ID = "_id";
         public static final String COLUMN_HEAD_ID_FK = "taskheadid";
-        public static final String COLUMN_FRIEND_ID_FK = "friendid";
+        public static final String COLUMN_USER_ID = "userid";
         public static final String COLUMN_NAME = "name";
         public static final String COLUMN_EMAIL = "email";
     }
@@ -103,11 +103,9 @@ public final class PersistenceContract {
                         MemberEntry.COLUMN_HEAD_ID_FK + TEXT_TYPE + COMMA_SEP +
                         MemberEntry.COLUMN_NAME + TEXT_TYPE + COMMA_SEP +
                         MemberEntry.COLUMN_EMAIL + TEXT_TYPE + COMMA_SEP +
-                        MemberEntry.COLUMN_FRIEND_ID_FK + TEXT_TYPE + COMMA_SEP +
+                        MemberEntry.COLUMN_USER_ID + TEXT_TYPE + COMMA_SEP +
                         FOREIGN_KEY + MemberEntry.COLUMN_HEAD_ID_FK +
-                        REFERENCES + TaskHeadEntry.TABLE_NAME + "(" + TaskHeadEntry.COLUMN_ID + ")" + COMMA_SEP +
-                        FOREIGN_KEY + MemberEntry.COLUMN_FRIEND_ID_FK +
-                        REFERENCES + FriendEntry.TABLE_NAME + "(" + FriendEntry.COLUMN_ID + ")" +
+                        REFERENCES + TaskHeadEntry.TABLE_NAME + "(" + TaskHeadEntry.COLUMN_ID + ")" +
                         ON_DELETE_CASCADE +
                         " )";
 

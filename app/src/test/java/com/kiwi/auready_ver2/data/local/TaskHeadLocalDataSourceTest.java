@@ -68,10 +68,10 @@ public class TaskHeadLocalDataSourceTest {
 //        TaskDataSource.LoadTaskHeadDetailsCallback loadTaskHeadDetailsCallback = new TaskDataSource.LoadTaskHeadDetailsCallback() {
 //            @Override
 //            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-//                assertEquals(TASKHEADS.get(0).getId(), taskHeadDetails.get(0).getTaskHead().getId());
+//                assertEquals(TASKHEADS.get(0).getUserId(), taskHeadDetails.get(0).getTaskHead().getUserId());
 //                assertEquals(TASKHEADS.get(0).getTitle(), taskHeadDetails.get(0).getTaskHead().getTitle());
 //
-//                assertEquals(TASKHEADS.get(1).getId(), taskHeadDetails.get(1).getTaskHead().getId());
+//                assertEquals(TASKHEADS.get(1).getUserId(), taskHeadDetails.get(1).getTaskHead().getUserId());
 //                assertEquals(TASKHEADS.get(1).getTitle(), taskHeadDetails.get(1).getTaskHead().getTitle());
 //            }
 //
@@ -101,10 +101,10 @@ public class TaskHeadLocalDataSourceTest {
                 // Set members
                 String memberId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_ID));
                 String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK));
-                String friendId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_FRIEND_ID_FK));
+                String userId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_USER_ID));
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_NAME));
                 String email = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_EMAIL));
-                Member member = new Member(memberId, taskHeadId_fk, friendId, name, email);
+                Member member = new Member(memberId, taskHeadId_fk, userId, name, email);
 
                 if (!taskHeadId_fk.equals(taskHeadIdOfPreRow)) {
                     i++;
@@ -308,7 +308,7 @@ public class TaskHeadLocalDataSourceTest {
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
+            members.add(new Member(member.getId(), taskHeadId, member.getUserId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();
@@ -316,7 +316,7 @@ public class TaskHeadLocalDataSourceTest {
             ContentValues memberValues = new ContentValues();
             memberValues.put(PersistenceContract.MemberEntry.COLUMN_ID, member.getId());
             memberValues.put(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-            memberValues.put(PersistenceContract.MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            memberValues.put(PersistenceContract.MemberEntry.COLUMN_USER_ID, member.getUserId());
             memberValues.put(PersistenceContract.MemberEntry.COLUMN_NAME, member.getName());
             memberValuesList.add(memberValues);
         }
@@ -326,7 +326,7 @@ public class TaskHeadLocalDataSourceTest {
 
     private void saveStubbedFriend(Friend friend) {
         ContentValues values = new ContentValues();
-        values.put(PersistenceContract.FriendEntry.COLUMN_ID, friend.getId());
+        values.put(PersistenceContract.FriendEntry.COLUMN_ID, friend.getUserId());
         values.put(PersistenceContract.FriendEntry.COLUMN_EMAIL, friend.getEmail());
         values.put(PersistenceContract.FriendEntry.COLUMN_NAME, friend.getName());
 
@@ -364,7 +364,7 @@ public class TaskHeadLocalDataSourceTest {
             // Coz member of the new taskHeadDetail didnt set taskHeadId
             List<Member> members = new ArrayList<>();
             for (Member member : tmpMembers) {
-                members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
+                members.add(new Member(member.getId(), taskHeadId, member.getUserId(), member.getName(), member.getEmail()));
             }
 
             List<ContentValues> memberValuesList = new ArrayList<>();
@@ -372,7 +372,7 @@ public class TaskHeadLocalDataSourceTest {
                 ContentValues memberValues = new ContentValues();
                 memberValues.put(PersistenceContract.MemberEntry.COLUMN_ID, member.getId());
                 memberValues.put(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-                memberValues.put(PersistenceContract.MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+                memberValues.put(PersistenceContract.MemberEntry.COLUMN_USER_ID, member.getUserId());
                 memberValues.put(PersistenceContract.MemberEntry.COLUMN_NAME, member.getName());
                 memberValues.put(PersistenceContract.MemberEntry.COLUMN_EMAIL, member.getEmail());
                 memberValuesList.add(memberValues);

@@ -13,7 +13,7 @@ public class Friend implements Parcelable {
 
     public static final String KEY = "friendList";
     @SerializedName("_id")
-    private String id;         // column id of Friend table
+    private String userId;         // column userId of Friend table
     @SerializedName("email")
     private String email;
     @SerializedName("name")
@@ -31,14 +31,14 @@ public class Friend implements Parcelable {
         return this.name;
     }
 
-    public Friend(String id, String email, String name) {
-        this.id = id;
+    public Friend(String userId, String email, String name) {
+        this.userId = userId;
         this.email = email;
         this.name = name;
     }
 
-    public String getId() {
-        return id;
+    public String getUserId() {
+        return userId;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class Friend implements Parcelable {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Friend friend = (Friend)o;
-        return Objects.equal(this.id, friend.id) &&
+        return Objects.equal(this.userId, friend.userId) &&
                 Objects.equal(this.email, friend.getEmail());
     }
 
@@ -62,7 +62,7 @@ public class Friend implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
+        dest.writeString(userId);
         dest.writeString(email);
         dest.writeString(name);
     }
@@ -80,7 +80,7 @@ public class Friend implements Parcelable {
     };
 
     protected Friend(Parcel in) {
-        id = in.readString();
+        userId = in.readString();
         email = in.readString();
         name = in.readString();
     }

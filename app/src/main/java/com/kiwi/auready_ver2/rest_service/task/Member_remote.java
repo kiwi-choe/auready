@@ -9,16 +9,16 @@ import com.google.gson.annotations.SerializedName;
 public class Member_remote {
     @SerializedName("id")
     private final String id;
-    @SerializedName("friendId")
-    private final String friendId;
+    @SerializedName("userId")
+    private final String userId;
     @SerializedName("name")
     private final String name;
     @SerializedName("email")
     private final String email;
 
-    public Member_remote(String id, String friendId, String name, String email) {
+    public Member_remote(String id, String userId, String name, String email) {
         this.id = id;
-        this.friendId = friendId;
+        this.userId = userId;
         this.name = name;
         this.email = email;
     }
@@ -35,7 +35,7 @@ public class Member_remote {
         return email;
     }
 
-    public String getFriendId() {
-        return friendId;
+    public String getUserId() {
+        return userId;
     }
 }

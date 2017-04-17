@@ -90,7 +90,7 @@ public class FriendLocalDataSource implements FriendDataSource {
         checkNotNull(friend);
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_ID, friend.getId());
+        values.put(COLUMN_ID, friend.getUserId());
         values.put(COLUMN_EMAIL, friend.getEmail());
         values.put(COLUMN_NAME, friend.getName());
 

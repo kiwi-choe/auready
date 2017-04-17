@@ -39,8 +39,8 @@ public class FriendsActivity extends AppCompatActivity {
 
             Bundle bundle = new Bundle();
             if(getIntent().hasExtra(FriendsFragment.EXTRA_KEY_MEMBERS)) {
-                ArrayList<String> friendIdOfMembers = getIntent().getStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS);
-                bundle.putStringArrayList(FriendsFragment.EXTRA_KEY_MEMBERS, friendIdOfMembers);
+                ArrayList<String> userIdOfMembers = getIntent().getStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS);
+                bundle.putStringArrayList(FriendsFragment.EXTRA_KEY_MEMBERS, userIdOfMembers);
             }
             friendsFragment.setArguments(bundle);
 

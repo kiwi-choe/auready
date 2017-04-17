@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.login;
 
+import com.kiwi.auready_ver2.data.User;
 import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
 import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 import com.kiwi.auready_ver2.rest_service.login.ILoginService;
@@ -20,8 +21,9 @@ public class MockSuccessLoginService_viewtest implements ILoginService {
     public static final String STUB_NAME = "loggedInName";
     private static final String STUB_EMAIL = "loggedInEmail";
 
+    private static final User STUB_USERINFO = new User("stub_id", STUB_EMAIL, STUB_NAME);
     public static final LoginResponse RESPONSE =
-            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME, STUB_EMAIL);
+            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_USERINFO);
 
     private final BehaviorDelegate<ILoginService> delegate;
 

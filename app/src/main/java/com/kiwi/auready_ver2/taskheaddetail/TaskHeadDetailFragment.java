@@ -144,12 +144,12 @@ public class TaskHeadDetailFragment extends Fragment implements
     private void openFriendsView() {
         Intent intent = new Intent(getActivity(), FriendsActivity.class);
 
-        // Set friendId of members
-        ArrayList<String> friendIdOfMembers = new ArrayList<>();
+        // Set userId of members
+        ArrayList<String> userIdOfMembers = new ArrayList<>();
         for (Member member : mMembers) {
-            friendIdOfMembers.add(member.getFriendId());
+            userIdOfMembers.add(member.getUserId());
         }
-        intent.putStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS, friendIdOfMembers);
+        intent.putStringArrayListExtra(FriendsFragment.EXTRA_KEY_MEMBERS, userIdOfMembers);
 
         if (mActionMode != null) {
             mActionMode.finish();
@@ -246,11 +246,11 @@ public class TaskHeadDetailFragment extends Fragment implements
         // Add the current user to members
         AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(getActivity().getApplicationContext());
         // testing
-        String myEmail = accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "");
-        String myName = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
-        String myIdOfFriend = "stub_friendId";
-        Friend meOfFriend = new Friend(myIdOfFriend, myEmail, myName);
-        Member me = new Member(null, meOfFriend.getId(), meOfFriend.getName(), meOfFriend.getEmail());
+        String email = accessTokenStore.getStringValue(AccessTokenStore.USER_EMAIL, "");
+        String name = accessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
+        String userId = accessTokenStore.getStringValue(AccessTokenStore.USER_ID, "");
+        Friend meOfFriend = new Friend(userId, email, name);
+        Member me = new Member(null, meOfFriend.getUserId(), meOfFriend.getName(), meOfFriend.getEmail());
         mMembers.add(0, me);
     }
 

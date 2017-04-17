@@ -1,5 +1,7 @@
 package com.kiwi.auready_ver2.rest_service.login;
 
+import com.kiwi.auready_ver2.data.User;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Path;
@@ -15,8 +17,9 @@ public class MockSuccessLoginService implements ILoginService {
     static final String STUB_NAME = "loggedInName";
     private static final String STUB_EMAIL = "stub_email";
 
+    private static final User STUB_USERINFO = new User("stub_id", STUB_EMAIL, STUB_NAME);
     public static final LoginResponse RESPONSE =
-            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_NAME, STUB_EMAIL);
+            new LoginResponse(STUB_ACCESSTOKEN, STUB_REFRESHTOKEN, STUB_USERINFO);
 
     private final BehaviorDelegate<ILoginService> delegate;
 

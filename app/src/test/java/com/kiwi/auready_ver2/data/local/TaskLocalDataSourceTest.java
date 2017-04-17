@@ -304,7 +304,7 @@ public class TaskLocalDataSourceTest {
         // Coz member of the new taskHeadDetail didnt set taskHeadId
         List<Member> members = new ArrayList<>();
         for (Member member : tmpMembers) {
-            members.add(new Member(member.getId(), taskHeadId, member.getFriendId(), member.getName(), member.getEmail()));
+            members.add(new Member(member.getId(), taskHeadId, member.getUserId(), member.getName(), member.getEmail()));
         }
 
         List<ContentValues> memberValuesList = new ArrayList<>();
@@ -312,7 +312,7 @@ public class TaskLocalDataSourceTest {
             ContentValues memberValues = new ContentValues();
             memberValues.put(PersistenceContract.MemberEntry.COLUMN_ID, member.getId());
             memberValues.put(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
-            memberValues.put(PersistenceContract.MemberEntry.COLUMN_FRIEND_ID_FK, member.getFriendId());
+            memberValues.put(PersistenceContract.MemberEntry.COLUMN_USER_ID, member.getUserId());
             memberValues.put(PersistenceContract.MemberEntry.COLUMN_NAME, member.getName());
             memberValuesList.add(memberValues);
         }

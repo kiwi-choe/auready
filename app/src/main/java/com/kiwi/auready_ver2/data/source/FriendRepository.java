@@ -114,7 +114,7 @@ public class FriendRepository implements FriendDataSource {
         mCacheFriends.clear();
         for (Friend friend : friends) {
 
-            mCacheFriends.put(friend.getId(), friend);
+            mCacheFriends.put(friend.getUserId(), friend);
         }
     }
 
@@ -140,6 +140,6 @@ public class FriendRepository implements FriendDataSource {
         if (mCacheFriends == null) {
             mCacheFriends = new LinkedHashMap<>();
         }
-        mCacheFriends.put(friend.getId(), friend);
+        mCacheFriends.put(friend.getUserId(), friend);
     }
 }

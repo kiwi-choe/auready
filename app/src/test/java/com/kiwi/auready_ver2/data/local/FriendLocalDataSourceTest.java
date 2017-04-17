@@ -104,7 +104,7 @@ public class FriendLocalDataSourceTest {
         saveStubbedFriends(FRIENDS);
 
         Friend deletingFriend = FRIENDS.get(1);
-        mLocalDataSource.deleteFriend(deletingFriend.getId());
+        mLocalDataSource.deleteFriend(deletingFriend.getUserId());
 
         // Verify that the deletingFriend is not exist
         List<Friend> friends = retrieveSavedFriends();

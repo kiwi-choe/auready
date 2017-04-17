@@ -95,7 +95,7 @@ class FriendsAdapter extends BaseAdapter {
 
         // Set check to the added member already
         for(String id:mAddedMemberIds) {
-            if(friend.getId().equals(id)) {
+            if(friend.getUserId().equals(id)) {
                 viewHolder.friendCheckbox.setEnabled(false);
             }
         }

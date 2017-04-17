@@ -76,7 +76,7 @@ public class FriendRepositoryTest {
         mRepository.saveFriend(newFriend , mSaveCallback);
         setFriendsSavedSuccess(mLocalDataSource, newFriend);
 
-        assertThat(mRepository.mCacheFriends.containsKey(newFriend.getId()), is(true));
+        assertThat(mRepository.mCacheFriends.containsKey(newFriend.getUserId()), is(true));
     }
 
     @Test
@@ -124,11 +124,11 @@ public class FriendRepositoryTest {
         saveStubbedFriends(FRIENDS);
 
         Friend deletingFriend = FRIENDS.get(1);
-        mRepository.deleteFriend(deletingFriend.getId());
+        mRepository.deleteFriend(deletingFriend.getUserId());
 
-        verify(mLocalDataSource).deleteFriend(eq(deletingFriend.getId()));
+        verify(mLocalDataSource).deleteFriend(eq(deletingFriend.getUserId()));
 
-        assertThat(mRepository.mCacheFriends.containsKey(deletingFriend.getId()), is(false));
+        assertThat(mRepository.mCacheFriends.containsKey(deletingFriend.getUserId()), is(false));
         assertThat(mRepository.mCacheFriends.size(), is(2));
     }
 

@@ -226,7 +226,7 @@ public class FriendsFragment extends Fragment implements FriendsContract.View {
         dialog.setPositiveButton(R.string.alert_positive_button, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPresenter.deleteFriend(clickedFriend.getId());
+                mPresenter.deleteFriend(clickedFriend.getUserId());
             }
         });
         // Cancel
