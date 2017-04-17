@@ -17,8 +17,8 @@ public interface ITaskService {
 
     @POST("/taskheads/")
     Call<Void> saveTaskHeadDetail(@Body TaskHeadDetail_remote taskHeadRemote);
-    @GET("/taskheads/{name}")
-    Call<List<TaskHeadDetail_remote>> getTaskHeadDetails(@Path("name") String name);
+    @GET("/taskheads/{userid}")
+    Call<List<TaskHeadDetail_remote>> getTaskHeadDetails(@Path("userid") String userId);
 
     @HTTP(method = "DELETE", path = "/taskheads", hasBody = true)
     Call<Void> deleteTaskHeads(@Body DeletingIds_remote ids);

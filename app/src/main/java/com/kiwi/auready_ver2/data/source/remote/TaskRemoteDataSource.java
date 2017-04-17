@@ -81,8 +81,8 @@ public class TaskRemoteDataSource implements TaskDataSource {
         ITaskService taskService =
                 ServiceGenerator.createService(ITaskService.class, accessToken);
 
-        String name = mAccessTokenStore.getStringValue(AccessTokenStore.USER_NAME, "");
-        Call<List<TaskHeadDetail_remote>> call = taskService.getTaskHeadDetails(name);
+        String userId = mAccessTokenStore.getStringValue(AccessTokenStore.USER_ID, "");
+        Call<List<TaskHeadDetail_remote>> call = taskService.getTaskHeadDetails(userId);
         call.enqueue(new Callback<List<TaskHeadDetail_remote>>() {
             @Override
             public void onResponse(Call<List<TaskHeadDetail_remote>> call, Response<List<TaskHeadDetail_remote>> response) {
@@ -154,7 +154,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
             List<Member_remote> member_remotes = taskHeadRemote.getMembers();
             for (Member_remote member_remote : member_remotes) {
                 Member newMember = new Member(member_remote.getId(),
-                        newTaskHead.getId(), member_remote.getFriendId(),
+                        newTaskHead.getId(), member_remote.getUserId(),
                         member_remote.getName(), member_remote.getEmail());
                 members.add(newMember);
             }
@@ -199,7 +199,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         for (Member member : members) {
             Member_remote memberRemote = new Member_remote(
                     member.getId(),
-                    member.getFriendId(),
+                    member.getUserId(),
                     member.getName(),
                     member.getEmail());
             memberRemotes.add(memberRemote);
