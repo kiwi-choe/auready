@@ -18,7 +18,7 @@ public interface LoginContract {
 
         void showLoginFailMessage(int stringResource);
 
-        void setLoggedInUserInfo(String accessToken, String email, String name);
+        void setLoggedInUserInfo(String accessToken, String email, String name, String remote_userid);
     }
 
     interface Presenter extends BasePresenter {
