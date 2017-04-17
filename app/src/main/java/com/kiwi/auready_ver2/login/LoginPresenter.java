@@ -7,11 +7,12 @@ import android.util.Log;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.notification.NotificationService;
+import com.kiwi.auready_ver2.data.User;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.login.ClientCredential;
 import com.kiwi.auready_ver2.rest_service.login.ILoginService;
 import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
+import com.kiwi.auready_ver2.rest_service.notification.INotificationService;
 import com.kiwi.auready_ver2.util.LoginUtils;
 
 import java.util.regex.Matcher;
@@ -23,7 +24,7 @@ import retrofit2.Response;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by kiwi on 6/11/16.
+ * Login
  */
 public class LoginPresenter implements LoginContract.Presenter {
 
@@ -122,8 +123,8 @@ public class LoginPresenter implements LoginContract.Presenter {
     /*
     * after login succeeded, update 3 parts
     * 1. UI
-    * 2. SharedPreferences
-    * 3. register instanceID for FCM
+    * 2. register instanceID for FCM
+    * 3. Save loggedInUser info in SharedPreferences
     * */
     @Override
     public void onLoginSuccess(LoginResponse loginResponse) {
@@ -131,22 +132,37 @@ public class LoginPresenter implements LoginContract.Presenter {
         // Stop progressBar
 
         // 1. send logged in email to MainView
-        String name = loginResponse.getUserName();
-        String email = loginResponse.getUserEmail();
-        mLoginView.setLoginSuccessUI(email, name);
+        final User user = loginResponse.getUserInfo();
+        mLoginView.setLoginSuccessUI(user.getEmail(), user.getName());
 
-        // 2. Set LoggedInUser info to SharedPreferences
-//        void setLoggedInUserInfo(TokenInfo tokenInfo, String email, String name, String myIdOfFriend);
-        String accessToken = loginResponse.getAccessToken();
-        mLoginView.setLoggedInUserInfo(
-                accessToken,
-                email,
-                name);
+        final String accessToken = loginResponse.getAccessToken();
 
-        // 3. Send instanceID to the app server
+        // 2. Send instanceID to the app server
         Log.d(TAG, "entered into onLoginSuccess()");
-        String token = FirebaseInstanceId.getInstance().getToken();
-        NotificationService.sendRegistrationToServer(token);
+        String instanceId = FirebaseInstanceId.getInstance().getToken();
+        sendRegistrationToServer(instanceId, accessToken);
+
+        // 3. Set LoggedInUser info to SharedPreferences// 3. Set LoggedInUser info to SharedPreferences
+        mLoginView.setLoggedInUserInfo(accessToken, user.getEmail(), user.getName(), user.getId());
+    }
+
+    private static void sendRegistrationToServer(String instanceId, String accessToken) {
+
+        INotificationService service = ServiceGenerator.createService(INotificationService.class, accessToken);
+        Call<Void> call = service.sendRegistration(instanceId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "success to send instanceID");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(TAG, "fail to send instanceID, ", t);
+            }
+        });
     }
 
     @Override

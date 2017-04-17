@@ -120,10 +120,10 @@ public class LoginFragment extends Fragment implements
     }
 
     @Override
-    public void setLoggedInUserInfo(String accessToken, String email, String name) {
+    public void setLoggedInUserInfo(String accessToken, String email, String name, String remote_userId) {
 
         // Save tokenInfo to SharedPreferences
-        mAccessTokenStore.save(accessToken, email, name);
+        mAccessTokenStore.save(accessToken, email, name, remote_userId);
     }
 
 
