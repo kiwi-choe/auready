@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.rest_service.login;
 
 import com.google.gson.annotations.SerializedName;
+import com.kiwi.auready_ver2.data.User;
 
 /**
  * response of '/auth/token' api
@@ -14,20 +15,13 @@ public class LoginResponse {
     private final String refreshToken;
 
     // User Info
-    @SerializedName("user_name")
-    private final String userName;
-    @SerializedName("user_email")
-    private final String userEmail;
+    @SerializedName("user_info")
+    private User userInfo;
 
-    public LoginResponse(String accessToken, String refreshToken, String userName, String userEmail) {
+    public LoginResponse(String accessToken, String refreshToken, User userInfo) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
-        this.userName = userName;
-        this.userEmail = userEmail;
-    }
-
-    public String getUserName() {
-        return userName;
+        this.userInfo = userInfo;
     }
 
     public String getAccessToken() {
@@ -38,7 +32,8 @@ public class LoginResponse {
         return refreshToken;
     }
 
-    public String getUserEmail() {
-        return userEmail;
+
+    public User getUserInfo() {
+        return userInfo;
     }
 }

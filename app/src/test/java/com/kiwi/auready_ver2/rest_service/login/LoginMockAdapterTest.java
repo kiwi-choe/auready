@@ -63,7 +63,7 @@ public class LoginMockAdapterTest {
 
         // Asserting response
         assertTrue(loginResponse.isSuccessful());
-        assertEquals(loginResponse.body().getUserName(), MockSuccessLoginService.STUB_NAME);
+        assertEquals(loginResponse.body().getUserInfo().getName(), MockSuccessLoginService.STUB_NAME);
     }
 
     @Test

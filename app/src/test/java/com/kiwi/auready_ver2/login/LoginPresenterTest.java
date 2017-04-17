@@ -3,9 +3,9 @@ package com.kiwi.auready_ver2.login;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
-import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 import com.kiwi.auready_ver2.data.source.FriendRepository;
 import com.kiwi.auready_ver2.friend.FriendsContract;
+import com.kiwi.auready_ver2.rest_service.login.LoginResponse;
 import com.kiwi.auready_ver2.rest_service.login.MockSuccessLoginService;
 
 import org.junit.Before;
@@ -52,7 +52,7 @@ public class LoginPresenterTest {
         LoginResponse loginResponse = MockSuccessLoginService.RESPONSE;
         mLoginPresenter.onLoginSuccess(loginResponse);
 
-        verify(mLoginView).setLoginSuccessUI(eq(EMAIL), eq(loginResponse.getUserName()));
+        verify(mLoginView).setLoginSuccessUI(eq(EMAIL), eq(loginResponse.getUserInfo().getName()));
     }
 
 
@@ -65,7 +65,8 @@ public class LoginPresenterTest {
         verify(mLoginView).setLoggedInUserInfo(
                 eq(successResponse.getAccessToken()),
                 eq(EMAIL),
-                eq(successResponse.getUserName()));
+                eq(successResponse.getUserInfo().getName()),
+                eq(successResponse.getUserInfo().getId()));
     }
 
     @Test
