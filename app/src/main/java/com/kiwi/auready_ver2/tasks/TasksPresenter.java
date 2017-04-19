@@ -47,7 +47,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final GetTasksOfTaskHead mGetTasksOfTaskHead;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
-                          String taskHeadId,
+                          @NonNull String taskHeadId,
                           @NonNull TasksContract.View tasksView,
                           @NonNull GetMembers getMembers,
                           @NonNull GetTasksOfMember getTasksOfMember,
@@ -56,7 +56,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull EditTasks editTasks,
                           @NonNull GetTasksOfTaskHead getTasksOfTaskHead) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
-        mTaskHeadId = taskHeadId;
+        mTaskHeadId = checkNotNull(taskHeadId, "taskHeadId cannot be null!");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetMembers = checkNotNull(getMembers);
         mGetTasksOfMember = checkNotNull(getTasksOfMember);
@@ -75,10 +75,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         if (mTasksView != null) {
             mTasksView.showLoadProgressBar();
         }
-
-        if (mTaskHeadId != null) {
-            populateMembers();
-        }
+        populateMembers();
     }
 
     @Override
