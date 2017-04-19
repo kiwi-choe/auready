@@ -95,10 +95,10 @@ public class TaskRepositoryTest {
     public void getTaskHeadsWithLocalUnavailable() {
         mRepository.getTaskHeadDetails(mLoadTaskHeadDetailsCallback);
 
-        // and Remote data source has no data available too
-        setTaskHeadDetailsNotAvailable(mRemoteDataSource);
         // Local data source has no data available
         setTaskHeadDetailsNotAvailable(mLocalDataSource);
+        // and Remote data source has no data available too
+        setTaskHeadDetailsNotAvailable(mRemoteDataSource);
 
         verify(mLoadTaskHeadDetailsCallback).onDataNotAvailable();
     }
@@ -107,7 +107,6 @@ public class TaskRepositoryTest {
     public void getTaskHeads_requestsTaskHeadsFromLocal() {
         mRepository.getTaskHeadDetails(mLoadTaskHeadDetailsCallback);
 
-        setTaskHeadDetailsNotAvailable(mRemoteDataSource);
         setTaskHeadDetailsAvailable(mLocalDataSource, TASKHEAD_DETAILS);
 
         // Then taskHeads are loaded from the local
@@ -193,10 +192,10 @@ public class TaskRepositoryTest {
         taskHeadIds.add(TASKHEADS.get(1).getId());
         mRepository.deleteTaskHeads(taskHeadIds, mDeleteTaskHeadsCallback);
 
-        verify(mRemoteDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
+        verify(mLocalDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
         mDeleteTaskHeadsCallbackCaptor.getValue().onDeleteSuccess();
 
-        verify(mLocalDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
+        verify(mRemoteDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
         mDeleteTaskHeadsCallbackCaptor.getValue().onDeleteSuccess();
     }
     @Test

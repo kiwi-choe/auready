@@ -104,20 +104,19 @@ public class TaskRepository implements TaskDataSource {
     public void getTaskHeadDetails(@NonNull final LoadTaskHeadDetailsCallback callback) {
         checkNotNull(callback);
 
-        // Get taskheads, members and tasks at once from Remote
-        mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
+        mLocalDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
             @Override
             public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-                refreshLocalDataSource(taskHeadDetails);
                 callback.onTaskHeadDetailsLoaded(taskHeadDetails);
             }
 
             @Override
             public void onDataNotAvailable() {
-
-                mLocalDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
+                // Get taskheads, members and tasks at once from Remote
+                mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
                     @Override
                     public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                        refreshLocalDataSource(taskHeadDetails);
                         callback.onTaskHeadDetailsLoaded(taskHeadDetails);
                     }
 
@@ -138,22 +137,20 @@ public class TaskRepository implements TaskDataSource {
                 mCachedTaskHeads.remove(id);
             }
         }
-
-        mRemoteDataSource.deleteTaskHeads(taskheadIds, new DeleteTaskHeadsCallback() {
+        mLocalDataSource.deleteTaskHeads(taskheadIds, new DeleteTaskHeadsCallback() {
             @Override
             public void onDeleteSuccess() {
-
-                mLocalDataSource.deleteTaskHeads(taskheadIds, new DeleteTaskHeadsCallback() {
+                mRemoteDataSource.deleteTaskHeads(taskheadIds, new DeleteTaskHeadsCallback() {
                     @Override
                     public void onDeleteSuccess() {
-                        callback.onDeleteSuccess();
                     }
 
                     @Override
                     public void onDeleteFail() {
-                        callback.onDeleteFail();
                     }
                 });
+
+                callback.onDeleteSuccess();
             }
 
             @Override
@@ -161,22 +158,24 @@ public class TaskRepository implements TaskDataSource {
                 callback.onDeleteFail();
             }
         });
+
     }
 
     private void refreshLocalDataSource(final List<TaskHeadDetail> taskHeadDetails) {
         mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
             @Override
             public void onDeleteAllSuccess() {
-
-                for(TaskHeadDetail taskHeadDetail: taskHeadDetails) {
+                for(final TaskHeadDetail taskHeadDetail: taskHeadDetails) {
                     mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
                         @Override
-                        public void onSaveSuccess() {}
+                        public void onSaveSuccess() {
+                        }
 
                         @Override
                         public void onSaveFailed() {}
                     });
                 }
+
             }
 
             @Override
