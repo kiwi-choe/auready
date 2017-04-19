@@ -109,21 +109,24 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         return sDb.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
     }
 
-    // the number of rows affected if a whereClause is passed in, 0 otherwise.
+    /*
+    * return value; isSuccess - is not invoked any exception
+    * */
     public boolean delete(String table, String whereClause, String[] whereArgs) {
         sDb = sDbHelper.getWritableDatabase();
 
-        int deletedRows = 0;
+        boolean isSuccess = true;
         sDb.beginTransaction();
         try {
-            deletedRows = sDb.delete(table, whereClause, whereArgs);
+            sDb.delete(table, whereClause, whereArgs);
             sDb.setTransactionSuccessful();
         } catch (SQLException e) {
             Log.e(TAG_SQLITE, "Could not delete the column in ( " + DATABASE_NAME + "). ", e);
+            isSuccess = false;
         } finally {
             sDb.endTransaction();
         }
-        return deletedRows != 0;
+        return isSuccess;
     }
 
     Cursor rawQuery(String sql, String[] selectionArgs) {

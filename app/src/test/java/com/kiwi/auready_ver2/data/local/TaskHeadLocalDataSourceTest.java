@@ -229,6 +229,27 @@ public class TaskHeadLocalDataSourceTest {
         mTaskLocalDataSource.getTaskHeadDetails(loadTaskHeadDetailsCallback);
     }
 
+    @Test
+    public void deleteAllTaskHeads_checkResultCountIsZero_invokeSuccessCallback() {
+        saveStubbedTaskHeadDetails(TASKHEAD_DETAILS);
+
+        final TaskDataSource.DeleteAllCallback callback = Mockito.mock(TaskDataSource.DeleteAllCallback.class);
+        mTaskLocalDataSource.deleteAllTaskHeads(callback);
+
+        TaskDataSource.LoadTaskHeadDetailsCallback loadCallback = new TaskDataSource.LoadTaskHeadDetailsCallback() {
+            @Override
+            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                fail();
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+                verify(callback).onDeleteAllSuccess();
+            }
+        };
+        mTaskLocalDataSource.getTaskHeadDetails(loadCallback);
+    }
     /*
     * Initialize All data in Local Database
     * */
@@ -270,6 +291,9 @@ public class TaskHeadLocalDataSourceTest {
         assertEquals(friends.size(), 0);
     }
 
+    /*
+    * Convenience methods
+    * */
     private List<Friend> retrieveSavedFriends() {
         List<Friend> friends = new ArrayList<>(0);
 
@@ -343,9 +367,6 @@ public class TaskHeadLocalDataSourceTest {
         mDbHelper.insert(PersistenceContract.NotificationEntry.TABLE_NAME, null, values);
     }
 
-    /*
-    * Convenience methods
-    * */
     private void saveStubbedTaskHeadDetails(List<TaskHeadDetail> taskHeadDetails) {
         for (TaskHeadDetail taskHeadDetail : taskHeadDetails) {
 
