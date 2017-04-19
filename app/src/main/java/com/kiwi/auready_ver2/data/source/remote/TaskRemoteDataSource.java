@@ -228,8 +228,59 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void editTaskHeadDetail(@NonNull TaskHead editTaskHead, @NonNull List<Member> addingMembers, @NonNull List<String> deletingMemberIds, @NonNull EditTaskHeadDetailCallback callback) {
+    public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
+                                   @NonNull List<Member> addingMembers,
+                                   @NonNull final EditTaskHeadDetailCallback callback) {
 
+        // Check network
+        if (!NetworkUtils.isOnline(mContext)) {
+            callback.onEditFailed();
+        }
+
+        // Check accessToken
+        String accessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        if (TextUtils.isEmpty(accessToken)) {
+            Log.d("Tag_TaskRemoteData", "no accessToken");
+            callback.onEditFailed();
+        }
+
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, accessToken);
+
+        // Make Object for remote
+        List<Member_remote> memberRemotes = new ArrayList<>();
+        for (Member member : addingMembers) {
+            Member_remote memberRemote = new Member_remote(
+                    member.getId(),
+                    member.getUserId(),
+                    member.getName(),
+                    member.getEmail());
+            memberRemotes.add(memberRemote);
+        }
+        TaskHeadDetail_remote editTaskHeadDetailRemote = new TaskHeadDetail_remote(
+                editTaskHead.getId(),
+                editTaskHead.getTitle(),
+                editTaskHead.getColor(),
+                memberRemotes);
+
+        Log.d("Tag_editTaskhead", String.valueOf(editTaskHead.getColor()));
+
+        Call<Void> call = taskService.editTaskHeadDetail(editTaskHead.getId(), editTaskHeadDetailRemote);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onEditSuccess();
+                } else {
+                    callback.onEditFailed();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onEditFailed();
+            }
+        });
     }
 
     @Override
