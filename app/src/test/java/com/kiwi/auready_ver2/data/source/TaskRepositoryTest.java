@@ -1,5 +1,6 @@
 package com.kiwi.auready_ver2.data.source;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS1;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASK;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEADS;
@@ -285,7 +287,7 @@ public class TaskRepositoryTest {
         // and the result that members are added
         List<Member> addingMembers = getAddingMembers(taskHead.getId(), editMembers);
         verify(mLocalDataSource).editTaskHeadDetail(
-                eq(editTaskHead), eq(addingMembers), any(List.class), mEditCallbackCaptor.capture());
+                eq(editTaskHead), eq(addingMembers), mEditCallbackCaptor.capture());
         // Verify that getAddingMembers function
         assertThat(addingMembers.size(), is(2));
         mEditCallbackCaptor.getValue().onEditSuccess();
@@ -294,44 +296,28 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void editTaskHeadDetail_saveEditedTaskHead_deleteMembers() {
-        // Save stubbed taskHeadDetails
-        List<TaskHeadDetail> savedTaskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
-        TaskHeadDetail original = savedTaskHeadDetails.get(0);
-
-        TaskHead taskHead = original.getTaskHead();
-        // Delete 1 members
-        List<Member> editMembers = new ArrayList<>();
-        editMembers.addAll(MEMBERS);
-        Member deletingMember = MEMBERS.get(0);
-        editMembers.remove(deletingMember);
-
-        TaskHeadDetail editTaskHeadDetail = new TaskHeadDetail(taskHead, editMembers);
-        mRepository.editTaskHeadDetailInRepo(editTaskHeadDetail, mEditCallback);
-
-        // Compare members
-        // and the result that members are deleted
-        List<String> deletingMemberIds = getDeletingMemberIds(taskHead.getId(), editMembers);
-        // Verify that getAddingMembers function
-        assertThat(deletingMemberIds.size(), is(1));
-
-        verify(mLocalDataSource).editTaskHeadDetail(
-                eq(taskHead), any(List.class), eq(deletingMemberIds), mEditCallbackCaptor.capture());
-        mEditCallbackCaptor.getValue().onEditSuccess();
-        assertThat(mRepository.mCachedMembers.containsKey(deletingMember.getId()), is(false));
-    }
-
-    @Test
     public void whenEditTaskHeadDetailSucceed_toLocal_firesOnEditSuccess() {
         mRepository.editTaskHeadDetailInRepo(TASKHEAD_DETAIL, mEditCallback);
 
         verify(mLocalDataSource).editTaskHeadDetail(
-                eq(TASKHEAD_DETAIL.getTaskHead()), any(List.class), any(List.class), mEditCallbackCaptor.capture());
+                eq(TASKHEAD_DETAIL.getTaskHead()), any(List.class), mEditCallbackCaptor.capture());
         mEditCallbackCaptor.getValue().onEditSuccess();
 
         verify(mEditCallback).onEditSuccess();
     }
 
+    @Test
+    public void editTaskHeadDetailToRemote_whenLocalIsSucceed() {
+        List<Member> addingMembers = Lists.newArrayList(MEMBERS1.get(0), MEMBERS1.get(1));
+        mRepository.editTaskHeadDetail(TASKHEAD_DETAIL.getTaskHead(), addingMembers, mEditCallback);
+
+        verify(mLocalDataSource).editTaskHeadDetail(
+                eq(TASKHEAD_DETAIL.getTaskHead()), any(List.class), mEditCallbackCaptor.capture());
+        mEditCallbackCaptor.getValue().onEditSuccess();
+
+        verify(mRemoteDataSource).editTaskHeadDetail(
+                eq(TASKHEAD_DETAIL.getTaskHead()), anyListOf(Member.class), mEditCallbackCaptor.capture());
+    }
     /*
     * Get a TaskHeadDetail
     * */

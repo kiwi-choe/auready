@@ -190,7 +190,7 @@ public class TaskHeadDetailLocalDataSourceTest {
         final String editTitle = "editTitle";
         TaskHead editTaskHead = new TaskHead(taskHeadId, editTitle, TASKHEAD_DETAIL.getTaskHead().getOrder(), TASKHEAD_DETAIL.getTaskHead().getColor());
         TaskDataSource.EditTaskHeadDetailCallback editCallback = Mockito.mock(TaskDataSource.EditTaskHeadDetailCallback.class);
-        mLocalDataSource.editTaskHeadDetail(editTaskHead, new ArrayList<Member>(0), new ArrayList<String>(0), editCallback);
+        mLocalDataSource.editTaskHeadDetail(editTaskHead, new ArrayList<Member>(0), editCallback);
         verify(editCallback).onEditSuccess();
 
         // Retrieve the updating taskHead
@@ -221,7 +221,7 @@ public class TaskHeadDetailLocalDataSourceTest {
         List<Member> addingMembers = new ArrayList<>(0);
         addingMembers.add(new Member("addingMemberId1", taskHeadId, "userId", "addingMemberName1", "addingMemberEmail1"));
         addingMembers.add(new Member("addingMemberId2", taskHeadId, "userId", "addingMemberName2", "addingMemberEmail2"));
-        mLocalDataSource.editTaskHeadDetail(TASKHEAD_DETAIL.getTaskHead(), addingMembers, new ArrayList<String>(0), editCallback);
+        mLocalDataSource.editTaskHeadDetail(TASKHEAD_DETAIL.getTaskHead(), addingMembers, editCallback);
         verify(editCallback).onEditSuccess();
 
         // Retrieve the updating taskHead

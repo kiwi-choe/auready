@@ -231,27 +231,46 @@ public class TaskRepository implements TaskDataSource {
 
         mRemoteDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
             @Override
-            public void onSaveSuccess() {
-                Log.d("test_SaveTaskHead", "success of saving into Remote");
-            }
+            public void onSaveSuccess() {}
 
             @Override
-            public void onSaveFailed() {
-                Log.d("test_SaveTaskHead", "fail of saving into Remote");
-            }
+            public void onSaveFailed() {}
         });
     }
 
-    public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
-                                   @NonNull List<Member> addingMembers,
-                                   @NonNull List<String> deletingMemberIds,
+    public void editTaskHeadDetail(@NonNull final TaskHead editTaskHead,
+                                   @NonNull final List<Member> addingMembers,
                                    @NonNull final EditTaskHeadDetailCallback callback) {
 
         checkNotNull(editTaskHead);
         checkNotNull(addingMembers);
-        checkNotNull(deletingMemberIds);
 
-        mLocalDataSource.editTaskHeadDetail(editTaskHead, addingMembers, deletingMemberIds, callback);
+        mLocalDataSource.editTaskHeadDetail(editTaskHead, addingMembers, new EditTaskHeadDetailCallback() {
+            @Override
+            public void onEditSuccess() {
+                addMembersToCache(addingMembers);
+
+                // Put into Remote asynchronously with Local
+                mRemoteDataSource.editTaskHeadDetail(editTaskHead, addingMembers, new EditTaskHeadDetailCallback() {
+                    @Override
+                    public void onEditSuccess() {
+                        Log.d("test_EditTaskHead", "success of putting into Remote");
+                    }
+
+                    @Override
+                    public void onEditFailed() {
+                        Log.d("test_EditTaskHead", "fail of putting into Remote");
+                    }
+                });
+
+                callback.onEditSuccess();
+            }
+
+            @Override
+            public void onEditFailed() {
+                callback.onEditFailed();
+            }
+        });
     }
 
     /*
@@ -266,22 +285,10 @@ public class TaskRepository implements TaskDataSource {
         // Compare cachedMembersOfTaskHead to editMembers
         final List<Member> addingMembers = getAddingMembers(editTaskHead.getId(), editMembers);
         Log.d("TEST_NOW", "addingMembers: " + addingMembers.size());
-        final List<String> deletingMemberIds = getDeletingMemberIds(editTaskHead.getId(), editMembers);
+//        final List<String> deletingMemberIds = getDeletingMemberIds(editTaskHead.getId(), editMembers);
+
         // Save taskHead, Save or Delete members
-        editTaskHeadDetail(editTaskHead, addingMembers, deletingMemberIds, new EditTaskHeadDetailCallback() {
-            @Override
-            public void onEditSuccess() {
-                addMembersToCache(addingMembers);
-                deleteMembersFromCache(deletingMemberIds);
-
-                callback.onEditSuccess();
-            }
-
-            @Override
-            public void onEditFailed() {
-                callback.onEditFailed();
-            }
-        });
+        editTaskHeadDetail(editTaskHead, addingMembers, callback);
     }
 
     @Override

@@ -251,7 +251,6 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
                                    @NonNull List<Member> addingMembers,
-                                   @NonNull List<String> deletingMembers,
                                    @NonNull EditTaskHeadDetailCallback callback) {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -264,10 +263,6 @@ public class TaskLocalDataSource implements TaskDataSource {
             long isSuccessOfAddMember = DBExceptionTag.INSERT_NOTHING;
             if (addingMembers.size() != 0) {
                 isSuccessOfAddMember = saveMembers(editTaskHead.getId(), addingMembers);
-            }
-
-            if (deletingMembers.size() != 0) {
-                deleteMembers(deletingMembers);
             }
 
             if (isSuccessOfTaskHead != DBExceptionTag.INSERT_ERROR &&

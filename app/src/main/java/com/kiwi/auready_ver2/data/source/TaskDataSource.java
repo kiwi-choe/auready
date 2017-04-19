@@ -75,7 +75,6 @@ public interface TaskDataSource {
 
     void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
                             @NonNull List<Member> addingMembers,
-                            @NonNull List<String> deletingMemberIds,
                             @NonNull EditTaskHeadDetailCallback callback);
 
     interface GetTaskHeadDetailCallback {
