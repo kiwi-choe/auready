@@ -77,10 +77,11 @@ public class TaskLocalDataSource implements TaskDataSource {
     public void getTaskHeadDetails(@NonNull LoadTaskHeadDetailsCallback callback) {
 
         String sql = String.format(
-                "SELECT * FROM %s, %s WHERE %s.%s = %s.%s",
+                "SELECT * FROM %s, %s WHERE %s.%s = %s.%s ORDER BY %s.%s ASC",
                 PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.MemberEntry.TABLE_NAME,
                 PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.TaskHeadEntry.COLUMN_ID,
-                PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK);
+                PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ORDER);
 
         Cursor cursor = mDbHelper.rawQuery(sql, null);
 
@@ -103,6 +104,8 @@ public class TaskLocalDataSource implements TaskDataSource {
                     String title = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_TITLE));
                     int order = cursor.getInt(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_ORDER));
                     int color = cursor.getInt(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_COLOR));
+
+                    Log.d("Tag_updateOrders", String.valueOf(order));
 
                     TaskHead taskHead = new TaskHead(taskHeadId_fk, title, order, color);
                     List<Member> members = Lists.newArrayList(member);
