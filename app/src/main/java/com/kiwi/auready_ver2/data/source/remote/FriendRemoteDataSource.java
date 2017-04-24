@@ -74,7 +74,8 @@ public class FriendRemoteDataSource implements FriendDataSource {
         IFriendService friendService = ServiceGenerator.createService(
                 IFriendService.class, mAccessToken);
 
-        Call<FriendsResponse> call = friendService.getFriends(STATUS_ACCEPTED);
+        Log.d(TAG, "entered into getFriends remote");
+        Call<FriendsResponse> call = friendService.getFriends();
         call.enqueue(new Callback<FriendsResponse>() {
             @Override
             public void onResponse(Call<FriendsResponse> call, Response<FriendsResponse> response) {
