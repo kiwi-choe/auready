@@ -2,21 +2,23 @@ package com.kiwi.auready_ver2.data;
 
 import android.support.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.UUID;
 
 /**
- * Created by kiwi on 8/19/16.
+ * Task model
  */
 public class Task {
-
+    @SerializedName("id")
     private String mId;
-
+    @SerializedName("memberid")
     private String mMemberId;
-
+    @SerializedName("description")
     private String mDescription;
-
+    @SerializedName("completed")
     private boolean mCompleted;
-
+    @SerializedName("order")
     private int mOrder;
 
     /*

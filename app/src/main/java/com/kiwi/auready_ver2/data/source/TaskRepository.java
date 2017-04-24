@@ -373,6 +373,8 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(task);
         mLocalDataSource.saveTask(task);
 
+        mRemoteDataSource.saveTask(task);
+
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
         }
