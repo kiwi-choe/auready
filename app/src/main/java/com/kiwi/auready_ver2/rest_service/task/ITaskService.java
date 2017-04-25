@@ -1,7 +1,5 @@
 package com.kiwi.auready_ver2.rest_service.task;
 
-import com.kiwi.auready_ver2.data.Task;
-
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,6 +27,6 @@ public interface ITaskService {
     @PUT("/taskheads/{id}")
     Call<Void> editTaskHeadDetail(@Path("id") String id, @Body TaskHeadDetail_remote editTaskHeadDetail);
 
-    @POST("/tasks/")
-    Call<Void> saveTask(@Body Task task);
+    @POST("/tasks/{memberid}")
+    Call<Void> saveTask(@Path("memberid") String memberId, @Body Task_remote task_remote);
 }

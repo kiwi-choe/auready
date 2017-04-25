@@ -161,7 +161,11 @@ public class TaskRepository implements TaskDataSource {
 
     }
 
+    /*
+    * Refresh after getting TaskHeadDetails from Remote
+    * */
     private void refreshLocalDataSource(final List<TaskHeadDetail> taskHeadDetails) {
+        // TaskHead, Member
         mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
             @Override
             public void onDeleteAllSuccess() {
@@ -169,19 +173,21 @@ public class TaskRepository implements TaskDataSource {
                     mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
                         @Override
                         public void onSaveSuccess() {
+                            // Task
+                            List<Task> tasks = taskHeadDetail.getTasks();
+                            for(Task task:tasks) {
+                                mLocalDataSource.saveTask(task);
+                            }
                         }
 
                         @Override
                         public void onSaveFailed() {}
                     });
                 }
-
             }
 
             @Override
-            public void onDeleteAllFail() {
-
-            }
+            public void onDeleteAllFail() {            }
         });
     }
 

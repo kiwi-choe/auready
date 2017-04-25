@@ -1,6 +1,7 @@
 package com.kiwi.auready_ver2.data;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -8,14 +9,25 @@ import java.util.List;
  * */
 public class TaskHeadDetail {
     private final TaskHead mTaskHead;
-    private List<Member> mMembers;  // member rows
-
+    private final List<Member> mMembers;
+    private List<Task> mTasks;
     /*
     * Use this constructor to create a new TaskHead.
+    * mTasks is empty
     * */
     public TaskHeadDetail(TaskHead taskHead, List<Member> members) {
         mTaskHead = taskHead;
         mMembers = members;
+        mTasks = new ArrayList<>();
+    }
+
+    /*
+    * when getting from Remote
+    * */
+    public TaskHeadDetail(TaskHead taskHead, List<Member> members, List<Task> tasks) {
+        mTaskHead = taskHead;
+        mMembers = members;
+        mTasks = tasks;
     }
 
     public TaskHead getTaskHead() {
@@ -27,5 +39,9 @@ public class TaskHeadDetail {
 
     public boolean isEmpty() {
         return (mTaskHead.getTitle() == null || "".equals(mTaskHead.getTitle()));
+    }
+
+    public List<Task> getTasks() {
+        return mTasks;
     }
 }

@@ -2,6 +2,8 @@ package com.kiwi.auready_ver2.rest_service.task;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Model Member for remote
  */
@@ -16,11 +18,15 @@ public class Member_remote {
     @SerializedName("email")
     private final String email;
 
-    public Member_remote(String id, String userId, String name, String email) {
+    @SerializedName("tasks")
+    private final List<Task_remote> tasks;
+
+    public Member_remote(String id, String userId, String name, String email, List<Task_remote> tasks) {
         this.id = id;
         this.userId = userId;
         this.name = name;
         this.email = email;
+        this.tasks = tasks;
     }
 
     public String getId() {
@@ -37,5 +43,9 @@ public class Member_remote {
 
     public String getUserId() {
         return userId;
+    }
+
+    public List<Task_remote> getTasks() {
+        return tasks;
     }
 }

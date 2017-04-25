@@ -17,6 +17,7 @@ import com.kiwi.auready_ver2.rest_service.task.DeletingIds_remote;
 import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
 import com.kiwi.auready_ver2.rest_service.task.TaskHeadDetail_remote;
+import com.kiwi.auready_ver2.rest_service.task.Task_remote;
 import com.kiwi.auready_ver2.util.NetworkUtils;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
             public void onResponse(Call<List<TaskHeadDetail_remote>> call, Response<List<TaskHeadDetail_remote>> response) {
                 if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
 
-                    List<TaskHeadDetail> taskHeadDetails = filterTaskHeadFromRemote(response.body());
+                    List<TaskHeadDetail> taskHeadDetails = filterFromRemote(response.body());
                     callback.onTaskHeadDetailsLoaded(taskHeadDetails);
                 } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS) {
 
@@ -126,25 +127,42 @@ public class TaskRemoteDataSource implements TaskDataSource {
         });
     }
 
-    private List<TaskHeadDetail> filterTaskHeadFromRemote(List<TaskHeadDetail_remote> taskHeads_remote) {
+    /*
+    * Separate objects
+    * TaskHead, Member, Task
+    * */
+    private List<TaskHeadDetail> filterFromRemote(List<TaskHeadDetail_remote> taskHeads_remote) {
 
         List<TaskHeadDetail> taskheadDetails = new ArrayList<>(0);
         for (TaskHeadDetail_remote taskHeadRemote : taskHeads_remote) {
-            // Make TaskHead model, Member model
+
+            // Make TaskHead
             List<Member> members = new ArrayList<>();
+            List<Task> tasks = new ArrayList<>();
 
             // Set default orders; 0
             TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(),
                     taskHeadRemote.getTitle(), 0, taskHeadRemote.getColor());
-
+            // Member
             List<Member_remote> member_remotes = taskHeadRemote.getMembers();
             for (Member_remote member_remote : member_remotes) {
                 Member newMember = new Member(member_remote.getId(),
                         newTaskHead.getId(), member_remote.getUserId(),
                         member_remote.getName(), member_remote.getEmail());
                 members.add(newMember);
+                // Task
+                List<Task_remote> task_remotes = member_remote.getTasks();
+                for(Task_remote task_remote : task_remotes) {
+                    Task newTask = new Task(
+                            task_remote.getId(),
+                            member_remote.getId(),
+                            task_remote.getDescription(),
+                            task_remote.getCompleted(),
+                            task_remote.getOrder());
+                    tasks.add(newTask);
+                }
             }
-            TaskHeadDetail taskHeadDetail = new TaskHeadDetail(newTaskHead, members);
+            TaskHeadDetail taskHeadDetail = new TaskHeadDetail(newTaskHead, members, tasks);
             taskheadDetails.add(taskHeadDetail);
         }
         return taskheadDetails;
@@ -179,7 +197,8 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     member.getId(),
                     member.getUserId(),
                     member.getName(),
-                    member.getEmail());
+                    member.getEmail(),
+                    new ArrayList<Task_remote>(0));
             memberRemotes.add(memberRemote);
         }
         TaskHeadDetail_remote taskHeadRemote = new TaskHeadDetail_remote(
@@ -224,7 +243,8 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     member.getId(),
                     member.getUserId(),
                     member.getName(),
-                    member.getEmail());
+                    member.getEmail(),
+                    new ArrayList<Task_remote>(0));
             memberRemotes.add(memberRemote);
         }
         TaskHeadDetail_remote editTaskHeadDetailRemote = new TaskHeadDetail_remote(
@@ -297,7 +317,9 @@ public class TaskRemoteDataSource implements TaskDataSource {
         ITaskService taskService =
                 ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
-        Call<Void> call = taskService.saveTask(task);
+        Task_remote taskRemote = new Task_remote(
+                task.getId(), task.getDescription(), task.getCompleted(), task.getOrder());
+        Call<Void> call = taskService.saveTask(task.getMemberId(), taskRemote);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
