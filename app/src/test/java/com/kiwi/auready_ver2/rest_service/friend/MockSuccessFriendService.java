@@ -29,9 +29,9 @@ public class MockSuccessFriendService implements IFriendService {
     }
 
     @Override
-    public Call<FriendsResponse> getFriends(@Path("status") int statusNum) {
+    public Call<FriendsResponse> getFriends() {
         FriendsResponse friendsResponse = new FriendsResponse(FRIENDS);
-        return delegate.returningResponse(friendsResponse).getFriends(STATUS_ACCEPTED);
+        return delegate.returningResponse(friendsResponse).getFriends();
     }
 
     @Override

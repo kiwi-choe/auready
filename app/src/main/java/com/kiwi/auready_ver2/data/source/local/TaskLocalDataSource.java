@@ -17,6 +17,7 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.*;
@@ -497,37 +498,37 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull List<String> taskIds) {
+    public void deleteTask(@NonNull String taskId) {
 
-        String args = "";
-        String TOKEN = ", ";
-        int size = taskIds.size();
-        for (int i = 0; i < size; i++) {
-            args = args + "\"" + taskIds.get(i);
-            args = args + "\"";
-            if (i == size - 1) {
-                break;
-            }
-            args = args + TOKEN;
-        }
-
-        String sql = String.format("DELETE FROM %s WHERE %s IN (%s);",
-                TaskEntry.TABLE_NAME,
-                TaskEntry.COLUMN_ID,
-                args);
-
-        mDbHelper.execSQL(sql);
+        String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
+        String[] whereArgs = {taskId};
+        mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
     @Override
-    public void editTasks(@NonNull List<Task> tasks) {
+    public void editTasks(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> cachedTasks) {
 
-        boolean isSuccess = false;
+        // Make the collection for all the tasks of members
+        List<Task> updatingTasks = new ArrayList<>();
+        for(String key:cachedTasks.keySet()) {
+            List<Task> tasks = cachedTasks.get(key);
+            updatingTasks.addAll(tasks);
+        }
 
+        editTasksInLocal(updatingTasks);
+    }
+
+    @Override
+    public void editTasksOfMember(String memberId, List<Task> tasks) {
+
+        editTasksInLocal(tasks);
+    }
+
+    private void editTasksInLocal(List<Task> tasks) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.beginTransaction();
         try {
-            int numOfRows = 0;
+            int numOfUpdatedRows = 0;
 
             String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
             for (Task task : tasks) {
@@ -537,11 +538,10 @@ public class TaskLocalDataSource implements TaskDataSource {
                 values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
                 String[] whereArgs = {task.getId()};
-                numOfRows += db.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
+                numOfUpdatedRows += db.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
             }
 
-            if (numOfRows == tasks.size()) {
-                isSuccess = true;
+            if (numOfUpdatedRows == tasks.size()) {
                 db.setTransactionSuccessful();
             }
         } catch (SQLException e) {
@@ -550,4 +550,5 @@ public class TaskLocalDataSource implements TaskDataSource {
             db.endTransaction();
         }
     }
+
 }

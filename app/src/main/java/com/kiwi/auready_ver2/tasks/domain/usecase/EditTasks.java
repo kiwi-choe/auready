@@ -7,11 +7,12 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Edit tasks
+ * Edit tasks of a taskHead
  */
 public class EditTasks extends UseCase<EditTasks.RequestValues, EditTasks.ResponseValue> {
 
@@ -27,19 +28,25 @@ public class EditTasks extends UseCase<EditTasks.RequestValues, EditTasks.Respon
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.editTasks(values.getTasks());
+        mTaskRepository.editTasks(values.getTaskHeadId(), values.getMemberTasks());
         getUseCaseCallback().onSuccess(new ResponseValue());
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
-        private final List<Task> mTasks;
+        private final String mTaskHeadId;
+        private final Map<String, List<Task>> mMemberTasks;
 
-        public RequestValues(@NonNull List<Task> tasks) {
-            mTasks = checkNotNull(tasks, "tasks cannot be null");
+        public RequestValues(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> memberTasks) {
+            mTaskHeadId = checkNotNull(taskHeadId);
+            mMemberTasks = checkNotNull(memberTasks, "memberTasks cannot be null");
         }
 
-        public List<Task> getTasks() {
-            return mTasks;
+        public String getTaskHeadId() {
+            return mTaskHeadId;
+        }
+
+        public Map<String, List<Task>> getMemberTasks() {
+            return mMemberTasks;
         }
     }
 

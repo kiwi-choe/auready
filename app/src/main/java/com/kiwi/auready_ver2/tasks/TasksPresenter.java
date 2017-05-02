@@ -9,16 +9,17 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
-import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -38,13 +39,14 @@ public class TasksPresenter implements TasksContract.Presenter {
     * Task List that can be controlled - add, delete, modify
     * For TasksAdapter and TaskRepository
     * */
-    public LinkedList<Task> mTaskList;
+    Map<String, List<Task>> mCachedTasks = null;
+
     private final GetMembers mGetMembers;
     private final GetTasksOfMember mGetTasksOfMember;
     private final SaveTask mSaveTask;
-    private final DeleteTasks mDeleteTasks;
+    private final DeleteTask mDeleteTask;
     private final EditTasks mEditTasks;
-    private final GetTasksOfTaskHead mGetTasksOfTaskHead;
+    private final EditTasksOfMember mEditTasksOfMember;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull String taskHeadId,
@@ -52,22 +54,20 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull GetMembers getMembers,
                           @NonNull GetTasksOfMember getTasksOfMember,
                           @NonNull SaveTask saveTask,
-                          @NonNull DeleteTasks deleteTasks,
+                          @NonNull DeleteTask deleteTask,
                           @NonNull EditTasks editTasks,
-                          @NonNull GetTasksOfTaskHead getTasksOfTaskHead) {
+                          @NonNull EditTasksOfMember editTasksOfMember) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = checkNotNull(taskHeadId, "taskHeadId cannot be null!");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetMembers = checkNotNull(getMembers);
         mGetTasksOfMember = checkNotNull(getTasksOfMember);
         mSaveTask = checkNotNull(saveTask);
-        mDeleteTasks = checkNotNull(deleteTasks);
+        mDeleteTask = checkNotNull(deleteTask);
         mEditTasks = checkNotNull(editTasks);
-        mGetTasksOfTaskHead = checkNotNull(getTasksOfTaskHead);
+        mEditTasksOfMember = editTasksOfMember;
 
         mTasksView.setPresenter(this);
-        // init mTaskList
-        mTaskList = new LinkedList<>();
     }
 
     @Override
@@ -152,14 +152,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void deleteTasks(@NonNull final String memberId, @NonNull List<String> taskIds) {
-        checkNotNull(taskIds);
+    public void deleteTask(@NonNull final String memberId, @NonNull String taskId) {
 
-        mUseCaseHandler.execute(new DeleteTasks(mDeleteTasks), new DeleteTasks.RequestValues(taskIds),
-                new UseCase.UseCaseCallback<DeleteTasks.ResponseValue>() {
+        mUseCaseHandler.execute(new DeleteTask(mDeleteTask), new DeleteTask.RequestValues(taskId),
+                new UseCase.UseCaseCallback<DeleteTask.ResponseValue>() {
 
                     @Override
-                    public void onSuccess(DeleteTasks.ResponseValue response) {
+                    public void onSuccess(DeleteTask.ResponseValue response) {
                         getTasksOfMember(memberId);
                     }
 
@@ -170,15 +169,16 @@ public class TasksPresenter implements TasksContract.Presenter {
                 });
     }
 
+    /*
+    * Edit tasks of a taskhead*/
     @Override
-    public void editTasks(@NonNull final String memberId, @NonNull List<Task> tasks) {
-
-        mUseCaseHandler.execute(new EditTasks(mEditTasks), new EditTasks.RequestValues(tasks),
+    public void editTasks() {
+        mUseCaseHandler.execute(mEditTasks, new EditTasks.RequestValues(mTaskHeadId, mCachedTasks),
                 new UseCase.UseCaseCallback<EditTasks.ResponseValue>() {
 
                     @Override
                     public void onSuccess(EditTasks.ResponseValue response) {
-                        getTasksOfMember(memberId);
+                        refreshCachedTasks();
                     }
 
                     @Override
@@ -186,6 +186,11 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     }
                 });
+    }
+
+    // Remove all tasks in memory
+    private void refreshCachedTasks() {
+        mCachedTasks.clear();
     }
 
     @Override
@@ -210,6 +215,33 @@ public class TasksPresenter implements TasksContract.Presenter {
             }
         }
 
-        mTasksView.showFilteredTasks(tasks.get(0).getMemberId(), completed, uncompleted);
+        mTasksView.showTasks(tasks.get(0).getMemberId(), completed, uncompleted);
+    }
+
+    @Override
+    public void updateTasksInMemory(String memberId, List<Task> tasks) {
+
+        if(mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        mCachedTasks.put(memberId, tasks);
+    }
+
+    @Override
+    public void editTasksOfMember(String memberId, List<Task> tasks) {
+
+        mUseCaseHandler.execute(mEditTasksOfMember, new EditTasksOfMember.RequestValues(memberId, tasks),
+                new UseCase.UseCaseCallback<EditTasksOfMember.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(EditTasksOfMember.ResponseValue response) {
+
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
     }
 }

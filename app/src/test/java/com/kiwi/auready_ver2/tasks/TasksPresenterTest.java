@@ -1,15 +1,16 @@
 package com.kiwi.auready_ver2.tasks;
 
+import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
-import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import org.junit.Before;
@@ -26,10 +27,11 @@ import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
@@ -103,8 +105,6 @@ public class TasksPresenterTest {
 
         verify(mTaskRepository).getTasksOfMember(eq(memberId), mLoadTasksCallbackCaptor.capture());
         mLoadTasksCallbackCaptor.getValue().onTasksLoaded(TASKS);
-
-        verify(mTasksView).showTasks(eq(memberId), eq(TASKS));
     }
 
     @Test
@@ -124,7 +124,7 @@ public class TasksPresenterTest {
         assertThat(completed.size(), is(2));
         assertThat(uncompleted.size(), is(1));
 
-        verify(mTasksView).showFilteredTasks(memberId, completed, uncompleted);
+        verify(mTasksView).showTasks(memberId, completed, uncompleted);
     }
     @Test
     public void getTasksOfMember_whenTasksIsEmpty() {
@@ -156,34 +156,50 @@ public class TasksPresenterTest {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         // Update a taskTextView
-        mTasksPresenter.editTasks(TASKS.get(0).getMemberId(), TASKS);
-        verify(mTaskRepository).editTasks(eq(TASKS));
+        String taskheadid = TASKHEAD.getId();
+        mTasksPresenter.editTasks();
+//        verify(mTaskRepository).editTasks(eq(taskheadid), eq(TASKS));
     }
 
     @Test
     public void deleteTasks() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
-        List<String> taskIds = new ArrayList<>();
-        for(Task task:TASKS) {
-            taskIds.add(task.getId());
-        }
-        mTasksPresenter.deleteTasks(TASKS.get(0).getMemberId(), taskIds);
-        verify(mTaskRepository).deleteTasks(anyListOf(String.class));
+        String taskId = TASKS.get(0).getId();
+        mTasksPresenter.deleteTask(TASKS.get(0).getMemberId(), taskId);
+        verify(mTaskRepository).deleteTask(eq(taskId));
     }
 
+    @Test
+    public void saveEditedTasksInMemory() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+
+        String memberId = "stubbed_memberId";
+        mTasksPresenter.updateTasksInMemory(memberId, TASKS);
+
+        assertThat(mTasksPresenter.mCachedTasks.containsKey(memberId), is(true));
+        assertThat(mTasksPresenter.mCachedTasks.get(memberId), is(TASKS));
+
+        // Modify the existing value test
+        List<Task> editedTasks = Lists.newArrayList(
+                new Task("stubbedTask0", MEMBERS.get(0).getId(), "editedDescription!!!!!", 0));
+        mTasksPresenter.updateTasksInMemory(memberId, editedTasks);
+        assertEquals(mTasksPresenter.mCachedTasks.size(), 1);
+        assertThat(mTasksPresenter.mCachedTasks.get(memberId), is(not(TASKS)));
+        assertThat(mTasksPresenter.mCachedTasks.get(memberId), is(editedTasks));
+    }
     private TasksPresenter givenTasksPresenter(String taskHeadId) {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
         GetMembers getMembers = new GetMembers(mTaskRepository);
         GetTasksOfMember getTasksOfMember = new GetTasksOfMember(mTaskRepository);
         SaveTask saveTask = new SaveTask(mTaskRepository);
-        DeleteTasks deleteTasks = new DeleteTasks(mTaskRepository);
+        DeleteTask deleteTask = new DeleteTask(mTaskRepository);
         EditTasks editTasks = new EditTasks(mTaskRepository);
-        GetTasksOfTaskHead getTasksOfTaskHead = new GetTasksOfTaskHead(mTaskRepository);
+        EditTasksOfMember editTasksOfMember = new EditTasksOfMember(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getMembers, getTasksOfMember, saveTask, deleteTasks, editTasks, getTasksOfTaskHead);
+                getMembers, getTasksOfMember, saveTask, deleteTask, editTasks, editTasksOfMember);
     }
 
 }

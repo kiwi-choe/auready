@@ -344,10 +344,11 @@ public class TaskRepository implements TaskDataSource {
 
     @Override
     public void getTasksOfMember(@NonNull String memberId, @NonNull final LoadTasksCallback callback) {
+
         mLocalDataSource.getTasksOfMember(memberId, new LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
-                refreshTasksCache(tasks);
+                refreshCachedTasks(tasks);
                 callback.onTasksLoaded(tasks);
             }
 
@@ -363,7 +364,7 @@ public class TaskRepository implements TaskDataSource {
         mLocalDataSource.getTasksOfTaskHead(taskheadId, new LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
-                refreshTasksCache(tasks);
+                refreshCachedTasks(tasks);
                 callback.onTasksLoaded(tasks);
             }
 
@@ -388,23 +389,38 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull List<String> taskIds) {
-        checkNotNull(taskIds);
+    public void deleteTask(@NonNull String taskId) {
+        checkNotNull(taskId);
 
-        mLocalDataSource.deleteTasks(taskIds);
+        mLocalDataSource.deleteTask(taskId);
+
+        mRemoteDataSource.deleteTask(taskId);
 
         if (mCachedTasks != null) {
-            for (String id : taskIds) {
-                mCachedTasks.remove(id);
-            }
+            mCachedTasks.remove(taskId);
         }
     }
 
     @Override
-    public void editTasks(@NonNull List<Task> tasks) {
-        mLocalDataSource.editTasks(tasks);
+    public void editTasks(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> cachedTasks) {
+        mLocalDataSource.editTasks(taskHeadId, cachedTasks);
+        mRemoteDataSource.editTasks(taskHeadId, cachedTasks);
 
-        refreshTasksCache(tasks);
+        // Make the collection for all the tasks of members
+        List<Task> updatingTasks = new ArrayList<>();
+        for(String key:cachedTasks.keySet()) {
+            List<Task> tasks = cachedTasks.get(key);
+            updatingTasks.addAll(tasks);
+        }
+
+        refreshCachedTasks(updatingTasks);
+    }
+
+    @Override
+    public void editTasksOfMember(String memberId, List<Task> tasks) {
+        mLocalDataSource.editTasksOfMember(memberId, tasks);
+
+        refreshCachedTasks(tasks);
     }
 
     private void showMembersCacheOf(String taskHeadId) {
@@ -528,11 +544,11 @@ public class TaskRepository implements TaskDataSource {
         }
     }
 
-    private void refreshTasksCache(List<Task> tasks) {
+    private void refreshCachedTasks(List<Task> tasks) {
         if (mCachedTasks == null) {
             mCachedTasks = new LinkedHashMap<>();
         }
-        mCachedTasks.clear();
+//        mCachedTasks.clear();
         for (Task task : tasks) {
             mCachedTasks.put(task.getId(), task);
         }

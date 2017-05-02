@@ -84,7 +84,7 @@ public class FriendServiceTest {
         IFriendService mockFriendService = createMockSuccessService();
 
         // Actual test
-        Call<FriendsResponse> call = mockFriendService.getFriends(STATUS_ACCEPTED);
+        Call<FriendsResponse> call = mockFriendService.getFriends();
         Response<FriendsResponse> response = call.execute();
         // Asserting response
         assertTrue(response.isSuccessful());
@@ -96,7 +96,7 @@ public class FriendServiceTest {
 
         IFriendService mockFriendService = createMockFailedService();
 
-        Call<FriendsResponse> call = mockFriendService.getFriends(STATUS_ACCEPTED);
+        Call<FriendsResponse> call = mockFriendService.getFriends();
         Response<FriendsResponse> response = call.execute();
 
         assertFalse(response.isSuccessful());

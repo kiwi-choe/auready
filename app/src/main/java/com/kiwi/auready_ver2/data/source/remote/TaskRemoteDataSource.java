@@ -18,10 +18,12 @@ import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
 import com.kiwi.auready_ver2.rest_service.task.TaskHeadDetail_remote;
 import com.kiwi.auready_ver2.rest_service.task.Task_remote;
+import com.kiwi.auready_ver2.tasks.MemberTasks;
 import com.kiwi.auready_ver2.util.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +36,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 
 public class TaskRemoteDataSource implements TaskDataSource {
+
+    private static final String TAG = "Tag_remoteTask";
 
     private static TaskRemoteDataSource INSTANCE;
     private final AccessTokenStore mAccessTokenStore;
@@ -54,6 +58,11 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
+    public void editTasksOfMember(String memberId, List<Task> tasks) {
+
+    }
+
+    @Override
     public void deleteAllTaskHeads(@NonNull DeleteAllCallback callback) {
 
     }
@@ -68,7 +77,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     @Override
     public void getTaskHeadDetails(@NonNull final LoadTaskHeadDetailsCallback callback) {
 
-        if(!readyToRequestAPI()) {
+        if (!readyToRequestAPI()) {
             callback.onDataNotAvailable();
         }
 
@@ -100,7 +109,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     @Override
     public void deleteTaskHeads(List<String> taskheadIds, @NonNull final DeleteTaskHeadsCallback callback) {
 
-        if(!readyToRequestAPI()) {
+        if (!readyToRequestAPI()) {
             callback.onDeleteFail();
         }
 
@@ -113,7 +122,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     Log.d("Tag_delete", "deleteTaskHeads success");
                     callback.onDeleteSuccess();
                 }
@@ -152,7 +161,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
                 members.add(newMember);
                 // Task
                 List<Task_remote> task_remotes = member_remote.getTasks();
-                for(Task_remote task_remote : task_remotes) {
+                for (Task_remote task_remote : task_remotes) {
                     Task newTask = new Task(
                             task_remote.getId(),
                             member_remote.getId(),
@@ -182,7 +191,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     @Override
     public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull final SaveCallback callback) {
 
-        if(!readyToRequestAPI()) {
+        if (!readyToRequestAPI()) {
             callback.onSaveFailed();
         }
 
@@ -229,7 +238,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
                                    @NonNull List<Member> addingMembers,
                                    @NonNull final EditTaskHeadDetailCallback callback) {
 
-        if(!readyToRequestAPI()) {
+        if (!readyToRequestAPI()) {
             callback.onEditFailed();
         }
 
@@ -310,7 +319,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     @Override
     public void saveTask(@NonNull Task task) {
-        if(!readyToRequestAPI()) {
+        if (!readyToRequestAPI()) {
             return;
         }
 
@@ -334,12 +343,65 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTasks(@NonNull List<String> taskIds) {
+    public void deleteTask(@NonNull String taskId) {
+        Log.d(TAG, "entered into deleteTask");
+        if(!readyToRequestAPI()) {
+            return;
+        }
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
+        Call<Void> call = taskService.deleteTask(taskId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    Log.d(TAG, "success to delete task");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(TAG, "fail to delete task");
+            }
+        });
     }
 
     @Override
-    public void editTasks(@NonNull List<Task> tasks) {
+    public void editTasks(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> cachedTasks) {
+        if (!readyToRequestAPI()) {
+            return;
+        }
 
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        // Make the collection for all the tasks of members
+        List<MemberTasks> updatingMemberTasks = new ArrayList<>(0);
+        for(String memberId:cachedTasks.keySet()) {
+            List<Task_remote> taskRemotes = new ArrayList<>(0);
+            List<Task> tasks = cachedTasks.get(memberId);
+            for(Task task:tasks) {
+                Task_remote taskRemote = new Task_remote(
+                        task.getId(), task.getDescription(), task.getCompleted(), task.getOrder());
+                taskRemotes.add(taskRemote);
+            }
+            MemberTasks memberTasks = new MemberTasks(memberId, taskRemotes);
+            updatingMemberTasks.add(memberTasks);
+        }
+
+        Call<Void> call = taskService.editTasks(taskHeadId, updatingMemberTasks);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d("Tag_remoteTask", "success to edit tasks");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Tag_remoteTask", "fail to edit tasks", t);
+            }
+        });
     }
+
 }

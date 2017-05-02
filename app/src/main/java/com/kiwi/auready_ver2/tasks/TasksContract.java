@@ -27,11 +27,9 @@ class TasksContract {
         /*
         * Tasks
         * */
-        void showTasks(String memberId, List<Task> tasks);
-
         void showLoadProgressBar();
 
-        void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted);
+        void showTasks(String memberId, List<Task> completed, List<Task> uncompleted);
 
         void showNoTask(String memberId);
 
@@ -50,10 +48,14 @@ class TasksContract {
 
         void result(int requestCode, int resultCode, Intent data);
 
-        void deleteTasks(@NonNull final String memberId, @NonNull List<String> taskIds);
+        void deleteTask(@NonNull final String memberId, @NonNull String taskId);
 
-        void editTasks(@NonNull final String memberId, @NonNull List<Task> tasks);
+        void editTasks();
 
         void filterTasks(List<Task> tasks, List<Task> completed, List<Task> uncompleted);
+
+        void updateTasksInMemory(String memberId, List<Task> tasks);
+
+        void editTasksOfMember(String memberId, List<Task> tasks);
     }
 }

@@ -15,7 +15,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS1;
@@ -200,6 +202,7 @@ public class TaskRepositoryTest {
         verify(mRemoteDataSource).deleteTaskHeads(eq(taskHeadIds), mDeleteTaskHeadsCallbackCaptor.capture());
         mDeleteTaskHeadsCallbackCaptor.getValue().onDeleteSuccess();
     }
+
     @Test
     public void deleteTaskHeads_fromCache() {
         // Save the stubbed taskheadDetails
@@ -318,6 +321,7 @@ public class TaskRepositoryTest {
         verify(mRemoteDataSource).editTaskHeadDetail(
                 eq(TASKHEAD_DETAIL.getTaskHead()), anyListOf(Member.class), mEditCallbackCaptor.capture());
     }
+
     /*
     * Get a TaskHeadDetail
     * */
@@ -402,20 +406,18 @@ public class TaskRepositoryTest {
     }
 
     /*
-    * Delete Tasks
+    * Delete a Task
     * */
     @Test
-    public void deleteTasks_fromLocal() {
-        List<String> taskIds = new ArrayList<>();
-        taskIds.add(TASKS.get(0).getId());
-        taskIds.add(TASKS.get(1).getId());
-        mRepository.deleteTasks(taskIds);
+    public void deleteTask_fromLocal() {
+        String taskId = TASKS.get(0).getId();
+        mRepository.deleteTask(taskId);
 
-        verify(mLocalDataSource).deleteTasks(eq(taskIds));
+        verify(mLocalDataSource).deleteTask(eq(taskId));
     }
 
     @Test
-    public void deleteTasks_fromCache() {
+    public void deleteTask_fromCache() {
         // Save the stubbed taskheadDetails
         mRepository.saveTask(TASKS.get(0));
         mRepository.saveTask(TASKS.get(1));
@@ -423,9 +425,7 @@ public class TaskRepositoryTest {
         assertThat(mRepository.mCachedTasks.size(), is(3));
 
         // Delete taskHeads TASKHEADS index 1, 2nd
-        List<String> taskIds = new ArrayList<>(0);
-        taskIds.add(TASKS.get(1).getId());
-        mRepository.deleteTasks(taskIds);
+        mRepository.deleteTask(TASKS.get(1).getId());
 
         assertThat(mRepository.mCachedTasks.size(), is(2));
         assertThat(mRepository.mCachedTasks.containsKey(TASKS.get(0).getId()), is(true));
@@ -438,27 +438,53 @@ public class TaskRepositoryTest {
     * */
     @Test
     public void editTasks_toLocal() {
-        // Save the stubbed tasks
-        List<Task> tasks = TASKS;
-        mRepository.saveTask(tasks.get(0));
-        mRepository.saveTask(tasks.get(1));
+        String memberId0 = "stubbedMemberId0";
+        String memberId1 = "stubbedMemberId1";
+        List<Task> TASKS0 = Lists.newArrayList(
+                new Task("stubbedTask0", memberId0, "description", 0),
+                new Task("stubbedTask1", memberId0, "description2", true, 0));
+        List<Task> TASKS1 = Lists.newArrayList(
+                new Task("stubbedTask2", memberId1, "description3", true, 0));
 
-        // Edit tasks
-        List<Task> editTasks = new ArrayList<>();
-        String description0 = "editDescription0";
-        Task editTask0 = new Task(
-                tasks.get(0).getId(), tasks.get(0).getMemberId(), description0, tasks.get(0).getOrder());
-        editTasks.add(editTask0);
-        String description1 = "editDescription1";
-        Task editTask1 = new Task(
-                tasks.get(1).getId(), tasks.get(1).getMemberId(), description1, tasks.get(1).getOrder());
-        editTasks.add(editTask1);
-        mRepository.editTasks(editTasks);
+        // Save tasks
+        Map<String, List<Task>> cachedTasks = new LinkedHashMap<>();
+        cachedTasks.put(memberId0, TASKS0);
+        cachedTasks.put(memberId1, TASKS1);
+        saveStubbedTasks(TASKS0);
+        saveStubbedTasks(TASKS1);
 
-        verify(mLocalDataSource).editTasks(eq(editTasks));
+        // Update tasks
+        TASKS0.get(0).setDescription("editDescription!!!");
+        cachedTasks.put(memberId0, TASKS0);
+        TASKS1.get(0).setDescription("edit description3");
+        cachedTasks.put(memberId1, TASKS1);
 
-        assertThat(mRepository.mCachedTasks.get(tasks.get(0).getId()).getDescription(), is(description0));
-        assertThat(mRepository.mCachedTasks.get(tasks.get(1).getId()).getDescription(), is(description1));
+        mRepository.editTasks("stubbedTaskHeadId", cachedTasks);
+
+        verify(mLocalDataSource).editTasks(eq("stubbedTaskHeadId"), eq(cachedTasks));
+
+        assertThat(mRepository.mCachedTasks.get(TASKS0.get(0).getId()).getDescription(), is("editDescription!!!"));
+        assertThat(mRepository.mCachedTasks.get(TASKS1.get(0).getId()).getDescription(), is("edit description3"));
+    }
+
+    @Test
+    public void editTasksOfMember() {
+        saveStubbedTasks(TASKS);
+
+        String memberId = TASKS.get(0).getMemberId();
+        List<Task> editTasks = TASKS;
+        String editDescription = "EDIT des!!";
+        editTasks.get(0).setDescription(editDescription);
+        mRepository.editTasksOfMember(memberId, editTasks);
+        verify(mLocalDataSource).editTasksOfMember(eq(memberId), eq(editTasks));
+
+        assertThat(mRepository.mCachedTasks.get(TASKS.get(0).getId()).getDescription(), is(editDescription));
+    }
+
+    private void saveStubbedTasks(List<Task> tasks) {
+        for (Task task : tasks) {
+            mRepository.saveTask(task);
+        }
     }
 
     /*
@@ -481,6 +507,7 @@ public class TaskRepositoryTest {
         assertThat(count, is(taskHeadDetails.size()));
         assertThat(taskHeadDetails.size(), is(mRepository.mCachedTaskHeads.size()));
     }
+
     /*
     * convenience methods
     * */

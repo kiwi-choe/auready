@@ -115,8 +115,7 @@ public class TasksFragment extends Fragment {
         taskAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Todo : There is a timing issue between Edit and Add
-                saveAllEditedDataInMemory();
+                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
 
                 int position = mUnCompleteListview.getInputAdapter().getCount();
                 Task task = new Task(mMemberId, "new Item " + position, position);
@@ -275,12 +274,13 @@ public class TasksFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        saveAllEditedDataInMemory();
+
+        updateTasksInMemory();
     }
 
-    private void saveAllEditedDataInMemory() {
+    private void updateTasksInMemory() {
         ArrayList<Task> tasks = (ArrayList<Task>) getAllTasks();
-        mTaskViewListener.onEditedTask(mMemberId, tasks);
+        mTaskViewListener.onUpdateTasksInMemory(mMemberId, tasks);
     }
 
     private List<Task> getAllTasks() {
@@ -346,7 +346,7 @@ public class TasksFragment extends Fragment {
     public interface TaskItemListener {
         void onTaskDeleteButtonClicked(String memberId, String taskId);
 
-        void onEditedTask(Task editedTask, boolean checked);
+        void onChangeComplete(Task editedTask, boolean checked);
     }
 
     private TaskItemListener mTaskItemListener = new TaskItemListener() {
@@ -361,12 +361,13 @@ public class TasksFragment extends Fragment {
             im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
             // update data
-            saveAllEditedDataInMemory();
+            mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
+
             mTaskViewListener.onDeleteTaskButtonClicked(memberId, taskId);
         }
 
         @Override
-        public void onEditedTask(Task editedTask, boolean checked) {
+        public void onChangeComplete(Task editedTask, boolean checked) {
 
             if (editedTask == null) {
                 return;

@@ -146,7 +146,7 @@ public class TasksAdapter extends BaseAdapter {
 
                 CheckBox checkBox = (CheckBox) v;
                 removedTask.setCompleted(checkBox.isChecked());
-                mTaskItemListener.onEditedTask(
+                mTaskItemListener.onChangeComplete(
                         removedTask,
                         checkBox.isChecked());
             }

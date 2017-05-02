@@ -31,13 +31,13 @@ public class MockFailedFriendService implements IFriendService {
     }
 
     @Override
-    public Call<FriendsResponse> getFriends(@Path("status") int statusNum) {
+    public Call<FriendsResponse> getFriends() {
 
         ErrorResponse error = new ErrorResponse(ERROR_CODE, ERROR_GETFRIENDS_MSG);
         Gson gson = new Gson();
         String json = gson.toJson(error);
         Response response = Response.error(ERROR_CODE, ResponseBody.create(MediaType.parse("application/json"), json));
-        return delegate.returning(Calls.response(response)).getFriends(1);
+        return delegate.returning(Calls.response(response)).getFriends();
     }
 
     @Override

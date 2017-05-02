@@ -8,6 +8,7 @@ import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Main entry point for accessing tasks data.
@@ -18,6 +19,8 @@ import java.util.List;
  * operation on database or network should be executed in a different thread.
  */
 public interface TaskDataSource {
+
+    void editTasksOfMember(String memberId, List<Task> tasks);
 
     interface  DeleteAllCallback {
         void onDeleteAllSuccess();
@@ -111,7 +114,7 @@ public interface TaskDataSource {
 
     void saveTask(@NonNull Task task);
 
-    void deleteTasks(@NonNull List<String> taskIds);
+    void deleteTask(@NonNull String taskId);
 
-    void editTasks(@NonNull List<Task> tasks);
+    void editTasks(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> tasks);
 }

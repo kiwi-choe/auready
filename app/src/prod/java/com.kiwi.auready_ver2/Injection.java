@@ -25,11 +25,11 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
-import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
+import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
-import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfTaskHead;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -113,16 +113,16 @@ public class Injection {
         return new SaveTask(Injection.provideTaskRepository(context));
     }
 
-    public static DeleteTasks provideDeleteTasks(@NonNull Context context) {
-        return new DeleteTasks(Injection.provideTaskRepository(context));
+    public static DeleteTask provideDeleteTasks(@NonNull Context context) {
+        return new DeleteTask(Injection.provideTaskRepository(context));
     }
 
     public static EditTasks provideEditTasks(@NonNull Context context) {
         return new EditTasks(Injection.provideTaskRepository(context));
     }
 
-    public static GetTasksOfTaskHead provideGetTasksOfTaskHead(@NonNull Context context) {
-        return new GetTasksOfTaskHead(Injection.provideTaskRepository(context));
+    public static EditTasksOfMember provideEditTasksOfMember(@NonNull Context context) {
+        return new EditTasksOfMember(Injection.provideTaskRepository(context));
     }
 
     /*

@@ -19,7 +19,6 @@ import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -67,7 +66,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
-                Injection.provideGetTasksOfTaskHead(getApplicationContext()));
+                Injection.provideEditTasksOfMember(getApplicationContext()));
     }
 
     private void initViews() {
@@ -98,6 +97,12 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     protected void onResume() {
         super.onResume();
         mPresenter.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mPresenter.editTasks();
     }
 
     @Override
@@ -164,44 +169,6 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                     mViewPager.getPaddingRight(),
                     mViewPager.getPaddingBottom());
         }
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-//                if (position == 0) {
-//                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding);
-//                    if (mViewPager.getPaddingStart() == startPadding) {
-//                        return;
-//                    }
-//
-//                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-//                            R.dimen.viewpager_end_padding),
-//                            mViewPager.getPaddingTop(),
-//                            mViewPager.getPaddingRight(),
-//                            mViewPager.getPaddingBottom());
-//                } else {
-//                    int startPadding = getResources().getDimensionPixelSize(R.dimen.viewpager_start_padding);
-//                    if (mViewPager.getPaddingStart() == startPadding) {
-//                        return;
-//                    }
-//
-//                    mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
-//                            R.dimen.viewpager_start_padding),
-//                            mViewPager.getPaddingTop(),
-//                            mViewPager.getPaddingRight(),
-//                            mViewPager.getPaddingBottom());
-//                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
     }
 
     interface TaskViewListener {
@@ -211,7 +178,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         void onDeleteTaskButtonClicked(String memberId, String taskId);
 
-        void onEditedTask(String memberId, List<Task> tasks);
+        void onUpdateTasksInMemory(String memberId, List<Task> tasks);
+
+        void onEditTasksOfMember(String mMemberId, List<Task> tasks);
     }
 
     private TaskViewListener mTaskViewListener = new TaskViewListener() {
@@ -228,24 +197,19 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         @Override
         public void onDeleteTaskButtonClicked(String memberId, String taskId) {
-            ArrayList<String> deleteTask = new ArrayList<>();
-            deleteTask.add(taskId);
-            mPresenter.deleteTasks(memberId, deleteTask);
+            mPresenter.deleteTask(memberId, taskId);
         }
 
         @Override
-        public void onEditedTask(String memberId, List<Task> tasks) {
-            ArrayList<Task> edittedTask = new ArrayList<>();
-            edittedTask.addAll(tasks);
-            mPresenter.editTasks(memberId, edittedTask);
+        public void onUpdateTasksInMemory(String memberId, List<Task> tasks) {
+            mPresenter.updateTasksInMemory(memberId, tasks);
+        }
+
+        @Override
+        public void onEditTasksOfMember(String memberId, List<Task> tasks) {
+            mPresenter.editTasksOfMember(memberId, tasks);
         }
     };
-
-    @Override
-    public void showTasks(String memberId, List<Task> tasks) {
-//        TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
-//        fragment.showTasks(tasks);
-    }
 
     @Override
     public void showLoadProgressBar() {
@@ -261,7 +225,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     }
 
     @Override
-    public void showFilteredTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
+    public void showTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
         if (mProgressBar != null) {
             mProgressBar.setVisibility(View.GONE);
         }

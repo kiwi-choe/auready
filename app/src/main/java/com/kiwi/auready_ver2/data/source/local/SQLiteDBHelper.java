@@ -175,5 +175,22 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         }
         return isSuccessAll;
     }
+
+    public boolean update(String table, ContentValues values, String whereClause, String[] whereArgs) {
+
+        sDb = sDbHelper.getWritableDatabase();
+
+        int numOfRows = 0;
+        sDb.beginTransaction();
+        try {
+            numOfRows = sDb.update(table, values, whereClause, whereArgs);
+            sDb.setTransactionSuccessful();
+        } catch (SQLException e) {
+            Log.e(TAG_SQLITE, "Error update to ( " + table + " ). ", e);
+        } finally {
+            sDb.endTransaction();
+        }
+        return numOfRows > 0;
+    }
 }
 
