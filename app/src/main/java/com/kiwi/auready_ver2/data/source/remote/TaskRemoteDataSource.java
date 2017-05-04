@@ -58,11 +58,6 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks) {
-
-    }
-
-    @Override
     public void deleteAllTaskHeads(@NonNull DeleteAllCallback callback) {
 
     }
@@ -404,4 +399,32 @@ public class TaskRemoteDataSource implements TaskDataSource {
         });
     }
 
+    @Override
+    public void editTasksOfMember(String memberId, List<Task> tasks) {
+        if(!readyToRequestAPI()) {
+            return;
+        }
+
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        List<Task_remote> updatingTasks = new ArrayList<>();
+        for(Task task: tasks) {
+            updatingTasks.add(new Task_remote(
+                    task.getId(), task.getDescription(), task.getCompleted(), task.getOrder()));
+        }
+
+        Call<Void> call = taskService.editTasksOfMember(memberId, updatingTasks);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.d("Tag_remoteTask", "success to editTasksOfMember");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Tag_remoteTask", "fail to editTasksOfMember");
+            }
+        });
+    }
 }

@@ -12,6 +12,7 @@ import retrofit2.http.HTTP;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Task, TaskHead
@@ -35,6 +36,9 @@ public interface ITaskService {
 
     @PUT("/tasks/{taskheadid}")
     Call<Void> editTasks(@Path("taskheadid") String taskHeadId, @Body List<MemberTasks> memberTasks);
+
+    @PUT("/tasks/")
+    Call<Void> editTasksOfMember(@Query("memberid") String memberId, @Body List<Task_remote> editingTasks);
 
     @DELETE("/tasks/{id}")
     Call<Void> deleteTask(@Path("id") String id);

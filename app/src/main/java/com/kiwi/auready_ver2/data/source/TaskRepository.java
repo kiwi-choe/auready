@@ -419,6 +419,7 @@ public class TaskRepository implements TaskDataSource {
     @Override
     public void editTasksOfMember(String memberId, List<Task> tasks) {
         mLocalDataSource.editTasksOfMember(memberId, tasks);
+        mRemoteDataSource.editTasksOfMember(memberId, tasks);
 
         refreshCachedTasks(tasks);
     }
