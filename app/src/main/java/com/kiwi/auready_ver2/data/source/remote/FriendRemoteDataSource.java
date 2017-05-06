@@ -2,6 +2,7 @@ package com.kiwi.auready_ver2.data.source.remote;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Friend;
@@ -34,14 +35,13 @@ public class FriendRemoteDataSource implements FriendDataSource {
     private static final int STATUS_ACCEPTED = 1;
 
     private static FriendRemoteDataSource INSTANCE;
-    private String mAccessToken;
     private Context mContext;
+    private final AccessTokenStore mAccessTokenStore;
+    private String mAccessToken;
 
     private FriendRemoteDataSource(@NonNull Context context) {
         mContext = context.getApplicationContext();
-        // Before entering here, AccessTokenStore static Instance should be created
-        mAccessToken = AccessTokenStore.getInstance(context)
-                .getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        mAccessTokenStore = AccessTokenStore.getInstance(context);
     }
 
     public static FriendRemoteDataSource getInstance(@NonNull Context context) {
@@ -65,14 +65,11 @@ public class FriendRemoteDataSource implements FriendDataSource {
     @Override
     public void getFriends(@NonNull final LoadFriendsCallback callback) {
 
-        // Check network
-        if(!NetworkUtils.isOnline(mContext)) {
+        if (!readyToRequestAPI()) {
             callback.onDataNotAvailable();
         }
 
-        // Request to Server
-        IFriendService friendService = ServiceGenerator.createService(
-                IFriendService.class, mAccessToken);
+        IFriendService friendService = ServiceGenerator.createService(IFriendService.class, mAccessToken);
 
         Log.d(TAG, "entered into getFriends remote");
         Call<FriendsResponse> call = friendService.getFriends();
@@ -94,6 +91,21 @@ public class FriendRemoteDataSource implements FriendDataSource {
                 callback.onDataNotAvailable();
             }
         });
+    }
+
+    private boolean readyToRequestAPI() {
+        // Check network
+        if (!NetworkUtils.isOnline(mContext)) {
+            return false;
+        }
+
+        // Check accessToken
+        mAccessToken = mAccessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        if (TextUtils.isEmpty(mAccessToken)) {
+            Log.d("Tag_FriendRemoteData", "no accessToken");
+            return false;
+        }
+        return true;
     }
 
     @Override
