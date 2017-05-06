@@ -94,7 +94,6 @@
     <string name="no_notification_txt">No notification</string>
     <string name="accept_friend_request_txt">Accept</string>
     <string name="delete_friend_request_txt">Delete</string>
-    <string name="noti_msg_friend_request">%s wants to be your friend</string>
     <string name="friend_request_accept">%s is added to your friend list</string>
 
 </resources>

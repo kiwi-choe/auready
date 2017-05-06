@@ -25,6 +25,7 @@ import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExce
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERID;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERNAME;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_ID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_MESSAGE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_TYPE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_iSNEW;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.TABLE_NAME;
@@ -47,10 +48,10 @@ public class NotificationLocalDataSourceTest {
     private static String fromUserId1 = "B id";
     private static String fromUserName1 = "B";
 
-    private static final Notification NOTIFICATION = new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0);
+    private static final Notification NOTIFICATION = new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0, "친구요청");
     private static final List<Notification> NOTIFICATIONS = Lists.newArrayList(
-            new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0),
-            new Notification(Notification.TYPES.friend_request.name(), fromUserId1, fromUserName1)
+            new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0, "친구요청"),
+            new Notification(Notification.TYPES.friend_request.name(), fromUserId1, fromUserName1, "친구요청")
     );
 
     private static SQLiteDBHelper mDbHelper;
@@ -79,6 +80,7 @@ public class NotificationLocalDataSourceTest {
         values.put(COLUMN_iSNEW, NOTIFICATION.getIsNewInteger());
         values.put(COLUMN_FROM_USERID, NOTIFICATION.getFromUserId());
         values.put(COLUMN_FROM_USERNAME, NOTIFICATION.getFromUserName());
+        values.put(COLUMN_MESSAGE, NOTIFICATION.getMessage());
 
         long isSuccessToInsert = mDbHelper.insert(TABLE_NAME, null, values);
         assertTrue(isSuccessToInsert != INSERT_ERROR);
@@ -253,6 +255,7 @@ public class NotificationLocalDataSourceTest {
         values.put(COLUMN_iSNEW, notification.getIsNewInteger());
         values.put(COLUMN_FROM_USERID, notification.getFromUserId());
         values.put(COLUMN_FROM_USERNAME, notification.getFromUserName());
+        values.put(COLUMN_MESSAGE, notification.getMessage());
 
         mDbHelper.insert(TABLE_NAME, null, values);
     }

@@ -30,7 +30,7 @@ import static org.mockito.Mockito.verify;
 public class NotificationPresenterTest {
 
     private static final List<Notification> NOTIFICATIONS = Lists.newArrayList(
-            new Notification(Notification.TYPES.friend_request.name(), "stubbed_fromUserId", "stubbed_fromUserName"));
+            new Notification(Notification.TYPES.friend_request.name(), "stubbed_fromUserId", "stubbed_fromUserName", "친구요청"));
 
     private NotificationPresenter mPresenter;
 

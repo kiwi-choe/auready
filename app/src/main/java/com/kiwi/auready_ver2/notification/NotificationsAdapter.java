@@ -22,6 +22,13 @@ import java.util.List;
 class NotificationsAdapter extends BaseAdapter {
 
     private final static String TAG = "TAG_NotificationAdapter";
+    /*
+    * 1. friend request
+    * 2. show message
+    * */
+    private static final int VIEW_TYPE_COUNT = 2;
+    private static final int VIEW_TYPE_FRIEND_REQUEST = 0;
+    private static final int VIEW_TYPE_SHOW_MESSAGE = 1;
 
     private final Context mContext;
     private List<Notification> mNotifications = new ArrayList<>();
@@ -54,68 +61,125 @@ class NotificationsAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup parent) {
-        View rowView = view;
-        ViewHolder viewHolder;
+    public int getViewTypeCount() {
+        return VIEW_TYPE_COUNT;
+    }
 
-        if(rowView == null) {
+    @Override
+    public int getItemViewType(int position) {
+        Notification notification = mNotifications.get(position);
+        int type = notification.getType();
+        if(type == Notification.TYPES.friend_request.getIntType()) {
+            return VIEW_TYPE_FRIEND_REQUEST;
+        } else {
+            return VIEW_TYPE_SHOW_MESSAGE;
+        }
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+
+        if (getItemViewType(position) == VIEW_TYPE_FRIEND_REQUEST) {
+            return getFriendRequestView(position, view, parent);
+        } else { //if(getItemViewType(position) == VIEW_TYPE_SHOW_MESSAGE) {
+            return getShowMessageView(position, view, parent);
+        }
+    }
+
+    private View getShowMessageView(int position, View view, ViewGroup parent) {
+        View rowView = view;
+        ShowMessage_ViewHolder viewHolder;
+        if (rowView == null) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            rowView = inflater.inflate(R.layout.noti_item_show_message, parent, false);
+
+            TextView message = (TextView) rowView.findViewById(R.id.txt_noti_message);
+
+            viewHolder = new ShowMessage_ViewHolder(message);
+            rowView.setTag(viewHolder);
+        } else {
+            viewHolder = (ShowMessage_ViewHolder) view.getTag();
+        }
+
+        // Bind views
+        Notification notification = getItem(position);
+        String message = notification.getMessage();
+        viewHolder.mMessage.setText(message);
+
+        return rowView;
+    }
+
+    private View getFriendRequestView(int position, View view, ViewGroup parent) {
+
+        View rowView = view;
+        FriendRequest_ViewHolder viewHolder;
+        if (rowView == null) {
+
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
             rowView = inflater.inflate(R.layout.noti_item_friend_request, parent, false);
 
             TextView message = (TextView) rowView.findViewById(R.id.txt_noti_message);
             Button acceptBt = (Button) rowView.findViewById(R.id.bt_accept_friend_request);
             Button deleteBt = (Button) rowView.findViewById(R.id.bt_delete_friend_request);
-            viewHolder = new ViewHolder(message, acceptBt, deleteBt);
+            viewHolder = new FriendRequest_ViewHolder(message, acceptBt, deleteBt);
 
             rowView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) view.getTag();
+            viewHolder = (FriendRequest_ViewHolder) view.getTag();
         }
 
         // Bind views
         Notification notification = getItem(position);
-        Log.d(TAG, notification.toString());
-        // Case, Friend Request
-        if(Notification.TYPES.friend_request.getIntType() == notification.getType()) {
-            // Set mMessage
-            String fromUserName = notification.getFromUserName();
-            String message = mContext.getString(R.string.noti_msg_friend_request, fromUserName);
-            Log.d(TAG, "message - " + message);
-            viewHolder.mMessage.setText(message);
-            // Set buttons
-            final String fromUserId = notification.getFromUserId();
-            final int notificationId = notification.getId();
-            viewHolder.mAcceptBt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mItemListener.onFriendRequestItemClicked(true, fromUserId, notificationId);
-                }
-            });
-            viewHolder.mDeleteBt.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mItemListener.onFriendRequestItemClicked(false, fromUserId, notificationId);
-                }
-            });
+        if(notification == null) {
+            Log.d(TAG, "notification is null");
         }
+
+        Log.d(TAG, notification.toString());
+        // Set mMessage
+        String message = notification.getMessage();
+        Log.d(TAG, "message - " + message);
+        viewHolder.mMessage.setText(message);
+        // Set buttons
+        final String fromUserId = notification.getFromUserId();
+        final int notificationId = notification.getId();
+        viewHolder.mAcceptBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemListener.onFriendRequestItemClicked(true, fromUserId, notificationId);
+            }
+        });
+        viewHolder.mDeleteBt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mItemListener.onFriendRequestItemClicked(false, fromUserId, notificationId);
+            }
+        });
 
         return rowView;
     }
 
-    public void replaceData(List<Notification> notifications) {
+    void replaceData(List<Notification> notifications) {
         setList(notifications);
         notifyDataSetChanged();
     }
 
-    private class ViewHolder {
+    private class FriendRequest_ViewHolder {
         TextView mMessage;
         Button mAcceptBt;
         Button mDeleteBt;
 
-        public ViewHolder(TextView message, Button acceptBt, Button deleteBt) {
+        FriendRequest_ViewHolder(TextView message, Button acceptBt, Button deleteBt) {
             mMessage = message;
             mAcceptBt = acceptBt;
             mDeleteBt = deleteBt;
+        }
+    }
+
+    private class ShowMessage_ViewHolder {
+        TextView mMessage;
+
+        ShowMessage_ViewHolder(TextView message) {
+            mMessage = message;
         }
     }
 }

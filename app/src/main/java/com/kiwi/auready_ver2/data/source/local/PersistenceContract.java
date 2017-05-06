@@ -16,6 +16,7 @@ public final class PersistenceContract {
         public static final long INSERT_ERROR = -1;
         public static final long INSERT_NOTHING = 0;
         public static final int DELETE_NOTHING = 0;
+        public static final long UPDATE_ERROR = 0;  // num of updated rows
     }
     /* Inner class that defines the table contents */
     public static class FriendEntry {
@@ -58,6 +59,7 @@ public final class PersistenceContract {
         public static final String COLUMN_iSNEW = "isnew";
         public static final String COLUMN_FROM_USERID = "from_userid";
         public static final String COLUMN_FROM_USERNAME = "from_username";
+        public static final String COLUMN_MESSAGE = "messageBody";
         public static final String COLUMN_CREATED_AT = "created_at";
     }
 
@@ -128,6 +130,7 @@ public final class PersistenceContract {
                         NotificationEntry.COLUMN_iSNEW + INTEGER_TYPE + DEFAULT + " 0" + COMMA_SEP +
                         NotificationEntry.COLUMN_FROM_USERID + TEXT_TYPE + COMMA_SEP +
                         NotificationEntry.COLUMN_FROM_USERNAME + TEXT_TYPE + COMMA_SEP +
+                        NotificationEntry.COLUMN_MESSAGE + TEXT_TYPE + COMMA_SEP +
                         NotificationEntry.COLUMN_CREATED_AT + DATETIME + DEFAULT + CURRENT_TIMESTAMP + NOTNULL +
                         " )";
     }

@@ -35,6 +35,8 @@ import com.kiwi.auready_ver2.data.Notification;
 import com.kiwi.auready_ver2.notification.domain.usecase.SaveNotification;
 import com.kiwi.auready_ver2.taskheads.TaskHeadsActivity;
 
+import java.util.Map;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFirebaseMsgService";
@@ -62,12 +64,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
         // Check if mMessage contains a data payload, a notification payload.
-        if (remoteMessage.getData().size() > 0 &&
-                remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+        if (remoteMessage.getData().size() > 0) {
+            Map<String, String> data = remoteMessage.getData();
+            Log.d(TAG, "Message data payload: " + data);
 
-            saveNotification(remoteMessage);
+            sendNotification(data.get(Notification.NOTI_TITLE),
+                    data.get(Notification.NOTI_BODY));
+
+            saveNotification(data);
         }
         // Also if you intend on generating your own notifications as a result of a received FCM
         // mMessage, here is where that should be initiated. See sendNotification method below.
@@ -77,9 +81,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     /**
      * Create and show a simple notification containing the received FCM mMessage.
      *
-     * @param messageBody FCM mMessage body received.
+     * @param title
+     * @param body FCM mMessage body received.
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String title, String body) {
         Intent intent = new Intent(this, TaskHeadsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
@@ -88,8 +93,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_stat_ic_notification)
-                .setContentTitle("FCM Message")
-                .setContentText(messageBody)
+                .setContentTitle(title)
+                .setContentText(body)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
@@ -104,13 +109,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     * Save new notification mMessage to Local storage
     * and update Notification UI
     * */
-    private void saveNotification(RemoteMessage message) {
+    private void saveNotification(Map<String, String> data) {
         // Data type = notification type
-        String dataType = message.getData().get(Notification.TYPE);
-        String fromUserId = message.getData().get(Notification.FROM_USERID);
-        String fromUserName = message.getData().get(Notification.FROM_USERNAME);
+        String dataType = data.get(Notification.TYPE);
+        String fromUserId = data.get(Notification.FROM_USERID);
+        String fromUserName = data.get(Notification.FROM_USERNAME);
+        String messageBody = data.get(Notification.NOTI_BODY);
 
-        final Notification notification = new Notification(dataType, fromUserId, fromUserName);
+        final Notification notification = new Notification(dataType, fromUserId, fromUserName, messageBody);
         // Save to local repository
         // Todo ; needs refactoring
         UseCaseHandler useCaseHandler = Injection.provideUseCaseHandler();

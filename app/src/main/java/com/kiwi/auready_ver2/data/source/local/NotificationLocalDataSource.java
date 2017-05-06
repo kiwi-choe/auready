@@ -17,6 +17,7 @@ import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExce
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERID;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_FROM_USERNAME;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_ID;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_MESSAGE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_TYPE;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.COLUMN_iSNEW;
 import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry.TABLE_NAME;
@@ -52,6 +53,7 @@ public class NotificationLocalDataSource implements NotificationDataSource {
         values.put(COLUMN_iSNEW, notification.getIsNewInteger());
         values.put(COLUMN_FROM_USERID, notification.getFromUserId());
         values.put(COLUMN_FROM_USERNAME, notification.getFromUserName());
+        values.put(COLUMN_MESSAGE, notification.getMessage());
 
         long isSuccess = mDbHelper.insert(TABLE_NAME, null, values);
         if (isSuccess != DBExceptionTag.INSERT_ERROR) {
@@ -74,8 +76,9 @@ public class NotificationLocalDataSource implements NotificationDataSource {
                 int isNew = c.getInt(c.getColumnIndexOrThrow(COLUMN_iSNEW));
                 String fromUserId = c.getString(c.getColumnIndexOrThrow(COLUMN_FROM_USERID));
                 String fromUserName = c.getString(c.getColumnIndexOrThrow(COLUMN_FROM_USERNAME));
+                String message = c.getString(c.getColumnIndexOrThrow(COLUMN_MESSAGE));
 
-                Notification notification = new Notification(id, type, isNew, fromUserId, fromUserName);
+                Notification notification = new Notification(id, type, isNew, fromUserId, fromUserName, message);
                 Log.d("TAG_notiLocal", notification.toString());
                 notifications.add(notification);
             }

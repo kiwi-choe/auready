@@ -47,7 +47,7 @@ public class TaskHeadLocalDataSourceTest {
     // notification stub data
     private static String fromUserId0 = "A id";
     private static String fromUserName0 = "A";
-    private static final Notification NOTIFICATION = new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0);
+    private static final Notification NOTIFICATION = new Notification(Notification.TYPES.friend_request.name(), fromUserId0, fromUserName0, "친구요청");
 
     private static SQLiteDBHelper mDbHelper;
     private TaskLocalDataSource mTaskLocalDataSource = TaskLocalDataSource.getInstance(RuntimeEnvironment.application);
