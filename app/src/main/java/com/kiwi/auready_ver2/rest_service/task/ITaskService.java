@@ -42,4 +42,7 @@ public interface ITaskService {
 
     @DELETE("/tasks/{id}")
     Call<Void> deleteTask(@Path("id") String id);
+
+    @GET("/taskheads/")
+    Call<TaskHeadDetail_remote> getTaskHeadDetail(@Query("id") String taskHeadId);
 }

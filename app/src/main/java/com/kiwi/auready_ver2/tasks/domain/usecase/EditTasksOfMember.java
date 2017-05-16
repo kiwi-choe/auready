@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import java.util.List;
@@ -23,8 +24,17 @@ public class EditTasksOfMember extends UseCase<EditTasksOfMember.RequestValues, 
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.editTasksOfMember(values.getMemberId(), values.getTasks());
-        getUseCaseCallback().onSuccess(new ResponseValue());
+        mTaskRepository.editTasksOfMember(values.getMemberId(), values.getTasks(), new TaskDataSource.EditTasksOfMemberCallback() {
+            @Override
+            public void onEditSuccess() {
+                getUseCaseCallback().onSuccess(new ResponseValue());
+            }
+
+            @Override
+            public void onEditFail() {
+                getUseCaseCallback().onError();
+            }
+        });
     }
 
     public static final class RequestValues implements UseCase.RequestValues {

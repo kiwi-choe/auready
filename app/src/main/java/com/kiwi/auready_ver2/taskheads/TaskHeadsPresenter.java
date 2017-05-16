@@ -30,7 +30,7 @@ import retrofit2.Response;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- *  TaskHead presenter
+ * TaskHead presenter
  */
 public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
@@ -91,14 +91,14 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     private List<TaskHead> filterTaskHeads(List<TaskHeadDetail> taskHeadDetails) {
         List<TaskHead> taskHeads = new ArrayList<>();
-        for(TaskHeadDetail taskHeadDetail: taskHeadDetails) {
+        for (TaskHeadDetail taskHeadDetail : taskHeadDetails) {
             taskHeads.add(taskHeadDetail.getTaskHead());
         }
         return taskHeads;
     }
 
     private void processTaskHeads(List<TaskHead> taskHeads) {
-        if(taskHeads.isEmpty()) {
+        if (taskHeads.isEmpty()) {
             mTaskHeadView.showNoTaskHeads();
         } else {
             mTaskHeadView.showTaskHeads(taskHeads);
@@ -136,7 +136,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                 title = data.getStringExtra(TaskHeadDetailFragment.EXTRA_TITLE);
             }
             int color = DEFAULT_COLOR;
-            if(data.hasExtra(TaskHeadDetailFragment.EXTRA_COLOR)) {
+            if (data.hasExtra(TaskHeadDetailFragment.EXTRA_COLOR)) {
                 color = data.getIntExtra(TaskHeadDetailFragment.EXTRA_COLOR, DEFAULT_COLOR);
             }
 
@@ -180,7 +180,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     public void updateOrders(List<TaskHead> taskheads) {
         List<TaskHead> updatingTaskHeads = new ArrayList<>(0);
         int size = taskheads.size();
-        for(int i = 0; i<size; i++) {
+        for (int i = 0; i < size; i++) {
             TaskHead taskHead = taskheads.get(i);
             updatingTaskHeads.add(new TaskHead(taskHead.getId(), taskHead.getTitle(), i, taskHead.getColor()));
         }

@@ -6,6 +6,7 @@ import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.MEMBERS;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD;
+import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKHEAD_DETAIL;
 import static com.kiwi.auready_ver2.StubbedData.TaskStub.TASKS;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
@@ -55,6 +57,8 @@ public class TasksPresenterTest {
     private ArgumentCaptor<TaskDataSource.LoadMembersCallback> mLoadMembersCallbackCaptor;
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.GetTaskHeadDetailCallback> getTaskHeadDetailCallbackCaptor;
 
     @Before
     public void setup() {
@@ -188,6 +192,18 @@ public class TasksPresenterTest {
         assertThat(mTasksPresenter.mCachedTasks.get(memberId), is(not(TASKS)));
         assertThat(mTasksPresenter.mCachedTasks.get(memberId), is(editedTasks));
     }
+    @Test
+    public void getTaskHeadDetailFromRemote() {
+        mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
+
+        mTasksPresenter.getTaskHeadDetailFromRemote();
+        verify(mTaskRepository).getTaskHeadDetail(eq(TASKHEAD.getId()), getTaskHeadDetailCallbackCaptor.capture());
+        getTaskHeadDetailCallbackCaptor.getValue().onTaskHeadDetailLoaded(TASKHEAD_DETAIL);
+
+        verify(mTasksView).setTitle(TASKHEAD_DETAIL.getTaskHead().getTitle());
+        verify(mTasksView).setColor(TASKHEAD_DETAIL.getTaskHead().getColor());
+        verify(mTasksView).showMembers(TASKHEAD_DETAIL.getMembers());
+    }
     private TasksPresenter givenTasksPresenter(String taskHeadId) {
 
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
@@ -197,9 +213,11 @@ public class TasksPresenterTest {
         DeleteTask deleteTask = new DeleteTask(mTaskRepository);
         EditTasks editTasks = new EditTasks(mTaskRepository);
         EditTasksOfMember editTasksOfMember = new EditTasksOfMember(mTaskRepository);
+        GetTaskHeadDetail getTaskHeadDetail = new GetTaskHeadDetail(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getMembers, getTasksOfMember, saveTask, deleteTask, editTasks, editTasksOfMember);
+                getMembers, getTasksOfMember, saveTask, deleteTask, editTasks, editTasksOfMember,
+                getTaskHeadDetail);
     }
 
 }

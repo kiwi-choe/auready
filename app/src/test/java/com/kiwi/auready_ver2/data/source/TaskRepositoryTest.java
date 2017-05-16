@@ -79,6 +79,10 @@ public class TaskRepositoryTest {
     private TaskDataSource.DeleteTaskHeadsCallback mDeleteTaskHeadsCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.DeleteTaskHeadsCallback> mDeleteTaskHeadsCallbackCaptor;
+    @Mock
+    private TaskDataSource.EditTasksOfMemberCallback mEditTasksOfMemberCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.EditTasksOfMemberCallback> mEditTasksOfMemberCallbackCaptor;
 
     @Before
     public void setup() {
@@ -335,6 +339,16 @@ public class TaskRepositoryTest {
     }
 
     @Test
+    public void getTaskHeadDetail_fromRemote() {
+        // Set forceToUpdate is true
+        mRepository.refreshLocalTaskHead();
+        String taskHeadId = TASKHEAD_DETAIL.getTaskHead().getId();
+        mRepository.getTaskHeadDetail(taskHeadId, mGetTaskHeadDetailCallback);
+
+        verify(mRemoteDataSource).getTaskHeadDetail(eq(taskHeadId), mGetTaskHeadDetailCallbackCaptor.capture());
+        verify(mGetTaskHeadDetailCallback).onTaskHeadDetailLoaded(TASKHEAD_DETAIL);
+    }
+    @Test
     public void getTaskHeadDetailWithBothDataSourceUnavailable_firesOnDataUnavailable() {
         String taskHeadId = TASKHEAD_DETAIL.getTaskHead().getId();
         mRepository.getTaskHeadDetail(taskHeadId, mGetTaskHeadDetailCallback);
@@ -475,8 +489,8 @@ public class TaskRepositoryTest {
         List<Task> editTasks = TASKS;
         String editDescription = "EDIT des!!";
         editTasks.get(0).setDescription(editDescription);
-        mRepository.editTasksOfMember(memberId, editTasks);
-        verify(mLocalDataSource).editTasksOfMember(eq(memberId), eq(editTasks));
+        mRepository.editTasksOfMember(memberId, editTasks, mEditTasksOfMemberCallback);
+        verify(mLocalDataSource).editTasksOfMember(eq(memberId), eq(editTasks), mEditTasksOfMemberCallbackCaptor.capture());
 
         assertThat(mRepository.mCachedTasks.get(TASKS.get(0).getId()).getDescription(), is(editDescription));
     }

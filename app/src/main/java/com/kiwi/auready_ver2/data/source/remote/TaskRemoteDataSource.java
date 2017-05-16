@@ -86,7 +86,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
             public void onResponse(Call<List<TaskHeadDetail_remote>> call, Response<List<TaskHeadDetail_remote>> response) {
                 if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
 
-                    List<TaskHeadDetail> taskHeadDetails = filterFromRemote(response.body());
+                    List<TaskHeadDetail> taskHeadDetails = filterTaskHeadDetailRemoteList(response.body());
                     callback.onTaskHeadDetailsLoaded(taskHeadDetails);
                 } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS) {
 
@@ -135,41 +135,45 @@ public class TaskRemoteDataSource implements TaskDataSource {
     * Separate objects
     * TaskHead, Member, Task
     * */
-    private List<TaskHeadDetail> filterFromRemote(List<TaskHeadDetail_remote> taskHeads_remote) {
+    private List<TaskHeadDetail> filterTaskHeadDetailRemoteList(List<TaskHeadDetail_remote> taskHeads_remote) {
 
         List<TaskHeadDetail> taskheadDetails = new ArrayList<>(0);
-        for (TaskHeadDetail_remote taskHeadRemote : taskHeads_remote) {
-
-            // Make TaskHead
-            List<Member> members = new ArrayList<>();
-            List<Task> tasks = new ArrayList<>();
-
-            // Set default orders; 0
-            TaskHead newTaskHead = new TaskHead(taskHeadRemote.getId(),
-                    taskHeadRemote.getTitle(), 0, taskHeadRemote.getColor());
-            // Member
-            List<Member_remote> member_remotes = taskHeadRemote.getMembers();
-            for (Member_remote member_remote : member_remotes) {
-                Member newMember = new Member(member_remote.getId(),
-                        newTaskHead.getId(), member_remote.getUserId(),
-                        member_remote.getName(), member_remote.getEmail());
-                members.add(newMember);
-                // Task
-                List<Task_remote> task_remotes = member_remote.getTasks();
-                for (Task_remote task_remote : task_remotes) {
-                    Task newTask = new Task(
-                            task_remote.getId(),
-                            member_remote.getId(),
-                            task_remote.getDescription(),
-                            task_remote.getCompleted(),
-                            task_remote.getOrder());
-                    tasks.add(newTask);
-                }
-            }
-            TaskHeadDetail taskHeadDetail = new TaskHeadDetail(newTaskHead, members, tasks);
+        for (TaskHeadDetail_remote taskHeadDetailRemote : taskHeads_remote) {
+            TaskHeadDetail taskHeadDetail = filterTaskHeadDetailRemote(taskHeadDetailRemote);
             taskheadDetails.add(taskHeadDetail);
         }
         return taskheadDetails;
+    }
+
+    private TaskHeadDetail filterTaskHeadDetailRemote(TaskHeadDetail_remote taskHeadDetailRemote) {
+
+        // Make TaskHead
+        List<Member> members = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
+
+        // Set default orders; 0
+        TaskHead newTaskHead = new TaskHead(taskHeadDetailRemote.getId(),
+                taskHeadDetailRemote.getTitle(), 0, taskHeadDetailRemote.getColor());
+        // Member
+        List<Member_remote> member_remotes = taskHeadDetailRemote.getMembers();
+        for (Member_remote member_remote : member_remotes) {
+            Member newMember = new Member(member_remote.getId(),
+                    newTaskHead.getId(), member_remote.getUserId(),
+                    member_remote.getName(), member_remote.getEmail());
+            members.add(newMember);
+            // Task
+            List<Task_remote> task_remotes = member_remote.getTasks();
+            for (Task_remote task_remote : task_remotes) {
+                Task newTask = new Task(
+                        task_remote.getId(),
+                        member_remote.getId(),
+                        task_remote.getDescription(),
+                        task_remote.getCompleted(),
+                        task_remote.getOrder());
+                tasks.add(newTask);
+            }
+        }
+        return new TaskHeadDetail(newTaskHead, members, tasks);
     }
 
     // for Local
@@ -293,8 +297,31 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull GetTaskHeadDetailCallback callback) {
+    public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull final GetTaskHeadDetailCallback callback) {
+        if (!readyToRequestAPI()) {
+            callback.onDataNotAvailable();
+        }
 
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        Call<TaskHeadDetail_remote> call = taskService.getTaskHeadDetail(taskHeadId);
+        call.enqueue(new Callback<TaskHeadDetail_remote>() {
+            @Override
+            public void onResponse(Call<TaskHeadDetail_remote> call, Response<TaskHeadDetail_remote> response) {
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
+                    TaskHeadDetail taskHeadDetail = filterTaskHeadDetailRemote(response.body());
+                    callback.onTaskHeadDetailLoaded(taskHeadDetail);
+                } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS) {
+                    callback.onDataNotAvailable();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TaskHeadDetail_remote> call, Throwable t) {
+                callback.onDataNotAvailable();
+            }
+        });
     }
 
     @Override
@@ -340,7 +367,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     @Override
     public void deleteTask(@NonNull String taskId) {
         Log.d(TAG, "entered into deleteTask");
-        if(!readyToRequestAPI()) {
+        if (!readyToRequestAPI()) {
             return;
         }
         ITaskService taskService =
@@ -350,7 +377,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     Log.d(TAG, "success to delete task");
                 }
             }
@@ -373,10 +400,10 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
         // Make the collection for all the tasks of members
         List<MemberTasks> updatingMemberTasks = new ArrayList<>(0);
-        for(String memberId:cachedTasks.keySet()) {
+        for (String memberId : cachedTasks.keySet()) {
             List<Task_remote> taskRemotes = new ArrayList<>(0);
             List<Task> tasks = cachedTasks.get(memberId);
-            for(Task task:tasks) {
+            for (Task task : tasks) {
                 Task_remote taskRemote = new Task_remote(
                         task.getId(), task.getDescription(), task.getCompleted(), task.getOrder());
                 taskRemotes.add(taskRemote);
@@ -400,8 +427,9 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks) {
-        if(!readyToRequestAPI()) {
+    public void editTasksOfMember(String memberId, List<Task> tasks,
+                                  @NonNull final EditTasksOfMemberCallback callback) {
+        if (!readyToRequestAPI()) {
             return;
         }
 
@@ -409,7 +437,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
                 ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
         List<Task_remote> updatingTasks = new ArrayList<>();
-        for(Task task: tasks) {
+        for (Task task : tasks) {
             updatingTasks.add(new Task_remote(
                     task.getId(), task.getDescription(), task.getCompleted(), task.getOrder()));
         }
@@ -418,13 +446,27 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Log.d("Tag_remoteTask", "success to editTasksOfMember");
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
+                    // Request getting latest updated taskHeads
+                    Log.d("Tag_remoteTask", "editTasksOfMember; no member");
+                    callback.onEditFail();
+                } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
+                    Log.d("Tag_remoteTask", "success to editTasksOfMember");
+                    callback.onEditSuccess();
+                }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
+                callback.onEditFail();
                 Log.d("Tag_remoteTask", "fail to editTasksOfMember");
             }
         });
+    }
+
+    @Override
+    public void refreshLocalTaskHead() {
+        // Not required because the {@link TaskRepository} handles the logic of refreshing the
+        // tasks from all the available data sources.
     }
 }

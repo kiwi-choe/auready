@@ -250,7 +250,8 @@ public class TaskLocalDataSourceTest {
         List<Task> updatingTasks = new ArrayList<>();
         updatingTasks.addAll(TASKS);
 
-        mLocalDataSource.editTasksOfMember(TASKS.get(0).getMemberId(), updatingTasks);
+        TaskDataSource.EditTasksOfMemberCallback editCallback = Mockito.mock(TaskDataSource.EditTasksOfMemberCallback.class);
+        mLocalDataSource.editTasksOfMember(TASKS.get(0).getMemberId(), updatingTasks, editCallback);
 
         mLocalDataSource.getTasksOfMember(TASKS.get(0).getMemberId(), new TaskDataSource.LoadTasksCallback() {
             @Override

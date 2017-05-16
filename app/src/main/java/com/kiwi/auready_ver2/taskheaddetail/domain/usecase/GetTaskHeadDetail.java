@@ -24,6 +24,11 @@ public class GetTaskHeadDetail extends UseCase<GetTaskHeadDetail.RequestValues, 
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
+
+        if(requestValues.isForceUpdate()) {
+            mRepository.refreshLocalTaskHead();
+        }
+
         mRepository.getTaskHeadDetail(requestValues.getTaskHeadId(), new TaskDataSource.GetTaskHeadDetailCallback() {
             @Override
             public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
@@ -40,13 +45,19 @@ public class GetTaskHeadDetail extends UseCase<GetTaskHeadDetail.RequestValues, 
 
     public static class RequestValues implements UseCase.RequestValues {
         private final String mTaskHeadId;
+        private final boolean mForceUpdate;
 
-        public RequestValues(String taskHeadId) {
+        public RequestValues(String taskHeadId, boolean forceUpdate) {
             mTaskHeadId = checkNotNull(taskHeadId, "taskHeadId cannot be null");
+            mForceUpdate = forceUpdate;
         }
 
         public String getTaskHeadId() {
             return mTaskHeadId;
+        }
+
+        public boolean isForceUpdate() {
+            return mForceUpdate;
         }
     }
 

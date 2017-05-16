@@ -269,7 +269,7 @@ public class TaskLocalDataSource implements TaskDataSource {
                 isSuccessOfAddMember = saveMembers(editTaskHead.getId(), addingMembers);
             }
 
-            if (isSuccessOfTaskHead != DBExceptionTag.INSERT_ERROR &&
+            if (isSuccessOfTaskHead != DBExceptionTag.UPDATE_ERROR &&
                     isSuccessOfAddMember != DBExceptionTag.INSERT_ERROR) {
                 isSuccessAll = true;
                 db.setTransactionSuccessful();
@@ -519,12 +519,23 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks) {
+    public void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback) {
 
-        editTasksInLocal(tasks);
+        if(editTasksInLocal(tasks)) {
+            callback.onEditSuccess();
+        } else {
+            callback.onEditFail();
+        }
     }
 
-    private void editTasksInLocal(List<Task> tasks) {
+    @Override
+    public void refreshLocalTaskHead() {
+        // Not required because the {@link TaskRepository} handles the logic of refreshing the
+        // tasks from all the available data sources.
+    }
+
+    private boolean editTasksInLocal(List<Task> tasks) {
+        boolean success = true;
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.beginTransaction();
         try {
@@ -545,10 +556,12 @@ public class TaskLocalDataSource implements TaskDataSource {
                 db.setTransactionSuccessful();
             }
         } catch (SQLException e) {
+            success = false;
             Log.e(TAG_SQLITE, "Could not delete taskheads in ( " + DATABASE_NAME + "). ", e);
         } finally {
             db.endTransaction();
         }
+        return success;
     }
 
 }

@@ -8,7 +8,9 @@ import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
+import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
@@ -39,7 +41,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     * Task List that can be controlled - add, delete, modify
     * For TasksAdapter and TaskRepository
     * */
-    Map<String, List<Task>> mCachedTasks = null;
+    Map<String, List<Task>> mCachedTasks = new LinkedHashMap<>();
 
     private final GetMembers mGetMembers;
     private final GetTasksOfMember mGetTasksOfMember;
@@ -47,6 +49,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final DeleteTask mDeleteTask;
     private final EditTasks mEditTasks;
     private final EditTasksOfMember mEditTasksOfMember;
+    private final GetTaskHeadDetail mGetTaskHeadDetail;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull String taskHeadId,
@@ -56,7 +59,8 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull SaveTask saveTask,
                           @NonNull DeleteTask deleteTask,
                           @NonNull EditTasks editTasks,
-                          @NonNull EditTasksOfMember editTasksOfMember) {
+                          @NonNull EditTasksOfMember editTasksOfMember,
+                          @NonNull GetTaskHeadDetail getTaskHeadDetail) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = checkNotNull(taskHeadId, "taskHeadId cannot be null!");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -66,6 +70,8 @@ public class TasksPresenter implements TasksContract.Presenter {
         mDeleteTask = checkNotNull(deleteTask);
         mEditTasks = checkNotNull(editTasks);
         mEditTasksOfMember = editTasksOfMember;
+
+        mGetTaskHeadDetail = getTaskHeadDetail;
 
         mTasksView.setPresenter(this);
     }
@@ -221,9 +227,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     @Override
     public void updateTasksInMemory(String memberId, List<Task> tasks) {
 
-        if(mCachedTasks == null) {
-            mCachedTasks = new LinkedHashMap<>();
-        }
         mCachedTasks.put(memberId, tasks);
     }
 
@@ -240,8 +243,34 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onError() {
+                        // Request getting latest updated taskHeads
+                        // Refresh TasksActivity
+                        mTasksView.onEditTasksOfMemberError();
+                    }
+                });
+    }
+
+    @Override
+    public void getTaskHeadDetailFromRemote() {
+        boolean forceToUpdate = true;
+        mUseCaseHandler.execute(mGetTaskHeadDetail, new GetTaskHeadDetail.RequestValues(mTaskHeadId, forceToUpdate),
+                new UseCase.UseCaseCallback<GetTaskHeadDetail.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(GetTaskHeadDetail.ResponseValue response) {
+                        setTaskHead(response.getTaskHeadDetail().getTaskHead());
+                        mTasksView.showMembers(response.getTaskHeadDetail().getMembers());
+                    }
+
+                    @Override
+                    public void onError() {
 
                     }
                 });
+    }
+
+    private void setTaskHead(TaskHead taskHead) {
+        mTasksView.setTitle(taskHead.getTitle());
+        mTasksView.setColor(taskHead.getColor());
     }
 }

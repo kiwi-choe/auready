@@ -117,7 +117,8 @@ public class TaskHeadDetailPresenter implements TaskHeadDetailContract.Presenter
         if (mTaskHeadId == null) {
             throw new RuntimeException("populateTaskHeadDetail() was called but taskhead is new.");
         }
-        mUseCaseHandler.execute(mGetTaskHeadDetail, new GetTaskHeadDetail.RequestValues(mTaskHeadId),
+        boolean forceToUpdate = false;
+        mUseCaseHandler.execute(mGetTaskHeadDetail, new GetTaskHeadDetail.RequestValues(mTaskHeadId, forceToUpdate),
                 new UseCase.UseCaseCallback<GetTaskHeadDetail.ResponseValue>() {
 
                     @Override

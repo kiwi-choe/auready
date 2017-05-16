@@ -23,7 +23,7 @@ class TasksContract {
         * Member
         * */
         void showMembers(List<Member> members);
-
+        void onEditTasksOfMemberError();
         /*
         * Tasks
         * */
@@ -57,5 +57,7 @@ class TasksContract {
         void updateTasksInMemory(String memberId, List<Task> tasks);
 
         void editTasksOfMember(String memberId, List<Task> tasks);
+
+        void getTaskHeadDetailFromRemote();
     }
 }

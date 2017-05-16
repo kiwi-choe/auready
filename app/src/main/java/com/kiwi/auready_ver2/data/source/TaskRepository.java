@@ -39,6 +39,10 @@ public class TaskRepository implements TaskDataSource {
     // Key: member id
     Map<String, Member> mCachedMembers = null;
     Map<String, Task> mCachedTasks = null;
+    /*
+    * Force to update Local taskDataSource, getting from Remote data source
+    * */
+    private boolean mForceToUpdate = false;
 
     // Prevent direct instantiation
     private TaskRepository(@NonNull TaskDataSource taskRemoteDataSource,
@@ -112,19 +116,25 @@ public class TaskRepository implements TaskDataSource {
 
             @Override
             public void onDataNotAvailable() {
-                // Get taskheads, members and tasks at once from Remote
-                mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
-                    @Override
-                    public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-                        refreshLocalDataSource(taskHeadDetails);
-                        callback.onTaskHeadDetailsLoaded(taskHeadDetails);
-                    }
+                getTaskHeadDetailsFromRemote(callback);
+            }
+        });
+    }
 
-                    @Override
-                    public void onDataNotAvailable() {
-                        callback.onDataNotAvailable();
-                    }
-                });
+    /*
+    * Get taskheads, members and tasks at once from Remote
+    * */
+    private void getTaskHeadDetailsFromRemote(final LoadTaskHeadDetailsCallback callback) {
+        mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
+            @Override
+            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                refreshLocalDataSource(taskHeadDetails);
+                callback.onTaskHeadDetailsLoaded(taskHeadDetails);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+                callback.onDataNotAvailable();
             }
         });
     }
@@ -169,25 +179,27 @@ public class TaskRepository implements TaskDataSource {
         mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
             @Override
             public void onDeleteAllSuccess() {
-                for(final TaskHeadDetail taskHeadDetail: taskHeadDetails) {
+                for (final TaskHeadDetail taskHeadDetail : taskHeadDetails) {
                     mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
                         @Override
                         public void onSaveSuccess() {
                             // Task
                             List<Task> tasks = taskHeadDetail.getTasks();
-                            for(Task task:tasks) {
+                            for (Task task : tasks) {
                                 mLocalDataSource.saveTask(task);
                             }
                         }
 
                         @Override
-                        public void onSaveFailed() {}
+                        public void onSaveFailed() {
+                        }
                     });
                 }
             }
 
             @Override
-            public void onDeleteAllFail() {            }
+            public void onDeleteAllFail() {
+            }
         });
     }
 
@@ -237,10 +249,12 @@ public class TaskRepository implements TaskDataSource {
 
         mRemoteDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
             @Override
-            public void onSaveSuccess() {}
+            public void onSaveSuccess() {
+            }
 
             @Override
-            public void onSaveFailed() {}
+            public void onSaveFailed() {
+            }
         });
     }
 
@@ -302,14 +316,35 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(taskHeadId);
         checkNotNull(callback);
 
-        // Is the taskhead in the local? if not, query the network.
-        mLocalDataSource.getTaskHeadDetail(taskHeadId, new GetTaskHeadDetailCallback() {
+        if (mForceToUpdate) {
+            getTaskHeadDetailFromRemote(taskHeadId, callback);
+        } else {
+            // Is the taskhead in the local? if not, query the network.
+            mLocalDataSource.getTaskHeadDetail(taskHeadId, new GetTaskHeadDetailCallback() {
 
+                @Override
+                public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
+                    refreshCachesOfTaskHeadDetail(taskHeadDetail);
+                    Log.d("TEST_NOW", "after getTaskHeadDetail");
+                    showMembersCacheOf(taskHeadId);
+                    callback.onTaskHeadDetailLoaded(taskHeadDetail);
+                }
+
+                @Override
+                public void onDataNotAvailable() {
+                    getTaskHeadDetailFromRemote(taskHeadId, callback);
+                }
+            });
+        }
+    }
+
+    private void getTaskHeadDetailFromRemote(String taskHeadId, final GetTaskHeadDetailCallback callback) {
+        mRemoteDataSource.getTaskHeadDetail(taskHeadId, new GetTaskHeadDetailCallback() {
             @Override
             public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
-                refreshCachesOfTaskHeadDetail(taskHeadDetail);
-                Log.d("TEST_NOW", "after getTaskHeadDetail");
-                showMembersCacheOf(taskHeadId);
+                List<TaskHeadDetail> taskHeadDetails = new ArrayList<>();
+                taskHeadDetails.add(taskHeadDetail);
+                refreshLocalDataSource(taskHeadDetails);
                 callback.onTaskHeadDetailLoaded(taskHeadDetail);
             }
 
@@ -408,7 +443,7 @@ public class TaskRepository implements TaskDataSource {
 
         // Make the collection for all the tasks of members
         List<Task> updatingTasks = new ArrayList<>();
-        for(String key:cachedTasks.keySet()) {
+        for (String key : cachedTasks.keySet()) {
             List<Task> tasks = cachedTasks.get(key);
             updatingTasks.addAll(tasks);
         }
@@ -417,11 +452,36 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks) {
-        mLocalDataSource.editTasksOfMember(memberId, tasks);
-        mRemoteDataSource.editTasksOfMember(memberId, tasks);
+    public void editTasksOfMember(final String memberId, final List<Task> tasks,
+                                  @NonNull final EditTasksOfMemberCallback callback) {
+        mLocalDataSource.editTasksOfMember(memberId, tasks, new EditTasksOfMemberCallback() {
+            @Override
+            public void onEditSuccess() {
 
-        refreshCachedTasks(tasks);
+                mRemoteDataSource.editTasksOfMember(memberId, tasks, new EditTasksOfMemberCallback() {
+                    @Override
+                    public void onEditSuccess() {
+                        refreshCachedTasks(tasks);
+                        callback.onEditSuccess();
+                    }
+
+                    @Override
+                    public void onEditFail() {
+                        callback.onEditFail();
+                    }
+                });
+            }
+
+            @Override
+            public void onEditFail() {
+                callback.onEditFail();
+            }
+        });
+    }
+
+    @Override
+    public void refreshLocalTaskHead() {
+        mForceToUpdate = true;
     }
 
     private void showMembersCacheOf(String taskHeadId) {

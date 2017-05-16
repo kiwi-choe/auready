@@ -30,5 +30,7 @@ public final class HttpStatusCode {
     public static class TaskHeadStatusCode {
         public static final int OK = 200;
         public static final int NO_TASKHEADS = 204;
+
+        public static final int NO_MEMBER = 204;
     }
 }

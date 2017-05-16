@@ -19,6 +19,7 @@ import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -66,7 +67,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
-                Injection.provideEditTasksOfMember(getApplicationContext()));
+                Injection.provideEditTasksOfMember(getApplicationContext()),
+                Injection.provideGetTaskHeadDetail(getApplicationContext()));
     }
 
     private void initViews() {
@@ -86,6 +88,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
             int backgroundColor = getIntent().getIntExtra(ARG_TASKHEAD_COLOR, DEFAULT_COLOR);
             setColor(backgroundColor);
         }
+
+        initFragments();
     }
 
     @Override
@@ -148,20 +152,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showMembers(List<Member> members) {
-        initFragments(members);
-    }
+        mPagerAdapter.replaceMembers(members);
 
-    private void initFragments(List<Member> members) {
-        mViewPager = (ViewPager) findViewById(R.id.tasks_fragment_pager);
-        mPagerAdapter = new TasksFragmentPagerAdapter(this, getSupportFragmentManager(), members, mTaskViewListener);
-        mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
+        if (mProgressBar != null) {
+            mProgressBar.setVisibility(View.GONE);
+        }
 
-        mViewPager.setClipToPadding(false);
-        mViewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding));
-
-        mViewPager.setVisibility(View.INVISIBLE);
-
+        mViewPager.setVisibility(View.VISIBLE);
         if (members != null && members.size() == 1) {
             mViewPager.setPaddingRelative(getResources().getDimensionPixelSize(
                     R.dimen.viewpager_end_padding),
@@ -169,6 +166,24 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                     mViewPager.getPaddingRight(),
                     mViewPager.getPaddingBottom());
         }
+    }
+
+    @Override
+    public void onEditTasksOfMemberError() {
+
+    }
+
+    private void initFragments() {
+        mViewPager = (ViewPager) findViewById(R.id.tasks_fragment_pager);
+        mPagerAdapter = new TasksFragmentPagerAdapter(
+                this, getSupportFragmentManager(), new ArrayList<Member>(), mTaskViewListener);
+        mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(OFF_SCREEN_PAGE_LIMIT);
+
+        mViewPager.setClipToPadding(false);
+        mViewPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.viewpager_end_padding));
+
+        mViewPager.setVisibility(View.INVISIBLE);
     }
 
     interface TaskViewListener {
@@ -226,11 +241,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-        }
+//        if (mProgressBar != null) {
+//            mProgressBar.setVisibility(View.GONE);
+//        }
 
-        mViewPager.setVisibility(View.VISIBLE);
+//        mViewPager.setVisibility(View.VISIBLE);
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         if (fragment != null) {
             fragment.showFilteredTasks(completed, uncompleted);
@@ -239,13 +254,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showNoTask(String memberId) {
-        if (mProgressBar != null) {
-            mProgressBar.setVisibility(View.GONE);
-        }
-
-        if (mViewPager != null) {
-            mViewPager.setVisibility(View.VISIBLE);
-        }
+//        if (mProgressBar != null) {
+//            mProgressBar.setVisibility(View.GONE);
+//        }
+//
+//        if (mViewPager != null) {
+//            mViewPager.setVisibility(View.VISIBLE);
+//        }
 
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         if (fragment != null) {
