@@ -11,11 +11,13 @@ public final class HttpStatusCode {
     // give it an empty constructor.
     public HttpStatusCode() {}
 
+    public static class BasicStatusCode {
+        public static final int OK_GET = 200;
+    }
     /*
     * Friend
     * */
     public static class FriendStatusCode {
-        public static final int OK = 200;
         public static final int NO_USERS = 204;
         public static final int DB_ERROR = 400;
 
@@ -28,7 +30,6 @@ public final class HttpStatusCode {
     * TaskHead
     * */
     public static class TaskHeadStatusCode {
-        public static final int OK = 200;
         public static final int NO_TASKHEADS = 204;
 
         public static final int NO_MEMBER = 204;

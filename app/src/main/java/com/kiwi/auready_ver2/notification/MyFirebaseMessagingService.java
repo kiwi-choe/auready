@@ -71,7 +71,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             sendNotification(data.get(Notification.NOTI_TITLE),
                     data.get(Notification.NOTI_BODY));
 
-            saveNotification(data);
+//            saveNotification(data);
         }
         // Also if you intend on generating your own notifications as a result of a received FCM
         // mMessage, here is where that should be initiated. See sendNotification method below.

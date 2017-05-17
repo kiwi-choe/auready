@@ -282,6 +282,7 @@ public class TaskHeadLocalDataSourceTest {
         saveStubbedFriend(StubbedData.FriendStub.FRIENDS.get(0));
         saveStubbedNotification(NOTIFICATION);
 
+        // Init Task
         TaskDataSource.InitLocalDataCallback initLocalDataCallback = Mockito.mock(TaskDataSource.InitLocalDataCallback.class);
         mTaskLocalDataSource.initializeLocalData(initLocalDataCallback);
         verify(initLocalDataCallback).onInitSuccess();

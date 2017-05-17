@@ -4,8 +4,8 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Notification;
-import com.kiwi.auready_ver2.data.source.local.NotificationDataSource;
-import com.kiwi.auready_ver2.data.source.local.NotificationLocalDataSource;
+import com.kiwi.auready_ver2.data.source.NotificationDataSource;
+import com.kiwi.auready_ver2.data.source.NotificationRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -14,15 +14,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class SaveNotification extends UseCase<SaveNotification.RequestValues, SaveNotification.ResponseValue> {
 
-    private final NotificationLocalDataSource mLocalDataSource;
+    private final NotificationRepository mRepository;
 
-    public SaveNotification(@NonNull NotificationLocalDataSource localDataSource) {
-        mLocalDataSource = checkNotNull(localDataSource, "localDataSource cannot be null");
+    public SaveNotification(@NonNull NotificationRepository repository) {
+        mRepository = checkNotNull(repository, "localDataSource cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mLocalDataSource.saveNotification(requestValues.getNotification(), new NotificationDataSource.SaveCallback() {
+        mRepository.saveNotification(requestValues.getNotification(), new NotificationDataSource.SaveCallback() {
             @Override
             public void onSaveSuccess() {
                 getUseCaseCallback().onSuccess(new ResponseValue());

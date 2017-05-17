@@ -129,7 +129,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         return isSuccess;
     }
 
-    Cursor rawQuery(String sql, String[] selectionArgs) {
+    public Cursor rawQuery(String sql, String[] selectionArgs) {
         sDb = sDbHelper.getReadableDatabase();
         return sDb.rawQuery(sql, selectionArgs);
     }

@@ -5,7 +5,8 @@ import android.support.annotation.NonNull;
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Notification;
-import com.kiwi.auready_ver2.notification.domain.usecase.GetNewNotificationsCount;
+import com.kiwi.auready_ver2.notification.domain.usecase.DeleteNotification;
+import com.kiwi.auready_ver2.notification.domain.usecase.GetNotificationsCount;
 import com.kiwi.auready_ver2.notification.domain.usecase.GetNotifications;
 import com.kiwi.auready_ver2.notification.domain.usecase.ReadNotification;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
@@ -36,9 +37,10 @@ public class NotificationPresenter implements
 
     @NonNull
     private GetNotifications mGetNotifications;
+    private DeleteNotification mDeleteNotification;
 
     @NonNull
-    private GetNewNotificationsCount mGetNewNotificationsCount;
+    private GetNotificationsCount mGetNotificationsCount;
 
     private String mAccessToken;
 
@@ -47,11 +49,13 @@ public class NotificationPresenter implements
                                  @NonNull UseCaseHandler useCaseHandler,
                                  @NonNull NotificationContract.View view,
                                  @NonNull GetNotifications getNotifications,
-                                 @NonNull ReadNotification readNotification) {
+                                 @NonNull ReadNotification readNotification,
+                                 @NonNull DeleteNotification deleteNotification) {
         mUseCaseHandler = useCaseHandler;
         mView = checkNotNull(view, "view cannot be null");
 
         mGetNotifications = checkNotNull(getNotifications, "getNotifications cannot be null");
+        mDeleteNotification = checkNotNull(deleteNotification, "deleteNotification cannot be null");
 
         mView.setPresenter(this);
 
@@ -61,11 +65,11 @@ public class NotificationPresenter implements
     // for TaskHeadsFragment menu view
     public NotificationPresenter(String accessToken, @NonNull UseCaseHandler useCaseHandler,
                                  @NonNull NotificationContract.MenuView menuView,
-                                 @NonNull GetNewNotificationsCount getNewNotificationsCount) {
+                                 @NonNull GetNotificationsCount getNotificationsCount) {
         mUseCaseHandler = useCaseHandler;
         mMenuView = checkNotNull(menuView, "menuView cannot be null");
 
-        mGetNewNotificationsCount = checkNotNull(getNewNotificationsCount, "getNewNotificationsCount cannot be null");
+        mGetNotificationsCount = checkNotNull(getNotificationsCount, "getNotificationsCount cannot be null");
 
         mMenuView.setMenuPresenter(this);
     }
@@ -125,6 +129,19 @@ public class NotificationPresenter implements
     @Override
     public void onAcceptFriendRequestSucceed(String fromUserId, int notificationId) {
         // 1. Delete this notification
+        mUseCaseHandler.execute(mDeleteNotification, new DeleteNotification.RequestValues(notificationId),
+                new UseCase.UseCaseCallback<DeleteNotification.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(DeleteNotification.ResponseValue response) {
+                        loadNotifications();
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
 
         // 2. Show the result msg - 'fromUserId가 친구로 추가되었습니다.'
         mView.showAcceptFriendRequestSuccessUI(fromUserId);
@@ -178,18 +195,17 @@ public class NotificationPresenter implements
     * for Notification menu item
     * */
     @Override
-    public void getNewNotificationsCount() {
-        mUseCaseHandler.execute(mGetNewNotificationsCount, new GetNewNotificationsCount.RequestValues(),
-                new UseCase.UseCaseCallback<GetNewNotificationsCount.ResponseValue>() {
+    public void getNotificationsCount() {
+        mUseCaseHandler.execute(mGetNotificationsCount, new GetNotificationsCount.RequestValues(),
+                new UseCase.UseCaseCallback<GetNotificationsCount.ResponseValue>() {
                     @Override
-                    public void onSuccess(GetNewNotificationsCount.ResponseValue response) {
-                        int newNotificationsCount = response.getNewCount();
-                        mMenuView.showNewSign(newNotificationsCount);
+                    public void onSuccess(GetNotificationsCount.ResponseValue response) {
+                        mMenuView.showNotificationSign(response.getNotificationsCount());
                     }
 
                     @Override
                     public void onError() {
-
+                        mMenuView.showNoNotificationSign();
                     }
                 });
     }

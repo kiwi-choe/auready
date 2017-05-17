@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Notification;
-import com.kiwi.auready_ver2.data.source.local.NotificationLocalDataSource;
+import com.kiwi.auready_ver2.data.source.NotificationRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -13,10 +13,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class ReadNotification extends UseCase<ReadNotification.RequestValues, ReadNotification.ResponseValue> {
 
-    private final NotificationLocalDataSource mLocalDataSource;
+    private final NotificationRepository mRepository;
 
-    public ReadNotification(@NonNull NotificationLocalDataSource localDataSource) {
-        mLocalDataSource = checkNotNull(localDataSource, "localDataSource cannot be null");
+    public ReadNotification(@NonNull NotificationRepository repository) {
+        mRepository = checkNotNull(repository, "repository cannot be null");
     }
 
     @Override

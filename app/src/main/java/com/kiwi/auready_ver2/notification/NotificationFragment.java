@@ -1,6 +1,5 @@
 package com.kiwi.auready_ver2.notification;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -13,7 +12,6 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.Notification;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +38,8 @@ public class NotificationFragment extends Fragment implements NotificationContra
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Context context = getActivity().getApplicationContext();
 
-        // Create Singleton AccessTokenStore
-        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance(context);
-        String accessToken = accessTokenStore.getStringValue(AccessTokenStore.ACCESS_TOKEN, null);
-
-        mListAdapter = new NotificationsAdapter(context, new ArrayList<Notification>(0), mItemListener);
+        mListAdapter = new NotificationsAdapter(new ArrayList<Notification>(0), mItemListener);
     }
 
     @Override
@@ -67,22 +60,6 @@ public class NotificationFragment extends Fragment implements NotificationContra
         super.onResume();
 
         mPresenter.start();
-    }
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-//        mListener = null;
     }
 
     @Override

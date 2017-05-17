@@ -42,10 +42,13 @@ public interface NotificationContract {
     // Menu View of TaskHeadsFragment
     interface MenuView {
         void setMenuPresenter(MenuPresenter presenter);
-        void showNewSign(int numOfNewNotifications);
+        void showNotificationSign(int numOfNewNotifications);
+
+        void showNoNotificationSign();
     }
 
     interface MenuPresenter {
-        void getNewNotificationsCount();
+
+        void getNotificationsCount();
     }
 }

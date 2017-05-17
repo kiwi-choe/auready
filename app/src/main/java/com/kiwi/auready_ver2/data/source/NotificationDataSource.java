@@ -1,4 +1,4 @@
-package com.kiwi.auready_ver2.data.source.local;
+package com.kiwi.auready_ver2.data.source;
 
 import android.support.annotation.NonNull;
 
@@ -29,9 +29,9 @@ public interface NotificationDataSource {
 
     void deleteNotification(@NonNull int id);
 
-    interface GetNewCountCallback {
-        void onLoaded(int newNotificationCount);
+    interface GetCountCallback {
+        void onSuccessGetCount(int newNotificationCount);
         void onDataNotAvailable();
     }
-    void getNewNotificationsCount(@NonNull GetNewCountCallback callback);
+    void getNotificationsCount(@NonNull GetCountCallback callback);
 }

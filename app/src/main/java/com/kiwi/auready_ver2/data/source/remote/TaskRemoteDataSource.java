@@ -84,7 +84,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<List<TaskHeadDetail_remote>>() {
             @Override
             public void onResponse(Call<List<TaskHeadDetail_remote>> call, Response<List<TaskHeadDetail_remote>> response) {
-                if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
+                if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
 
                     List<TaskHeadDetail> taskHeadDetails = filterTaskHeadDetailRemoteList(response.body());
                     callback.onTaskHeadDetailsLoaded(taskHeadDetails);
@@ -309,7 +309,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<TaskHeadDetail_remote>() {
             @Override
             public void onResponse(Call<TaskHeadDetail_remote> call, Response<TaskHeadDetail_remote> response) {
-                if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
+                if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
                     TaskHeadDetail taskHeadDetail = filterTaskHeadDetailRemote(response.body());
                     callback.onTaskHeadDetailLoaded(taskHeadDetail);
                 } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_TASKHEADS) {
@@ -450,7 +450,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     // Request getting latest updated taskHeads
                     Log.d("Tag_remoteTask", "editTasksOfMember; no member");
                     callback.onEditFail();
-                } else if (response.code() == HttpStatusCode.TaskHeadStatusCode.OK) {
+                } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
                     Log.d("Tag_remoteTask", "success to editTasksOfMember");
                     callback.onEditSuccess();
                 }

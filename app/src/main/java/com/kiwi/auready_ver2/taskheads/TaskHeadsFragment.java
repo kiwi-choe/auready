@@ -43,7 +43,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TaskHeadsFragment extends Fragment implements
-        TaskHeadsContract.View ,
+        TaskHeadsContract.View,
         NotificationContract.MenuView {
 
     public static final String TAG_TASKHEADSFRAGMENT = "TAG_TaskHeadsFragment";
@@ -60,6 +60,7 @@ public class TaskHeadsFragment extends Fragment implements
 
     // for noti menu
     private NotificationContract.MenuPresenter mNotificationPresenter;
+    private int mNotificationsCount;
 
     public TaskHeadsFragment() {
         // Required empty public constructor
@@ -72,6 +73,7 @@ public class TaskHeadsFragment extends Fragment implements
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        mNotificationsCount = 0;
         super.onCreate(savedInstanceState);
     }
 
@@ -81,7 +83,7 @@ public class TaskHeadsFragment extends Fragment implements
         // Destroy all menu and recall onCreateOptionsMenu
 //        getActivity().supportInvalidateOptionsMenu();
         mPresenter.start();
-        mNotificationPresenter.getNewNotificationsCount();
+        mNotificationPresenter.getNotificationsCount();
     }
 
     @Override
@@ -221,9 +223,18 @@ public class TaskHeadsFragment extends Fragment implements
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem notificationItem = menu.findItem(R.id.item_notification);
+        MenuItem no_notificationItem = menu.findItem(R.id.item_no_notification);
+        MenuItem notificationItem = menu.findItem(R.id.item_notifications);
 
-        // has new notifications
+        // if there are new notifications,
+        if (mNotificationsCount > 0) {
+            no_notificationItem.setVisible(false);
+            notificationItem.setVisible(true);
+        } else {    // no notification,
+            notificationItem.setVisible(false);
+            no_notificationItem.setVisible(true);
+        }
+
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -236,7 +247,7 @@ public class TaskHeadsFragment extends Fragment implements
                 getActivity().startActionMode(mActionmodeCallback);
                 break;
 
-            case R.id.item_notification:
+            case R.id.item_notifications:
                 showNotificationsView();
                 break;
 
@@ -245,6 +256,7 @@ public class TaskHeadsFragment extends Fragment implements
         }
         return super.onOptionsItemSelected(item);
     }
+
 
     @Override
     public void setLoginSuccessUI() {
@@ -309,8 +321,15 @@ public class TaskHeadsFragment extends Fragment implements
     }
 
     @Override
-    public void showNewSign(int numOfNewNotifications) {
+    public void showNotificationSign(int numOfNewNotifications) {
+        mNotificationsCount = numOfNewNotifications;
+        getActivity().invalidateOptionsMenu();
+    }
 
+    @Override
+    public void showNoNotificationSign() {
+        mNotificationsCount = 0;
+        getActivity().invalidateOptionsMenu();
     }
 
     // Interface with TaskHeadsActivity

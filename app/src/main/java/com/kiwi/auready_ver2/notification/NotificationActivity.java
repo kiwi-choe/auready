@@ -32,6 +32,7 @@ public class NotificationActivity extends AppCompatActivity {
                 Injection.provideUseCaseHandler(),
                 notificationFragment,
                 Injection.provideGetNotifications(context),
-                Injection.provideReadNotification(context));
+                Injection.provideReadNotification(context),
+                Injection.provideDeleteNotification(context));
     }
 }

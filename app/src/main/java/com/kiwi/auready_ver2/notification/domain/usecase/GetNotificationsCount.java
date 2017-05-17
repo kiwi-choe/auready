@@ -3,32 +3,28 @@ package com.kiwi.auready_ver2.notification.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
-import com.kiwi.auready_ver2.data.Notification;
 import com.kiwi.auready_ver2.data.source.NotificationDataSource;
 import com.kiwi.auready_ver2.data.source.NotificationRepository;
-
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Get Notifications
+ * Get number of notifications
  */
-public class GetNotifications extends UseCase<GetNotifications.RequestValues, GetNotifications.ResponseValue> {
+public class GetNotificationsCount extends UseCase<GetNotificationsCount.RequestValues, GetNotificationsCount.ResponseValue> {
 
     private final NotificationRepository mRepository;
 
-    public GetNotifications(@NonNull NotificationRepository repository) {
+    public GetNotificationsCount(@NonNull NotificationRepository repository) {
         mRepository = checkNotNull(repository, "repository cannot be null");
     }
 
     @Override
     protected void executeUseCase(RequestValues requestValues) {
-        mRepository.loadNotifications(new NotificationDataSource.LoadNotificationsCallback() {
+        mRepository.getNotificationsCount(new NotificationDataSource.GetCountCallback() {
             @Override
-            public void onLoaded(List<Notification> notifications) {
-                ResponseValue responseValue = new ResponseValue(notifications);
-                getUseCaseCallback().onSuccess(responseValue);
+            public void onSuccessGetCount(int notificationsCount) {
+                getUseCaseCallback().onSuccess(new ResponseValue(notificationsCount));
             }
 
             @Override
@@ -41,14 +37,14 @@ public class GetNotifications extends UseCase<GetNotifications.RequestValues, Ge
     public static class RequestValues implements UseCase.RequestValues {    }
 
     public static class ResponseValue implements UseCase.ResponseValue {
-        private final List<Notification> mNotifications;
+        private final int mNotificationsCount;
 
-        public ResponseValue(@NonNull List<Notification> notifications) {
-            mNotifications = checkNotNull(notifications, "notifications cannot be null");
+        public ResponseValue(@NonNull int notificationsCount) {
+            mNotificationsCount = checkNotNull(notificationsCount, "notificationCount cannot be null");
         }
 
-        public List<Notification> getNotifications() {
-            return mNotifications;
+        public int getNotificationsCount() {
+            return mNotificationsCount;
         }
     }
 

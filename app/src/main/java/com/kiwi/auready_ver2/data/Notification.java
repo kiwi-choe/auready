@@ -7,7 +7,7 @@ package com.kiwi.auready_ver2.data;
 public class Notification {
 
     // String key
-    public static final String TYPE = "noti_type";
+    public static final String TYPE = "notiType";
 
     public static final String FROM_USERID = "fromUserId";
     public static final String FROM_USERNAME = "fromUserName";
@@ -75,7 +75,12 @@ public class Notification {
         mType = TYPES.valueOf(type).getIntType();
         mFromUserId = fromUserId;
         mFromUserName = fromUserName;
-        mNotiBody = notiBody;
+
+        if(type.equals(TYPES.friend_request.name())) {
+            mNotiBody = fromUserName + " 님이 친구하고 싶대용.";
+        } else {
+            mNotiBody = notiBody;
+        }
         mIsNew = true;
     }
 

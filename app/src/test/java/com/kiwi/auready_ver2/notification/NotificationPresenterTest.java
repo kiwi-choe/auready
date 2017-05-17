@@ -4,10 +4,11 @@ import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Notification;
-import com.kiwi.auready_ver2.data.source.local.NotificationDataSource;
-import com.kiwi.auready_ver2.data.source.local.NotificationLocalDataSource;
-import com.kiwi.auready_ver2.notification.domain.usecase.GetNewNotificationsCount;
+import com.kiwi.auready_ver2.data.source.NotificationDataSource;
+import com.kiwi.auready_ver2.data.source.NotificationRepository;
+import com.kiwi.auready_ver2.notification.domain.usecase.DeleteNotification;
 import com.kiwi.auready_ver2.notification.domain.usecase.GetNotifications;
+import com.kiwi.auready_ver2.notification.domain.usecase.GetNotificationsCount;
 import com.kiwi.auready_ver2.notification.domain.usecase.ReadNotification;
 
 import org.junit.Before;
@@ -42,11 +43,11 @@ public class NotificationPresenterTest {
     private NotificationContract.MenuView mMenuView;
 
     @Mock
-    private NotificationLocalDataSource mLocalRepository;
+    private NotificationRepository mRepository;
     @Captor
     private ArgumentCaptor<NotificationDataSource.LoadNotificationsCallback> mLoadNotificationsCallbackCaptor;
     @Captor
-    private ArgumentCaptor<NotificationDataSource.GetNewCountCallback> mGetNewCountCallbackCaptor;
+    private ArgumentCaptor<NotificationDataSource.GetCountCallback> mGetCountCallbackCaptor;
 
     @Before
     public void setUp() {
@@ -59,18 +60,20 @@ public class NotificationPresenterTest {
     private NotificationPresenter givenMenuPresenter() {
         String accessToken = "stubbedAccessToken";
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
-        GetNewNotificationsCount getNewNotificationsCount = new GetNewNotificationsCount(mLocalRepository);
+        GetNotificationsCount getNotificationsCount = new GetNotificationsCount(mRepository);
 
-        return new NotificationPresenter(accessToken, useCaseHandler, mMenuView, getNewNotificationsCount);
+        return new NotificationPresenter(accessToken, useCaseHandler, mMenuView, getNotificationsCount);
     }
 
     private NotificationPresenter givenNotificationPresenter() {
         String accessToken = "stubbedAccessToken";
         UseCaseHandler useCaseHandler = new UseCaseHandler(new TestUseCaseScheduler());
-        GetNotifications getNotifications = new GetNotifications(mLocalRepository);
-        ReadNotification readNotification = new ReadNotification(mLocalRepository);
+        GetNotifications getNotifications = new GetNotifications(mRepository);
+        ReadNotification readNotification = new ReadNotification(mRepository);
+        DeleteNotification deleteNotification = new DeleteNotification(mRepository);
 
-        return new NotificationPresenter(accessToken, useCaseHandler, mView, getNotifications, readNotification);
+        return new NotificationPresenter(accessToken, useCaseHandler, mView,
+                getNotifications, readNotification, deleteNotification);
     }
 
     @Test
@@ -78,7 +81,7 @@ public class NotificationPresenterTest {
         mPresenter = givenNotificationPresenter();
         mPresenter.loadNotifications();
 
-        verify(mLocalRepository).loadNotifications(mLoadNotificationsCallbackCaptor.capture());
+        verify(mRepository).loadNotifications(mLoadNotificationsCallbackCaptor.capture());
         mLoadNotificationsCallbackCaptor.getValue().onLoaded(NOTIFICATIONS);
 
         ArgumentCaptor<List> showNotisArgumentCaptor = ArgumentCaptor.forClass(List.class);
@@ -87,17 +90,17 @@ public class NotificationPresenterTest {
     }
 
     @Test
-    public void getNewNotificationsCount_updateView() {
+    public void getNotificationsCount_updateView() {
         mMenuPresenter = givenMenuPresenter();
-        mMenuPresenter.getNewNotificationsCount();
+        mMenuPresenter.getNotificationsCount();
 
-        int COUNT_OF_NEW = 0;
-        verify(mLocalRepository).getNewNotificationsCount(mGetNewCountCallbackCaptor.capture());
-        mGetNewCountCallbackCaptor.getValue().onLoaded(COUNT_OF_NEW);
+        int COUNT_OF_NOTIS = 1;
+        verify(mRepository).getNotificationsCount(mGetCountCallbackCaptor.capture());
+        mGetCountCallbackCaptor.getValue().onSuccessGetCount(COUNT_OF_NOTIS);
 
         ArgumentCaptor<Integer> showArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
-        verify(mMenuView).showNewSign(showArgumentCaptor.capture());
-        assertTrue(showArgumentCaptor.getValue() == COUNT_OF_NEW);
+        verify(mMenuView).showNotificationSign(showArgumentCaptor.capture());
+        assertTrue(showArgumentCaptor.getValue() == COUNT_OF_NOTIS);
     }
 
     @Test
@@ -108,6 +111,6 @@ public class NotificationPresenterTest {
         mPresenter.onAcceptFriendRequestSucceed(fromUserId, notificationId);
 
         verify(mView).showAcceptFriendRequestSuccessUI(fromUserId);
-        verify(mLocalRepository).deleteNotification(notificationId);
+        verify(mRepository).deleteNotification(notificationId);
     }
 }

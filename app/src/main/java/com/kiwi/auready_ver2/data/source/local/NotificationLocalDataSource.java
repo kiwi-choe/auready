@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.kiwi.auready_ver2.data.Notification;
+import com.kiwi.auready_ver2.data.source.NotificationDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +80,6 @@ public class NotificationLocalDataSource implements NotificationDataSource {
                 String message = c.getString(c.getColumnIndexOrThrow(COLUMN_MESSAGE));
 
                 Notification notification = new Notification(id, type, isNew, fromUserId, fromUserName, message);
-                Log.d("TAG_notiLocal", notification.toString());
                 notifications.add(notification);
             }
         }
@@ -115,8 +115,15 @@ public class NotificationLocalDataSource implements NotificationDataSource {
     }
 
     @Override
-    public void getNewNotificationsCount(@NonNull GetNewCountCallback callback) {
-
+    public void getNotificationsCount(@NonNull GetCountCallback callback) {
+        String query = "SELECT * FROM " + TABLE_NAME;
+        Cursor c = mDbHelper.rawQuery(query, null);
+        if(c!=null && c.getCount() > 0) {
+            callback.onSuccessGetCount(c.getCount());
+            c.close();
+        } else {
+            callback.onDataNotAvailable();
+        }
     }
 
     /*
@@ -126,4 +133,6 @@ public class NotificationLocalDataSource implements NotificationDataSource {
     public static void destroyInstance() {
         INSTANCE = null;
     }
+
+
 }

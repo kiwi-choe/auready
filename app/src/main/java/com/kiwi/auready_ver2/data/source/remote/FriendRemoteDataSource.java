@@ -76,7 +76,7 @@ public class FriendRemoteDataSource implements FriendDataSource {
         call.enqueue(new Callback<FriendsResponse>() {
             @Override
             public void onResponse(Call<FriendsResponse> call, Response<FriendsResponse> response) {
-                if(response.code() == HttpStatusCode.FriendStatusCode.OK) {
+                if(response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
                     callback.onFriendsLoaded(response.body().getFriends());
                 } else if(response.code() == HttpStatusCode.FriendStatusCode.NO_FRIENDS) {
                     // There is no friend in Remote DB, so synchronize to Local DB

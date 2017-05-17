@@ -84,7 +84,7 @@ public class FindPresenter implements FindContract.Presenter {
         call.enqueue(new Callback<List<SearchedUser>>() {
             @Override
             public void onResponse(Call<List<SearchedUser>> call, Response<List<SearchedUser>> response) {
-                if(response.code() == FriendStatusCode.OK) {
+                if(response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
                     List<SearchedUser> searchedUsers = response.body();
                     onFindPeopleSucceed(searchedUsers);
                 } else if(response.code() == FriendStatusCode.NO_USERS) {

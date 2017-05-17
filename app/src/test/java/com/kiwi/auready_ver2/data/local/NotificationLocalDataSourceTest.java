@@ -5,7 +5,7 @@ import android.database.Cursor;
 
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.data.Notification;
-import com.kiwi.auready_ver2.data.source.local.NotificationDataSource;
+import com.kiwi.auready_ver2.data.source.NotificationDataSource;
 import com.kiwi.auready_ver2.data.source.local.NotificationLocalDataSource;
 import com.kiwi.auready_ver2.data.source.local.SQLiteDBHelper;
 
@@ -247,6 +247,28 @@ public class NotificationLocalDataSourceTest {
         // Retrieve notifications - returns 0
         Cursor c = mDbHelper.query(TABLE_NAME, null, null, null, null, null, null);
         assertTrue(c.getCount() == 0);
+    }
+
+    @Test
+    public void getNotificationsCount_query() {
+        saveStubbedNotifications(NOTIFICATIONS);
+
+        String query = "SELECT * FROM " + TABLE_NAME;
+        Cursor c = mDbHelper.rawQuery(query, null);
+        if (c != null) {
+            assertEquals(NOTIFICATIONS.size(), c.getCount());
+        } else {
+            fail();
+        }
+    }
+
+    @Test
+    public void getNotificationsCount_firesCallbackWithCountValue() {
+        saveStubbedNotifications(NOTIFICATIONS);
+
+        NotificationDataSource.GetCountCallback callback = Mockito.mock(NotificationDataSource.GetCountCallback.class);
+        mLocalDataSource.getNotificationsCount(callback);
+        verify(callback).onSuccessGetCount(NOTIFICATIONS.size());
     }
 
     private void saveNotification(Notification notification) {

@@ -2,11 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/delete_menu"
+        android:icon="@drawable/ic_stat_delete"
         android:title="@string/delete"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always" />
     <item
-        android:id="@+id/item_notification"
-        android:icon="@drawable/notification_icon"
+        android:id="@+id/item_notifications"
+        android:icon="@drawable/ic_stat_notifications"
         android:title="@string/notification"
         android:showAsAction="always" />
+    <item
+        android:id="@+id/item_no_notification"
+        android:icon="@drawable/ic_stat_notifications_none"
+        android:title="@string/no_notification"
+        android:showAsAction="ifRoom" />
 </menu>
