@@ -241,11 +241,6 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showTasks(String memberId, List<Task> completed, List<Task> uncompleted) {
-//        if (mProgressBar != null) {
-//            mProgressBar.setVisibility(View.GONE);
-//        }
-
-//        mViewPager.setVisibility(View.VISIBLE);
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         if (fragment != null) {
             fragment.showFilteredTasks(completed, uncompleted);
@@ -254,14 +249,6 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void showNoTask(String memberId) {
-//        if (mProgressBar != null) {
-//            mProgressBar.setVisibility(View.GONE);
-//        }
-//
-//        if (mViewPager != null) {
-//            mViewPager.setVisibility(View.VISIBLE);
-//        }
-
         TasksFragment fragment = (TasksFragment) mPagerAdapter.getItem(memberId);
         if (fragment != null) {
             fragment.showNoTask();

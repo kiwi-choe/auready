@@ -290,17 +290,6 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
     }
 
-    private void deleteMembers(List<String> deletingMembers) {
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        // Delete members
-        String whereClause = null;
-        for (String id : deletingMembers) {
-            whereClause = MemberEntry.COLUMN_ID + " LIKE?";
-            String[] whereArgs = {id};
-            db.delete(MemberEntry.TABLE_NAME, whereClause, whereArgs);
-        }
-    }
-
     private long saveMembers(String taskHeadId, List<Member> addingMembers) {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
@@ -516,6 +505,35 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
 
         editTasksInLocal(updatingTasks);
+    }
+
+    @Override
+    public void saveMembers(List<Member> members) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
+        for (Member member : members) {
+            ContentValues memberValues = new ContentValues();
+            memberValues.put(MemberEntry.COLUMN_ID, member.getId());
+            memberValues.put(MemberEntry.COLUMN_HEAD_ID_FK, member.getTaskHeadId());
+            memberValues.put(MemberEntry.COLUMN_USER_ID, member.getUserId());
+            memberValues.put(MemberEntry.COLUMN_NAME, member.getName());
+            memberValues.put(MemberEntry.COLUMN_EMAIL, member.getEmail());
+            db.insertOrThrow(MemberEntry.TABLE_NAME, null, memberValues);
+        }
+    }
+
+    // Delete members by taskHeadId
+    @Override
+    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
+
+        String whereClause = MemberEntry.COLUMN_HEAD_ID_FK + " LIKE?";
+        String[] whereArgs = {taskHeadId};
+        boolean isSuccess = mDbHelper.delete(PersistenceContract.MemberEntry.TABLE_NAME, whereClause, whereArgs);
+        if(isSuccess) {
+            callback.onDeleteSuccess();
+        } else {
+            callback.onDeleteFail();
+        }
     }
 
     @Override

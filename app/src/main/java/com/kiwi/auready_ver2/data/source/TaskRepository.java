@@ -128,7 +128,7 @@ public class TaskRepository implements TaskDataSource {
         mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
             @Override
             public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-                refreshLocalDataSource(taskHeadDetails);
+                refreshLocalTaskHeadDetails(taskHeadDetails);
                 callback.onTaskHeadDetailsLoaded(taskHeadDetails);
             }
 
@@ -174,7 +174,7 @@ public class TaskRepository implements TaskDataSource {
     /*
     * Refresh after getting TaskHeadDetails from Remote
     * */
-    private void refreshLocalDataSource(final List<TaskHeadDetail> taskHeadDetails) {
+    private void refreshLocalTaskHeadDetails(final List<TaskHeadDetail> taskHeadDetails) {
         // TaskHead, Member
         mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
             @Override
@@ -344,7 +344,7 @@ public class TaskRepository implements TaskDataSource {
             public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
                 List<TaskHeadDetail> taskHeadDetails = new ArrayList<>();
                 taskHeadDetails.add(taskHeadDetail);
-                refreshLocalDataSource(taskHeadDetails);
+                refreshLocalTaskHeadDetails(taskHeadDetails);
                 callback.onTaskHeadDetailLoaded(taskHeadDetail);
             }
 
@@ -362,9 +362,10 @@ public class TaskRepository implements TaskDataSource {
     public void getMembers(@NonNull final String taskHeadId, @NonNull final LoadMembersCallback callback) {
         checkNotNull(taskHeadId);
 
-        mLocalDataSource.getMembers(taskHeadId, new LoadMembersCallback() {
+        mRemoteDataSource.getMembers(taskHeadId, new LoadMembersCallback() {
             @Override
             public void onMembersLoaded(List<Member> members) {
+                refreshLocalMembers(taskHeadId, members);
                 refreshMembersOfTaskHeadCache(taskHeadId, members);
                 refreshMembersCache(members);
                 callback.onMembersLoaded(members);
@@ -372,7 +373,36 @@ public class TaskRepository implements TaskDataSource {
 
             @Override
             public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
+                mLocalDataSource.getMembers(taskHeadId, new LoadMembersCallback() {
+                    @Override
+                    public void onMembersLoaded(List<Member> members) {
+                        refreshMembersOfTaskHeadCache(taskHeadId, members);
+                        refreshMembersCache(members);
+                        callback.onMembersLoaded(members);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        callback.onDataNotAvailable();
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void refreshLocalMembers(final String taskHeadId, final List<Member> members) {
+        // Delete members of TaskHead(id)
+        mLocalDataSource.deleteMembers(taskHeadId, new DeleteMembersCallback() {
+            @Override
+            public void onDeleteSuccess() {
+                // and save loaded members
+                mLocalDataSource.saveMembers(members);
+            }
+
+            @Override
+            public void onDeleteFail() {
+
             }
         });
     }
@@ -449,6 +479,16 @@ public class TaskRepository implements TaskDataSource {
         }
 
         refreshCachedTasks(updatingTasks);
+    }
+
+    @Override
+    public void saveMembers(List<Member> members) {
+
+    }
+
+    @Override
+    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
+
     }
 
     @Override

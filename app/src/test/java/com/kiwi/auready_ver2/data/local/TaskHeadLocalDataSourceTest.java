@@ -292,6 +292,29 @@ public class TaskHeadLocalDataSourceTest {
         assertEquals(friends.size(), 0);
     }
 
+    @Test
+    public void deleteMembers_query() {
+        saveStubbedTaskHeadDetail(TASKHEAD_DETAIL);
+
+        // delete members by taskHeadId
+        String taskHeadId = TASKHEAD_DETAIL.getMembers().get(0).getTaskHeadId();
+        String whereClause = PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK + " LIKE?";
+        String[] whereArgs = {taskHeadId};
+        mDbHelper.delete(PersistenceContract.MemberEntry.TABLE_NAME, whereClause, whereArgs);
+
+        // Deleted members size by taskHeadId should be 0
+        mTaskLocalDataSource.getMembers(taskHeadId, new TaskDataSource.LoadMembersCallback() {
+            @Override
+            public void onMembersLoaded(List<Member> members) {
+                fail();
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+    }
     /*
     * Convenience methods
     * */

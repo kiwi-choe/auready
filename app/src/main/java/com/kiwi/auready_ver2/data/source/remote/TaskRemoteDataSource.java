@@ -325,8 +325,43 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getMembers(@NonNull String taskHeadId, @NonNull LoadMembersCallback callback) {
+    public void getMembers(@NonNull final String taskHeadId, @NonNull final LoadMembersCallback callback) {
+        if (!readyToRequestAPI()) {
+            callback.onDataNotAvailable();
+        }
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+        Call<List<Member_remote>> call = taskService.getMembers(taskHeadId);
+        call.enqueue(new Callback<List<Member_remote>>() {
+            @Override
+            public void onResponse(Call<List<Member_remote>> call, Response<List<Member_remote>> response) {
+                if (response.isSuccessful()) {
+                    List<Member> members = convertMemberRemoteToMember(taskHeadId, response.body());
+                    callback.onMembersLoaded(members);
+                } else {
+                    callback.onDataNotAvailable();
+                }
+            }
 
+            @Override
+            public void onFailure(Call<List<Member_remote>> call, Throwable t) {
+                callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    // Convert to Local model Member
+    private List<Member> convertMemberRemoteToMember(String taskHeadId, List<Member_remote> memberRemotes) {
+        List<Member> members = new ArrayList<>();
+        for (Member_remote memberRemote : memberRemotes) {
+            members.add(new Member(
+                    memberRemote.getId(),
+                    taskHeadId,
+                    memberRemote.getUserId(),
+                    memberRemote.getName(),
+                    memberRemote.getEmail()));
+        }
+        return members;
     }
 
     @Override
@@ -424,6 +459,16 @@ public class TaskRemoteDataSource implements TaskDataSource {
                 Log.d("Tag_remoteTask", "fail to edit tasks", t);
             }
         });
+    }
+
+    @Override
+    public void saveMembers(List<Member> members) {
+
+    }
+
+    @Override
+    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
+
     }
 
     @Override

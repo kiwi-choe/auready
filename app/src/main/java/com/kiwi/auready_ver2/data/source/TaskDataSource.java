@@ -20,6 +20,14 @@ import java.util.Map;
  */
 public interface TaskDataSource {
 
+    void saveMembers(List<Member> members);
+
+    interface DeleteMembersCallback {
+        void onDeleteSuccess();
+        void onDeleteFail();
+    }
+    void deleteMembers(String taskHeadId, DeleteMembersCallback callback);
+
     interface EditTasksOfMemberCallback {
         void onEditSuccess();
         void onEditFail();

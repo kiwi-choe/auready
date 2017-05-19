@@ -505,15 +505,32 @@ public class TaskRepositoryTest {
     * Get members
     * */
     @Test
-    public void getMembers_fromLocal() {
-        mRepository.getMembers(TASKHEAD.getId(), mLoadMembersCallback);
-        verify(mLocalDataSource).getMembers(eq(TASKHEAD.getId()), mLoadMembersCallbackCaptor.capture());
+    public void getMembers_fromLocal_whenLoadFromRemoteIsFailed() {
+        String taskHeadId = TASKHEAD.getId();
+        mRepository.getMembers(taskHeadId, mLoadMembersCallback);
+
+        setGettingMembersNotAvailable(mRemoteDataSource, taskHeadId);
+
+        verify(mLocalDataSource).getMembers(eq(taskHeadId), mLoadMembersCallbackCaptor.capture());
         mLoadMembersCallbackCaptor.getValue().onMembersLoaded(MEMBERS);
 
-        assertThat(mRepository.mCachedMembersOfTaskHead.containsKey(TASKHEAD.getId()), is(true));
+        assertThat(mRepository.mCachedMembersOfTaskHead.containsKey(taskHeadId), is(true));
         assertThat(mRepository.mCachedMembers.size(), is(MEMBERS.size()));
     }
 
+    @Test
+    public void getMembers_fromRemote_andUpdateCaches() {
+        String taskHeadId = TASKHEAD.getId();
+        mRepository.getMembers(taskHeadId, mLoadMembersCallback);
+
+        verify(mRemoteDataSource).getMembers(eq(taskHeadId), mLoadMembersCallbackCaptor.capture());
+        mLoadMembersCallbackCaptor.getValue().onMembersLoaded(MEMBERS);
+
+        verify(mLoadMembersCallback).onMembersLoaded(eq(MEMBERS));
+
+        assertThat(mRepository.mCachedMembersOfTaskHead.containsKey(taskHeadId), is(true));
+        assertThat(mRepository.mCachedMembers.size(), is(MEMBERS.size()));
+    }
     @Test
     public void getTaskHeadsCount() {
         List<TaskHeadDetail> taskHeadDetails = saveStubbedTaskHeadDetails_toLocal();
@@ -525,6 +542,11 @@ public class TaskRepositoryTest {
     /*
     * convenience methods
     * */
+    private void setGettingMembersNotAvailable(TaskDataSource dataSource, String taskHeadId) {
+        verify(dataSource).getMembers(eq(taskHeadId), mLoadMembersCallbackCaptor.capture());
+        mLoadMembersCallbackCaptor.getValue().onDataNotAvailable();
+    }
+
     private void setTaskHeadDetailNotAvailable(TaskDataSource dataSource, String taskHeadId) {
         verify(dataSource).getTaskHeadDetail(eq(taskHeadId), mGetTaskHeadDetailCallbackCaptor.capture());
         mGetTaskHeadDetailCallbackCaptor.getValue().onDataNotAvailable();
