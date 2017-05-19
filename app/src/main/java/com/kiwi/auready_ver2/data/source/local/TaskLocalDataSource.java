@@ -404,6 +404,9 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
     }
 
+    /*
+    * Tasks
+    * */
     @Override
     public void getTasksOfMember(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
 
@@ -483,7 +486,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
         values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
-        mDbHelper.insert(TaskEntry.TABLE_NAME, null, values);
+        mDbHelper.replace(TaskEntry.TABLE_NAME, null, values);
     }
 
     @Override

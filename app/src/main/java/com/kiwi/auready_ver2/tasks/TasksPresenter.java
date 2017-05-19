@@ -132,7 +132,6 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
                         getTasksOfMember(memberId);
-//                        mTasksView.showLoadProgressBar();
                     }
 
                     @Override

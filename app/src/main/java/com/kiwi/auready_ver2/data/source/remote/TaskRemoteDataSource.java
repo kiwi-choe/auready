@@ -365,8 +365,42 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void getTasksOfMember(@NonNull String memberId, @NonNull LoadTasksCallback callback) {
+    public void getTasksOfMember(@NonNull final String memberId, @NonNull final LoadTasksCallback callback) {
+        if (!readyToRequestAPI()) {
+            return;
+        }
 
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        Call<List<Task_remote>> call = taskService.getTasksOfMember(memberId);
+        call.enqueue(new Callback<List<Task_remote>>() {
+            @Override
+            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
+                if(response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
+                    List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
+                    callback.onTasksLoaded(tasks);
+                } else {
+                    callback.onDataNotAvailable();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
+                callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    private List<Task> convertTasksRemoteToTasks(String memberId, List<Task_remote> taskRemotes) {
+        List<Task> tasks = new ArrayList<>();
+        for(Task_remote remote: taskRemotes) {
+            Task task = new Task(
+                    remote.getId(), memberId, remote.getDescription(), remote.getCompleted(), remote.getOrder());
+
+            tasks.add(task);
+        }
+        return tasks;
     }
 
     @Override

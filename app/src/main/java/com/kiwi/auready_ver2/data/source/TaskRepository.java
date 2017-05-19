@@ -408,20 +408,40 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void getTasksOfMember(@NonNull String memberId, @NonNull final LoadTasksCallback callback) {
+    public void getTasksOfMember(@NonNull final String memberId, @NonNull final LoadTasksCallback callback) {
 
-        mLocalDataSource.getTasksOfMember(memberId, new LoadTasksCallback() {
+        mRemoteDataSource.getTasksOfMember(memberId, new LoadTasksCallback() {
             @Override
             public void onTasksLoaded(List<Task> tasks) {
+                refreshLocalTasksOfMember(tasks);
                 refreshCachedTasks(tasks);
                 callback.onTasksLoaded(tasks);
             }
 
             @Override
             public void onDataNotAvailable() {
-                callback.onDataNotAvailable();
+                mLocalDataSource.getTasksOfMember(memberId, new LoadTasksCallback() {
+                    @Override
+                    public void onTasksLoaded(List<Task> tasks) {
+                        refreshCachedTasks(tasks);
+                        callback.onTasksLoaded(tasks);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        callback.onDataNotAvailable();
+                    }
+                });
             }
         });
+
+    }
+
+    private void refreshLocalTasksOfMember(List<Task> tasks) {
+        // update or insert
+        for(Task task: tasks) {
+            mLocalDataSource.saveTask(task);
+        }
     }
 
     @Override

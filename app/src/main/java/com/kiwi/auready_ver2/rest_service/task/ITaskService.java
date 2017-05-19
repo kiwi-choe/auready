@@ -48,4 +48,7 @@ public interface ITaskService {
 
     @GET("/taskheads/{id}/members")
     Call<List<Member_remote>> getMembers(@Path("id") String taskHeadId);
+
+    @GET("/tasks/{memberid}")
+    Call<List<Task_remote>> getTasksOfMember(@Path("memberid") String memberId);
 }

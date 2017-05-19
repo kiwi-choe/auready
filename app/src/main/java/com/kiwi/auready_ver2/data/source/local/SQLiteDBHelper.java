@@ -11,14 +11,21 @@ import android.util.Log;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.FriendEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.MemberEntry;
+import com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskEntry;
 import com.kiwi.auready_ver2.data.source.local.PersistenceContract.TaskHeadEntry;
-import com.kiwi.auready_ver2.data.source.local.PersistenceContract.NotificationEntry;
 
 import java.util.List;
 
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.*;
-import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.*;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.INSERT_ERROR;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.DBExceptionTag.TAG_SQLITE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.DATABASE_NAME;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.DATABASE_VERSION;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.SQL_CREATE_FRIEND_TABLE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.SQL_CREATE_MEMBER_TABLE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.SQL_CREATE_NOTIFICATION_TABLE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.SQL_CREATE_TASKHEAD_TABLE;
+import static com.kiwi.auready_ver2.data.source.local.PersistenceContract.SQL_CREATE_TABLE.SQL_CREATE_TASK_TABLE;
 
 /*
 * Local Database helper
@@ -192,5 +199,21 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
         }
         return numOfRows > 0;
     }
+
+    public long replace(String table, String nullColumnHack, ContentValues values) {
+        sDb = sDbHelper.getWritableDatabase();
+
+        sDb.beginTransaction();
+        try {
+            sDb.setTransactionSuccessful();
+            return sDb.replace(table, nullColumnHack, values);
+        } catch (SQLException e) {
+            Log.e(TAG_SQLITE, "Error inserting " + values, e);
+            return -1;
+        } finally {
+            sDb.endTransaction();
+        }
+    }
+
 }
 
