@@ -59,5 +59,7 @@ class TasksContract {
         void editTasksOfMember(String memberId, List<Task> tasks);
 
         void getTaskHeadDetailFromRemote();
+
+        void changeComplete(Task editedTask);
     }
 }

@@ -183,11 +183,8 @@ public class TaskRepository implements TaskDataSource {
                     mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
                         @Override
                         public void onSaveSuccess() {
-                            // Task
-                            List<Task> tasks = taskHeadDetail.getTasks();
-                            for (Task task : tasks) {
-                                mLocalDataSource.saveTask(task);
-                            }
+
+                            saveTasksInLocal(taskHeadDetail.getTasks());
                         }
 
                         @Override
@@ -201,6 +198,23 @@ public class TaskRepository implements TaskDataSource {
             public void onDeleteAllFail() {
             }
         });
+    }
+
+    private void saveTasksInLocal(List<Task> tasks) {
+        // Task
+        for (Task task : tasks) {
+            mLocalDataSource.saveTask(task, new SaveTaskCallback() {
+                @Override
+                public void onSaveSuccess() {
+
+                }
+
+                @Override
+                public void onSaveFailed() {
+
+                }
+            });
+        }
     }
 
     @Override
@@ -439,8 +453,18 @@ public class TaskRepository implements TaskDataSource {
 
     private void refreshLocalTasksOfMember(List<Task> tasks) {
         // update or insert
-        for(Task task: tasks) {
-            mLocalDataSource.saveTask(task);
+        for (Task task : tasks) {
+            mLocalDataSource.saveTask(task, new SaveTaskCallback() {
+                @Override
+                public void onSaveSuccess() {
+
+                }
+
+                @Override
+                public void onSaveFailed() {
+
+                }
+            });
         }
     }
 
@@ -461,25 +485,30 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
-        checkNotNull(task);
-        mLocalDataSource.saveTask(task);
-
-        mRemoteDataSource.saveTask(task);
-
-        if (mCachedTasks == null) {
-            mCachedTasks = new LinkedHashMap<>();
-        }
-        mCachedTasks.put(task.getId(), task);
-    }
-
-    @Override
-    public void deleteTask(@NonNull String taskId) {
+    public void deleteTask(@NonNull final String taskId, @NonNull final DeleteTaskCallback callback) {
         checkNotNull(taskId);
 
-        mLocalDataSource.deleteTask(taskId);
+        mLocalDataSource.deleteTask(taskId, new DeleteTaskCallback() {
+            @Override
+            public void onDeleteSuccess() {
+                mRemoteDataSource.deleteTask(taskId, new DeleteTaskCallback() {
+                    @Override
+                    public void onDeleteSuccess() {
+                        callback.onDeleteSuccess();
+                    }
 
-        mRemoteDataSource.deleteTask(taskId);
+                    @Override
+                    public void onDeleteFailed() {
+                        callback.onDeleteFailed();
+                    }
+                });
+            }
+
+            @Override
+            public void onDeleteFailed() {
+                callback.onDeleteFailed();
+            }
+        });
 
         if (mCachedTasks != null) {
             mCachedTasks.remove(taskId);
@@ -502,8 +531,57 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
+    public void saveTask(@NonNull final Task task, @NonNull final SaveTaskCallback callback) {
+        checkNotNull(task);
+        mLocalDataSource.saveTask(task, new SaveTaskCallback() {
+            @Override
+            public void onSaveSuccess() {
+
+                // Save into Remote synchronously with Local
+                saveTaskToRemote(task, callback);
+            }
+
+            @Override
+            public void onSaveFailed() {
+                callback.onSaveFailed();
+            }
+        });
+
+        if (mCachedTasks == null) {
+            mCachedTasks = new LinkedHashMap<>();
+        }
+        mCachedTasks.put(task.getId(), task);
+    }
+
+    private void saveTaskToRemote(Task task, final SaveTaskCallback callback) {
+
+        mRemoteDataSource.saveTask(task, new SaveTaskCallback() {
+            @Override
+            public void onSaveSuccess() {
+                callback.onSaveSuccess();
+            }
+
+            @Override
+            public void onSaveFailed() {
+                callback.onSaveFailed();
+            }
+        });
+
+    }
+
+    @Override
     public void saveMembers(List<Member> members) {
 
+    }
+
+    @Override
+    public void changeComplete(Task editedTask) {
+        mLocalDataSource.changeComplete(editedTask);
+        mRemoteDataSource.changeComplete(editedTask);
+
+        if(mCachedTasks != null) {
+            mCachedTasks.put(editedTask.getId(), editedTask);
+        }
     }
 
     @Override

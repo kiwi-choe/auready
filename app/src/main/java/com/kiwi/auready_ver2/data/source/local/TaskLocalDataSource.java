@@ -50,7 +50,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     public void deleteAllTaskHeads(@NonNull DeleteAllCallback callback) {
         boolean isSuccess = mDbHelper.delete(TaskHeadEntry.TABLE_NAME, null, null);
 
-        if(isSuccess) {
+        if (isSuccess) {
             callback.onDeleteAllSuccess();
         } else {
             callback.onDeleteAllFail();
@@ -60,14 +60,14 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void initializeLocalData(@NonNull InitLocalDataCallback callback) {
 
-        boolean isDeletedTaskHead = mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
+        boolean isDeletedTaskHead = mDbHelper.delete(TaskHeadEntry.TABLE_NAME, null, null);
         // cascade
-//        mDbHelper.delete(PersistenceContract.MemberEntry.TABLE_NAME, null, null);
-//        mDbHelper.delete(PersistenceContract.TaskEntry.TABLE_NAME, null, null);
+//        mDbHelper.delete(MemberEntry.TABLE_NAME, null, null);
+//        mDbHelper.delete(TaskEntry.TABLE_NAME, null, null);
         boolean isDeletedFriend = mDbHelper.delete(PersistenceContract.FriendEntry.TABLE_NAME, null, null);
         boolean isDeletedNotification = mDbHelper.delete(PersistenceContract.NotificationEntry.TABLE_NAME, null, null);
 
-        if(isDeletedTaskHead && isDeletedFriend && isDeletedNotification) {
+        if (isDeletedTaskHead && isDeletedFriend && isDeletedNotification) {
             callback.onInitSuccess();
         } else {
             callback.onInitFail();
@@ -79,9 +79,9 @@ public class TaskLocalDataSource implements TaskDataSource {
 
         String sql = String.format(
                 "SELECT * FROM %s, %s WHERE %s.%s = %s.%s ORDER BY %s.%s ASC",
-                PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.MemberEntry.TABLE_NAME,
-                PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.TaskHeadEntry.COLUMN_ID,
-                PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK,
+                TaskHeadEntry.TABLE_NAME, MemberEntry.TABLE_NAME,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID,
+                MemberEntry.TABLE_NAME, MemberEntry.COLUMN_HEAD_ID_FK,
                 TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ORDER);
 
         Cursor cursor = mDbHelper.rawQuery(sql, null);
@@ -92,19 +92,19 @@ public class TaskLocalDataSource implements TaskDataSource {
         if (cursor != null && cursor.getCount() > 0) {
             while (cursor.moveToNext()) {
                 // Set members
-                String memberId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_ID));
-                String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK));
-                String userId = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_USER_ID));
-                String name = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_NAME));
-                String email = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.MemberEntry.COLUMN_EMAIL));
+                String memberId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_ID));
+                String taskHeadId_fk = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_HEAD_ID_FK));
+                String userId = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_USER_ID));
+                String name = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_NAME));
+                String email = cursor.getString(cursor.getColumnIndexOrThrow(MemberEntry.COLUMN_EMAIL));
                 Member member = new Member(memberId, taskHeadId_fk, userId, name, email);
 
                 if (!taskHeadId_fk.equals(taskHeadIdOfPreRow)) {
                     i++;
                     // Set TaskHead
-                    String title = cursor.getString(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_TITLE));
-                    int order = cursor.getInt(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_ORDER));
-                    int color = cursor.getInt(cursor.getColumnIndexOrThrow(PersistenceContract.TaskHeadEntry.COLUMN_COLOR));
+                    String title = cursor.getString(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_TITLE));
+                    int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
+                    int color = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_COLOR));
 
                     Log.d("Tag_updateOrders", String.valueOf(order));
 
@@ -152,7 +152,7 @@ public class TaskLocalDataSource implements TaskDataSource {
                 args);
 
         boolean isSuccess = mDbHelper.execSQL(sql);
-        if(isSuccess) {
+        if (isSuccess) {
             callback.onDeleteSuccess();
         } else {
             callback.onDeleteFail();
@@ -444,18 +444,25 @@ public class TaskLocalDataSource implements TaskDataSource {
         List<Task> tasks = new ArrayList<>();
 
         String query = String.format(
-                "SELECT * FROM %s " +
+                "SELECT %s.%s, %s, %s, %s, %s.%s FROM %s " +
                         "INNER JOIN %s ON %s.%s = %s.%s " +
                         "INNER JOIN %s ON %s.%s = %s.%s " +
                         "WHERE %s.%s = \'%s\'",
+                TaskEntry.TABLE_NAME, TaskEntry.COLUMN_ID,
+                TaskEntry.COLUMN_MEMBER_ID_FK,
+                TaskEntry.COLUMN_DESCRIPTION,
+                TaskEntry.COLUMN_COMPLETED,
+                TaskEntry.TABLE_NAME, TaskEntry.COLUMN_ORDER,
                 TaskEntry.TABLE_NAME,
-                MemberEntry.TABLE_NAME, MemberEntry.TABLE_NAME, MemberEntry.COLUMN_ID, TaskEntry.TABLE_NAME, TaskEntry.COLUMN_ID,
+                MemberEntry.TABLE_NAME, MemberEntry.TABLE_NAME, MemberEntry.COLUMN_ID, TaskEntry.TABLE_NAME, TaskEntry.COLUMN_MEMBER_ID_FK,
                 TaskHeadEntry.TABLE_NAME, TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, MemberEntry.TABLE_NAME, MemberEntry.COLUMN_HEAD_ID_FK,
-                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, taskheadId
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID,
+                taskheadId
         );
+
         Cursor c = mDbHelper.rawQuery(query, null);
-        if(c != null && c.getCount() > 0) {
-            while(c.moveToNext()) {
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
                 String id = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ID));
                 String memberId = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_MEMBER_ID_FK));
                 String description = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_DESCRIPTION));
@@ -478,7 +485,15 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
+    public void deleteTask(@NonNull String taskId, @NonNull DeleteTaskCallback callback) {
+        String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
+        String[] whereArgs = {taskId};
+        mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
+    }
+
+    @Override
+    public void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback) {
+
         ContentValues values = new ContentValues();
         values.put(TaskEntry.COLUMN_ID, task.getId());
         values.put(TaskEntry.COLUMN_MEMBER_ID_FK, task.getMemberId());
@@ -486,15 +501,12 @@ public class TaskLocalDataSource implements TaskDataSource {
         values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
         values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
-        mDbHelper.replace(TaskEntry.TABLE_NAME, null, values);
-    }
-
-    @Override
-    public void deleteTask(@NonNull String taskId) {
-
-        String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
-        String[] whereArgs = {taskId};
-        mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
+        long result = mDbHelper.replace(TaskEntry.TABLE_NAME, null, values);
+        if (result == DBExceptionTag.REPLACE_ERROR) {
+            callback.onSaveFailed();
+        } else {
+            callback.onSaveSuccess();
+        }
     }
 
     @Override
@@ -502,7 +514,7 @@ public class TaskLocalDataSource implements TaskDataSource {
 
         // Make the collection for all the tasks of members
         List<Task> updatingTasks = new ArrayList<>();
-        for(String key:cachedTasks.keySet()) {
+        for (String key : cachedTasks.keySet()) {
             List<Task> tasks = cachedTasks.get(key);
             updatingTasks.addAll(tasks);
         }
@@ -525,14 +537,26 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
     }
 
+    @Override
+    public void changeComplete(Task editedTask) {
+        ContentValues values = new ContentValues();
+        values.put(TaskEntry.COLUMN_DESCRIPTION, editedTask.getDescription());
+        values.put(TaskEntry.COLUMN_COMPLETED, editedTask.getCompletedInteger());
+        values.put(TaskEntry.COLUMN_ORDER, editedTask.getOrder());
+
+        String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
+        String[] whereArgs = {editedTask.getId()};
+        mDbHelper.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
     // Delete members by taskHeadId
     @Override
     public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
 
         String whereClause = MemberEntry.COLUMN_HEAD_ID_FK + " LIKE?";
         String[] whereArgs = {taskHeadId};
-        boolean isSuccess = mDbHelper.delete(PersistenceContract.MemberEntry.TABLE_NAME, whereClause, whereArgs);
-        if(isSuccess) {
+        boolean isSuccess = mDbHelper.delete(MemberEntry.TABLE_NAME, whereClause, whereArgs);
+        if (isSuccess) {
             callback.onDeleteSuccess();
         } else {
             callback.onDeleteFail();
@@ -542,7 +566,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback) {
 
-        if(editTasksInLocal(tasks)) {
+        if (editTasksInLocal(tasks)) {
             callback.onEditSuccess();
         } else {
             callback.onEditFail();

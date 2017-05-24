@@ -84,7 +84,6 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object item) {
-        Log.d("Tag_showmembers", "enetered into getItemPosition()");
         if (item instanceof TasksFragment) {
             if (!mTasksFragments.containsValue(item)) {
                 Log.d("Tag_showmembers", "POSITION_NONE");

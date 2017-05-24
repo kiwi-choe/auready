@@ -4,12 +4,13 @@ import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Created by kiwi on 8/31/16.
+ * Save a Task
  */
 public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseValue> {
 
@@ -26,8 +27,18 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
     @Override
     protected void executeUseCase(RequestValues requestValue) {
         final Task newTask = requestValue.getTask();
-        mTaskRepository.saveTask(newTask);
-        getUseCaseCallback().onSuccess(new ResponseValue());
+        mTaskRepository.saveTask(newTask, new TaskDataSource.SaveTaskCallback() {
+
+            @Override
+            public void onSaveSuccess() {
+                getUseCaseCallback().onSuccess(new ResponseValue());
+            }
+
+            @Override
+            public void onSaveFailed() {
+                getUseCaseCallback().onError();
+            }
+        });
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
@@ -42,5 +53,6 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
         }
     }
 
-    public static final class ResponseValue implements UseCase.ResponseValue {}
+    public static final class ResponseValue implements UseCase.ResponseValue {
+    }
 }

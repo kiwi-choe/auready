@@ -209,7 +209,7 @@ public class SQLiteDBHelper extends SQLiteOpenHelper {
             return sDb.replace(table, nullColumnHack, values);
         } catch (SQLException e) {
             Log.e(TAG_SQLITE, "Error inserting " + values, e);
-            return -1;
+            return PersistenceContract.DBExceptionTag.REPLACE_ERROR;
         } finally {
             sDb.endTransaction();
         }

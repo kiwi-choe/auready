@@ -17,6 +17,7 @@ public final class PersistenceContract {
         public static final long INSERT_NOTHING = 0;
         public static final int DELETE_NOTHING = 0;
         public static final long UPDATE_ERROR = 0;  // num of updated rows
+        public static final long REPLACE_ERROR = -1;
     }
     /* Inner class that defines the table contents */
     public static class FriendEntry {

@@ -20,7 +20,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
@@ -56,19 +58,21 @@ public class TaskLocalDataSourceTest {
     private TaskLocalDataSource mLocalDataSource = TaskLocalDataSource.getInstance(RuntimeEnvironment.application);
     @Captor
     private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
+    @Mock
+    private TaskDataSource.SaveTaskCallback mSaveCallback;
 
     @Before
     public void setup() {
-        mDbHelper = SQLiteDBHelper.getInstance(RuntimeEnvironment.application);
+        MockitoAnnotations.initMocks(this);
 
+        mDbHelper = SQLiteDBHelper.getInstance(RuntimeEnvironment.application);
         // Save member first
         saveStubbedTaskHeadDetail(TASKHEAD_DETAIL);
     }
 
     @Test
     public void saveTask() {
-
-        mLocalDataSource.saveTask(TASK);
+        mLocalDataSource.saveTask(TASK, mSaveCallback);
 
         // Retrieve the saved task using query directly
         String selection = TaskEntry.COLUMN_ID + " LIKE?";
@@ -87,10 +91,32 @@ public class TaskLocalDataSourceTest {
     }
 
     @Test
+    public void replaceTask_canUpdateTheExistingTasks() {
+        mLocalDataSource.saveTask(TASK, mSaveCallback);
+        String id = TASK.getId();
+        Task updatedTask = new Task(id, TASK.getMemberId(), "editDes", false, 0);
+        mLocalDataSource.saveTask(updatedTask, mSaveCallback);
+
+        // Retrieve the saved task using query directly
+        String selection = TaskEntry.COLUMN_ID + " LIKE?";
+        String[] selectionArgs = {TASK.getId()};
+        Cursor c = mDbHelper.query(TaskEntry.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+        if (c != null && c.getCount() > 0) {
+            assertEquals(1, c.getCount());
+
+            while (c.moveToNext()) {
+                String taskId = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ID));
+                String description = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_DESCRIPTION));
+                assertThat(taskId, is(id));
+                assertThat(description, is("editDes"));
+            }
+        }
+    }
+    @Test
     public void getTasks_checkResultValues() {
         // Save 3 stubbedTasks
-        mLocalDataSource.saveTask(TASKS.get(0));
-        mLocalDataSource.saveTask(TASKS.get(1));
+        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
 
         // Get the saved tasks by memberId
         String memberId = TASKS.get(0).getMemberId();
@@ -125,8 +151,8 @@ public class TaskLocalDataSourceTest {
     @Test
     public void getTasks_firesOnTasksLoaded() {
         // Save 2 stubbedTasks
-        mLocalDataSource.saveTask(TASKS.get(0));
-        mLocalDataSource.saveTask(TASKS.get(1));
+        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
 
         TaskDataSource.LoadTasksCallback loadTasksCallback = Mockito.mock(TaskDataSource.LoadTasksCallback.class);
         String memberId = TASKS.get(0).getMemberId();
@@ -146,12 +172,13 @@ public class TaskLocalDataSourceTest {
     @Test
     public void deleteTask_retrieveExistingTasks() {
         // Save 2 tasks
-        mLocalDataSource.saveTask(TASKS.get(0));
-        mLocalDataSource.saveTask(TASKS.get(1));
+        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
         String memberId = TASKS.get(0).getMemberId();
 
         // Delete tasks - index 0
-        mLocalDataSource.deleteTask(TASKS.get(0).getId());
+        TaskDataSource.DeleteTaskCallback deleteCallback = Mockito.mock(TaskDataSource.DeleteTaskCallback.class);
+        mLocalDataSource.deleteTask(TASKS.get(0).getId(), deleteCallback);
 
         // Retrieve tasks to verify that tasks are deleted
         mLocalDataSource.getTasksOfMember(memberId, new TaskDataSource.LoadTasksCallback() {
@@ -184,10 +211,10 @@ public class TaskLocalDataSourceTest {
         cachedTasks.put(memberId0, TASKS0);
         cachedTasks.put(memberId1, TASKS1);
         for (Task task : TASKS0) {
-            mLocalDataSource.saveTask(task);
+            mLocalDataSource.saveTask(task, mSaveCallback);
         }
         for (Task task : TASKS0) {
-            mLocalDataSource.saveTask(task);
+            mLocalDataSource.saveTask(task, mSaveCallback);
         }
 
         // Update tasks
@@ -240,7 +267,7 @@ public class TaskLocalDataSourceTest {
     public void editTasksOfMember() {
         // save stubbedTasks
         for(Task task: TASKS) {
-            mLocalDataSource.saveTask(task);
+            mLocalDataSource.saveTask(task, mSaveCallback);
         }
         // Update tasks
         TASKS.get(0).setDescription("EDIT DES 0");
@@ -314,27 +341,51 @@ public class TaskLocalDataSourceTest {
     @Test
     public void getTasksOfTaskHead_checkResultValues() {
         // Save 2 stubbedTasks
-        mLocalDataSource.saveTask(TASKS.get(0));
-        mLocalDataSource.saveTask(TASKS.get(1));
+        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
+        verify(mSaveCallback).onSaveSuccess();
+
+        // retrieve in Task table
+        String query = String.format(
+                "SELECT %s.%s, %s, %s, %s, %s.%s FROM %s " +
+                        "INNER JOIN %s ON %s.%s = %s.%s " +
+                        "INNER JOIN %s ON %s.%s = %s.%s " +
+                        "WHERE %s.%s = \'%s\'",
+                TaskEntry.TABLE_NAME, TaskEntry.COLUMN_ID,
+                TaskEntry.COLUMN_MEMBER_ID_FK,
+                TaskEntry.COLUMN_DESCRIPTION,
+                TaskEntry.COLUMN_COMPLETED,
+                TaskEntry.TABLE_NAME, TaskEntry.COLUMN_ORDER,
+                TaskEntry.TABLE_NAME,
+                PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.COLUMN_ID, TaskEntry.TABLE_NAME, TaskEntry.COLUMN_MEMBER_ID_FK,
+                PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.TaskHeadEntry.COLUMN_ID, PersistenceContract.MemberEntry.TABLE_NAME, PersistenceContract.MemberEntry.COLUMN_HEAD_ID_FK,
+                PersistenceContract.TaskHeadEntry.TABLE_NAME, PersistenceContract.TaskHeadEntry.COLUMN_ID, TASKHEAD.getId()
+        );
+        Cursor c = mDbHelper.rawQuery(query, null);
+        if (c != null && c.getCount() > 0) {
+            while (c.moveToNext()) {
+                assertEquals(1, c.getCount());
+                String id = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ID));
+                String memberId = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_MEMBER_ID_FK));
+                String description = c.getString(c.getColumnIndexOrThrow(TaskEntry.COLUMN_DESCRIPTION));
+                boolean completed = (c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_COMPLETED)) > 0);
+                int order = c.getInt(c.getColumnIndexOrThrow(TaskEntry.COLUMN_ORDER));
+
+                assertEquals(id, TASKS.get(0).getId());
+                assertEquals(memberId, TASKS.get(0).getMemberId());
+                assertEquals(description, TASKS.get(0).getDescription());
+                assertEquals(completed, TASKS.get(0).getCompleted());
+                assertEquals(order, TASKS.get(0).getOrder());
+            }
+        } else {
+            fail();
+        }
 
         TaskDataSource.LoadTasksCallback loadTasksCallback = Mockito.mock(TaskDataSource.LoadTasksCallback.class);
         String taskheadId = TASKHEAD.getId();
         mLocalDataSource.getTasksOfTaskHead(taskheadId, loadTasksCallback);
         verify(loadTasksCallback).onTasksLoaded(anyListOf(Task.class));
-//        mLocalDataSource.getTasksOfTaskHead(taskheadId, new TaskDataSource.LoadTasksCallback() {
-//            @Override
-//            public void onTasksLoaded(List<Task> tasks) {
-//                assertNotNull(tasks);
-//                assertTrue(tasks.size() == 2);
-//
-//            }
-//
-//            @Override
-//            public void onDataNotAvailable() {
-//                fail();
-//            }
-//        });
     }
+
     private void deleteAllTaskHeadDetails() {
         mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
     }

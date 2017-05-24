@@ -409,9 +409,9 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task) {
+    public void saveTask(@NonNull Task task, @NonNull final SaveTaskCallback callback) {
         if (!readyToRequestAPI()) {
-            return;
+            callback.onSaveFailed();
         }
 
         ITaskService taskService =
@@ -423,18 +423,20 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-
+                if(response.isSuccessful()) {
+                    callback.onSaveSuccess();
+                }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
+                callback.onSaveFailed();
             }
         });
     }
 
     @Override
-    public void deleteTask(@NonNull String taskId) {
+    public void deleteTask(@NonNull String taskId, @NonNull final DeleteTaskCallback callback) {
         Log.d(TAG, "entered into deleteTask");
         if (!readyToRequestAPI()) {
             return;
@@ -447,13 +449,13 @@ public class TaskRemoteDataSource implements TaskDataSource {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Log.d(TAG, "success to delete task");
+                    callback.onDeleteSuccess();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.d(TAG, "fail to delete task");
+                callback.onDeleteFailed();
             }
         });
     }
@@ -501,15 +503,41 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
+    public void changeComplete(Task editedTask) {
+        if(!readyToRequestAPI()) {
+            return;
+        }
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
 
+        Task_remote taskRemote = new Task_remote(
+                editedTask.getId(), editedTask.getDescription(), editedTask.getCompleted(), editedTask.getOrder());
+        Call<Void> call = taskService.changeCompleted(editedTask.getId(), taskRemote);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    Log.d("Tag_changeComplete", "success to edit a task");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Tag_changeComplete", "fail to edit a task");
+            }
+        });
+    }
+
+    @Override
+    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
+        // Implement to Local
     }
 
     @Override
     public void editTasksOfMember(String memberId, List<Task> tasks,
                                   @NonNull final EditTasksOfMemberCallback callback) {
         if (!readyToRequestAPI()) {
-            return;
+            callback.onEditFail();
         }
 
         ITaskService taskService =

@@ -7,6 +7,7 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeComplete;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
@@ -19,6 +20,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -151,7 +153,8 @@ public class TasksPresenterTest {
         int order = TASKS.size();
         mTasksPresenter.createTask(memberId, description, order);
         // Then a taskTextView is saved in the repository
-        verify(mTaskRepository).saveTask(any(Task.class));
+        TaskDataSource.SaveTaskCallback callback = Mockito.mock(TaskDataSource.SaveTaskCallback.class);
+        verify(mTaskRepository).saveTask(any(Task.class), callback);
         // And Update View
     }
 
@@ -171,7 +174,8 @@ public class TasksPresenterTest {
 
         String taskId = TASKS.get(0).getId();
         mTasksPresenter.deleteTask(TASKS.get(0).getMemberId(), taskId);
-        verify(mTaskRepository).deleteTask(eq(taskId));
+        TaskDataSource.DeleteTaskCallback callback = Mockito.mock(TaskDataSource.DeleteTaskCallback.class);
+        verify(mTaskRepository).deleteTask(eq(taskId), callback);
     }
 
     @Test
@@ -214,10 +218,11 @@ public class TasksPresenterTest {
         EditTasks editTasks = new EditTasks(mTaskRepository);
         EditTasksOfMember editTasksOfMember = new EditTasksOfMember(mTaskRepository);
         GetTaskHeadDetail getTaskHeadDetail = new GetTaskHeadDetail(mTaskRepository);
+        ChangeComplete changeComplete = new ChangeComplete(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
                 getMembers, getTasksOfMember, saveTask, deleteTask, editTasks, editTasksOfMember,
-                getTaskHeadDetail);
+                getTaskHeadDetail, changeComplete);
     }
 
 }

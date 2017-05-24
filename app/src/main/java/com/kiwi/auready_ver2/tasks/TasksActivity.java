@@ -68,7 +68,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
                 Injection.provideEditTasksOfMember(getApplicationContext()),
-                Injection.provideGetTaskHeadDetail(getApplicationContext()));
+                Injection.provideGetTaskHeadDetail(getApplicationContext()),
+                Injection.provideChangeCompleted(getApplicationContext()));
     }
 
     private void initViews() {
@@ -170,7 +171,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void onEditTasksOfMemberError() {
-
+        mPresenter.getTaskHeadDetailFromRemote();
     }
 
     private void initFragments() {
@@ -196,6 +197,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         void onUpdateTasksInMemory(String memberId, List<Task> tasks);
 
         void onEditTasksOfMember(String mMemberId, List<Task> tasks);
+
+        void onChangeComplete(Task editedTask);
     }
 
     private TaskViewListener mTaskViewListener = new TaskViewListener() {
@@ -223,6 +226,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         @Override
         public void onEditTasksOfMember(String memberId, List<Task> tasks) {
             mPresenter.editTasksOfMember(memberId, tasks);
+        }
+
+        @Override
+        public void onChangeComplete(Task editedTask) {
+            mPresenter.changeComplete(editedTask);
         }
     };
 

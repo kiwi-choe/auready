@@ -22,6 +22,8 @@ public interface TaskDataSource {
 
     void saveMembers(List<Member> members);
 
+    void changeComplete(Task editedTask);
+
     interface DeleteMembersCallback {
         void onDeleteSuccess();
         void onDeleteFail();
@@ -126,9 +128,17 @@ public interface TaskDataSource {
 
     void getTasksOfTaskHead(@NonNull String taskheadId, @NonNull LoadTasksCallback callback);
 
-    void saveTask(@NonNull Task task);
-
-    void deleteTask(@NonNull String taskId);
+    interface DeleteTaskCallback {
+        void onDeleteSuccess();
+        void onDeleteFailed();
+    }
+    void deleteTask(@NonNull String taskId, @NonNull DeleteTaskCallback callback);
 
     void editTasks(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> tasks);
+
+    interface SaveTaskCallback {
+        void onSaveSuccess();
+        void onSaveFailed();
+    }
+    void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback);
 }

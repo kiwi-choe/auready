@@ -20,6 +20,9 @@ import retrofit2.http.Query;
 
 public interface ITaskService {
 
+    /*
+    * TaskHead(Detail)
+    * */
     @POST("/taskheads/")
     Call<Void> saveTaskHeadDetail(@Body TaskHeadDetail_remote taskHeadRemote);
     @GET("/taskheads/{userid}")
@@ -31,14 +34,20 @@ public interface ITaskService {
     @PUT("/taskheads/{id}")
     Call<Void> editTaskHeadDetail(@Path("id") String id, @Body TaskHeadDetail_remote editTaskHeadDetail);
 
+    /*
+    * Task
+    * */
     @POST("/tasks/{memberid}")
     Call<Void> saveTask(@Path("memberid") String memberId, @Body Task_remote task_remote);
 
-    @PUT("/tasks/{taskheadid}")
-    Call<Void> editTasks(@Path("taskheadid") String taskHeadId, @Body List<MemberTasks> memberTasks);
+    @PUT("/tasks/taskhead/{id}")
+    Call<Void> editTasks(@Path("id") String taskHeadId, @Body List<MemberTasks> memberTasks);
 
-    @PUT("/tasks/")
-    Call<Void> editTasksOfMember(@Query("memberid") String memberId, @Body List<Task_remote> editingTasks);
+    @PUT("/tasks/member/{id}")
+    Call<Void> editTasksOfMember(@Path("id") String memberId, @Body List<Task_remote> editingTasks);
+
+    @PUT("/tasks/{id}")
+    Call<Void> changeCompleted(@Path("id") String taskId, @Body Task_remote editedTask);
 
     @DELETE("/tasks/{id}")
     Call<Void> deleteTask(@Path("id") String id);

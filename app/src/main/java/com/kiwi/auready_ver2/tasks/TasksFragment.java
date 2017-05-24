@@ -115,7 +115,7 @@ public class TasksFragment extends Fragment {
         taskAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
+//                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
 
                 int position = mUnCompleteListview.getInputAdapter().getCount();
                 Task task = new Task(mMemberId, "new Item " + position, position);
@@ -353,7 +353,9 @@ public class TasksFragment extends Fragment {
         @Override
         public void onTaskDeleteButtonClicked(String memberId, String taskId) {
             // remove focus
-            getActivity().getCurrentFocus().clearFocus();
+            if(getActivity().getCurrentFocus()!= null) {
+                getActivity().getCurrentFocus().clearFocus();
+            }
 
             // hide keyboard
             InputMethodManager im =
@@ -361,7 +363,7 @@ public class TasksFragment extends Fragment {
             im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
             // update data
-            mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
+//            mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
 
             mTaskViewListener.onDeleteTaskButtonClicked(memberId, taskId);
         }
@@ -386,6 +388,7 @@ public class TasksFragment extends Fragment {
 
             controlTasksVisibility(unCompleteAdapter.getCount(), completeAdapter.getCount());
 
+            mTaskViewListener.onChangeComplete(editedTask);
 //            invalidateSplitView();
         }
     };

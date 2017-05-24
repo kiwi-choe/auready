@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks.domain.usecase;
 import android.support.annotation.NonNull;
 
 import com.kiwi.auready_ver2.UseCase;
+import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -24,8 +25,17 @@ public class DeleteTask extends UseCase<DeleteTask.RequestValues, DeleteTask.Res
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.deleteTask(values.getTaskId());
-        getUseCaseCallback().onSuccess(new ResponseValue());
+        mTaskRepository.deleteTask(values.getTaskId(), new TaskDataSource.DeleteTaskCallback() {
+            @Override
+            public void onDeleteSuccess() {
+                getUseCaseCallback().onSuccess(new ResponseValue());
+            }
+
+            @Override
+            public void onDeleteFailed() {
+                getUseCaseCallback().onError();
+            }
+        });
     }
 
     public static final class RequestValues implements UseCase.RequestValues {

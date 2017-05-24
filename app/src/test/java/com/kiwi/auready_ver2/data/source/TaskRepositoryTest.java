@@ -83,6 +83,14 @@ public class TaskRepositoryTest {
     private TaskDataSource.EditTasksOfMemberCallback mEditTasksOfMemberCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.EditTasksOfMemberCallback> mEditTasksOfMemberCallbackCaptor;
+    @Mock
+    private TaskDataSource.SaveTaskCallback mSaveTaskCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.SaveTaskCallback> mSaveTaskCallbackCaptor;
+    @Mock
+    private TaskDataSource.DeleteTaskCallback mDeleteTaskCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.DeleteTaskCallback> mDeleteTaskCallbackCaptor;
 
     @Before
     public void setup() {
@@ -348,6 +356,7 @@ public class TaskRepositoryTest {
         verify(mRemoteDataSource).getTaskHeadDetail(eq(taskHeadId), mGetTaskHeadDetailCallbackCaptor.capture());
         verify(mGetTaskHeadDetailCallback).onTaskHeadDetailLoaded(TASKHEAD_DETAIL);
     }
+
     @Test
     public void getTaskHeadDetailWithBothDataSourceUnavailable_firesOnDataUnavailable() {
         String taskHeadId = TASKHEAD_DETAIL.getTaskHead().getId();
@@ -413,9 +422,12 @@ public class TaskRepositoryTest {
     * */
     @Test
     public void saveTask_toLocal() {
-        mRepository.saveTask(TASK);
+        mRepository.saveTask(TASK, mSaveTaskCallback);
 
-        verify(mLocalDataSource).saveTask(eq(TASK));
+        verify(mLocalDataSource).saveTask(eq(TASK), mSaveTaskCallbackCaptor.capture());
+        mSaveTaskCallbackCaptor.getValue().onSaveSuccess();
+        verify(mSaveTaskCallback).onSaveSuccess();
+
         assertThat(mRepository.mCachedTasks.containsKey(TASK.getId()), is(true));
     }
 
@@ -425,21 +437,21 @@ public class TaskRepositoryTest {
     @Test
     public void deleteTask_fromLocal() {
         String taskId = TASKS.get(0).getId();
-        mRepository.deleteTask(taskId);
+        mRepository.deleteTask(taskId, mDeleteTaskCallback);
 
-        verify(mLocalDataSource).deleteTask(eq(taskId));
+        verify(mLocalDataSource).deleteTask(eq(taskId), mDeleteTaskCallback);
     }
 
     @Test
     public void deleteTask_fromCache() {
         // Save the stubbed taskheadDetails
-        mRepository.saveTask(TASKS.get(0));
-        mRepository.saveTask(TASKS.get(1));
-        mRepository.saveTask(TASKS.get(2));
+        mRepository.saveTask(TASKS.get(0), mSaveTaskCallback);
+        mRepository.saveTask(TASKS.get(1), mSaveTaskCallback);
+        mRepository.saveTask(TASKS.get(2), mSaveTaskCallback);
         assertThat(mRepository.mCachedTasks.size(), is(3));
 
         // Delete taskHeads TASKHEADS index 1, 2nd
-        mRepository.deleteTask(TASKS.get(1).getId());
+        mRepository.deleteTask(TASKS.get(1).getId(), mDeleteTaskCallback);
 
         assertThat(mRepository.mCachedTasks.size(), is(2));
         assertThat(mRepository.mCachedTasks.containsKey(TASKS.get(0).getId()), is(true));
@@ -497,7 +509,7 @@ public class TaskRepositoryTest {
 
     private void saveStubbedTasks(List<Task> tasks) {
         for (Task task : tasks) {
-            mRepository.saveTask(task);
+            mRepository.saveTask(task, mSaveTaskCallback);
         }
     }
 
@@ -531,6 +543,7 @@ public class TaskRepositoryTest {
         assertThat(mRepository.mCachedMembersOfTaskHead.containsKey(taskHeadId), is(true));
         assertThat(mRepository.mCachedMembers.size(), is(MEMBERS.size()));
     }
+
     @Test
     public void getTaskHeadsCount() {
         List<TaskHeadDetail> taskHeadDetails = saveStubbedTaskHeadDetails_toLocal();

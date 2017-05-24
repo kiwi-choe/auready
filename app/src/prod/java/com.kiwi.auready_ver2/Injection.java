@@ -28,6 +28,7 @@ import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeComplete;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
@@ -126,6 +127,10 @@ public class Injection {
 
     public static EditTasksOfMember provideEditTasksOfMember(@NonNull Context context) {
         return new EditTasksOfMember(Injection.provideTaskRepository(context));
+    }
+
+    public static ChangeComplete provideChangeCompleted(@NonNull Context context) {
+        return new ChangeComplete(Injection.provideTaskRepository(context));
     }
 
     /*

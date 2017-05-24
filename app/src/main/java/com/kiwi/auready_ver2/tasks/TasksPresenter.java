@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.UseCase;
@@ -11,6 +12,7 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeComplete;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
@@ -50,6 +52,7 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final EditTasks mEditTasks;
     private final EditTasksOfMember mEditTasksOfMember;
     private final GetTaskHeadDetail mGetTaskHeadDetail;
+    private final ChangeComplete mChangeCompleted;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull String taskHeadId,
@@ -60,7 +63,8 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull DeleteTask deleteTask,
                           @NonNull EditTasks editTasks,
                           @NonNull EditTasksOfMember editTasksOfMember,
-                          @NonNull GetTaskHeadDetail getTaskHeadDetail) {
+                          @NonNull GetTaskHeadDetail getTaskHeadDetail,
+                          @NonNull ChangeComplete changeCompleted) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = checkNotNull(taskHeadId, "taskHeadId cannot be null!");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -72,6 +76,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         mEditTasksOfMember = editTasksOfMember;
 
         mGetTaskHeadDetail = getTaskHeadDetail;
+        mChangeCompleted = changeCompleted;
 
         mTasksView.setPresenter(this);
     }
@@ -110,6 +115,7 @@ public class TasksPresenter implements TasksContract.Presenter {
                     @Override
                     public void onSuccess(GetTasksOfMember.ResponseValue response) {
                         if (response.getTasks().size() != 0) {
+                            Log.d("Tag_getTasksOfMember", String.valueOf(response.getTasks().size()));
                             filterTasks(response.getTasks(), new ArrayList<Task>(), new ArrayList<Task>());
                         } else {
                             mTasksView.showNoTask(memberId);
@@ -259,6 +265,22 @@ public class TasksPresenter implements TasksContract.Presenter {
                     public void onSuccess(GetTaskHeadDetail.ResponseValue response) {
                         setTaskHead(response.getTaskHeadDetail().getTaskHead());
                         mTasksView.showMembers(response.getTaskHeadDetail().getMembers());
+                    }
+
+                    @Override
+                    public void onError() {
+
+                    }
+                });
+    }
+
+    @Override
+    public void changeComplete(Task editedTask) {
+        mUseCaseHandler.execute(mChangeCompleted, new ChangeComplete.RequestValues(editedTask),
+                new UseCase.UseCaseCallback<ChangeComplete.ResponseValue>() {
+
+                    @Override
+                    public void onSuccess(ChangeComplete.ResponseValue response) {
                     }
 
                     @Override
