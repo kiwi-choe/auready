@@ -24,6 +24,8 @@ public interface TaskDataSource {
 
     void changeComplete(Task editedTask);
 
+    void deleteTasksOfMember(String memberId);
+
     interface DeleteMembersCallback {
         void onDeleteSuccess();
         void onDeleteFail();
@@ -31,7 +33,7 @@ public interface TaskDataSource {
     void deleteMembers(String taskHeadId, DeleteMembersCallback callback);
 
     interface EditTasksOfMemberCallback {
-        void onEditSuccess();
+        void onEditSuccess(List<Task> tasksOfMember);
         void onEditFail();
     }
     void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback);

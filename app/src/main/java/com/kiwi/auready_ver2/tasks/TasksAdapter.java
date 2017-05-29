@@ -112,6 +112,9 @@ public class TasksAdapter extends BaseAdapter {
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Delete Item from TasksAdapter
+                removeItem(position);
+
                 mTaskItemListener.onTaskDeleteButtonClicked(task.getMemberId(), task.getId());
             }
         });

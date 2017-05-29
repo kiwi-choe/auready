@@ -115,11 +115,15 @@ public class TasksFragment extends Fragment {
         taskAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
-
                 int position = mUnCompleteListview.getInputAdapter().getCount();
                 Task task = new Task(mMemberId, "new Item " + position, position);
+
+                // Add Item to TasksAdapter
+                TasksAdapter unCompleteAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
+                unCompleteAdapter.addItem(task);
+
                 mTaskViewListener.onAddTaskButtonClicked(task);
+                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
             }
         });
 
@@ -362,15 +366,12 @@ public class TasksFragment extends Fragment {
                     (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
             im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
-            // update data
-//            mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
-
             mTaskViewListener.onDeleteTaskButtonClicked(memberId, taskId);
+            mTaskViewListener.onEditTasksOfMember(memberId, getAllTasks());
         }
 
         @Override
         public void onChangeComplete(Task editedTask, boolean checked) {
-
             if (editedTask == null) {
                 return;
             }
@@ -389,6 +390,7 @@ public class TasksFragment extends Fragment {
             controlTasksVisibility(unCompleteAdapter.getCount(), completeAdapter.getCount());
 
             mTaskViewListener.onChangeComplete(editedTask);
+            mTaskViewListener.onEditTasksOfMember(editedTask.getMemberId(), getAllTasks());
 //            invalidateSplitView();
         }
     };

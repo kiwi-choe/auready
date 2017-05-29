@@ -540,13 +540,18 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void changeComplete(Task editedTask) {
         ContentValues values = new ContentValues();
-        values.put(TaskEntry.COLUMN_DESCRIPTION, editedTask.getDescription());
         values.put(TaskEntry.COLUMN_COMPLETED, editedTask.getCompletedInteger());
-        values.put(TaskEntry.COLUMN_ORDER, editedTask.getOrder());
 
         String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
         String[] whereArgs = {editedTask.getId()};
         mDbHelper.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
+    }
+
+    @Override
+    public void deleteTasksOfMember(String memberId) {
+        String whereClause = TaskEntry.COLUMN_MEMBER_ID_FK + " LIKE?";
+        String[] whereArgs = {memberId};
+        mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
     }
 
     // Delete members by taskHeadId
@@ -567,7 +572,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     public void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback) {
 
         if (editTasksInLocal(tasks)) {
-            callback.onEditSuccess();
+            callback.onEditSuccess(tasks);
         } else {
             callback.onEditFail();
         }

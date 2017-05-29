@@ -137,7 +137,6 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
-                        getTasksOfMember(memberId);
                     }
 
                     @Override
@@ -236,14 +235,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks) {
-
+    public void editTasksOfMember(final String memberId, List<Task> tasks) {
         mUseCaseHandler.execute(mEditTasksOfMember, new EditTasksOfMember.RequestValues(memberId, tasks),
                 new UseCase.UseCaseCallback<EditTasksOfMember.ResponseValue>() {
 
                     @Override
                     public void onSuccess(EditTasksOfMember.ResponseValue response) {
-
+                        filterTasks(response.getTasksOfMember(), new ArrayList<Task>(), new ArrayList<Task>());
                     }
 
                     @Override

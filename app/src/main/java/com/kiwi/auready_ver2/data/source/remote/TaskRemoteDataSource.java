@@ -261,8 +261,6 @@ public class TaskRemoteDataSource implements TaskDataSource {
                 editTaskHead.getColor(),
                 memberRemotes);
 
-        Log.d("Tag_editTaskhead", String.valueOf(editTaskHead.getColor()));
-
         Call<Void> call = taskService.editTaskHeadDetail(editTaskHead.getId(), editTaskHeadDetailRemote);
         call.enqueue(new Callback<Void>() {
             @Override
@@ -410,54 +408,12 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     @Override
     public void saveTask(@NonNull Task task, @NonNull final SaveTaskCallback callback) {
-        if (!readyToRequestAPI()) {
-            callback.onSaveFailed();
-        }
-
-        ITaskService taskService =
-                ServiceGenerator.createService(ITaskService.class, mAccessToken);
-
-        Task_remote taskRemote = new Task_remote(
-                task.getId(), task.getDescription(), task.getCompleted(), task.getOrder());
-        Call<Void> call = taskService.saveTask(task.getMemberId(), taskRemote);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
-                    callback.onSaveSuccess();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                callback.onSaveFailed();
-            }
-        });
+        // Implement in Local only
     }
 
     @Override
     public void deleteTask(@NonNull String taskId, @NonNull final DeleteTaskCallback callback) {
-        Log.d(TAG, "entered into deleteTask");
-        if (!readyToRequestAPI()) {
-            return;
-        }
-        ITaskService taskService =
-                ServiceGenerator.createService(ITaskService.class, mAccessToken);
-
-        Call<Void> call = taskService.deleteTask(taskId);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    callback.onDeleteSuccess();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                callback.onDeleteFailed();
-            }
-        });
+        // Implement in Local only
     }
 
     @Override
@@ -504,28 +460,12 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     @Override
     public void changeComplete(Task editedTask) {
-        if(!readyToRequestAPI()) {
-            return;
-        }
-        ITaskService taskService =
-                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+        // Implement in Local only
+    }
 
-        Task_remote taskRemote = new Task_remote(
-                editedTask.getId(), editedTask.getDescription(), editedTask.getCompleted(), editedTask.getOrder());
-        Call<Void> call = taskService.changeCompleted(editedTask.getId(), taskRemote);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
-                    Log.d("Tag_changeComplete", "success to edit a task");
-                }
-            }
+    @Override
+    public void deleteTasksOfMember(String memberId) {
 
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Tag_changeComplete", "fail to edit a task");
-            }
-        });
     }
 
     @Override
@@ -534,7 +474,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks,
+    public void editTasksOfMember(final String memberId, List<Task> tasks,
                                   @NonNull final EditTasksOfMemberCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onEditFail();
@@ -549,24 +489,25 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     task.getId(), task.getDescription(), task.getCompleted(), task.getOrder()));
         }
 
-        Call<Void> call = taskService.editTasksOfMember(memberId, updatingTasks);
-        call.enqueue(new Callback<Void>() {
+        Call<List<Task_remote>> call = taskService.editTasksOfMember(memberId, updatingTasks);
+        call.enqueue(new Callback<List<Task_remote>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
                 if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
                     // Request getting latest updated taskHeads
                     Log.d("Tag_remoteTask", "editTasksOfMember; no member");
                     callback.onEditFail();
                 } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
                     Log.d("Tag_remoteTask", "success to editTasksOfMember");
-                    callback.onEditSuccess();
+                    List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
+                    callback.onEditSuccess(tasks);
                 }
             }
 
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                callback.onEditFail();
+            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
                 Log.d("Tag_remoteTask", "fail to editTasksOfMember");
+                callback.onEditFail();
             }
         });
     }

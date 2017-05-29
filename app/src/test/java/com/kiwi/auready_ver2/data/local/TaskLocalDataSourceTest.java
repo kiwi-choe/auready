@@ -386,6 +386,27 @@ public class TaskLocalDataSourceTest {
         verify(loadTasksCallback).onTasksLoaded(anyListOf(Task.class));
     }
 
+    // Delete tasks of MEMBERS index 0
+    @Test
+    public void deleteTasksOfMember() {
+        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
+
+        mLocalDataSource.deleteTasksOfMember(TASKS.get(0).getMemberId());
+
+        // Check
+        mLocalDataSource.getTasksOfMember(TASKS.get(0).getMemberId(), new TaskDataSource.LoadTasksCallback() {
+            @Override
+            public void onTasksLoaded(List<Task> tasks) {
+                fail();
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+    }
     private void deleteAllTaskHeadDetails() {
         mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
     }

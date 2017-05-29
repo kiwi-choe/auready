@@ -6,7 +6,6 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.POST;
@@ -37,20 +36,11 @@ public interface ITaskService {
     /*
     * Task
     * */
-    @POST("/tasks/{memberid}")
-    Call<Void> saveTask(@Path("memberid") String memberId, @Body Task_remote task_remote);
-
     @PUT("/tasks/taskhead/{id}")
     Call<Void> editTasks(@Path("id") String taskHeadId, @Body List<MemberTasks> memberTasks);
 
     @PUT("/tasks/member/{id}")
-    Call<Void> editTasksOfMember(@Path("id") String memberId, @Body List<Task_remote> editingTasks);
-
-    @PUT("/tasks/{id}")
-    Call<Void> changeCompleted(@Path("id") String taskId, @Body Task_remote editedTask);
-
-    @DELETE("/tasks/{id}")
-    Call<Void> deleteTask(@Path("id") String id);
+    Call<List<Task_remote>> editTasksOfMember(@Path("id") String memberId, @Body List<Task_remote> editingTasks);
 
     @GET("/taskheads/")
     Call<TaskHeadDetail_remote> getTaskHeadDetail(@Query("id") String taskHeadId);

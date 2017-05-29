@@ -2,15 +2,12 @@ package com.kiwi.auready_ver2.data;
 
 import android.support.annotation.NonNull;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.UUID;
 
 /**
  * Task model
  */
 public class Task {
-    @SerializedName("id")
     private String mId;
     private String mMemberId;
     private String mDescription;

@@ -32,6 +32,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 /**
@@ -494,15 +495,19 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void editTasksOfMember() {
-        saveStubbedTasks(TASKS);
+    public void editTasksOfMember_RemoteFirst_ifSuccess_RefreshLocalTask() {
+//        saveStubbedTasks(TASKS);
 
         String memberId = TASKS.get(0).getMemberId();
         List<Task> editTasks = TASKS;
         String editDescription = "EDIT des!!";
         editTasks.get(0).setDescription(editDescription);
         mRepository.editTasksOfMember(memberId, editTasks, mEditTasksOfMemberCallback);
-        verify(mLocalDataSource).editTasksOfMember(eq(memberId), eq(editTasks), mEditTasksOfMemberCallbackCaptor.capture());
+        verify(mRemoteDataSource).editTasksOfMember(eq(memberId), eq(editTasks), mEditTasksOfMemberCallbackCaptor.capture());
+        mEditTasksOfMemberCallbackCaptor.getValue().onEditSuccess(editTasks);
+
+        verify(mLocalDataSource, times(TASKS.size())).saveTask(any(Task.class), mSaveTaskCallbackCaptor.capture());
+//        verify(mLocalDataSource).editTasksOfMember(eq(memberId), eq(editTasks), mEditTasksOfMemberCallbackCaptor.capture());
 
         assertThat(mRepository.mCachedTasks.get(TASKS.get(0).getId()).getDescription(), is(editDescription));
     }

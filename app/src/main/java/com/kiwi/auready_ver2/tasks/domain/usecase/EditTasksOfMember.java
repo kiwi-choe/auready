@@ -26,8 +26,8 @@ public class EditTasksOfMember extends UseCase<EditTasksOfMember.RequestValues, 
     protected void executeUseCase(RequestValues values) {
         mTaskRepository.editTasksOfMember(values.getMemberId(), values.getTasks(), new TaskDataSource.EditTasksOfMemberCallback() {
             @Override
-            public void onEditSuccess() {
-                getUseCaseCallback().onSuccess(new ResponseValue());
+            public void onEditSuccess(List<Task> tasksOfMember) {
+                getUseCaseCallback().onSuccess(new ResponseValue(tasksOfMember));
             }
 
             @Override
@@ -56,6 +56,14 @@ public class EditTasksOfMember extends UseCase<EditTasksOfMember.RequestValues, 
     }
 
     public static final class ResponseValue implements UseCase.ResponseValue {
+        private final List<Task> mTasksOfMember;
 
+        public ResponseValue(List<Task> tasksOfMember) {
+            mTasksOfMember = tasksOfMember;
+        }
+
+        public List<Task> getTasksOfMember() {
+            return mTasksOfMember;
+        }
     }
 }
