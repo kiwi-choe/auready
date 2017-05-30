@@ -16,8 +16,10 @@ import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.task.DeletingIds_remote;
 import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
+import com.kiwi.auready_ver2.rest_service.task.Order_remote;
 import com.kiwi.auready_ver2.rest_service.task.TaskHeadDetail_remote;
 import com.kiwi.auready_ver2.rest_service.task.Task_remote;
+import com.kiwi.auready_ver2.rest_service.task.UpdatingOrder_remote;
 import com.kiwi.auready_ver2.tasks.MemberTasks;
 import com.kiwi.auready_ver2.util.NetworkUtils;
 
@@ -151,9 +153,20 @@ public class TaskRemoteDataSource implements TaskDataSource {
         List<Member> members = new ArrayList<>();
         List<Task> tasks = new ArrayList<>();
 
+        int order = 0;
+        String currentUserId = AccessTokenStore.getInstance(mContext).getStringValue(AccessTokenStore.USER_ID, "");
+        for (Order_remote order_remote : taskHeadDetailRemote.getOrders()) {
+            if (order_remote.getUserId().equals(currentUserId)) {
+                order = order_remote.getOrderNum();
+                break;
+            }
+        }
         // Set default orders; 0
-        TaskHead newTaskHead = new TaskHead(taskHeadDetailRemote.getId(),
-                taskHeadDetailRemote.getTitle(), 0, taskHeadDetailRemote.getColor());
+        TaskHead newTaskHead = new TaskHead(
+                taskHeadDetailRemote.getId(),
+                taskHeadDetailRemote.getTitle(),
+                order,
+                taskHeadDetailRemote.getColor());
         // Member
         List<Member_remote> member_remotes = taskHeadDetailRemote.getMembers();
         for (Member_remote member_remote : member_remotes) {
@@ -184,7 +197,32 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     @Override
     public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
+        if (!readyToRequestAPI()) {
+            return;
+        }
 
+        // Make jsonData
+        List<UpdatingOrder_remote> updatingTaskHeadOrders = new ArrayList<>();
+        for (TaskHead taskHead : taskHeads) {
+            UpdatingOrder_remote updatingOrder = new UpdatingOrder_remote(taskHead.getId(), taskHead.getOrder());
+            updatingTaskHeadOrders.add(updatingOrder);
+        }
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+        Call<Void> call = taskService.updateTaskHeadOrders(updatingTaskHeadOrders);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "updateTaskHeadOrders succeeded");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d(TAG, "updateTaskHeadOrders failed");
+            }
+        });
     }
 
     @Override
@@ -209,10 +247,23 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     new ArrayList<Task_remote>(0));
             memberRemotes.add(memberRemote);
         }
+        // Make orders
+        List<Order_remote> orders = new ArrayList<>();
+        for (Member member : members) {
+            String currentUserId = AccessTokenStore.getInstance(mContext).getStringValue(AccessTokenStore.USER_ID, "");
+            Order_remote orderRemote;
+            if (member.getUserId().equals(currentUserId)) {
+                orderRemote = new Order_remote(member.getUserId(), taskHeadDetail.getTaskHead().getOrder());
+            } else {
+                orderRemote = new Order_remote(member.getUserId(), 0);
+            }
+            orders.add(orderRemote);
+        }
         TaskHeadDetail_remote taskHeadRemote = new TaskHeadDetail_remote(
                 taskHeadDetail.getTaskHead().getId(),
                 taskHeadDetail.getTaskHead().getTitle(),
                 taskHeadDetail.getTaskHead().getColor(),
+                orders,
                 memberRemotes);
         Call<Void> call = taskService.saveTaskHeadDetail(taskHeadRemote);
         call.enqueue(new Callback<Void>() {
@@ -255,10 +306,13 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     new ArrayList<Task_remote>(0));
             memberRemotes.add(memberRemote);
         }
+        // Make temp orders for Remote model; orders is empty
+        List<Order_remote> orders = new ArrayList<>();
         TaskHeadDetail_remote editTaskHeadDetailRemote = new TaskHeadDetail_remote(
                 editTaskHead.getId(),
                 editTaskHead.getTitle(),
                 editTaskHead.getColor(),
+                orders,
                 memberRemotes);
 
         Call<Void> call = taskService.editTaskHeadDetail(editTaskHead.getId(), editTaskHeadDetailRemote);
@@ -375,7 +429,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<List<Task_remote>>() {
             @Override
             public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
-                if(response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
+                if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
                     List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
                     callback.onTasksLoaded(tasks);
                 } else {
@@ -392,7 +446,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
     private List<Task> convertTasksRemoteToTasks(String memberId, List<Task_remote> taskRemotes) {
         List<Task> tasks = new ArrayList<>();
-        for(Task_remote remote: taskRemotes) {
+        for (Task_remote remote : taskRemotes) {
             Task task = new Task(
                     remote.getId(), memberId, remote.getDescription(), remote.getCompleted(), remote.getOrder());
 

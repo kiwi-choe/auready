@@ -3,6 +3,7 @@ package com.kiwi.auready_ver2.tasks;
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,10 +113,10 @@ public class TasksAdapter extends BaseAdapter {
         viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Delete Item from TasksAdapter
-                removeItem(position);
 
-                mTaskItemListener.onTaskDeleteButtonClicked(task.getMemberId(), task.getId());
+                Log.d("Tag_position", String.valueOf(position));
+
+                mTaskItemListener.onTaskDeleteButtonClicked(task, position);
             }
         });
 

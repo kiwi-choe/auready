@@ -15,13 +15,16 @@ public class TaskHeadDetail_remote {
     private final String title;
     @SerializedName("color")
     private final int color;
+    @SerializedName("orders")
+    private final List<Order_remote> orders;
     @SerializedName("members")
     private final List<Member_remote> members;
 
-    public TaskHeadDetail_remote(String id, String title, int color, List<Member_remote> members) {
+    public TaskHeadDetail_remote(String id, String title, int color, List<Order_remote> orders, List<Member_remote> members) {
         this.id = id;
         this.title = title;
         this.color = color;
+        this.orders = orders;
         this.members = members;
     }
 
@@ -39,5 +42,9 @@ public class TaskHeadDetail_remote {
 
     public List<Member_remote> getMembers() {
         return members;
+    }
+
+    public List<Order_remote> getOrders() {
+        return orders;
     }
 }

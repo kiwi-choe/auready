@@ -348,27 +348,12 @@ public class TasksFragment extends Fragment {
     }
 
     public interface TaskItemListener {
-        void onTaskDeleteButtonClicked(String memberId, String taskId);
-
         void onChangeComplete(Task editedTask, boolean checked);
+
+        void onTaskDeleteButtonClicked(Task task, int position);
     }
 
     private TaskItemListener mTaskItemListener = new TaskItemListener() {
-        @Override
-        public void onTaskDeleteButtonClicked(String memberId, String taskId) {
-            // remove focus
-            if(getActivity().getCurrentFocus()!= null) {
-                getActivity().getCurrentFocus().clearFocus();
-            }
-
-            // hide keyboard
-            InputMethodManager im =
-                    (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
-            im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-
-            mTaskViewListener.onDeleteTaskButtonClicked(memberId, taskId);
-            mTaskViewListener.onEditTasksOfMember(memberId, getAllTasks());
-        }
 
         @Override
         public void onChangeComplete(Task editedTask, boolean checked) {
@@ -392,6 +377,31 @@ public class TasksFragment extends Fragment {
             mTaskViewListener.onChangeComplete(editedTask);
             mTaskViewListener.onEditTasksOfMember(editedTask.getMemberId(), getAllTasks());
 //            invalidateSplitView();
+        }
+
+        @Override
+        public void onTaskDeleteButtonClicked(Task task, int position) {
+            // remove focus
+            if(getActivity().getCurrentFocus()!= null) {
+                getActivity().getCurrentFocus().clearFocus();
+
+                // hide keyboard
+                InputMethodManager im =
+                        (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            }
+
+            // Remove item from TasksAdapter
+            TasksAdapter tasksAdapter;
+            if(task.getCompleted()) {
+                tasksAdapter = (TasksAdapter) mCompleteListview.getInputAdapter();
+            } else {
+                tasksAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
+            }
+            tasksAdapter.removeItem(position);
+
+            mTaskViewListener.onDeleteTaskButtonClicked(task.getMemberId(), task.getId());
+            mTaskViewListener.onEditTasksOfMember(task.getMemberId(), getAllTasks());
         }
     };
 

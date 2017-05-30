@@ -30,8 +30,11 @@ public interface ITaskService {
     @HTTP(method = "DELETE", path = "/taskheads", hasBody = true)
     Call<Void> deleteTaskHeads(@Body DeletingIds_remote ids);
 
-    @PUT("/taskheads/{id}")
+    @PUT("/taskheads/{id}/details")
     Call<Void> editTaskHeadDetail(@Path("id") String id, @Body TaskHeadDetail_remote editTaskHeadDetail);
+
+    @PUT("/taskheads/orders")
+    Call<Void> updateTaskHeadOrders(@Body List<UpdatingOrder_remote> updatingOrders);
 
     /*
     * Task

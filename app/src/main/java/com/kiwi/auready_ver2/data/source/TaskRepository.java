@@ -228,6 +228,7 @@ public class TaskRepository implements TaskDataSource {
     @Override
     public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
         mLocalDataSource.updateTaskHeadOrders(taskHeads);
+        mRemoteDataSource.updateTaskHeadOrders(taskHeads);
 
         refreshTaskHeadsCache(taskHeads);
     }
