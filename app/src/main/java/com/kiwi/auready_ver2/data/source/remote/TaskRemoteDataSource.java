@@ -284,7 +284,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void editTaskHeadDetail(@NonNull TaskHead editTaskHead,
+    public void editTaskHeadDetail(@NonNull final TaskHead editTaskHead,
                                    @NonNull List<Member> addingMembers,
                                    @NonNull final EditTaskHeadDetailCallback callback) {
 
@@ -297,6 +297,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
         // Make Object for remote
         List<Member_remote> memberRemotes = new ArrayList<>();
+        List<Order_remote> orders = new ArrayList<>();
         for (Member member : addingMembers) {
             Member_remote memberRemote = new Member_remote(
                     member.getId(),
@@ -305,9 +306,12 @@ public class TaskRemoteDataSource implements TaskDataSource {
                     member.getEmail(),
                     new ArrayList<Task_remote>(0));
             memberRemotes.add(memberRemote);
+
+            // Make orders
+            Order_remote orderRemote = new Order_remote(member.getUserId(), 0);
+            orders.add(orderRemote);
         }
-        // Make temp orders for Remote model; orders is empty
-        List<Order_remote> orders = new ArrayList<>();
+
         TaskHeadDetail_remote editTaskHeadDetailRemote = new TaskHeadDetail_remote(
                 editTaskHead.getId(),
                 editTaskHead.getTitle(),
