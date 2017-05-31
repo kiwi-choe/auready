@@ -15,7 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
+import com.kiwi.auready_ver2.data.Member;
 import com.kiwi.auready_ver2.data.Task;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.util.view.DragSortController;
 import com.kiwi.auready_ver2.util.view.DragSortItemView;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
@@ -30,9 +32,11 @@ public class TasksFragment extends Fragment {
     public static final String ARG_MEMBER_ID = "MEMBER_ID";
     public static final String ARG_MEMBER_NAME = "MEMBER_NAME";
     public static final String ARG_FRAGMENT_LISTENER = "FRAGMENT_LISTENER";
+    private static final String ARG_MEMBER_USERID = "MEMBER_USERID";
 
     private String mMemberId;
     private String mMemberName;
+    private String mMemberUserId;
 
     private DragSortListView mUnCompleteListview;
     private DragSortListView mCompleteListview;
@@ -47,15 +51,15 @@ public class TasksFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static TasksFragment newInstance(String memberId, String memberName,
-                                            TasksActivity.TaskViewListener taskViewListener) {
+    public static TasksFragment newInstance(Member member, TasksActivity.TaskViewListener taskViewListener) {
 
         mTaskViewListener = taskViewListener;
         TasksFragment fragment = new TasksFragment();
 
         Bundle bundle = new Bundle();
-        bundle.putString(ARG_MEMBER_ID, memberId);
-        bundle.putString(ARG_MEMBER_NAME, memberName);
+        bundle.putString(ARG_MEMBER_ID, member.getId());
+        bundle.putString(ARG_MEMBER_NAME, member.getName());
+        bundle.putString(ARG_MEMBER_USERID, member.getUserId());
         fragment.setArguments(bundle);
 
         return fragment;
@@ -67,6 +71,7 @@ public class TasksFragment extends Fragment {
         if (getArguments() != null) {
             mMemberId = getArguments().getString(ARG_MEMBER_ID);
             mMemberName = getArguments().getString(ARG_MEMBER_NAME);
+            mMemberUserId = getArguments().getString(ARG_MEMBER_USERID);
         }
     }
 
@@ -110,7 +115,24 @@ public class TasksFragment extends Fragment {
         TextView memberText = (TextView) root.findViewById(R.id.member_name);
         memberText.setText(mMemberName);
 
-        // set task add button
+        // AUReady button
+        TextView btAUReady = (TextView) root.findViewById(R.id.bt_auready);
+        // Set visibility
+        String currentUserId = AccessTokenStore.getInstance().getStringValue(AccessTokenStore.USER_ID, "");
+        if(currentUserId.equals(mMemberUserId)) {
+            btAUReady.setVisibility(View.INVISIBLE);
+        } else {
+            btAUReady.setVisibility(View.VISIBLE);
+        }
+        btAUReady.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Request Notify AUReady to the member
+                mTaskViewListener.onAUReadyClicked(mMemberUserId);
+            }
+        });
+
+        // Set task add button
         TextView taskAddButton = (TextView) root.findViewById(R.id.add_task_btn);
         taskAddButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -51,10 +51,7 @@ public class TasksFragmentPagerAdapter extends FragmentStatePagerAdapter {
         for (Member member : members) {
             if (!mTasksFragments.containsKey(member.getId())) {
                 mTasksFragments.put(member.getId(),
-                        TasksFragment.newInstance(
-                                member.getId(),
-                                member.getName(),
-                                mTaskViewListener));
+                        TasksFragment.newInstance(member, mTaskViewListener));
             }
         }
     }

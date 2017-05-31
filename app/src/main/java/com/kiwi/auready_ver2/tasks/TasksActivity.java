@@ -199,6 +199,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         void onEditTasksOfMember(String mMemberId, List<Task> tasks);
 
         void onChangeComplete(Task editedTask);
+
+        void onAUReadyClicked(String memberId);
     }
 
     private TaskViewListener mTaskViewListener = new TaskViewListener() {
@@ -231,6 +233,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         @Override
         public void onChangeComplete(Task editedTask) {
             mPresenter.changeComplete(editedTask);
+        }
+
+        @Override
+        public void onAUReadyClicked(String userId) {
+            mPresenter.notifyAUReady(userId);
         }
     };
 

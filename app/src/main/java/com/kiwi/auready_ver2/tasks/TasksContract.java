@@ -61,5 +61,7 @@ class TasksContract {
         void getTaskHeadDetailFromRemote();
 
         void changeComplete(Task editedTask);
+
+        void notifyAUReady(String userId);
     }
 }

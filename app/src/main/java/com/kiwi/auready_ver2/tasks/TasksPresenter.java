@@ -10,6 +10,9 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.TaskHead;
+import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
+import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.notification.INotificationService;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeComplete;
@@ -24,6 +27,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -286,6 +293,28 @@ public class TasksPresenter implements TasksContract.Presenter {
 
                     }
                 });
+    }
+
+    @Override
+    public void notifyAUReady(String userId) {
+        String accessToken = AccessTokenStore.getInstance().getStringValue(AccessTokenStore.ACCESS_TOKEN, "");
+        INotificationService notificationService =
+                ServiceGenerator.createService(INotificationService.class, accessToken);
+
+        Call<Void> call = notificationService.notifyAUReady(userId);
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if(response.isSuccessful()) {
+                    Log.d("Tag_notifyAUReady", "success");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("Tag_notifyAUReady", "fail");
+            }
+        });
     }
 
     private void setTaskHead(TaskHead taskHead) {

@@ -8,7 +8,6 @@ import retrofit2.http.Path;
 /**
  * FCM messaging service
  */
-
 public interface INotificationService {
 
     @POST("/notifications/{instanceId}")
@@ -16,4 +15,7 @@ public interface INotificationService {
 
     @GET("/relationships/status/pending")
     Call<PendingRequestList> getFriendRequestPending();
+
+    @GET("/notifications/auready/{userId}")
+    Call<Void> notifyAUReady(@Path("userId") String userId);
 }
