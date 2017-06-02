@@ -203,9 +203,9 @@ public class TaskRepository implements TaskDataSource {
     private void saveTasksInLocal(List<Task> tasks) {
         // Task
         for (Task task : tasks) {
-            mLocalDataSource.saveTask(task, new SaveTaskCallback() {
+            mLocalDataSource.saveTask(task, new ArrayList<Task>(), new SaveTaskCallback() {
                 @Override
-                public void onSaveSuccess() {
+                public void onSaveSuccess(List<Task> tasksOfMember) {
 
                 }
 
@@ -457,9 +457,9 @@ public class TaskRepository implements TaskDataSource {
         mLocalDataSource.deleteTasksOfMember(memberId);
         // update or insert
         for (Task task : tasks) {
-            mLocalDataSource.saveTask(task, new SaveTaskCallback() {
+            mLocalDataSource.saveTask(task, new ArrayList<Task>(), new SaveTaskCallback() {
                 @Override
-                public void onSaveSuccess() {
+                public void onSaveSuccess(List<Task> tasksOfMember) {
 
                 }
 
@@ -487,17 +487,25 @@ public class TaskRepository implements TaskDataSource {
         });
     }
 
-    /*
-    * Local only
-    * */
     @Override
-    public void deleteTask(@NonNull final String taskId, @NonNull final DeleteTaskCallback callback) {
+    public void deleteTask(final String memberId, @NonNull final String taskId, @NonNull final List<Task> editingTasks, @NonNull final DeleteTaskCallback callback) {
         checkNotNull(taskId);
 
-        mLocalDataSource.deleteTask(taskId, new DeleteTaskCallback() {
+        mLocalDataSource.deleteTask(memberId, taskId, new ArrayList<Task>(), new DeleteTaskCallback() {
             @Override
-            public void onDeleteSuccess() {
-                callback.onDeleteSuccess();
+            public void onDeleteSuccess(List<Task> tasksOfMember) {
+
+                mRemoteDataSource.deleteTask(memberId, taskId, editingTasks, new DeleteTaskCallback() {
+                    @Override
+                    public void onDeleteSuccess(List<Task> tasksOfMember) {
+                        callback.onDeleteSuccess(tasksOfMember);
+                    }
+
+                    @Override
+                    public void onDeleteFailed() {
+                        callback.onDeleteFailed();
+                    }
+                });
             }
 
             @Override
@@ -526,16 +534,24 @@ public class TaskRepository implements TaskDataSource {
         refreshCachedTasks(updatingTasks);
     }
 
-    /*
-    * Local only
-    * */
     @Override
-    public void saveTask(@NonNull final Task task, @NonNull final SaveTaskCallback callback) {
+    public void saveTask(@NonNull final Task task, @NonNull final List<Task> editingTasks, @NonNull final SaveTaskCallback callback) {
         checkNotNull(task);
-        mLocalDataSource.saveTask(task, new SaveTaskCallback() {
+        mLocalDataSource.saveTask(task, new ArrayList<Task>(), new SaveTaskCallback() {
+
             @Override
-            public void onSaveSuccess() {
-                callback.onSaveSuccess();
+            public void onSaveSuccess(List<Task> tasksOfMember) {
+                mRemoteDataSource.saveTask(task, editingTasks, new SaveTaskCallback() {
+                    @Override
+                    public void onSaveSuccess(List<Task> tasksOfMember) {
+                        callback.onSaveSuccess(tasksOfMember);
+                    }
+
+                    @Override
+                    public void onSaveFailed() {
+                        callback.onSaveFailed();
+                    }
+                });
             }
 
             @Override
@@ -559,7 +575,7 @@ public class TaskRepository implements TaskDataSource {
     public void changeComplete(Task editedTask) {
         mLocalDataSource.changeComplete(editedTask);
 
-        if(mCachedTasks != null) {
+        if (mCachedTasks != null) {
             mCachedTasks.put(editedTask.getId(), editedTask);
         }
     }

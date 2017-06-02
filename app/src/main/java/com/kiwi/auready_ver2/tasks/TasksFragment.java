@@ -138,14 +138,16 @@ public class TasksFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int position = mUnCompleteListview.getInputAdapter().getCount();
-                Task task = new Task(mMemberId, "new Item " + position, position);
+                Task task = new Task(mMemberId, "new " + position, position);
 
+                // Get tasks before adding
+                List<Task> editingTasks = getAllTasks();
                 // Add Item to TasksAdapter
                 TasksAdapter unCompleteAdapter = (TasksAdapter) mUnCompleteListview.getInputAdapter();
                 unCompleteAdapter.addItem(task);
 
-                mTaskViewListener.onAddTaskButtonClicked(task);
-                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
+                mTaskViewListener.onAddTaskButtonClicked(task, editingTasks);
+//                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
             }
         });
 
@@ -278,7 +280,8 @@ public class TasksFragment extends Fragment {
             public void drop(int from, int to) {
                 TasksAdapter tasksAdapter = (TasksAdapter) listView.getInputAdapter();
                 tasksAdapter.reorder(from, to);
-//                mPresenter.updateOrders(mTaskHeadsAdapter.getTaskHeadDetails());
+
+                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
             }
 
             @Override
@@ -396,7 +399,7 @@ public class TasksFragment extends Fragment {
 
             controlTasksVisibility(unCompleteAdapter.getCount(), completeAdapter.getCount());
 
-            mTaskViewListener.onChangeComplete(editedTask);
+//            mTaskViewListener.onChangeComplete(editedTask);
             mTaskViewListener.onEditTasksOfMember(editedTask.getMemberId(), getAllTasks());
 //            invalidateSplitView();
         }
@@ -413,6 +416,8 @@ public class TasksFragment extends Fragment {
                 im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
             }
 
+            // Get tasks before removing
+            List<Task> editingTasks = getAllTasks();
             // Remove item from TasksAdapter
             TasksAdapter tasksAdapter;
             if(task.getCompleted()) {
@@ -422,8 +427,8 @@ public class TasksFragment extends Fragment {
             }
             tasksAdapter.removeItem(position);
 
-            mTaskViewListener.onDeleteTaskButtonClicked(task.getMemberId(), task.getId());
-            mTaskViewListener.onEditTasksOfMember(task.getMemberId(), getAllTasks());
+            mTaskViewListener.onDeleteTaskButtonClicked(task.getMemberId(), task.getId(), editingTasks);
+//            mTaskViewListener.onEditTasksOfMember(task.getMemberId(), getAllTasks());
         }
     };
 

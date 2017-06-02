@@ -133,6 +133,10 @@ public class Injection {
         return new ChangeComplete(Injection.provideTaskRepository(context));
     }
 
+    public static InitializeLocalData provideInitializeLocalData(@NonNull Context context) {
+        return new InitializeLocalData(Injection.provideTaskRepository(context));
+    }
+
     /*
     * Notification
     * */
@@ -155,10 +159,6 @@ public class Injection {
 
     public static ReadNotification provideReadNotification(@NonNull Context context) {
         return new ReadNotification(Injection.provideNotificationRepository(context));
-    }
-
-    public static InitializeLocalData provideInitializeLocalData(@NonNull Context context) {
-        return new InitializeLocalData(Injection.provideTaskRepository(context));
     }
 
     public static DeleteNotification provideDeleteNotification(@NonNull Context context) {

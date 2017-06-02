@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -61,6 +59,10 @@ public class TasksPresenterTest {
     private ArgumentCaptor<TaskDataSource.LoadTasksCallback> mLoadTasksCallbackCaptor;
     @Captor
     private ArgumentCaptor<TaskDataSource.GetTaskHeadDetailCallback> getTaskHeadDetailCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.SaveTaskCallback> mSaveTaskCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.DeleteTaskCallback> mDeleteTaskCallbackCaptor;
 
     @Before
     public void setup() {
@@ -148,13 +150,11 @@ public class TasksPresenterTest {
     public void createTask_andLoadIntoView() {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
         // Create a new taskTextView
-        String memberId = TASKS.get(0).getMemberId();
-        String description = "description new taskTextView";
-        int order = TASKS.size();
-        mTasksPresenter.createTask(memberId, description, order);
+        Task newTask = TASKS.get(0);
+        mTasksPresenter.createTask(newTask, TASKS);
         // Then a taskTextView is saved in the repository
-        TaskDataSource.SaveTaskCallback callback = Mockito.mock(TaskDataSource.SaveTaskCallback.class);
-        verify(mTaskRepository).saveTask(any(Task.class), callback);
+//        TaskDataSource.SaveTaskCallback callback = Mockito.mock(TaskDataSource.SaveTaskCallback.class);
+        verify(mTaskRepository).saveTask(eq(newTask), eq(TASKS), mSaveTaskCallbackCaptor.capture());
         // And Update View
     }
 
@@ -173,9 +173,9 @@ public class TasksPresenterTest {
         mTasksPresenter = givenTasksPresenter(TASKHEAD.getId());
 
         String taskId = TASKS.get(0).getId();
-        mTasksPresenter.deleteTask(TASKS.get(0).getMemberId(), taskId);
-        TaskDataSource.DeleteTaskCallback callback = Mockito.mock(TaskDataSource.DeleteTaskCallback.class);
-        verify(mTaskRepository).deleteTask(eq(taskId), callback);
+        mTasksPresenter.deleteTask(TASKS.get(0).getMemberId(), taskId, TASKS);
+        verify(mTaskRepository).deleteTask(eq(TASKS.get(0).getMemberId()), eq(taskId), eq(TASKS),
+                mDeleteTaskCallbackCaptor.capture());
     }
 
     @Test

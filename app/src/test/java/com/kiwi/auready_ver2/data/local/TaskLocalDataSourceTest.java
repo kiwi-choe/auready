@@ -72,7 +72,7 @@ public class TaskLocalDataSourceTest {
 
     @Test
     public void saveTask() {
-        mLocalDataSource.saveTask(TASK, mSaveCallback);
+        mLocalDataSource.saveTask(TASK, new ArrayList<Task>(), mSaveCallback);
 
         // Retrieve the saved task using query directly
         String selection = TaskEntry.COLUMN_ID + " LIKE?";
@@ -92,10 +92,10 @@ public class TaskLocalDataSourceTest {
 
     @Test
     public void replaceTask_canUpdateTheExistingTasks() {
-        mLocalDataSource.saveTask(TASK, mSaveCallback);
+        mLocalDataSource.saveTask(TASK, new ArrayList<Task>(), mSaveCallback);
         String id = TASK.getId();
         Task updatedTask = new Task(id, TASK.getMemberId(), "editDes", false, 0);
-        mLocalDataSource.saveTask(updatedTask, mSaveCallback);
+        mLocalDataSource.saveTask(updatedTask, new ArrayList<Task>(), mSaveCallback);
 
         // Retrieve the saved task using query directly
         String selection = TaskEntry.COLUMN_ID + " LIKE?";
@@ -112,11 +112,12 @@ public class TaskLocalDataSourceTest {
             }
         }
     }
+
     @Test
     public void getTasks_checkResultValues() {
         // Save 3 stubbedTasks
-        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
-        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(0), new ArrayList<Task>(), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), new ArrayList<Task>(), mSaveCallback);
 
         // Get the saved tasks by memberId
         String memberId = TASKS.get(0).getMemberId();
@@ -151,8 +152,8 @@ public class TaskLocalDataSourceTest {
     @Test
     public void getTasks_firesOnTasksLoaded() {
         // Save 2 stubbedTasks
-        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
-        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(0), new ArrayList<Task>(), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), new ArrayList<Task>(), mSaveCallback);
 
         TaskDataSource.LoadTasksCallback loadTasksCallback = Mockito.mock(TaskDataSource.LoadTasksCallback.class);
         String memberId = TASKS.get(0).getMemberId();
@@ -172,13 +173,13 @@ public class TaskLocalDataSourceTest {
     @Test
     public void deleteTask_retrieveExistingTasks() {
         // Save 2 tasks
-        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
-        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(0), new ArrayList<Task>(), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), new ArrayList<Task>(), mSaveCallback);
         String memberId = TASKS.get(0).getMemberId();
 
         // Delete tasks - index 0
         TaskDataSource.DeleteTaskCallback deleteCallback = Mockito.mock(TaskDataSource.DeleteTaskCallback.class);
-        mLocalDataSource.deleteTask(TASKS.get(0).getId(), deleteCallback);
+        mLocalDataSource.deleteTask(memberId, TASKS.get(0).getId(), new ArrayList<Task>(), deleteCallback);
 
         // Retrieve tasks to verify that tasks are deleted
         mLocalDataSource.getTasksOfMember(memberId, new TaskDataSource.LoadTasksCallback() {
@@ -211,10 +212,10 @@ public class TaskLocalDataSourceTest {
         cachedTasks.put(memberId0, TASKS0);
         cachedTasks.put(memberId1, TASKS1);
         for (Task task : TASKS0) {
-            mLocalDataSource.saveTask(task, mSaveCallback);
+            mLocalDataSource.saveTask(task, new ArrayList<Task>(), mSaveCallback);
         }
         for (Task task : TASKS0) {
-            mLocalDataSource.saveTask(task, mSaveCallback);
+            mLocalDataSource.saveTask(task, new ArrayList<Task>(), mSaveCallback);
         }
 
         // Update tasks
@@ -225,14 +226,14 @@ public class TaskLocalDataSourceTest {
 
         // Make the collection for all the tasks of members
         List<Task> updatingTasks = new ArrayList<>();
-        for(String key:cachedTasks.keySet()) {
+        for (String key : cachedTasks.keySet()) {
             List<Task> tasks = cachedTasks.get(key);
             updatingTasks.addAll(tasks);
         }
 
         // Query
         String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
-        for(Task task: updatingTasks) {
+        for (Task task : updatingTasks) {
             ContentValues values = new ContentValues();
             values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
             values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
@@ -266,8 +267,8 @@ public class TaskLocalDataSourceTest {
     @Test
     public void editTasksOfMember() {
         // save stubbedTasks
-        for(Task task: TASKS) {
-            mLocalDataSource.saveTask(task, mSaveCallback);
+        for (Task task : TASKS) {
+            mLocalDataSource.saveTask(task, new ArrayList<Task>(), mSaveCallback);
         }
         // Update tasks
         TASKS.get(0).setDescription("EDIT DES 0");
@@ -311,11 +312,11 @@ public class TaskLocalDataSourceTest {
                 assertThat(members.size(), is(TASKHEAD_DETAIL.getMembers().size()));
                 boolean foundMember0 = false;
                 boolean foundMember1 = false;
-                for(Member member:members) {
-                    if(member.getId().equals(MEMBERS.get(0).getId())) {
+                for (Member member : members) {
+                    if (member.getId().equals(MEMBERS.get(0).getId())) {
                         foundMember0 = true;
                     }
-                    if(member.getId().equals(MEMBERS.get(1).getId())) {
+                    if (member.getId().equals(MEMBERS.get(1).getId())) {
                         foundMember1 = true;
                     }
                 }
@@ -341,8 +342,8 @@ public class TaskLocalDataSourceTest {
     @Test
     public void getTasksOfTaskHead_checkResultValues() {
         // Save 2 stubbedTasks
-        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
-        verify(mSaveCallback).onSaveSuccess();
+        mLocalDataSource.saveTask(TASKS.get(0), new ArrayList<Task>(), mSaveCallback);
+        verify(mSaveCallback).onSaveSuccess(new ArrayList<Task>());
 
         // retrieve in Task table
         String query = String.format(
@@ -389,8 +390,8 @@ public class TaskLocalDataSourceTest {
     // Delete tasks of MEMBERS index 0
     @Test
     public void deleteTasksOfMember() {
-        mLocalDataSource.saveTask(TASKS.get(0), mSaveCallback);
-        mLocalDataSource.saveTask(TASKS.get(1), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(0), new ArrayList<Task>(), mSaveCallback);
+        mLocalDataSource.saveTask(TASKS.get(1), new ArrayList<Task>(), mSaveCallback);
 
         mLocalDataSource.deleteTasksOfMember(TASKS.get(0).getMemberId());
 
@@ -407,6 +408,7 @@ public class TaskLocalDataSourceTest {
             }
         });
     }
+
     private void deleteAllTaskHeadDetails() {
         mDbHelper.delete(PersistenceContract.TaskHeadEntry.TABLE_NAME, null, null);
     }

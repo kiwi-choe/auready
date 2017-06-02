@@ -43,12 +43,11 @@ class TasksContract {
         // Get tasks by memberId
         void getTasksOfMember(@NonNull String memberId);
 
-        void createTask(@NonNull String memberId,
-                        @NonNull String description, @NonNull int order);
+        void createTask(@NonNull Task task, List<Task> editingTasks);
 
         void result(int requestCode, int resultCode, Intent data);
 
-        void deleteTask(@NonNull final String memberId, @NonNull String taskId);
+        void deleteTask(@NonNull final String memberId, @NonNull String taskId, List<Task> editingTasks);
 
         void editTasks();
 

@@ -22,21 +22,11 @@ public interface TaskDataSource {
 
     void saveMembers(List<Member> members);
 
-    void changeComplete(Task editedTask);
-
-    void deleteTasksOfMember(String memberId);
-
     interface DeleteMembersCallback {
         void onDeleteSuccess();
         void onDeleteFail();
     }
     void deleteMembers(String taskHeadId, DeleteMembersCallback callback);
-
-    interface EditTasksOfMemberCallback {
-        void onEditSuccess(List<Task> tasksOfMember);
-        void onEditFail();
-    }
-    void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback);
 
     void refreshLocalTaskHead();
 
@@ -131,16 +121,26 @@ public interface TaskDataSource {
     void getTasksOfTaskHead(@NonNull String taskheadId, @NonNull LoadTasksCallback callback);
 
     interface DeleteTaskCallback {
-        void onDeleteSuccess();
+        void onDeleteSuccess(List<Task> tasksOfMember);
         void onDeleteFailed();
     }
-    void deleteTask(@NonNull String taskId, @NonNull DeleteTaskCallback callback);
+    void deleteTask(String memberId, @NonNull String taskId, @NonNull List<Task> editingTasks, @NonNull DeleteTaskCallback callback);
 
     void editTasks(@NonNull String taskHeadId, @NonNull Map<String, List<Task>> tasks);
 
     interface SaveTaskCallback {
-        void onSaveSuccess();
+        void onSaveSuccess(List<Task> tasksOfMember);
         void onSaveFailed();
     }
-    void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback);
+    void saveTask(@NonNull Task task, @NonNull List<Task> editingTasks, @NonNull SaveTaskCallback callback);
+
+    void changeComplete(Task editedTask);
+
+    void deleteTasksOfMember(String memberId);
+
+    interface EditTasksOfMemberCallback {
+        void onEditSuccess(List<Task> tasksOfMember);
+        void onEditFail();
+    }
+    void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback);
 }

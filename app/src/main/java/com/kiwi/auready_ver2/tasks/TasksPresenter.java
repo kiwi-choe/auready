@@ -137,13 +137,13 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void createTask(@NonNull final String memberId, @NonNull String description, @NonNull int order) {
-        Task newTask = new Task(memberId, description, order);
-        mUseCaseHandler.execute(new SaveTask(mSaveTask), new SaveTask.RequestValues(newTask),
+    public void createTask(@NonNull Task task, List<Task> editingTasks) {
+        mUseCaseHandler.execute(new SaveTask(mSaveTask), new SaveTask.RequestValues(task, editingTasks),
                 new UseCase.UseCaseCallback<SaveTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(SaveTask.ResponseValue response) {
+                        filterTasks(response.getTasksOfMember(), new ArrayList<Task>(), new ArrayList<Task>());
                     }
 
                     @Override
@@ -169,14 +169,14 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void deleteTask(@NonNull final String memberId, @NonNull String taskId) {
+    public void deleteTask(@NonNull final String memberId, @NonNull String taskId, List<Task> editingTasks) {
 
-        mUseCaseHandler.execute(new DeleteTask(mDeleteTask), new DeleteTask.RequestValues(taskId),
+        mUseCaseHandler.execute(new DeleteTask(mDeleteTask), new DeleteTask.RequestValues(memberId, taskId, editingTasks),
                 new UseCase.UseCaseCallback<DeleteTask.ResponseValue>() {
 
                     @Override
                     public void onSuccess(DeleteTask.ResponseValue response) {
-                        getTasksOfMember(memberId);
+                        filterTasks(response.getTasksOfMember(), new ArrayList<Task>(), new ArrayList<Task>());
                     }
 
                     @Override
@@ -243,6 +243,10 @@ public class TasksPresenter implements TasksContract.Presenter {
 
     @Override
     public void editTasksOfMember(final String memberId, List<Task> tasks) {
+        if (tasks.size() == 0) {
+            Log.d("Tag_editTasksOfMember", "no need to edit tasks");
+            return;
+        }
         mUseCaseHandler.execute(mEditTasksOfMember, new EditTasksOfMember.RequestValues(memberId, tasks),
                 new UseCase.UseCaseCallback<EditTasksOfMember.ResponseValue>() {
 
@@ -305,7 +309,7 @@ public class TasksPresenter implements TasksContract.Presenter {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     Log.d("Tag_notifyAUReady", "success");
                 }
             }

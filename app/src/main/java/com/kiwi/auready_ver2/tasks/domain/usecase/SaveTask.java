@@ -7,6 +7,8 @@ import com.kiwi.auready_ver2.data.Task;
 import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -26,12 +28,11 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
 
     @Override
     protected void executeUseCase(RequestValues requestValue) {
-        final Task newTask = requestValue.getTask();
-        mTaskRepository.saveTask(newTask, new TaskDataSource.SaveTaskCallback() {
+        mTaskRepository.saveTask(requestValue.getTask(), requestValue.getEditingTasks(), new TaskDataSource.SaveTaskCallback() {
 
             @Override
-            public void onSaveSuccess() {
-                getUseCaseCallback().onSuccess(new ResponseValue());
+            public void onSaveSuccess(List<Task> tasksOfMember) {
+                getUseCaseCallback().onSuccess(new ResponseValue(tasksOfMember));
             }
 
             @Override
@@ -43,16 +44,31 @@ public class SaveTask extends UseCase<SaveTask.RequestValues, SaveTask.ResponseV
 
     public static final class RequestValues implements UseCase.RequestValues {
         private final Task mTask;
+        private final List<Task> mEditingTasks;
 
-        public RequestValues(@NonNull Task task) {
+        public RequestValues(@NonNull Task task, List<Task> editingTasks) {
             mTask = checkNotNull(task, "task cannot be null");
+            mEditingTasks = editingTasks;
         }
 
         public Task getTask() {
             return mTask;
         }
+
+        public List<Task> getEditingTasks() {
+            return mEditingTasks;
+        }
     }
 
     public static final class ResponseValue implements UseCase.ResponseValue {
+        private final List<Task> mTasksOfMember;
+
+        public ResponseValue(List<Task> tasksOfMember) {
+            mTasksOfMember = tasksOfMember;
+        }
+
+        public List<Task> getTasksOfMember() {
+            return mTasksOfMember;
+        }
     }
 }

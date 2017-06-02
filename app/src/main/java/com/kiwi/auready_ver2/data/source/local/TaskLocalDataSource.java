@@ -485,27 +485,14 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void deleteTask(@NonNull String taskId, @NonNull DeleteTaskCallback callback) {
+    public void deleteTask(String memberId, @NonNull String taskId, @NonNull List<Task> editingTasks, @NonNull DeleteTaskCallback callback) {
         String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
         String[] whereArgs = {taskId};
-        mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
-    }
-
-    @Override
-    public void saveTask(@NonNull Task task, @NonNull SaveTaskCallback callback) {
-
-        ContentValues values = new ContentValues();
-        values.put(TaskEntry.COLUMN_ID, task.getId());
-        values.put(TaskEntry.COLUMN_MEMBER_ID_FK, task.getMemberId());
-        values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
-        values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
-        values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
-
-        long result = mDbHelper.replace(TaskEntry.TABLE_NAME, null, values);
-        if (result == DBExceptionTag.REPLACE_ERROR) {
-            callback.onSaveFailed();
+        boolean isSuccess = mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
+        if(isSuccess) {
+            callback.onDeleteSuccess(editingTasks);
         } else {
-            callback.onSaveSuccess();
+            callback.onDeleteFailed();
         }
     }
 
@@ -520,6 +507,27 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
 
         editTasksInLocal(updatingTasks);
+    }
+
+    /*
+    * editingTasks is only for Remote; empty list
+    * */
+    @Override
+    public void saveTask(@NonNull Task task, @NonNull List<Task> editingTasks, @NonNull SaveTaskCallback callback) {
+
+        ContentValues values = new ContentValues();
+        values.put(TaskEntry.COLUMN_ID, task.getId());
+        values.put(TaskEntry.COLUMN_MEMBER_ID_FK, task.getMemberId());
+        values.put(TaskEntry.COLUMN_DESCRIPTION, task.getDescription());
+        values.put(TaskEntry.COLUMN_COMPLETED, task.getCompletedInteger());
+        values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
+
+        long result = mDbHelper.replace(TaskEntry.TABLE_NAME, null, values);
+        if (result == DBExceptionTag.REPLACE_ERROR) {
+            callback.onSaveFailed();
+        } else {
+            callback.onSaveSuccess(editingTasks);
+        }
     }
 
     @Override

@@ -45,6 +45,12 @@ public interface ITaskService {
     @PUT("/tasks/member/{id}")
     Call<List<Task_remote>> editTasksOfMember(@Path("id") String memberId, @Body List<Task_remote> editingTasks);
 
+    @PUT("/tasks/member/{id}/add")
+    Call<List<Task_remote>> addTask(@Path("id") String memberId, @Body AddTaskData addTaskData);
+
+    @PUT("/tasks/member/{memberid}/del/{id}")
+    Call<List<Task_remote>> deleteTask(@Path("memberid") String memberId, @Path("id") String taskHeadId, @Body List<Task_remote> editingTasks);
+
     @GET("/taskheads/")
     Call<TaskHeadDetail_remote> getTaskHeadDetail(@Query("id") String taskHeadId);
 

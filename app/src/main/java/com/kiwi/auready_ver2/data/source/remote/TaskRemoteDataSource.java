@@ -13,6 +13,7 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.rest_service.HttpStatusCode;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
+import com.kiwi.auready_ver2.rest_service.task.AddTaskData;
 import com.kiwi.auready_ver2.rest_service.task.DeletingIds_remote;
 import com.kiwi.auready_ver2.rest_service.task.ITaskService;
 import com.kiwi.auready_ver2.rest_service.task.Member_remote;
@@ -465,13 +466,43 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void saveTask(@NonNull Task task, @NonNull final SaveTaskCallback callback) {
-        // Implement in Local only
-    }
+    public void deleteTask(final String memberId, @NonNull String taskId, @NonNull List<Task> editingTasks, @NonNull final DeleteTaskCallback callback) {
+        if (!readyToRequestAPI()) {
+            callback.onDeleteFailed();
+        }
 
-    @Override
-    public void deleteTask(@NonNull String taskId, @NonNull final DeleteTaskCallback callback) {
-        // Implement in Local only
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        List<Task_remote> editingTasks_remote = new ArrayList<>();
+        for (Task editingTask : editingTasks) {
+            editingTasks_remote.add(new Task_remote(
+                    editingTask.getId(),
+                    editingTask.getDescription(),
+                    editingTask.getCompleted(),
+                    editingTask.getOrder()));
+        }
+        Call<List<Task_remote>> call = taskService.deleteTask(memberId, taskId, editingTasks_remote);
+        Log.d("Tag_remote", "entered into DeleteTask in Remote");
+        call.enqueue(new Callback<List<Task_remote>>() {
+            @Override
+            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
+                    // Request getting latest updated taskHeads
+                    Log.d("Tag_remoteTask", "deleteTask; no member");
+                    callback.onDeleteFailed();
+                } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
+                    Log.d("Tag_remoteTask", "success to deleteTask");
+                    List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
+                    callback.onDeleteSuccess(tasks);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
+                Log.d("Tag_remoteTask", "deleteTask is failed");
+            }
+        });
     }
 
     @Override
@@ -501,12 +532,59 @@ public class TaskRemoteDataSource implements TaskDataSource {
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Log.d("Tag_remoteTask", "success to edit tasks");
+                if (response.isSuccessful()) {
+                    Log.d("Tag_remoteTask", "success to edit tasks");
+                }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.d("Tag_remoteTask", "fail to edit tasks", t);
+            }
+        });
+    }
+
+    @Override
+    public void saveTask(@NonNull final Task task, @NonNull List<Task> editingTasks, @NonNull final SaveTaskCallback callback) {
+        if (!readyToRequestAPI()) {
+            callback.onSaveFailed();
+        }
+
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        Task_remote newTask = new Task_remote(
+                task.getId(), task.getDescription(), task.getCompleted(), task.getOrder());
+
+        List<Task_remote> editingTasks_remote = new ArrayList<>();
+        for (Task editingTask : editingTasks) {
+            editingTasks_remote.add(new Task_remote(
+                    editingTask.getId(),
+                    editingTask.getDescription(),
+                    editingTask.getCompleted(),
+                    editingTask.getOrder()));
+        }
+        AddTaskData addTaskData = new AddTaskData(newTask, editingTasks_remote);
+
+        Call<List<Task_remote>> call = taskService.addTask(task.getMemberId(), addTaskData);
+        call.enqueue(new Callback<List<Task_remote>>() {
+            @Override
+            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
+                    // Request getting latest updated taskHeads
+                    Log.d("Tag_remoteTask", "saveTask; no member");
+                    callback.onSaveFailed();
+                } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
+                    Log.d("Tag_remoteTask", "success to saveTask");
+                    List<Task> tasks = convertTasksRemoteToTasks(task.getMemberId(), response.body());
+                    callback.onSaveSuccess(tasks);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
+                Log.d("Tag_remoteTask", "fail to saveTask");
+                callback.onSaveFailed();
             }
         });
     }
