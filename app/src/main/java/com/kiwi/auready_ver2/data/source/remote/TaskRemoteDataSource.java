@@ -197,7 +197,8 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
+    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads, @NonNull final UpdateTaskHeadOrdersCallback callback) {
+
         if (!readyToRequestAPI()) {
             return;
         }
@@ -216,14 +217,21 @@ public class TaskRemoteDataSource implements TaskDataSource {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.d(TAG, "updateTaskHeadOrders succeeded");
+                    callback.onUpdateSuccess();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.d(TAG, "updateTaskHeadOrders failed");
+                callback.onUpdateFailed();
             }
         });
+    }
+
+    @Override
+    public void saveTaskHeadDetails(@NonNull List<TaskHeadDetail> taskHeadDetails, @NonNull SaveTaskHeadDetailsCallback callback) {
+
     }
 
     @Override
@@ -649,7 +657,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void refreshLocalTaskHead() {
+    public void forceUpdateLocalATaskHeadDetail() {
         // Not required because the {@link TaskRepository} handles the logic of refreshing the
         // tasks from all the available data sources.
     }

@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -17,18 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.notification.NotificationActivity;
 import com.kiwi.auready_ver2.notification.NotificationContract;
-import com.kiwi.auready_ver2.notification.NotificationService;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
 import com.kiwi.auready_ver2.util.LoginUtils;
@@ -61,6 +57,8 @@ public class TaskHeadsFragment extends Fragment implements
     // for noti menu
     private NotificationContract.MenuPresenter mNotificationPresenter;
     private int mNotificationsCount;
+
+    private SwipeRefreshLayout mSwipleRefreshLayout;
 
     public TaskHeadsFragment() {
         // Required empty public constructor
@@ -174,29 +172,12 @@ public class TaskHeadsFragment extends Fragment implements
         mTaskHeadsAdapter = new TaskHeadsAdapter(new ArrayList<TaskHead>(0));
         mTaskHeadsView.setAdapter(mTaskHeadsAdapter);
 
-
-        // get token test
-        Button logTokenButton = (Button) root.findViewById(R.id.logTokenButton);
-        logTokenButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getToken();
-            }
-        });
+        // Set swipeRefreshLayout
+        mSwipleRefreshLayout = (SwipeRefreshLayout) root.findViewById(R.id.swipe_refresh_layout);
+        mSwipleRefreshLayout.setColorSchemeResources(R.color.color_scheme_1_1, R.color.color_scheme_1_2,
+                R.color.color_scheme_1_3, R.color.color_scheme_1_4);
 
         return root;
-    }
-
-    private void getToken() {
-        // Get token
-        String token = FirebaseInstanceId.getInstance().getToken();
-
-        // Log and toast
-        String msg = getString(R.string.msg_token_fmt, token);
-        Log.d(TAG_TASKHEADSFRAGMENT, msg);
-        Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
-        // testing
-        NotificationService.sendRegistrationToServer(token);
     }
 
     @Override
@@ -213,6 +194,14 @@ public class TaskHeadsFragment extends Fragment implements
         });
 
         mTaskHeadsView.setDropListener(mDropListener);
+
+        // SwipeRefreshLayout
+        mSwipleRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.loadTaskHeads(true);
+            }
+        });
     }
 
     @Override
@@ -267,6 +256,8 @@ public class TaskHeadsFragment extends Fragment implements
 
     @Override
     public void showTaskHeads(List<TaskHead> taskHeads) {
+        setRefreshing(false);
+
         mTaskHeadsAdapter.replaceData(taskHeads);
 
         mNoTaskHeadTxt.setVisibility(View.GONE);
@@ -275,6 +266,8 @@ public class TaskHeadsFragment extends Fragment implements
 
     @Override
     public void showNoTaskHeads() {
+        setRefreshing(false);
+
         mTaskHeadsView.setVisibility(View.GONE);
         mNoTaskHeadTxt.setVisibility(View.VISIBLE);
     }
@@ -318,6 +311,13 @@ public class TaskHeadsFragment extends Fragment implements
     @Override
     public void setLogoutFailResult() {
         Snackbar.make(mTaskHeadsView, getString(R.string.logout_fail_msg), Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setRefreshing(boolean refreshing) {
+        if(mSwipleRefreshLayout.isRefreshing()) {
+            mSwipleRefreshLayout.setRefreshing(refreshing);
+        }
     }
 
     @Override

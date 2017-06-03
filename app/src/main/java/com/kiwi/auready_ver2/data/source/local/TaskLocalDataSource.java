@@ -106,7 +106,7 @@ public class TaskLocalDataSource implements TaskDataSource {
                     int order = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_ORDER));
                     int color = cursor.getInt(cursor.getColumnIndexOrThrow(TaskHeadEntry.COLUMN_COLOR));
 
-                    Log.d("Tag_updateOrders", String.valueOf(order));
+                    Log.d("Tag_getTaskHeadDetails", String.valueOf(order));
 
                     TaskHead taskHead = new TaskHead(taskHeadId_fk, title, order, color);
                     List<Member> members = Lists.newArrayList(member);
@@ -173,7 +173,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
+    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads, @NonNull UpdateTaskHeadOrdersCallback callback) {
 
         String whenThenArgs = "";
         String whereArgs = "";
@@ -203,7 +203,57 @@ public class TaskLocalDataSource implements TaskDataSource {
                 TaskHeadEntry.COLUMN_ID, whereArgs);
 
 
-        mDbHelper.execSQL(sql);
+        if (mDbHelper.execSQL(sql)) {
+            callback.onUpdateSuccess();
+        } else {
+            callback.onUpdateFailed();
+        }
+    }
+
+    @Override
+    public void saveTaskHeadDetails(@NonNull final List<TaskHeadDetail> taskHeadDetails, @NonNull final SaveTaskHeadDetailsCallback callback) {
+        final List<Boolean> isSuccessAll = new ArrayList<>(0);
+        for (final TaskHeadDetail taskHeadDetail : taskHeadDetails) {
+            saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+
+                @Override
+                public void onSaveSuccess() {
+                    List<Task> tasks = taskHeadDetail.getTasks();
+                    for (Task task : tasks) {
+                        saveTask(task);
+                    }
+                    isSuccessAll.add(true);
+
+                    // End condition
+                    if(isSuccessAll.size() == taskHeadDetails.size()) {
+                        if(isSuccessAll.contains(false)) {
+                            callback.onSaveFailed();
+                        } else {
+                            callback.onSaveSuccess();
+                        }
+                    }
+                }
+
+                @Override
+                public void onSaveFailed() {
+                    isSuccessAll.add(false);
+
+                    // End condition
+                    if(isSuccessAll.size() == taskHeadDetails.size()) {
+                        if(isSuccessAll.contains(false)) {
+                            callback.onSaveFailed();
+                        } else {
+                            callback.onSaveSuccess();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    private void saveTaskInLocal(List<Task> tasks) {
+        // Task
+
     }
 
     @Override
@@ -330,11 +380,12 @@ public class TaskLocalDataSource implements TaskDataSource {
         // Get 2 objects - get a TaskHead and get Members
         // Get a taskHead
         String sql = String.format(
-                "SELECT * FROM %s, %s WHERE %s.%s = %s.%s AND %s.%s = \'%s\'",
+                "SELECT * FROM %s, %s WHERE %s.%s = %s.%s AND %s.%s = \'%s\' ORDER BY %s.%s ASC",
                 TaskHeadEntry.TABLE_NAME, MemberEntry.TABLE_NAME,
                 TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID,
                 MemberEntry.TABLE_NAME, MemberEntry.COLUMN_HEAD_ID_FK,
-                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, taskHeadId);
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ID, taskHeadId,
+                TaskHeadEntry.TABLE_NAME, TaskHeadEntry.COLUMN_ORDER);
 
         Cursor cursor = mDbHelper.rawQuery(sql, null);
 
@@ -489,7 +540,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
         String[] whereArgs = {taskId};
         boolean isSuccess = mDbHelper.delete(TaskEntry.TABLE_NAME, whereClause, whereArgs);
-        if(isSuccess) {
+        if (isSuccess) {
             callback.onDeleteSuccess(editingTasks);
         } else {
             callback.onDeleteFailed();
@@ -515,6 +566,15 @@ public class TaskLocalDataSource implements TaskDataSource {
     @Override
     public void saveTask(@NonNull Task task, @NonNull List<Task> editingTasks, @NonNull SaveTaskCallback callback) {
 
+        boolean issuccess = saveTask(task);
+        if (issuccess) {
+            callback.onSaveSuccess(editingTasks);
+        } else {
+            callback.onSaveFailed();
+        }
+    }
+
+    private boolean saveTask(Task task) {
         ContentValues values = new ContentValues();
         values.put(TaskEntry.COLUMN_ID, task.getId());
         values.put(TaskEntry.COLUMN_MEMBER_ID_FK, task.getMemberId());
@@ -523,11 +583,7 @@ public class TaskLocalDataSource implements TaskDataSource {
         values.put(TaskEntry.COLUMN_ORDER, task.getOrder());
 
         long result = mDbHelper.replace(TaskEntry.TABLE_NAME, null, values);
-        if (result == DBExceptionTag.REPLACE_ERROR) {
-            callback.onSaveFailed();
-        } else {
-            callback.onSaveSuccess(editingTasks);
-        }
+        return result != DBExceptionTag.REPLACE_ERROR;
     }
 
     @Override
@@ -587,7 +643,7 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void refreshLocalTaskHead() {
+    public void forceUpdateLocalATaskHeadDetail() {
         // Not required because the {@link TaskRepository} handles the logic of refreshing the
         // tasks from all the available data sources.
     }

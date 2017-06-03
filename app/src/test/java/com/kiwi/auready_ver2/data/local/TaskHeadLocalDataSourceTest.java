@@ -200,11 +200,12 @@ public class TaskHeadLocalDataSourceTest {
         TaskHead taskHead1 = TASKHEADS.get(1);
 
         List<TaskHead> updatingTaskHeads = new ArrayList<>();
-        final TaskHead updating0 = new TaskHead(taskHead0.getId(), taskHead0.getTitle(), 100, taskHead0.getColor());
+        final TaskHead updating0 = new TaskHead(taskHead0.getId(), taskHead0.getTitle(), 555, taskHead0.getColor());
         updatingTaskHeads.add(updating0);
         final TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200, taskHead1.getColor());
         updatingTaskHeads.add(updating1);
-        mTaskLocalDataSource.updateTaskHeadOrders(updatingTaskHeads);
+        TaskDataSource.UpdateTaskHeadOrdersCallback callback = Mockito.mock(TaskDataSource.UpdateTaskHeadOrdersCallback.class);
+        mTaskLocalDataSource.updateTaskHeadOrders(updatingTaskHeads, callback);
 
         // Verify if taskHeads are updating
         TaskDataSource.LoadTaskHeadDetailsCallback loadTaskHeadDetailsCallback = new TaskDataSource.LoadTaskHeadDetailsCallback() {
@@ -213,7 +214,7 @@ public class TaskHeadLocalDataSourceTest {
                 for (TaskHeadDetail taskHeadDetail : taskHeadDetails) {
                     if (taskHeadDetail.getTaskHead().getId().equals(updating0.getId())) {
 
-                        assertEquals(100, taskHeadDetail.getTaskHead().getOrder());
+                        assertEquals(555, taskHeadDetail.getTaskHead().getOrder());
                     }
                     if (taskHeadDetail.getTaskHead().getId().equals(updating1.getId())) {
                         assertEquals(200, taskHeadDetail.getTaskHead().getOrder());

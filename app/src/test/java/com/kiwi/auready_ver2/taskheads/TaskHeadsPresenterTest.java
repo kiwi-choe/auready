@@ -49,6 +49,8 @@ public class TaskHeadsPresenterTest {
 
     @Captor
     private ArgumentCaptor<TaskDataSource.DeleteTaskHeadsCallback> mDeleteTaskHeadsCallbackCaptor;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.UpdateTaskHeadOrdersCallback> mUpdateTaskHeadCallbackCaptor;
 
     @Before
     public void setup() {
@@ -73,7 +75,7 @@ public class TaskHeadsPresenterTest {
 
     @Test
     public void loadAllTaskHeadsFromRepository_andLoadIntoView() {
-        mTaskHeadsPresenter.loadTaskHeads();
+        mTaskHeadsPresenter.loadTaskHeads(false);
 
         verify(mRepository).getTaskHeadDetails(mLoadTaskHeadsCallbackCaptor.capture());
         mLoadTaskHeadsCallbackCaptor.getValue().onTaskHeadDetailsLoaded(TASKHEAD_DETAILS);
@@ -107,7 +109,7 @@ public class TaskHeadsPresenterTest {
     public void updateTaskHeadsOrder_toRepo() {
         mTaskHeadsPresenter.updateOrders(TASKHEADS);
 
-        verify(mRepository).updateTaskHeadOrders((List<TaskHead>) anyCollectionOf(TaskHead.class));
+        verify(mRepository).updateTaskHeadOrders((List<TaskHead>) anyCollectionOf(TaskHead.class), mUpdateTaskHeadCallbackCaptor.capture());
     }
 
     @Test

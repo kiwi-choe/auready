@@ -28,7 +28,7 @@ public interface TaskDataSource {
     }
     void deleteMembers(String taskHeadId, DeleteMembersCallback callback);
 
-    void refreshLocalTaskHead();
+    void forceUpdateLocalATaskHeadDetail();
 
     interface  DeleteAllCallback {
         void onDeleteAllSuccess();
@@ -44,8 +44,8 @@ public interface TaskDataSource {
     void initializeLocalData(@NonNull InitLocalDataCallback callback); // only in Local
 
     /*
-                                        * TaskHeadsView
-                                        * */
+    * TaskHeadsView
+    * */
     interface LoadTaskHeadDetailsCallback {
 
         void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails);
@@ -63,7 +63,17 @@ public interface TaskDataSource {
 
     int getTaskHeadsCount();
 
-    void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads);
+    interface UpdateTaskHeadOrdersCallback {
+        void onUpdateSuccess();
+        void onUpdateFailed();
+    }
+    void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads, @NonNull UpdateTaskHeadOrdersCallback callback);
+
+    interface SaveTaskHeadDetailsCallback {
+        void onSaveSuccess();
+        void onSaveFailed();
+    }
+    void saveTaskHeadDetails(@NonNull List<TaskHeadDetail> taskHeadDetails, @NonNull SaveTaskHeadDetailsCallback callback);
 
     /*
     * TaskHeadDetailView

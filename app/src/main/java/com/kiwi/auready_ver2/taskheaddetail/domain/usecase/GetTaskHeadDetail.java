@@ -26,7 +26,7 @@ public class GetTaskHeadDetail extends UseCase<GetTaskHeadDetail.RequestValues, 
     protected void executeUseCase(RequestValues requestValues) {
 
         if(requestValues.isForceUpdate()) {
-            mRepository.refreshLocalTaskHead();
+            mRepository.forceUpdateLocalATaskHeadDetail();
         }
 
         mRepository.getTaskHeadDetail(requestValues.getTaskHeadId(), new TaskDataSource.GetTaskHeadDetailCallback() {

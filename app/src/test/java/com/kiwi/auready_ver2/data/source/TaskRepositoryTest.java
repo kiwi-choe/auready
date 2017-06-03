@@ -92,6 +92,10 @@ public class TaskRepositoryTest {
     private TaskDataSource.DeleteTaskCallback mDeleteTaskCallback;
     @Captor
     private ArgumentCaptor<TaskDataSource.DeleteTaskCallback> mDeleteTaskCallbackCaptor;
+    @Mock
+    private TaskDataSource.UpdateTaskHeadOrdersCallback mUpdateTaskHeadOrdersCallback;
+    @Captor
+    private ArgumentCaptor<TaskDataSource.UpdateTaskHeadOrdersCallback> mUpdateTaskHeadOrdersCallbackCaptor;
 
     @Before
     public void setup() {
@@ -247,9 +251,9 @@ public class TaskRepositoryTest {
         updatingTaskHeads.add(updating0);
         TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200, taskHead1.getColor());
         updatingTaskHeads.add(updating1);
-        mRepository.updateTaskHeadOrders(updatingTaskHeads);
+        mRepository.updateTaskHeadOrders(updatingTaskHeads, mUpdateTaskHeadOrdersCallback);
 
-        verify(mLocalDataSource).updateTaskHeadOrders(eq(updatingTaskHeads));
+        verify(mLocalDataSource).updateTaskHeadOrders(eq(updatingTaskHeads), mUpdateTaskHeadOrdersCallbackCaptor.capture());
     }
 
     @Test
@@ -265,7 +269,7 @@ public class TaskRepositoryTest {
         updatingTaskHeads.add(updating0);
         TaskHead updating1 = new TaskHead(taskHead1.getId(), taskHead1.getTitle(), 200, taskHead1.getColor());
         updatingTaskHeads.add(updating1);
-        mRepository.updateTaskHeadOrders(updatingTaskHeads);
+        mRepository.updateTaskHeadOrders(updatingTaskHeads, mUpdateTaskHeadOrdersCallback);
 
         assertThat(mRepository.mCachedTaskHeads.get(taskHead0.getId()).getOrder(), is(100));
         assertThat(mRepository.mCachedTaskHeads.get(taskHead1.getId()).getOrder(), is(200));
@@ -350,7 +354,7 @@ public class TaskRepositoryTest {
     @Test
     public void getTaskHeadDetail_fromRemote() {
         // Set forceToUpdate is true
-        mRepository.refreshLocalTaskHead();
+        mRepository.forceUpdateLocalATaskHeadDetail();
         String taskHeadId = TASKHEAD_DETAIL.getTaskHead().getId();
         mRepository.getTaskHeadDetail(taskHeadId, mGetTaskHeadDetailCallback);
 

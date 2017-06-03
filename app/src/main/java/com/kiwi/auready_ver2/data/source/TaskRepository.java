@@ -25,8 +25,6 @@ public class TaskRepository implements TaskDataSource {
     private TaskDataSource mLocalDataSource;
     private TaskDataSource mRemoteDataSource;
 
-    private boolean mCacheIsDirty;
-
     /*
     * This variable has package local visibility so it can be accessed from tests.
     * */
@@ -42,7 +40,8 @@ public class TaskRepository implements TaskDataSource {
     /*
     * Force to update Local taskDataSource, getting from Remote data source
     * */
-    private boolean mForceToUpdate = false;
+    private boolean mForceToUpdate_ATaskHeadDetail = false;
+    private boolean mForceToUpdate_TaskHeadDetails = false;
 
     // Prevent direct instantiation
     private TaskRepository(@NonNull TaskDataSource taskRemoteDataSource,
@@ -101,24 +100,27 @@ public class TaskRepository implements TaskDataSource {
         });
     }
 
-    /*
-    * Load from Remote first
-    * */
     @Override
     public void getTaskHeadDetails(@NonNull final LoadTaskHeadDetailsCallback callback) {
         checkNotNull(callback);
 
-        mLocalDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
-            @Override
-            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-                callback.onTaskHeadDetailsLoaded(taskHeadDetails);
-            }
+        if(mForceToUpdate_TaskHeadDetails) {
+            getTaskHeadDetailsFromRemote(callback);
+        } else {
+            mLocalDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
+                @Override
+                public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                    mForceToUpdate_TaskHeadDetails = false;
 
-            @Override
-            public void onDataNotAvailable() {
-                getTaskHeadDetailsFromRemote(callback);
-            }
-        });
+                    callback.onTaskHeadDetailsLoaded(taskHeadDetails);
+                }
+
+                @Override
+                public void onDataNotAvailable() {
+                    getTaskHeadDetailsFromRemote(callback);
+                }
+            });
+        }
     }
 
     /*
@@ -128,8 +130,9 @@ public class TaskRepository implements TaskDataSource {
         mRemoteDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
             @Override
             public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
-                refreshLocalTaskHeadDetails(taskHeadDetails);
-                callback.onTaskHeadDetailsLoaded(taskHeadDetails);
+                mForceToUpdate_TaskHeadDetails = false;
+
+                refreshLocalTaskHeadDetails(taskHeadDetails, callback);
             }
 
             @Override
@@ -174,47 +177,42 @@ public class TaskRepository implements TaskDataSource {
     /*
     * Refresh after getting TaskHeadDetails from Remote
     * */
-    private void refreshLocalTaskHeadDetails(final List<TaskHeadDetail> taskHeadDetails) {
+    private void refreshLocalTaskHeadDetails(final List<TaskHeadDetail> taskHeadDetails, final LoadTaskHeadDetailsCallback callback) {
         // TaskHead, Member
         mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
             @Override
             public void onDeleteAllSuccess() {
-                for (final TaskHeadDetail taskHeadDetail : taskHeadDetails) {
-                    mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
-                        @Override
-                        public void onSaveSuccess() {
+                mLocalDataSource.saveTaskHeadDetails(taskHeadDetails, new SaveTaskHeadDetailsCallback() {
 
-                            saveTasksInLocal(taskHeadDetail.getTasks());
-                        }
+                    @Override
+                    public void onSaveSuccess() {
+                        mLocalDataSource.getTaskHeadDetails(new LoadTaskHeadDetailsCallback() {
+                            @Override
+                            public void onTaskHeadDetailsLoaded(List<TaskHeadDetail> taskHeadDetails) {
+                                callback.onTaskHeadDetailsLoaded(taskHeadDetails);
+                            }
 
-                        @Override
-                        public void onSaveFailed() {
-                        }
-                    });
-                }
+                            @Override
+                            public void onDataNotAvailable() {
+                                callback.onDataNotAvailable();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onSaveFailed() {
+                        Log.d("Tag_refreshLocal", "refreshLocalTaskHeadDetails onSaveFailed");
+                        callback.onTaskHeadDetailsLoaded(taskHeadDetails);
+                    }
+                });
             }
 
             @Override
             public void onDeleteAllFail() {
+                Log.d("Tag_refreshLocal", "refreshLocalTaskHeadDetails onDeleteAllFail");
+                callback.onTaskHeadDetailsLoaded(taskHeadDetails);
             }
         });
-    }
-
-    private void saveTasksInLocal(List<Task> tasks) {
-        // Task
-        for (Task task : tasks) {
-            mLocalDataSource.saveTask(task, new ArrayList<Task>(), new SaveTaskCallback() {
-                @Override
-                public void onSaveSuccess(List<Task> tasksOfMember) {
-
-                }
-
-                @Override
-                public void onSaveFailed() {
-
-                }
-            });
-        }
     }
 
     @Override
@@ -226,11 +224,37 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void updateTaskHeadOrders(@NonNull List<TaskHead> taskHeads) {
-        mLocalDataSource.updateTaskHeadOrders(taskHeads);
-        mRemoteDataSource.updateTaskHeadOrders(taskHeads);
+    public void updateTaskHeadOrders(@NonNull final List<TaskHead> taskHeads, @NonNull final UpdateTaskHeadOrdersCallback callback) {
+        mLocalDataSource.updateTaskHeadOrders(taskHeads, new UpdateTaskHeadOrdersCallback() {
+            @Override
+            public void onUpdateSuccess() {
+                mRemoteDataSource.updateTaskHeadOrders(taskHeads, new UpdateTaskHeadOrdersCallback() {
+                    @Override
+                    public void onUpdateSuccess() {
+
+
+                    }
+
+                    @Override
+                    public void onUpdateFailed() {
+//                        callback.onUpdateFailed();
+                    }
+                });
+                callback.onUpdateSuccess();
+            }
+
+            @Override
+            public void onUpdateFailed() {
+                callback.onUpdateFailed();
+            }
+        });
 
         refreshTaskHeadsCache(taskHeads);
+    }
+
+    @Override
+    public void saveTaskHeadDetails(@NonNull List<TaskHeadDetail> taskHeadDetails, @NonNull SaveTaskHeadDetailsCallback callback) {
+        // implement in Local
     }
 
     /*
@@ -331,7 +355,7 @@ public class TaskRepository implements TaskDataSource {
         checkNotNull(taskHeadId);
         checkNotNull(callback);
 
-        if (mForceToUpdate) {
+        if (mForceToUpdate_ATaskHeadDetail) {
             getTaskHeadDetailFromRemote(taskHeadId, callback);
         } else {
             // Is the taskhead in the local? if not, query the network.
@@ -339,9 +363,11 @@ public class TaskRepository implements TaskDataSource {
 
                 @Override
                 public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
+                    mForceToUpdate_ATaskHeadDetail = false;
+
                     refreshCachesOfTaskHeadDetail(taskHeadDetail);
-                    Log.d("TEST_NOW", "after getTaskHeadDetail");
                     showMembersCacheOf(taskHeadId);
+
                     callback.onTaskHeadDetailLoaded(taskHeadDetail);
                 }
 
@@ -357,16 +383,50 @@ public class TaskRepository implements TaskDataSource {
         mRemoteDataSource.getTaskHeadDetail(taskHeadId, new GetTaskHeadDetailCallback() {
             @Override
             public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
-                List<TaskHeadDetail> taskHeadDetails = new ArrayList<>();
-                taskHeadDetails.add(taskHeadDetail);
-                refreshLocalTaskHeadDetails(taskHeadDetails);
+                mForceToUpdate_ATaskHeadDetail = false;
 
-                callback.onTaskHeadDetailLoaded(taskHeadDetail);
+                refreshLocalATaskHeadDetail(taskHeadDetail, callback);
             }
 
             @Override
             public void onDataNotAvailable() {
                 callback.onDataNotAvailable();
+            }
+        });
+    }
+
+    private void refreshLocalATaskHeadDetail(final TaskHeadDetail taskHeadDetail, final GetTaskHeadDetailCallback callback) {
+        mLocalDataSource.deleteAllTaskHeads(new DeleteAllCallback() {
+            @Override
+            public void onDeleteAllSuccess() {
+                mLocalDataSource.saveTaskHeadDetail(taskHeadDetail, new SaveCallback() {
+                    @Override
+                    public void onSaveSuccess() {
+                        mLocalDataSource.getTaskHeadDetail(taskHeadDetail.getTaskHead().getId(), new GetTaskHeadDetailCallback() {
+                            @Override
+                            public void onTaskHeadDetailLoaded(TaskHeadDetail taskHeadDetail) {
+                                callback.onTaskHeadDetailLoaded(taskHeadDetail);
+                            }
+
+                            @Override
+                            public void onDataNotAvailable() {
+                                callback.onDataNotAvailable();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onSaveFailed() {
+                        Log.d("Tag_refreshLocal", "refreshLocalATaskHeadDetail onSaveFailed");
+                        callback.onTaskHeadDetailLoaded(taskHeadDetail);
+                    }
+                });
+            }
+
+            @Override
+            public void onDeleteAllFail() {
+                Log.d("Tag_refreshLocal", "refreshLocalATaskHeadDetail onDeleteFailed");
+                callback.onTaskHeadDetailLoaded(taskHeadDetail);
             }
         });
     }
@@ -614,8 +674,8 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void refreshLocalTaskHead() {
-        mForceToUpdate = true;
+    public void forceUpdateLocalATaskHeadDetail() {
+        mForceToUpdate_ATaskHeadDetail = true;
     }
 
     private void showMembersCacheOf(String taskHeadId) {
@@ -747,5 +807,9 @@ public class TaskRepository implements TaskDataSource {
         for (Task task : tasks) {
             mCachedTasks.put(task.getId(), task);
         }
+    }
+
+    public void forceUpdateLocalTaskHeadDetails() {
+        mForceToUpdate_TaskHeadDetails = true;
     }
 }

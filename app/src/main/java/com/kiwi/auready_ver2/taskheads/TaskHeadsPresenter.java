@@ -65,20 +65,22 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
     @Override
     public void start() {
-        loadTaskHeads();
+        loadTaskHeads(false);
     }
 
     @Override
-    public void loadTaskHeads() {
+    public void loadTaskHeads(boolean forceToUpdate) {
 
         // Load taskHeadDetail and filter taskheads
-        mUseCaseHandler.execute(mGetTaskHeadDetails, new GetTaskHeadDetails.RequestValues(),
+        mUseCaseHandler.execute(mGetTaskHeadDetails, new GetTaskHeadDetails.RequestValues(forceToUpdate),
                 new UseCase.UseCaseCallback<GetTaskHeadDetails.ResponseValue>() {
 
                     @Override
                     public void onSuccess(GetTaskHeadDetails.ResponseValue response) {
                         List<TaskHead> taskHeads = filterTaskHeads(response.getTaskHeadDetails());
-                        Log.d("Tag_loadTaskHeads", String.valueOf(taskHeads.size()));
+                        for(TaskHead taskHead: taskHeads) {
+                            Log.d("Tag_loadTaskHeads", taskHead.getTitle() + " - " + String.valueOf(taskHead.getOrder()));
+                        }
                         processTaskHeads(taskHeads);
                     }
 
@@ -166,7 +168,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                     @Override
                     public void onSuccess(DeleteTaskHeads.ResponseValue response) {
                         Log.d("Tag_delete_presenter", "success");
-                        loadTaskHeads();
+                        loadTaskHeads(false);
                     }
 
                     @Override
@@ -190,7 +192,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     @Override
                     public void onSuccess(UpdateTaskHeadOrders.ResponseValue response) {
-                        loadTaskHeads();
+                        loadTaskHeads(false);
                     }
 
                     @Override
@@ -238,7 +240,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                     @Override
                     public void onSuccess(InitializeLocalData.ResponseValue response) {
                         Log.d("Tag_logout", "initializeLocalData is succeeded");
-                        loadTaskHeads();
+                        loadTaskHeads(false);
                     }
 
                     @Override

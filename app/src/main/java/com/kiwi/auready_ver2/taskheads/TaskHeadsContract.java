@@ -28,11 +28,17 @@ public interface TaskHeadsContract {
         void setLogoutSuccessUI();
 
         void setLogoutFailResult();
+
+        void setRefreshing(boolean refreshing);
     }
 
     interface Presenter extends BasePresenter {
 
-        void loadTaskHeads();
+        /*
+        * forceToUpdate; true - getting from Remote first and refresh Local
+        *               false - getting from Local first
+        * */
+        void loadTaskHeads(boolean forceToUpdate);
 
         void addNewTaskHead();
 
