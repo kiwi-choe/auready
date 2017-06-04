@@ -43,6 +43,9 @@
         <!-- [END firebase_iid_service] -->
 
         <activity android:name=".notification.NotificationActivity"></activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="cf14f6b3d4dfc2c07a8264ebc9d36a2f2063191b" />
     </application>
 
 </manifest>

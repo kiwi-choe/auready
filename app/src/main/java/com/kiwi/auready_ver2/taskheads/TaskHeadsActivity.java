@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.kiwi.auready_ver2.Injection;
@@ -23,6 +24,8 @@ import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.notification.NotificationPresenter;
 import com.kiwi.auready_ver2.util.ActivityUtils;
+
+import io.fabric.sdk.android.Fabric;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -45,6 +48,7 @@ public class TaskHeadsActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_taskheads);
 
         TaskHeadsFragment taskHeadsFragment =
