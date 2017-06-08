@@ -67,6 +67,7 @@ public class FriendRemoteDataSource implements FriendDataSource {
 
         if (!readyToRequestAPI()) {
             callback.onDataNotAvailable();
+            return;
         }
 
         IFriendService friendService = ServiceGenerator.createService(IFriendService.class, mAccessToken);

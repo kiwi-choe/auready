@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -24,6 +25,7 @@ import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.login.LoginActivity;
 import com.kiwi.auready_ver2.notification.NotificationPresenter;
 import com.kiwi.auready_ver2.util.ActivityUtils;
+import com.kiwi.auready_ver2.util.NetworkUtils;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -91,9 +93,17 @@ public class TaskHeadsActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
+        checkNetworkConnection();
         checkGooglePlayService();
 
         supportInvalidateOptionsMenu();
+    }
+
+    private void checkNetworkConnection() {
+        if(!NetworkUtils.isOnline(getApplicationContext())) {
+            // Show the message
+            Toast.makeText(getApplicationContext(), R.string.need_to_connect_network, Toast.LENGTH_LONG).show();
+        }
     }
 
     private void checkGooglePlayService() {

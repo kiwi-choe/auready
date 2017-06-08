@@ -77,7 +77,10 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
         if (!readyToRequestAPI()) {
             callback.onDataNotAvailable();
+            return;
         }
+
+        Log.d("Tag_network", "if no network connection, should not enter to here");
 
         ITaskService taskService =
                 ServiceGenerator.createService(ITaskService.class, mAccessToken);
@@ -109,6 +112,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
         if (!readyToRequestAPI()) {
             callback.onDeleteFail();
+            return;
         }
 
         ITaskService taskService =
@@ -239,6 +243,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
         if (!readyToRequestAPI()) {
             callback.onSaveFailed();
+            return;
         }
 
         ITaskService taskService =
@@ -299,6 +304,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
 
         if (!readyToRequestAPI()) {
             callback.onEditFailed();
+            return;
         }
 
         ITaskService taskService =
@@ -365,6 +371,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     public void getTaskHeadDetail(@NonNull String taskHeadId, @NonNull final GetTaskHeadDetailCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onDataNotAvailable();
+            return;
         }
 
         ITaskService taskService =
@@ -393,6 +400,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     public void getMembers(@NonNull final String taskHeadId, @NonNull final LoadMembersCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onDataNotAvailable();
+            return;
         }
         ITaskService taskService =
                 ServiceGenerator.createService(ITaskService.class, mAccessToken);
@@ -477,6 +485,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     public void deleteTask(final String memberId, @NonNull String taskId, @NonNull List<Task> editingTasks, @NonNull final DeleteTaskCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onDeleteFailed();
+            return;
         }
 
         ITaskService taskService =
@@ -556,6 +565,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     public void saveTask(@NonNull final Task task, @NonNull List<Task> editingTasks, @NonNull final SaveTaskCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onSaveFailed();
+            return;
         }
 
         ITaskService taskService =
@@ -601,6 +611,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     public void changeComplete(final String memberId, String taskId, List<Task> editingTasks, final ChangeCompleteTaskCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onChangeCompleteFail();
+            return;
         }
 
         ITaskService taskService =
@@ -640,6 +651,7 @@ public class TaskRemoteDataSource implements TaskDataSource {
     public void changeOrders(final String memberId, List<Task> editingTasks, final ChangeOrdersCallback callback) {
         if (!readyToRequestAPI()) {
             callback.onChangeOrdersFail();
+            return;
         }
 
         ITaskService taskService =

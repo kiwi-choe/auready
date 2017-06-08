@@ -116,6 +116,7 @@ public class NotificationPresenter implements
     public void acceptFriendRequest(final String fromUserId, final int notificationId) {
         if (!readyToRequestAPI()) {
             onAcceptFriendRequestFail();
+            return;
         }
         IFriendService friendService =
                 ServiceGenerator.createService(IFriendService.class, mAccessToken);
@@ -176,6 +177,7 @@ public class NotificationPresenter implements
     public void deleteFriendRequest(final String fromUserId) {
         if (!readyToRequestAPI()) {
             onDeleteFriendRequestFail();
+            return;
         }
 
         IFriendService friendService =

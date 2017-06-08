@@ -96,5 +96,7 @@
     <string name="accept_friend_request_txt">Accept</string>
     <string name="delete_friend_request_txt">Delete</string>
     <string name="friend_request_accept">%s is added to your friend list</string>
+    <string name="need_to_connect_network">Please connect network, you can read-only without network</string>
+    <string name="need_to_login">Please Login</string>
 
 </resources>
