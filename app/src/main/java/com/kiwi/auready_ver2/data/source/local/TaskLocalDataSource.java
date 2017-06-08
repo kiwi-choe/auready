@@ -251,11 +251,6 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
     }
 
-    private void saveTaskInLocal(List<Task> tasks) {
-        // Task
-
-    }
-
     @Override
     public void saveTaskHeadDetail(@NonNull TaskHeadDetail taskHeadDetail, @NonNull SaveCallback callback) {
         checkNotNull(taskHeadDetail);
@@ -602,16 +597,6 @@ public class TaskLocalDataSource implements TaskDataSource {
     }
 
     @Override
-    public void changeComplete(Task editedTask) {
-        ContentValues values = new ContentValues();
-        values.put(TaskEntry.COLUMN_COMPLETED, editedTask.getCompletedInteger());
-
-        String whereClause = TaskEntry.COLUMN_ID + " LIKE?";
-        String[] whereArgs = {editedTask.getId()};
-        mDbHelper.update(TaskEntry.TABLE_NAME, values, whereClause, whereArgs);
-    }
-
-    @Override
     public void deleteTasksOfMember(String memberId) {
         String whereClause = TaskEntry.COLUMN_MEMBER_ID_FK + " LIKE?";
         String[] whereArgs = {memberId};
@@ -632,20 +617,23 @@ public class TaskLocalDataSource implements TaskDataSource {
         }
     }
 
+    /*
+    * unimplemented in Local
+    * */
     @Override
-    public void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback) {
+    public void changeOrders(String memberId, List<Task> editingTasks, ChangeOrdersCallback callback) {
 
-        if (editTasksInLocal(tasks)) {
-            callback.onEditSuccess(tasks);
-        } else {
-            callback.onEditFail();
-        }
     }
 
     @Override
     public void forceUpdateLocalATaskHeadDetail() {
         // Not required because the {@link TaskRepository} handles the logic of refreshing the
         // tasks from all the available data sources.
+    }
+
+    @Override
+    public void changeComplete(String memberId, String taskId, List<Task> editingTasks, ChangeCompleteTaskCallback callback) {
+
     }
 
     private boolean editTasksInLocal(List<Task> tasks) {

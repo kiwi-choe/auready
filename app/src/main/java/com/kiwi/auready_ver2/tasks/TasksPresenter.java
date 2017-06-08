@@ -16,9 +16,9 @@ import com.kiwi.auready_ver2.rest_service.notification.INotificationService;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeComplete;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeOrders;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
-import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -57,9 +57,9 @@ public class TasksPresenter implements TasksContract.Presenter {
     private final SaveTask mSaveTask;
     private final DeleteTask mDeleteTask;
     private final EditTasks mEditTasks;
-    private final EditTasksOfMember mEditTasksOfMember;
     private final GetTaskHeadDetail mGetTaskHeadDetail;
     private final ChangeComplete mChangeCompleted;
+    private final ChangeOrders mChangeOrders;
 
     public TasksPresenter(@NonNull UseCaseHandler useCaseHandler,
                           @NonNull String taskHeadId,
@@ -69,9 +69,9 @@ public class TasksPresenter implements TasksContract.Presenter {
                           @NonNull SaveTask saveTask,
                           @NonNull DeleteTask deleteTask,
                           @NonNull EditTasks editTasks,
-                          @NonNull EditTasksOfMember editTasksOfMember,
                           @NonNull GetTaskHeadDetail getTaskHeadDetail,
-                          @NonNull ChangeComplete changeCompleted) {
+                          @NonNull ChangeComplete changeCompleted,
+                          @NonNull ChangeOrders changeOrders) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "usecaseHandler cannot be null");
         mTaskHeadId = checkNotNull(taskHeadId, "taskHeadId cannot be null!");
         mTasksView = checkNotNull(tasksView, "tasksView cannot be null!");
@@ -80,10 +80,10 @@ public class TasksPresenter implements TasksContract.Presenter {
         mSaveTask = checkNotNull(saveTask);
         mDeleteTask = checkNotNull(deleteTask);
         mEditTasks = checkNotNull(editTasks);
-        mEditTasksOfMember = editTasksOfMember;
 
         mGetTaskHeadDetail = getTaskHeadDetail;
         mChangeCompleted = changeCompleted;
+        mChangeOrders = changeOrders;
 
         mTasksView.setPresenter(this);
     }
@@ -242,29 +242,6 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void editTasksOfMember(final String memberId, List<Task> tasks) {
-        if (tasks.size() == 0) {
-            Log.d("Tag_editTasksOfMember", "no need to edit tasks");
-            return;
-        }
-        mUseCaseHandler.execute(mEditTasksOfMember, new EditTasksOfMember.RequestValues(memberId, tasks),
-                new UseCase.UseCaseCallback<EditTasksOfMember.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(EditTasksOfMember.ResponseValue response) {
-                        filterTasks(response.getTasksOfMember(), new ArrayList<Task>(), new ArrayList<Task>());
-                    }
-
-                    @Override
-                    public void onError() {
-                        // Request getting latest updated taskHeads
-                        // Refresh TasksActivity
-                        mTasksView.onEditTasksOfMemberError();
-                    }
-                });
-    }
-
-    @Override
     public void getTaskHeadDetailFromRemote() {
         boolean forceToUpdate = true;
         mUseCaseHandler.execute(mGetTaskHeadDetail, new GetTaskHeadDetail.RequestValues(mTaskHeadId, forceToUpdate),
@@ -284,12 +261,27 @@ public class TasksPresenter implements TasksContract.Presenter {
     }
 
     @Override
-    public void changeComplete(Task editedTask) {
-        mUseCaseHandler.execute(mChangeCompleted, new ChangeComplete.RequestValues(editedTask),
+    public void changeComplete(String memberId, String taskId, List<Task> editingTasks) {
+        mUseCaseHandler.execute(mChangeCompleted, new ChangeComplete.RequestValues(memberId, taskId, editingTasks),
                 new UseCase.UseCaseCallback<ChangeComplete.ResponseValue>() {
-
                     @Override
                     public void onSuccess(ChangeComplete.ResponseValue response) {
+                        filterTasks(response.getTasksOfMember(), new ArrayList<Task>(), new ArrayList<Task>());
+                    }
+
+                    @Override
+                    public void onError() {
+                    }
+                });
+    }
+
+    @Override
+    public void reorder(String memberId, List<Task> tasks) {
+        mUseCaseHandler.execute(mChangeOrders, new ChangeOrders.RequestValues(memberId, tasks),
+                new UseCase.UseCaseCallback<ChangeOrders.ResponseValue>() {
+                    @Override
+                    public void onSuccess(ChangeOrders.ResponseValue response) {
+                        filterTasks(response.getTasksOfMember(), new ArrayList<Task>(), new ArrayList<Task>());
                     }
 
                     @Override

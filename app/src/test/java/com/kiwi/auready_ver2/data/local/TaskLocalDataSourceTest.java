@@ -263,45 +263,6 @@ public class TaskLocalDataSourceTest {
             }
         });
     }
-
-    @Test
-    public void editTasksOfMember() {
-        // save stubbedTasks
-        for (Task task : TASKS) {
-            mLocalDataSource.saveTask(task, new ArrayList<Task>(), mSaveCallback);
-        }
-        // Update tasks
-        TASKS.get(0).setDescription("EDIT DES 0");
-        TASKS.get(1).setDescription("EDIT DES 1");
-
-        // Make the collection for all the tasks of members
-        List<Task> updatingTasks = new ArrayList<>();
-        updatingTasks.addAll(TASKS);
-
-        TaskDataSource.EditTasksOfMemberCallback editCallback = Mockito.mock(TaskDataSource.EditTasksOfMemberCallback.class);
-        mLocalDataSource.editTasksOfMember(TASKS.get(0).getMemberId(), updatingTasks, editCallback);
-
-        mLocalDataSource.getTasksOfMember(TASKS.get(0).getMemberId(), new TaskDataSource.LoadTasksCallback() {
-            @Override
-            public void onTasksLoaded(List<Task> tasks) {
-                assertNotNull(tasks);
-                for (Task task : tasks) {
-                    if (task.getId().equals(TASKS.get(0).getId())) {
-                        assertEquals(TASKS.get(0).getDescription(), task.getDescription());
-                    }
-                    if (task.getId().equals(TASKS.get(1).getId())) {
-                        assertEquals(TASKS.get(1).getDescription(), task.getDescription());
-                    }
-                }
-            }
-
-            @Override
-            public void onDataNotAvailable() {
-                fail();
-            }
-        });
-    }
-
     @Test
     public void getMembers() {
 

@@ -144,13 +144,17 @@ public interface TaskDataSource {
     }
     void saveTask(@NonNull Task task, @NonNull List<Task> editingTasks, @NonNull SaveTaskCallback callback);
 
-    void changeComplete(Task editedTask);
+    interface ChangeCompleteTaskCallback {
+        void onChangeCompleteSuccess(List<Task> tasksOfMember);
+        void onChangeCompleteFail();
+    }
+    void changeComplete(String memberId, String taskId, List<Task> editingTasks, ChangeCompleteTaskCallback callback);
 
     void deleteTasksOfMember(String memberId);
 
-    interface EditTasksOfMemberCallback {
-        void onEditSuccess(List<Task> tasksOfMember);
-        void onEditFail();
+    interface ChangeOrdersCallback {
+        void onChangeOrdersSuccess(List<Task> tasksOfMember);
+        void onChangeOrdersFail();
     }
-    void editTasksOfMember(String memberId, List<Task> tasks, @NonNull EditTasksOfMemberCallback callback);
+    void changeOrders(String memberId, List<Task> editingTasks, ChangeOrdersCallback callback);
 }

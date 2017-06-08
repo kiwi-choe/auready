@@ -12,46 +12,47 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Edit tasks of a member
+ * Edit order and description of tasks
  */
-public class EditTasksOfMember extends UseCase<EditTasksOfMember.RequestValues, EditTasksOfMember.ResponseValue> {
+public class ChangeOrders extends UseCase<ChangeOrders.RequestValues, ChangeOrders.ResponseValue> {
 
     private final TaskRepository mTaskRepository;
 
-    public EditTasksOfMember(@NonNull TaskRepository taskRepository) {
+    public ChangeOrders(@NonNull TaskRepository taskRepository) {
         mTaskRepository = checkNotNull(taskRepository);
     }
 
     @Override
     protected void executeUseCase(RequestValues values) {
-        mTaskRepository.editTasksOfMember(values.getMemberId(), values.getTasks(), new TaskDataSource.EditTasksOfMemberCallback() {
-            @Override
-            public void onEditSuccess(List<Task> tasksOfMember) {
-                getUseCaseCallback().onSuccess(new ResponseValue(tasksOfMember));
-            }
+        mTaskRepository.changeOrders(values.getMemberId(), values.getEditingTasks(),
+                new TaskDataSource.ChangeOrdersCallback() {
+                    @Override
+                    public void onChangeOrdersSuccess(List<Task> tasksOfMember) {
+                        getUseCaseCallback().onSuccess(new ResponseValue(tasksOfMember));
+                    }
 
-            @Override
-            public void onEditFail() {
-                getUseCaseCallback().onError();
-            }
-        });
+                    @Override
+                    public void onChangeOrdersFail() {
+                        getUseCaseCallback().onError();
+                    }
+                });
     }
 
     public static final class RequestValues implements UseCase.RequestValues {
         private final String mMemberId;
-        private final List<Task> mTasks;
+        private final List<Task> mEditingTasks;
 
-        public RequestValues(@NonNull String memberId, @NonNull List<Task> tasks) {
-            mMemberId = checkNotNull(memberId);
-            mTasks = checkNotNull(tasks);
+        public RequestValues(@NonNull String memberId, List<Task> editingTasks) {
+            mMemberId = memberId;
+            mEditingTasks = editingTasks;
         }
 
         public String getMemberId() {
             return mMemberId;
         }
 
-        public List<Task> getTasks() {
-            return mTasks;
+        public List<Task> getEditingTasks() {
+            return mEditingTasks;
         }
     }
 

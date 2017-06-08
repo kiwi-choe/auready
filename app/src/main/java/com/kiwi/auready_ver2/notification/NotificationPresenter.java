@@ -1,16 +1,20 @@
 package com.kiwi.auready_ver2.notification;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.Notification;
 import com.kiwi.auready_ver2.notification.domain.usecase.DeleteNotification;
-import com.kiwi.auready_ver2.notification.domain.usecase.GetNotificationsCount;
 import com.kiwi.auready_ver2.notification.domain.usecase.GetNotifications;
+import com.kiwi.auready_ver2.notification.domain.usecase.GetNotificationsCount;
 import com.kiwi.auready_ver2.notification.domain.usecase.ReadNotification;
 import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
 import com.kiwi.auready_ver2.rest_service.friend.IFriendService;
+import com.kiwi.auready_ver2.util.NetworkUtils;
 
 import java.util.List;
 
@@ -44,13 +48,16 @@ public class NotificationPresenter implements
 
     private String mAccessToken;
 
+    private Context mContext;
+
     // for NotificationFragment view
     public NotificationPresenter(@NonNull String accessToken,
                                  @NonNull UseCaseHandler useCaseHandler,
                                  @NonNull NotificationContract.View view,
                                  @NonNull GetNotifications getNotifications,
                                  @NonNull ReadNotification readNotification,
-                                 @NonNull DeleteNotification deleteNotification) {
+                                 @NonNull DeleteNotification deleteNotification,
+                                 @NonNull Context context) {
         mUseCaseHandler = useCaseHandler;
         mView = checkNotNull(view, "view cannot be null");
 
@@ -60,6 +67,8 @@ public class NotificationPresenter implements
         mView.setPresenter(this);
 
         mAccessToken = accessToken;
+
+        mContext = context;
     }
 
     // for TaskHeadsFragment menu view
@@ -105,6 +114,9 @@ public class NotificationPresenter implements
 
     @Override
     public void acceptFriendRequest(final String fromUserId, final int notificationId) {
+        if (!readyToRequestAPI()) {
+            onAcceptFriendRequestFail();
+        }
         IFriendService friendService =
                 ServiceGenerator.createService(IFriendService.class, mAccessToken);
 
@@ -112,7 +124,7 @@ public class NotificationPresenter implements
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     onAcceptFriendRequestSucceed(fromUserId, notificationId);
                 } else {
                     onAcceptFriendRequestFail();
@@ -124,6 +136,14 @@ public class NotificationPresenter implements
                 onAcceptFriendRequestFail();
             }
         });
+    }
+
+    private boolean readyToRequestAPI() {
+        // Check network && Check accessToken
+        if (!NetworkUtils.isOnline(mContext) && TextUtils.isEmpty(mAccessToken)) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -149,11 +169,15 @@ public class NotificationPresenter implements
 
     @Override
     public void onAcceptFriendRequestFail() {
-
+        Log.d("Tag_notiPresenter", "onAcceptFriendRequestFail()");
     }
 
     @Override
     public void deleteFriendRequest(final String fromUserId) {
+        if (!readyToRequestAPI()) {
+            onDeleteFriendRequestFail();
+        }
+
         IFriendService friendService =
                 ServiceGenerator.createService(IFriendService.class, mAccessToken);
 
@@ -161,7 +185,7 @@ public class NotificationPresenter implements
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     onDeleteFriendRequestSucceed(fromUserId);
                 } else {
                     onDeleteFriendRequestFail();
@@ -183,7 +207,7 @@ public class NotificationPresenter implements
 
     @Override
     public void onDeleteFriendRequestFail() {
-
+        Log.d("Tag_notiPresenter", "onDeleteFriendRequestFail()");
     }
 
     @Override

@@ -15,8 +15,6 @@ import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * Created by kiwi on 6/16/16.
  */
@@ -79,7 +77,7 @@ public class ServiceGenerator {
     }
 
     public static <S> S createService(Class<S> serviceClass, @NonNull final String accessToken) {
-        checkNotNull(accessToken, "accessToken is null");
+//        checkNotNull(accessToken, "accessToken is null");
         httpClient.interceptors().clear();
         httpClient.interceptors().add(new Interceptor() {
             @Override

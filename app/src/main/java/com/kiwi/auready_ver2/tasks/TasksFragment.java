@@ -281,7 +281,7 @@ public class TasksFragment extends Fragment {
                 TasksAdapter tasksAdapter = (TasksAdapter) listView.getInputAdapter();
                 tasksAdapter.reorder(from, to);
 
-                mTaskViewListener.onEditTasksOfMember(mMemberId, getAllTasks());
+                mTaskViewListener.onReordering(mMemberId, getAllTasks());
             }
 
             @Override
@@ -399,8 +399,7 @@ public class TasksFragment extends Fragment {
 
             controlTasksVisibility(unCompleteAdapter.getCount(), completeAdapter.getCount());
 
-//            mTaskViewListener.onChangeComplete(editedTask);
-            mTaskViewListener.onEditTasksOfMember(editedTask.getMemberId(), getAllTasks());
+            mTaskViewListener.onChangeComplete(editedTask.getMemberId(), editedTask.getId(), getAllTasks());
 //            invalidateSplitView();
         }
 

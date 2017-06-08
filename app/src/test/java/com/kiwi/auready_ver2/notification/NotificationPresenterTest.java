@@ -1,5 +1,8 @@
 package com.kiwi.auready_ver2.notification;
 
+import android.content.Context;
+import android.test.mock.MockContext;
+
 import com.google.common.collect.Lists;
 import com.kiwi.auready_ver2.TestUseCaseScheduler;
 import com.kiwi.auready_ver2.UseCaseHandler;
@@ -16,6 +19,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
@@ -71,9 +75,10 @@ public class NotificationPresenterTest {
         GetNotifications getNotifications = new GetNotifications(mRepository);
         ReadNotification readNotification = new ReadNotification(mRepository);
         DeleteNotification deleteNotification = new DeleteNotification(mRepository);
-
+//        Context context = Mockito.mock(Context.)
+        Context context = Mockito.mock(MockContext.class);
         return new NotificationPresenter(accessToken, useCaseHandler, mView,
-                getNotifications, readNotification, deleteNotification);
+                getNotifications, readNotification, deleteNotification, context);
     }
 
     @Test

@@ -55,11 +55,11 @@ class TasksContract {
 
         void updateTasksInMemory(String memberId, List<Task> tasks);
 
-        void editTasksOfMember(String memberId, List<Task> tasks);
-
         void getTaskHeadDetailFromRemote();
 
-        void changeComplete(Task editedTask);
+        void changeComplete(String memberId, String taskId, List<Task> editingTasks);
+
+        void reorder(String memberId, List<Task> tasks);
 
         void notifyAUReady(String userId);
     }

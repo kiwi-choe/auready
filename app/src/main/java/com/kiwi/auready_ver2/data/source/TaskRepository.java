@@ -627,48 +627,33 @@ public class TaskRepository implements TaskDataSource {
     }
 
     @Override
-    public void saveMembers(List<Member> members) {
-
-    }
-
-    @Override
-    public void changeComplete(Task editedTask) {
-        mLocalDataSource.changeComplete(editedTask);
-
-        if (mCachedTasks != null) {
-            mCachedTasks.put(editedTask.getId(), editedTask);
-        }
-    }
-
-    @Override
-    public void deleteTasksOfMember(String memberId) {
-        // local
-    }
-
-    @Override
-    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
-
-    }
-
-    /*
-    * Remote only
-    * */
-    @Override
-    public void editTasksOfMember(final String memberId, final List<Task> tasks,
-                                  @NonNull final EditTasksOfMemberCallback callback) {
-
-        mRemoteDataSource.editTasksOfMember(memberId, tasks, new EditTasksOfMemberCallback() {
-
+    public void changeComplete(final String memberId, final String taskId, final List<Task> editingTasks, final ChangeCompleteTaskCallback callback) {
+        mRemoteDataSource.changeComplete(memberId, taskId, editingTasks, new ChangeCompleteTaskCallback() {
             @Override
-            public void onEditSuccess(List<Task> tasksOfMember) {
+            public void onChangeCompleteSuccess(List<Task> tasksOfMember) {
                 refreshLocalTasksOfMember(memberId, tasksOfMember);
-                refreshCachedTasks(tasksOfMember);
-                callback.onEditSuccess(tasksOfMember);
+                callback.onChangeCompleteSuccess(tasksOfMember);
             }
 
             @Override
-            public void onEditFail() {
-                callback.onEditFail();
+            public void onChangeCompleteFail() {
+                callback.onChangeCompleteFail();
+            }
+        });
+    }
+
+    @Override
+    public void changeOrders(final String memberId, List<Task> editingTasks, final ChangeOrdersCallback callback) {
+        mRemoteDataSource.changeOrders(memberId, editingTasks, new ChangeOrdersCallback() {
+            @Override
+            public void onChangeOrdersSuccess(List<Task> tasksOfMember) {
+                refreshLocalTasksOfMember(memberId, tasksOfMember);
+                callback.onChangeOrdersSuccess(tasksOfMember);
+            }
+
+            @Override
+            public void onChangeOrdersFail() {
+                callback.onChangeOrdersFail();
             }
         });
     }
@@ -747,6 +732,23 @@ public class TaskRepository implements TaskDataSource {
         }
         return addingMembers;
     }
+
+
+    /*
+    * unimplemented in Repository
+    * */
+    @Override
+    public void saveMembers(List<Member> members) {
+
+    }
+
+    @Override
+    public void deleteTasksOfMember(String memberId) {
+        // local
+    }
+
+    @Override
+    public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {}
 
     /*
     * refresh caches methods

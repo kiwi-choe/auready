@@ -598,13 +598,88 @@ public class TaskRemoteDataSource implements TaskDataSource {
     }
 
     @Override
-    public void saveMembers(List<Member> members) {
+    public void changeComplete(final String memberId, String taskId, List<Task> editingTasks, final ChangeCompleteTaskCallback callback) {
+        if (!readyToRequestAPI()) {
+            callback.onChangeCompleteFail();
+        }
 
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        List<Task_remote> updatingTasks = new ArrayList<>();
+        for (Task task : editingTasks) {
+            updatingTasks.add(new Task_remote(
+                    task.getId(), task.getDescription(), task.getCompleted(), task.getOrder()));
+        }
+
+        Call<List<Task_remote>> call = taskService.changeComplete(memberId, taskId, updatingTasks);
+        call.enqueue(new Callback<List<Task_remote>>() {
+            @Override
+            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
+
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
+                    // Request getting latest updated taskHeads
+                    Log.d("Tag_remoteTask", "changeCompleted; no member");
+                    callback.onChangeCompleteFail();
+                } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
+                    Log.d("Tag_remoteTask", "success to changeComplete");
+                    List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
+                    callback.onChangeCompleteSuccess(tasks);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
+                Log.d("Tag_remoteTask", "fail to changeComplete");
+                callback.onChangeCompleteFail();
+            }
+        });
     }
 
     @Override
-    public void changeComplete(Task editedTask) {
-        // Implement in Local only
+    public void changeOrders(final String memberId, List<Task> editingTasks, final ChangeOrdersCallback callback) {
+        if (!readyToRequestAPI()) {
+            callback.onChangeOrdersFail();
+        }
+
+        ITaskService taskService =
+                ServiceGenerator.createService(ITaskService.class, mAccessToken);
+
+        List<Task_remote> updatingTasks = new ArrayList<>();
+        for (Task task : editingTasks) {
+            updatingTasks.add(new Task_remote(
+                    task.getId(), task.getDescription(), task.getCompleted(), task.getOrder()));
+        }
+
+        Call<List<Task_remote>> call = taskService.changeOrders(memberId, updatingTasks);
+        call.enqueue(new Callback<List<Task_remote>>() {
+            @Override
+            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
+                if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
+                    // Request getting latest updated taskHeads
+                    Log.d("Tag_remoteTask", "changeOrders; no member");
+                    callback.onChangeOrdersFail();
+                } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
+                    Log.d("Tag_remoteTask", "success to changeOrders");
+                    List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
+                    callback.onChangeOrdersSuccess(tasks);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
+                Log.d("Tag_remoteTask", "fail to changeOrders");
+                callback.onChangeOrdersFail();
+            }
+        });
+    }
+
+    /*
+    * unimplemented in Remote
+    * */
+    @Override
+    public void saveMembers(List<Member> members) {
+
     }
 
     @Override
@@ -615,45 +690,6 @@ public class TaskRemoteDataSource implements TaskDataSource {
     @Override
     public void deleteMembers(String taskHeadId, DeleteMembersCallback callback) {
         // Implement to Local
-    }
-
-    @Override
-    public void editTasksOfMember(final String memberId, List<Task> tasks,
-                                  @NonNull final EditTasksOfMemberCallback callback) {
-        if (!readyToRequestAPI()) {
-            callback.onEditFail();
-        }
-
-        ITaskService taskService =
-                ServiceGenerator.createService(ITaskService.class, mAccessToken);
-
-        List<Task_remote> updatingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            updatingTasks.add(new Task_remote(
-                    task.getId(), task.getDescription(), task.getCompleted(), task.getOrder()));
-        }
-
-        Call<List<Task_remote>> call = taskService.editTasksOfMember(memberId, updatingTasks);
-        call.enqueue(new Callback<List<Task_remote>>() {
-            @Override
-            public void onResponse(Call<List<Task_remote>> call, Response<List<Task_remote>> response) {
-                if (response.code() == HttpStatusCode.TaskHeadStatusCode.NO_MEMBER) {
-                    // Request getting latest updated taskHeads
-                    Log.d("Tag_remoteTask", "editTasksOfMember; no member");
-                    callback.onEditFail();
-                } else if (response.code() == HttpStatusCode.BasicStatusCode.OK_GET) {
-                    Log.d("Tag_remoteTask", "success to editTasksOfMember");
-                    List<Task> tasks = convertTasksRemoteToTasks(memberId, response.body());
-                    callback.onEditSuccess(tasks);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Task_remote>> call, Throwable t) {
-                Log.d("Tag_remoteTask", "fail to editTasksOfMember");
-                callback.onEditFail();
-            }
-        });
     }
 
     @Override

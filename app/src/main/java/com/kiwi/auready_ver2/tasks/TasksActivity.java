@@ -67,9 +67,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
                 Injection.provideSaveTask(getApplicationContext()),
                 Injection.provideDeleteTasks(getApplicationContext()),
                 Injection.provideEditTasks(getApplicationContext()),
-                Injection.provideEditTasksOfMember(getApplicationContext()),
                 Injection.provideGetTaskHeadDetail(getApplicationContext()),
-                Injection.provideChangeCompleted(getApplicationContext()));
+                Injection.provideChangeCompleted(getApplicationContext()),
+                Injection.provideChangeOrders(getApplicationContext()));
     }
 
     private void initViews() {
@@ -196,9 +196,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
         void onUpdateTasksInMemory(String memberId, List<Task> tasks);
 
-        void onEditTasksOfMember(String mMemberId, List<Task> tasks);
+        void onChangeComplete(String memberId, String taskId, List<Task> editingTasks);
 
-        void onChangeComplete(Task editedTask);
+        void onReordering(String memberId, List<Task> editingTasks);
 
         void onAUReadyClicked(String memberId);
     }
@@ -226,13 +226,13 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         }
 
         @Override
-        public void onEditTasksOfMember(String memberId, List<Task> tasks) {
-            mPresenter.editTasksOfMember(memberId, tasks);
+        public void onChangeComplete(String memberId, String taskId, List<Task> editingTasks) {
+            mPresenter.changeComplete(memberId, taskId, editingTasks);
         }
 
         @Override
-        public void onChangeComplete(Task editedTask) {
-            mPresenter.changeComplete(editedTask);
+        public void onReordering(String memberId, List<Task> editingTasks) {
+            mPresenter.reorder(memberId, editingTasks);
         }
 
         @Override

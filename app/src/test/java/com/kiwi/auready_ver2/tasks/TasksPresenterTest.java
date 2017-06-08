@@ -8,9 +8,9 @@ import com.kiwi.auready_ver2.data.source.TaskDataSource;
 import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheaddetail.domain.usecase.GetTaskHeadDetail;
 import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeComplete;
+import com.kiwi.auready_ver2.tasks.domain.usecase.ChangeOrders;
 import com.kiwi.auready_ver2.tasks.domain.usecase.DeleteTask;
 import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasks;
-import com.kiwi.auready_ver2.tasks.domain.usecase.EditTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetMembers;
 import com.kiwi.auready_ver2.tasks.domain.usecase.GetTasksOfMember;
 import com.kiwi.auready_ver2.tasks.domain.usecase.SaveTask;
@@ -216,13 +216,13 @@ public class TasksPresenterTest {
         SaveTask saveTask = new SaveTask(mTaskRepository);
         DeleteTask deleteTask = new DeleteTask(mTaskRepository);
         EditTasks editTasks = new EditTasks(mTaskRepository);
-        EditTasksOfMember editTasksOfMember = new EditTasksOfMember(mTaskRepository);
         GetTaskHeadDetail getTaskHeadDetail = new GetTaskHeadDetail(mTaskRepository);
         ChangeComplete changeComplete = new ChangeComplete(mTaskRepository);
+        ChangeOrders changeOrders = new ChangeOrders(mTaskRepository);
 
         return new TasksPresenter(useCaseHandler, taskHeadId, mTasksView,
-                getMembers, getTasksOfMember, saveTask, deleteTask, editTasks, editTasksOfMember,
-                getTaskHeadDetail, changeComplete);
+                getMembers, getTasksOfMember, saveTask, deleteTask, editTasks,
+                getTaskHeadDetail, changeComplete, changeOrders);
     }
 
 }
