@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +31,8 @@ public class LoginFragment extends Fragment implements
 
     public static final String TAG_LOGINFRAGMENT = "Tag_LoginFragment";
 
+    private View mRoot;
+
     private EditText mEmail;
     private EditText mPassword;
     private Button mBtLoginComplete;
@@ -39,7 +42,6 @@ public class LoginFragment extends Fragment implements
     private LoginContract.Presenter mPresenter;
 
     private AccessTokenStore mAccessTokenStore;
-
 
     public LoginFragment() {
         // Required empty public constructor
@@ -54,15 +56,15 @@ public class LoginFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_login, container, false);
-        mEmail = (EditText) root.findViewById(R.id.ed_email);
-        mPassword = (EditText) root.findViewById(R.id.ed_password);
+        mRoot = inflater.inflate(R.layout.fragment_login, container, false);
+        mEmail = (EditText) mRoot.findViewById(R.id.ed_email);
+        mPassword = (EditText) mRoot.findViewById(R.id.ed_password);
 
-        mBtLoginComplete = (Button) root.findViewById(R.id.bt_login_complete);
-        mBtSignupOpen = (TextView) root.findViewById(R.id.bt_signup_open);
+        mBtLoginComplete = (Button) mRoot.findViewById(R.id.bt_login_complete);
+        mBtSignupOpen = (TextView) mRoot.findViewById(R.id.bt_signup_open);
 
-        mSocialLoginLayout = (LinearLayout) root.findViewById(R.id.social_login_layout);
-        return root;
+        mSocialLoginLayout = (LinearLayout) mRoot.findViewById(R.id.social_login_layout);
+        return mRoot;
     }
 
     @Override
@@ -97,7 +99,7 @@ public class LoginFragment extends Fragment implements
     public void setLoginSuccessUI(String email, String name) {
         if (isAdded()) {
             // Popup message - getView() is null?
-            Snackbar.make(mEmail, getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(mRoot, getString(R.string.login_success_msg), Snackbar.LENGTH_SHORT).show();
             // Send result OK and the logged in email to TasksView
             sendResult(true);
         }
@@ -114,8 +116,17 @@ public class LoginFragment extends Fragment implements
     @Override
     public void showLoginFailMessage(int stringResource) {
         if (isAdded()) {
-            Snackbar.make(getView(), getString(stringResource), Snackbar.LENGTH_SHORT).show();
-            sendResult(false);
+            // remove focus
+            if(getActivity().getCurrentFocus()!= null) {
+                getActivity().getCurrentFocus().clearFocus();
+
+                // hide keyboard
+                InputMethodManager im =
+                        (InputMethodManager) getActivity().getSystemService(getActivity().INPUT_METHOD_SERVICE);
+                im.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            }
+
+            Snackbar.make(mRoot, getString(stringResource), Snackbar.LENGTH_LONG).show();
         }
     }
 

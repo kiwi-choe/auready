@@ -106,7 +106,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                 if (response.isSuccessful()) {
                     // Save tokenInfo to sharedPreferences
                     onLoginSuccess(response.body());
-                } else if (response.code() == 400) {
+                } else {    // 4xx code
                     onLoginFail(R.string.login_fail_message_400);
                 }
             }
