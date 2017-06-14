@@ -5,11 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -68,17 +66,6 @@ public class FindFragment extends Fragment implements
         // Inflate the layout for this fragment
         mRoot = inflater.inflate(R.layout.fragment_find, container, false);
 
-        Button btSaveFriend = (Button)mRoot.findViewById(R.id.bt_test_save_friend);
-        btSaveFriend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // testing
-                // Stub a Friend
-                TEST_FRIENDS_CNT = (TEST_FRIENDS_CNT+1) % 10;
-                mPresenter.saveFriend(TEST_FRIENDS.get(TEST_FRIENDS_CNT));
-            }
-        });
-
         // Searched users view
         mSearchedUsersView = (LinearLayout) mRoot.findViewById(R.id.searched_list_layout);
         mSearchPeopleEd = (EditText) mRoot.findViewById(R.id.ed_search_people);
@@ -113,7 +100,6 @@ public class FindFragment extends Fragment implements
     public void setAddFriendSucceedUI(@NonNull String name) {
         // Show message
         String successMsg = name + " " + getString(R.string.add_friend_success_msg);
-        Log.d(TAG_FINDFRAG, successMsg);
         Snackbar.make(mRoot, successMsg, Snackbar.LENGTH_SHORT).show();
 
         // replace adapter data
@@ -136,7 +122,6 @@ public class FindFragment extends Fragment implements
 
     @Override
     public void setAddFriendFailMessage(int stringResource) {
-        Log.d(TAG_FINDFRAG, getString(stringResource));
         Snackbar.make(mRoot, getString(stringResource), Snackbar.LENGTH_SHORT).show();
     }
 

@@ -88,13 +88,4 @@ public class FriendViewTest {
         onView(withItemText(NAME1)).check(matches(not(isDisplayed())));
     }
 
-    @Test
-    public void clickFindBtOnToolbar_openFindView() {
-//        onView(withId(R.id.action_open_findview))
-//                .perform(click());
-
-        onView(withId(R.id.bt_test_save_friend))
-                .check(matches(isDisplayed()));
-    }
-
 }

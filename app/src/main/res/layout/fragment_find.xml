@@ -5,13 +5,6 @@
     android:orientation="vertical"
     tools:context="com.kiwi.auready_ver2.friend.FindFragment">
 
-    <!--testing-->
-    <Button
-        android:id="@+id/bt_test_save_friend"
-        android:text="Save a friend: name is nameOfaa"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <!-- Searching layout -->
     <LinearLayout
         android:layout_width="match_parent"
