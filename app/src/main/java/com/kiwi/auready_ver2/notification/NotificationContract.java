@@ -28,11 +28,11 @@ public interface NotificationContract {
         void readNotification(int id);  // Update 'isNew' field
 
         // Send the response of friend request to Server
-        void acceptFriendRequest(String fromUserId, int notificationId);
+        void acceptFriendRequest(String fromUserId, String fromUserName, int notificationId);
 
         void deleteFriendRequest(String fromUserId);
 
-        void onAcceptFriendRequestSucceed(String fromUserId, int notificationId);
+        void onAcceptFriendRequestSucceed(String fromUserName, int notificationId);
         void onAcceptFriendRequestFail();
 
         void onDeleteFriendRequestSucceed(String fromUserId);

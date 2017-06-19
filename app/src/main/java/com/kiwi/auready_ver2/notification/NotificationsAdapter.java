@@ -80,17 +80,18 @@ class NotificationsAdapter extends BaseAdapter {
         viewHolder.mMessage.setText(message);
         // Set buttons
         final String fromUserId = notification.getFromUserId();
+        final String fromUserName = notification.getFromUserName();
         final int notificationId = notification.getId();
         viewHolder.mAcceptBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onFriendRequestItemClicked(true, fromUserId, notificationId);
+                mItemListener.onFriendRequestItemClicked(true, fromUserId, fromUserName, notificationId);
             }
         });
         viewHolder.mDeleteBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mItemListener.onFriendRequestItemClicked(false, fromUserId, notificationId);
+                mItemListener.onFriendRequestItemClicked(false, fromUserId, fromUserName, notificationId);
             }
         });
 

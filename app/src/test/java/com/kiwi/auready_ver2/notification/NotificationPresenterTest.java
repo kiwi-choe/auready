@@ -113,7 +113,7 @@ public class NotificationPresenterTest {
         mPresenter = givenNotificationPresenter();
         String fromUserId = "stubbed_fromUserId";
         int notificationId = 1;
-        mPresenter.onAcceptFriendRequestSucceed(fromUserId, notificationId);
+        mPresenter.onAcceptFriendRequestSucceed(fromUserId, fromUserName, notificationId);
 
         verify(mView).showAcceptFriendRequestSuccessUI(fromUserId);
         verify(mRepository).deleteNotification(notificationId);

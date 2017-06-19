@@ -62,7 +62,7 @@
                 android:id="@+id/no_tasks"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:src="@drawable/add_list_icon"
+                android:src="@drawable/ic_add_list"
                 android:tint="@color/cardview_dark_background"
                 android:visibility="gone" />
 

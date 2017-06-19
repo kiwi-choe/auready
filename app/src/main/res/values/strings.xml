@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AUReady-ver2</string>
+    <string name="app_name">AUReady</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -98,5 +98,6 @@
     <string name="friend_request_accept">%s is added to your friend list</string>
     <string name="need_to_connect_network">Please connect network, you can read-only without network</string>
     <string name="need_to_login">Please Login</string>
+    <string name="auready_settings">settings</string>
 
 </resources>

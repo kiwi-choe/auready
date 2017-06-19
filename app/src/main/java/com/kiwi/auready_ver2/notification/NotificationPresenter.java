@@ -113,7 +113,7 @@ public class NotificationPresenter implements
     }
 
     @Override
-    public void acceptFriendRequest(final String fromUserId, final int notificationId) {
+    public void acceptFriendRequest(final String fromUserId, final String fromUserName, final int notificationId) {
         if (!readyToRequestAPI()) {
             onAcceptFriendRequestFail();
             return;
@@ -126,7 +126,7 @@ public class NotificationPresenter implements
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    onAcceptFriendRequestSucceed(fromUserId, notificationId);
+                    onAcceptFriendRequestSucceed(fromUserName, notificationId);
                 } else {
                     onAcceptFriendRequestFail();
                 }
@@ -148,7 +148,7 @@ public class NotificationPresenter implements
     }
 
     @Override
-    public void onAcceptFriendRequestSucceed(String fromUserId, int notificationId) {
+    public void onAcceptFriendRequestSucceed(String fromUserName, int notificationId) {
         // 1. Delete this notification
         mUseCaseHandler.execute(mDeleteNotification, new DeleteNotification.RequestValues(notificationId),
                 new UseCase.UseCaseCallback<DeleteNotification.ResponseValue>() {
@@ -164,8 +164,8 @@ public class NotificationPresenter implements
                     }
                 });
 
-        // 2. Show the result msg - 'fromUserId가 친구로 추가되었습니다.'
-        mView.showAcceptFriendRequestSuccessUI(fromUserId);
+        // 2. Show the result msg - 'fromUserName 가 친구로 추가되었습니다.'
+        mView.showAcceptFriendRequestSuccessUI(fromUserName);
     }
 
     @Override

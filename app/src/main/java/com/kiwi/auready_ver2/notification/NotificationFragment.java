@@ -77,8 +77,8 @@ public class NotificationFragment extends Fragment implements NotificationContra
     }
 
     @Override
-    public void showAcceptFriendRequestSuccessUI(String fromUserId) {
-        String message = getString(R.string.friend_request_accept, fromUserId);
+    public void showAcceptFriendRequestSuccessUI(String fromUserName) {
+        String message = getString(R.string.friend_request_accept, fromUserName);
         Snackbar.make(mRoot, message, Snackbar.LENGTH_LONG).show();
     }
 
@@ -96,14 +96,14 @@ public class NotificationFragment extends Fragment implements NotificationContra
     * Listener for ListView
     * */
     interface NotificationItemListener {
-        void onFriendRequestItemClicked(boolean isAccept, String fromUserId, int notificationId);
+        void onFriendRequestItemClicked(boolean isAccept, String fromUserId, String fromUserName, int notificationId);
     }
 
     NotificationItemListener mItemListener = new NotificationItemListener() {
         @Override
-        public void onFriendRequestItemClicked(boolean isAccept, String fromUserId, int notificationId) {
+        public void onFriendRequestItemClicked(boolean isAccept, String fromUserId, String fromUserName, int notificationId) {
             if(isAccept) {
-                mPresenter.acceptFriendRequest(fromUserId, notificationId);
+                mPresenter.acceptFriendRequest(fromUserId, fromUserName, notificationId);
             } else {
                 mPresenter.deleteFriendRequest(fromUserId);
             }
