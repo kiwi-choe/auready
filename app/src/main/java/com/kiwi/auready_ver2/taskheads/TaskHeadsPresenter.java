@@ -10,22 +10,15 @@ import com.kiwi.auready_ver2.UseCase;
 import com.kiwi.auready_ver2.UseCaseHandler;
 import com.kiwi.auready_ver2.data.TaskHead;
 import com.kiwi.auready_ver2.data.TaskHeadDetail;
-import com.kiwi.auready_ver2.login.LoginFragment;
-import com.kiwi.auready_ver2.rest_service.ServiceGenerator;
-import com.kiwi.auready_ver2.rest_service.login.ILoginService;
+import com.kiwi.auready_ver2.settings.SettingsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -43,22 +36,18 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
     private final DeleteTaskHeads mDeleteTaskHeads;
     private final GetTaskHeadsCount mGetTaskHeadCount;
     private UpdateTaskHeadOrders mUpdateTaskHeadOrders;
-    private final InitializeLocalData mInitializeLocalData;
 
     public TaskHeadsPresenter(UseCaseHandler useCaseHandler, @NonNull TaskHeadsContract.View tasksView,
                               @NonNull GetTaskHeadDetails getTaskHeadDetails,
                               @NonNull DeleteTaskHeads deleteTaskHeads,
                               @NonNull GetTaskHeadsCount getTaskHeadCount,
-                              @NonNull UpdateTaskHeadOrders updateTaskHeadOrders,
-                              @NonNull InitializeLocalData initializeLocalData) {
+                              @NonNull UpdateTaskHeadOrders updateTaskHeadOrders) {
         mUseCaseHandler = checkNotNull(useCaseHandler, "useCaseHandler cannot be null");
         mTaskHeadView = checkNotNull(tasksView, "tasksView cannot be null!");
         mGetTaskHeadDetails = checkNotNull(getTaskHeadDetails, "getTaskHeadDetails cannot be null");
         mDeleteTaskHeads = checkNotNull(deleteTaskHeads, "deleteTaskHeads cannot be null");
         mGetTaskHeadCount = checkNotNull(getTaskHeadCount);
         mUpdateTaskHeadOrders = updateTaskHeadOrders;
-
-        mInitializeLocalData = checkNotNull(initializeLocalData);
 
         mTaskHeadView.setPresenter(this);
     }
@@ -78,7 +67,7 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
                     @Override
                     public void onSuccess(GetTaskHeadDetails.ResponseValue response) {
                         List<TaskHead> taskHeads = filterTaskHeads(response.getTaskHeadDetails());
-                        for(TaskHead taskHead: taskHeads) {
+                        for (TaskHead taskHead : taskHeads) {
                             Log.d("Tag_loadTaskHeads", taskHead.getTitle() + " - " + String.valueOf(taskHead.getOrder()));
                         }
                         processTaskHeads(taskHeads);
@@ -146,11 +135,10 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
             // Canceled create taskhead, Open TaskHeadsView
         }
-        if (TaskHeadsActivity.REQ_LOGIN == requestCode && Activity.RESULT_OK == resultCode) {
-
-            boolean isSuccess = data.getBooleanExtra(LoginFragment.IS_SUCCESS, false);
+        if (TaskHeadsActivity.REQ_SETTINGS == requestCode && Activity.RESULT_OK == resultCode) {
+            boolean isSuccess = data.getBooleanExtra(SettingsFragment.EXTRA_LOGOUT, false);
             if (isSuccess) {
-                mTaskHeadView.setLoginSuccessUI();
+                mTaskHeadView.showAccountView();
             }
         }
     }
@@ -200,58 +188,5 @@ public class TaskHeadsPresenter implements TaskHeadsContract.Presenter {
 
                     }
                 });
-    }
-
-    @Override
-    public void logout(@NonNull String accessToken) {
-        checkNotNull(accessToken);
-
-        Log.d("Tag_logout", "accessToken - " + accessToken);
-        ILoginService loginService =
-                ServiceGenerator.createService(ILoginService.class, accessToken);
-
-        Call<Void> call = loginService.logout(accessToken);
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    onLogoutSuccess();
-                } else {
-                    onLogoutFail();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.d("Exception in Logout: ", "onFailure()", t);
-                onLogoutFail();
-            }
-        });
-    }
-
-    @Override
-    public void onLogoutSuccess() {
-
-        mTaskHeadView.setLogoutSuccessUI();
-
-        mUseCaseHandler.execute(mInitializeLocalData, new InitializeLocalData.RequestValues(),
-                new UseCase.UseCaseCallback<InitializeLocalData.ResponseValue>() {
-
-                    @Override
-                    public void onSuccess(InitializeLocalData.ResponseValue response) {
-                        Log.d("Tag_logout", "initializeLocalData is succeeded");
-                        loadTaskHeads(false);
-                    }
-
-                    @Override
-                    public void onError() {
-
-                    }
-                });
-    }
-
-    @Override
-    public void onLogoutFail() {
-        mTaskHeadView.setLogoutFailResult();
     }
 }

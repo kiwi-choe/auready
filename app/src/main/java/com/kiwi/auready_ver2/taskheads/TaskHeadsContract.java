@@ -15,8 +15,6 @@ public interface TaskHeadsContract {
 
     interface View extends BaseView<Presenter> {
 
-        void setLoginSuccessUI();
-
         void showTaskHeads(List<TaskHead> taskHeads);
 
         void showNoTaskHeads();
@@ -25,11 +23,9 @@ public interface TaskHeadsContract {
 
         void showTasksView(String taskHeadId, String title, int color);
 
-        void setLogoutSuccessUI();
-
-        void setLogoutFailResult();
-
         void setRefreshing(boolean refreshing);
+
+        void showAccountView();
     }
 
     interface Presenter extends BasePresenter {
@@ -47,11 +43,5 @@ public interface TaskHeadsContract {
         void deleteTaskHeads(List<TaskHead> taskheads);
 
         void updateOrders(List<TaskHead> taskheads);
-
-        // Logout
-        void logout(String accessToken);
-
-        void onLogoutSuccess();
-        void onLogoutFail();
     }
 }

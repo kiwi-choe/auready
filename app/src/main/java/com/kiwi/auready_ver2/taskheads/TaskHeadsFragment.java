@@ -1,11 +1,10 @@
 package com.kiwi.auready_ver2.taskheads;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ActionMode;
@@ -22,12 +21,12 @@ import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
 import com.kiwi.auready_ver2.data.TaskHead;
-import com.kiwi.auready_ver2.data.source.local.AccessTokenStore;
 import com.kiwi.auready_ver2.notification.NotificationActivity;
 import com.kiwi.auready_ver2.notification.NotificationContract;
+import com.kiwi.auready_ver2.settings.SettingsActivity;
+import com.kiwi.auready_ver2.settings.SettingsFragment;
 import com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailActivity;
 import com.kiwi.auready_ver2.tasks.TasksActivity;
-import com.kiwi.auready_ver2.util.LoginUtils;
 import com.kiwi.auready_ver2.util.view.DragSortController;
 import com.kiwi.auready_ver2.util.view.DragSortItemView;
 import com.kiwi.auready_ver2.util.view.DragSortListView;
@@ -46,8 +45,6 @@ public class TaskHeadsFragment extends Fragment implements
 
     private TaskHeadsContract.Presenter mPresenter;
 
-    // interface
-    private TaskHeadsFragmentListener mListener;
     private TaskHeadsAdapter mTaskHeadsAdapter;
 
     private TextView mNoTaskHeadTxt;
@@ -79,27 +76,9 @@ public class TaskHeadsFragment extends Fragment implements
     public void onResume() {
         super.onResume();
         // Destroy all menu and recall onCreateOptionsMenu
-//        getActivity().supportInvalidateOptionsMenu();
+        getActivity().supportInvalidateOptionsMenu();
         mPresenter.start();
         mNotificationPresenter.getNotificationsCount();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof TaskHeadsFragmentListener) {
-            mListener = (TaskHeadsFragmentListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement TaskHeadsFragmentListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        mListener = null;
     }
 
     @Override
@@ -205,12 +184,6 @@ public class TaskHeadsFragment extends Fragment implements
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.taskhead_menu, menu);
-    }
-
-    @Override
     public void onPrepareOptionsMenu(Menu menu) {
         MenuItem no_notificationItem = menu.findItem(R.id.item_no_notification);
         MenuItem notificationItem = menu.findItem(R.id.item_notifications);
@@ -240,18 +213,19 @@ public class TaskHeadsFragment extends Fragment implements
                 showNotificationsView();
                 break;
 
+            case R.id.item_settings:
+                showSettingsView();
+                break;
+
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
-    @Override
-    public void setLoginSuccessUI() {
-        if (mListener != null) {
-            mListener.onUpdatingNavHeaderUI(LoginUtils.LOGIN);
-        }
+    private void showSettingsView() {
+        Intent intent = new Intent(getContext(), SettingsActivity.class);
+        getActivity().startActivityForResult(intent, TaskHeadsActivity.REQ_SETTINGS);
     }
 
     @Override
@@ -280,7 +254,7 @@ public class TaskHeadsFragment extends Fragment implements
 
         Intent intent = new Intent(getContext(), TaskHeadDetailActivity.class);
         intent.putExtra(TaskHeadDetailActivity.ARG_CNT_OF_TASKHEADS, cntOfTaskHeads);
-        startActivityForResult(intent, TaskHeadsActivity.REQ_ADD_TASKHEAD);
+        getActivity().startActivityForResult(intent, TaskHeadsActivity.REQ_ADD_TASKHEAD);
     }
 
     @Override
@@ -297,27 +271,18 @@ public class TaskHeadsFragment extends Fragment implements
     }
 
     @Override
-    public void setLogoutSuccessUI() {
-
-        // init SharedPreferences
-        AccessTokenStore accessTokenStore = AccessTokenStore.getInstance();
-        accessTokenStore.logoutUser();
-
-        if (mListener != null) {
-            mListener.onUpdatingNavHeaderUI(LoginUtils.LOGOUT);
-        }
-    }
-
-    @Override
-    public void setLogoutFailResult() {
-        Snackbar.make(mTaskHeadsView, getString(R.string.logout_fail_msg), Snackbar.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void setRefreshing(boolean refreshing) {
         if(mSwipleRefreshLayout.isRefreshing()) {
             mSwipleRefreshLayout.setRefreshing(refreshing);
         }
+    }
+
+    @Override
+    public void showAccountView() {
+        Intent intent = getActivity().getIntent();
+        intent.putExtra(SettingsFragment.EXTRA_LOGOUT, true);
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
 
     @Override
@@ -330,11 +295,6 @@ public class TaskHeadsFragment extends Fragment implements
     public void showNoNotificationSign() {
         mNotificationsCount = 0;
         getActivity().invalidateOptionsMenu();
-    }
-
-    // Interface with TaskHeadsActivity
-    public interface TaskHeadsFragmentListener {
-        void onUpdatingNavHeaderUI(boolean isLogin);
     }
 
     // For Action Mode(CHOICE_MODE_MULTIPLE_MODAL)

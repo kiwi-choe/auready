@@ -8,7 +8,6 @@ import com.kiwi.auready_ver2.data.source.TaskRepository;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.DeleteTaskHeads;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadDetails;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.GetTaskHeadsCount;
-import com.kiwi.auready_ver2.taskheads.domain.usecase.InitializeLocalData;
 import com.kiwi.auready_ver2.taskheads.domain.usecase.UpdateTaskHeadOrders;
 
 import org.junit.Before;
@@ -66,11 +65,9 @@ public class TaskHeadsPresenterTest {
         DeleteTaskHeads deleteTaskHeads = new DeleteTaskHeads(mRepository);
         GetTaskHeadsCount getTaskHeadsCount = new GetTaskHeadsCount(mRepository);
         UpdateTaskHeadOrders updateTaskHeadOrders = new UpdateTaskHeadOrders(mRepository);
-        InitializeLocalData initializeLocalData = new InitializeLocalData(mRepository);
 
         return new TaskHeadsPresenter(useCaseHandler, mTaskHeadView,
-                getTaskHeadDetails, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadOrders,
-                initializeLocalData);
+                getTaskHeadDetails, deleteTaskHeads, getTaskHeadsCount, updateTaskHeadOrders);
     }
 
     @Test
@@ -110,15 +107,5 @@ public class TaskHeadsPresenterTest {
         mTaskHeadsPresenter.updateOrders(TASKHEADS);
 
         verify(mRepository).updateTaskHeadOrders((List<TaskHead>) anyCollectionOf(TaskHead.class), mUpdateTaskHeadCallbackCaptor.capture());
-    }
-
-    @Test
-    public void logoutIsSucceed_updateViews_andDeleteAllInRepo() {
-        mTaskHeadsPresenter.onLogoutSuccess();
-
-        verify(mTaskHeadView).setLogoutSuccessUI();
-
-        verify(mRepository).initializeLocalData(mInitLocalDataCallbackCaptor.capture());
-        mInitLocalDataCallbackCaptor.getValue().onInitSuccess();
     }
 }

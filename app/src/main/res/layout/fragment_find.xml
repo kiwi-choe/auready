@@ -10,14 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_margin="10dp"
         android:weightSum="1">
         <EditText
             android:id="@+id/ed_search_people"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="6dp"
             android:layout_weight="0.95"/>
         <ImageButton
             android:id="@+id/bt_search_people"
@@ -36,8 +34,10 @@
     <!-- Show Searched people List -->
     <LinearLayout
         android:id="@+id/searched_list_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:orientation="vertical">
 
         <ListView
@@ -50,12 +50,15 @@
     <LinearLayout
         android:id="@+id/no_searched_email_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="10dp">
+
         <TextView
             android:id="@+id/txt_no_searched_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="@string/no_searched_email_msg"
-            android:layout_gravity="center" />
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"/>
     </LinearLayout>
 </LinearLayout>

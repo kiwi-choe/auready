@@ -99,5 +99,8 @@
     <string name="need_to_connect_network">Please connect network, you can read-only without network</string>
     <string name="need_to_login">Please Login</string>
     <string name="auready_settings">settings</string>
+    <string name="bt_logout">LOGOUT</string>
+    <string name="settings_title">Settings</string>
+    <string name="find_title">Find</string>
 
 </resources>

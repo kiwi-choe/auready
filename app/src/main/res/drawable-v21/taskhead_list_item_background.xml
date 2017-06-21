@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <ripple android:color="@color/taskhead_list_item_select_color"></ripple>
-    </item>
-</layer-list>

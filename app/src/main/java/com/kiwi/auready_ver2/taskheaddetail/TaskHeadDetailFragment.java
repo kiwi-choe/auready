@@ -305,7 +305,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void showEditedTaskHead(String title, int color) {
-        Intent intent = new Intent();
+        Intent intent = getActivity().getIntent();
         intent.putExtra(EXTRA_TITLE, title);
         intent.putExtra(EXTRA_COLOR, color);
         sendResult(Activity.RESULT_OK, intent);
@@ -313,7 +313,7 @@ public class TaskHeadDetailFragment extends Fragment implements
 
     @Override
     public void showSaveError() {
-        sendResult(Activity.RESULT_CANCELED, null);
+        sendResult(Activity.RESULT_CANCELED, getActivity().getIntent());
     }
 
     @Override
@@ -329,11 +329,7 @@ public class TaskHeadDetailFragment extends Fragment implements
     }
 
     private void sendResult(int resultCode, @Nullable Intent intent) {
-        if (intent != null) {
-            getActivity().setResult(resultCode, intent);
-        } else {
-            getActivity().setResult(resultCode);
-        }
+        getActivity().setResult(resultCode, intent);
         getActivity().finish();
     }
 

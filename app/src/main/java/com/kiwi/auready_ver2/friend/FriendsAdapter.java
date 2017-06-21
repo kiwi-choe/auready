@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
@@ -73,7 +72,7 @@ class FriendsAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.friendCheckbox = (CheckBox) rowView.findViewById(R.id.friend_checkbox);
             viewHolder.friendName = (TextView) rowView.findViewById(R.id.friend_name);
-            viewHolder.deleteFriendBtn = (Button) rowView.findViewById(R.id.delete_friend_btn);
+//            viewHolder.deleteFriendBtn = (Button) rowView.findViewById(R.id.delete_friend_btn);
 
             rowView.setTag(viewHolder);
         } else {
@@ -158,7 +157,7 @@ class FriendsAdapter extends BaseAdapter {
     private class ViewHolder {
         CheckBox friendCheckbox;
         TextView friendName;
-        Button deleteFriendBtn;
+//        Button deleteFriendBtn;
     }
 }
 

@@ -106,9 +106,8 @@ public class LoginFragment extends Fragment implements
     }
 
     private void sendResult(boolean isSuccess) {
-        Intent intent = new Intent();
+        Intent intent = getActivity().getIntent();
         intent.putExtra(IS_SUCCESS, isSuccess);
-
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }

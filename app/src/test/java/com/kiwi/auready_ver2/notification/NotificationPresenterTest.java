@@ -111,11 +111,11 @@ public class NotificationPresenterTest {
     @Test
     public void acceptFriendRequest_whenSucceed_updateUIAndDeleteTheNotification() {
         mPresenter = givenNotificationPresenter();
-        String fromUserId = "stubbed_fromUserId";
+        String fromUserName = "stubbed_fromUserName";
         int notificationId = 1;
-        mPresenter.onAcceptFriendRequestSucceed(fromUserId, fromUserName, notificationId);
+        mPresenter.onAcceptFriendRequestSucceed(fromUserName, notificationId);
 
-        verify(mView).showAcceptFriendRequestSuccessUI(fromUserId);
+        verify(mView).showAcceptFriendRequestSuccessUI(fromUserName);
         verify(mRepository).deleteNotification(notificationId);
     }
 }

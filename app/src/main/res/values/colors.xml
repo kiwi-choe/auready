@@ -1,61 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#009688</color>
+    <color name="colorPrimaryDark">#004D40</color>
+    <color name="colorPrimaryBright">#E0F2F1</color>
+    <color name="colorAccent">#1DE9B6</color>
+    <color name="teal_200">#80CBC4</color>
+    <color name="teal_400">#26A69A</color>
     <color name="shadow_item_color">#66000000</color>
     <color name="transparent">#00ffffff</color>
 
     <!--taskhead-->
     <color name="taskhead_background_color">#fffdfdfd</color>
     <color name="taskhead_list_item_background_color">#fffdfdfd</color>
-    <color name="taskhead_list_item_select_color">#acacac</color>
+    <color name="taskhead_list_item_select_color">@color/teal_200</color>
     <color name="listview_text_title">#dd000000</color>
     <color name="listview_sub_text">#dd000000</color>
-    <color name="cardview_shadow_color">#bdbdbd</color>
-    <color name="cardview_stroke_color">#5b5b5b</color>
     <color name="taskhead_list_drag_shadow_view">#88ffffff</color>
 
     <!--tasksView-->
-    <color name="tasksview_background_color">@color/teal</color>
-    <color name="tasksview_list_header_view">#cacaca</color>
-    <color name="tasks_listview_background">#bababa</color>
+    <color name="tasksview_background_color">@color/teal_400</color>
+    <color name="tasksview_list_header_view">@color/teal_200</color>
     <color name="tasks_item_background">#f2f2f2</color>
     <color name="tasks_item_description_dim_color">#8e8e8e</color>
-
-
-    <color name="tasks_child_item_background">#fafafa</color>
 
     <color name="icon_gray">#8affffff</color>
     <color name="dark_background">#a4a4a4</color>
     <color name="listview_background">#ffffff</color>
-    <color name="listview_selected_item">@android:color/holo_blue_light</color>
 
-
-    <color name="color_picker_backgroud">#4a504f</color>
+    <color name="color_picker_background">#4a504f</color>
     <color name="color_picker_title_color">#ffffff</color>
     <color name="color_picker_default_color">@color/tasksview_background_color</color>
 
-    <!--color picker-->
-    <color name="red">#ccF6402C</color>
-    <color name="pink">#EB1460</color>
-    <color name="purple">#9C1AB1</color>
-    <color name="deep_purple">#6633B9</color>
-    <color name="indigo">#3D4DB7</color>
-    <color name="blue">#1093F5</color>
-    <color name="light_blue">#00A6F6</color>
-    <color name="cyan">#00BBD5</color>
-    <color name="teal">#009687</color>
-    <color name="green">#46AF4A</color>
-    <color name="light_green">#88C440</color>
-    <color name="lime">#CCDD1E</color>
-    <color name="yellow">#FFEC16</color>
-    <color name="amber">#FFC100</color>
-    <color name="orange">#FF9800</color>
-    <color name="deep_orange">#FF5505</color>
-    <color name="brown">#7A5547</color>
-    <color name="grey">#9D9D9D</color>
-    <color name="blue_grey">#5E7C8B</color>
+    <!--color picker; material color 400-->
+    <color name="red">#EF5350</color>
+    <color name="pink">#EC407A</color>
+    <color name="purple">#AB47BC</color>
+    <color name="deep_purple">#7E57C2</color>
+    <color name="indigo">#5C6BC0</color>
+    <color name="blue">#42A5F5</color>
+    <color name="light_blue">#29B6F6</color>
+    <color name="cyan">#26C6DA</color>
+    <color name="teal">#26A69A</color>
+    <color name="green">#66BB6A</color>
+    <color name="light_green">#9CCC65</color>
+    <color name="lime">#D4E157</color>
+    <color name="yellow">#FFEE58</color>
+    <color name="amber">#FFCA28</color>
+    <color name="orange">#FFA726</color>
+    <color name="deep_orange">#FF7043</color>
+    <color name="brown">#8D6E63</color>
+    <color name="grey">#BDBDBD</color>
+    <color name="blue_grey">#78909C</color>
 
     <array name="color_picker">
         <item>@color/red</item>
@@ -89,4 +84,6 @@
     <color name="color_scheme_1_3">#FFBB33</color>
     <color name="color_scheme_1_4">#FF4444</color>
 
+    <!-- settings -->
+    <color name="category_text_color">#9D9D9D</color>
 </resources>

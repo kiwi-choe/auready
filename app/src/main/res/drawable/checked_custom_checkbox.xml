@@ -4,7 +4,7 @@
     <item
         android:width="18dp"
         android:height="18dp"
-        android:drawable="@color/color_picker_backgroud" />
+        android:drawable="@color/color_picker_background" />
     <item
         android:width="18dp"
         android:height="18dp"

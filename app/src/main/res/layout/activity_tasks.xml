@@ -23,7 +23,7 @@
                 android:id="@+id/tasks_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
+                android:background="@color/teal_400"
                 android:gravity="start"
                 android:minHeight="?attr/actionBarSize"
                 android:theme="@style/Toolbar" />
@@ -34,7 +34,7 @@
             android:id="@+id/tasks_fragments_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/color_picker_default_color"
+            android:background="@color/colorPrimaryBright"
             android:orientation="horizontal">
 
             <android.support.v4.view.ViewPager

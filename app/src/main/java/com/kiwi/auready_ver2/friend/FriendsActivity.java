@@ -29,7 +29,7 @@ public class FriendsActivity extends AppCompatActivity {
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setDisplayShowHomeEnabled(true);
-            ab.setTitle(getApplicationContext().getResources().getString(R.string.friend_title));
+            ab.setTitle(getString(R.string.friend_title));
         }
 
         FriendsFragment friendsFragment =

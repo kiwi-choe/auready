@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.kiwi.auready_ver2.Injection;
@@ -35,6 +34,7 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
     private static final int DEFAULT_COLOR = R.color.color_picker_default_color;
 
 
+    private Toolbar mToolbar;
     // tasks fragment view pager
     private ViewPager mViewPager;
     private TasksFragmentPagerAdapter mPagerAdapter;
@@ -74,8 +74,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     private void initViews() {
         // Set up the toolbar.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
-        setSupportActionBar(toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.tasks_toolbar);
+        setSupportActionBar(mToolbar);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -86,8 +86,8 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         }
 
         if(getIntent().hasExtra(ARG_TASKHEAD_COLOR)) {
-            int backgroundColor = getIntent().getIntExtra(ARG_TASKHEAD_COLOR, DEFAULT_COLOR);
-            setColor(backgroundColor);
+            int toolbarColor = getIntent().getIntExtra(ARG_TASKHEAD_COLOR, DEFAULT_COLOR);
+            setColor(toolbarColor);
         }
 
         initFragments();
@@ -272,10 +272,11 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
 
     @Override
     public void setColor(int color) {
-        LinearLayout baseLayoutOfFragments = (LinearLayout)findViewById(R.id.tasks_fragments_layout);
-        if (baseLayoutOfFragments != null) {
-            baseLayoutOfFragments.setBackgroundColor(color);
-        }
+        mToolbar.setBackgroundColor(color);
+//        LinearLayout baseLayoutOfFragments = (LinearLayout)findViewById(R.id.tasks_fragments_layout);
+//        if (baseLayoutOfFragments != null) {
+//            baseLayoutOfFragments.setBackgroundColor(color);
+//        }
     }
 
     @Override

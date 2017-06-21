@@ -4,7 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.kiwi.auready_ver2.R;
@@ -60,7 +60,7 @@ public class SearchedUsersAdapter extends BaseAdapter {
             viewHolder = new ViewHolder();
             viewHolder.name = (TextView) rowView.findViewById(R.id.txt_user_name);
             viewHolder.email = (TextView) rowView.findViewById(R.id.txt_user_email);
-            viewHolder.addFriendRequestBt = (Button) rowView.findViewById(R.id.bt_add_friend_request);
+            viewHolder.addFriendRequestBt = (ImageButton) rowView.findViewById(R.id.bt_add_friend_request);
 
             rowView.setTag(viewHolder);
         } else {
@@ -114,6 +114,6 @@ public class SearchedUsersAdapter extends BaseAdapter {
     private class ViewHolder {
         TextView name;
         TextView email;
-        Button addFriendRequestBt;
+        ImageButton addFriendRequestBt;
     }
 }
