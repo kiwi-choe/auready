@@ -8,5 +8,6 @@
         android:id="@+id/member_add_bt"
         android:layout_weight="1"
         style="@style/add_button_style"
+        android:background="@color/colorPrimary"
         android:text="+ Add member" />
 </LinearLayout>
