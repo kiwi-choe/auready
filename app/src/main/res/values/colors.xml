@@ -51,6 +51,7 @@
     <color name="brown">#8D6E63</color>
     <color name="grey">#BDBDBD</color>
     <color name="blue_grey">#78909C</color>
+    <color name="black">#000000</color>
 
     <array name="color_picker">
         <item>@color/red</item>
@@ -72,7 +73,7 @@
         <item>@color/brown</item>
         <item>@color/grey</item>
         <item>@color/blue_grey</item>
-        <item>@color/color_picker_default_color</item>
+        <item>@color/black</item>
     </array>
 
     <!--

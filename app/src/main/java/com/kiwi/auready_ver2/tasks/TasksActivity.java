@@ -78,7 +78,9 @@ public class TasksActivity extends AppCompatActivity implements TasksContract.Vi
         setSupportActionBar(mToolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         if (getIntent().hasExtra(ARG_TITLE)) {
             String title = getIntent().getStringExtra(ARG_TITLE);

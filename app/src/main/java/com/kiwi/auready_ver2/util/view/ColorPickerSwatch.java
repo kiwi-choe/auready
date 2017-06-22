@@ -55,7 +55,7 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
         mSwatchImage = (ImageView) findViewById(R.id.color_picker_swatch);
         mCheckmarkImage = (ImageView) findViewById(R.id.color_picker_checkmark);
         setColor(color);
-        setChecked(checked);
+//        setChecked(checked);
         setOnClickListener(this);
     }
 

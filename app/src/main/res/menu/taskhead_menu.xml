@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/delete_menu"
         android:icon="@drawable/ic_delete"
         android:title="@string/delete"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/item_notifications"
         android:icon="@drawable/ic_notifications"
         android:title="@string/notification"
-        android:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
         android:id="@+id/item_no_notification"
         android:icon="@drawable/ic_notifications_none"
         android:title="@string/no_notification"
-        android:showAsAction="ifRoom" />
+        android:showAsAction="always" />
     <item
         android:id="@+id/item_settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/auready_settings"
-        android:showAsAction="always" />
+        app:showAsAction="always" />
 </menu>

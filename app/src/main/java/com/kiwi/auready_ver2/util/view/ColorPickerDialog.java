@@ -133,6 +133,11 @@ public class ColorPickerDialog extends DialogFragment implements ColorPickerSwat
             mListener.onColorSelected(color);
         }
 
+        if(getTargetFragment() instanceof ColorPickerSwatch.OnColorSelectedListener) {
+            final ColorPickerSwatch.OnColorSelectedListener listener =
+                    (ColorPickerSwatch.OnColorSelectedListener) getTargetFragment();
+            listener.onColorSelected(color);
+        }
         // Redraw palette to show checkmark on newly selected color before dismissing.
         setSelectedColor(color);
 
