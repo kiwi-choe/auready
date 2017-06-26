@@ -102,5 +102,6 @@
     <string name="bt_logout">LOGOUT</string>
     <string name="settings_title">Settings</string>
     <string name="find_title">Find</string>
+    <string name="connect_network_dialog">No Internet Connection</string>
 
 </resources>

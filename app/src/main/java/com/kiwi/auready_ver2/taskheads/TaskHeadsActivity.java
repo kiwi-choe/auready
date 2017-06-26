@@ -2,13 +2,14 @@ package com.kiwi.auready_ver2.taskheads;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -29,8 +30,11 @@ public class TaskHeadsActivity extends AppCompatActivity {
 
     private static final String TAG = "Tag_TaskHeadsActivity";
     private static final int REQ_PLAY_SERVICES_RESOLUTION_REQUEST = 0;
+    private static final int REQ_ACTION_WIRELESS_SETTINGS = 1;
 
     private TaskHeadsPresenter mPresenter;
+
+    private CustomDialog mCustomDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,10 +87,26 @@ public class TaskHeadsActivity extends AppCompatActivity {
 
     private void checkNetworkConnection() {
         if(!NetworkUtils.isOnline(getApplicationContext())) {
-            // Show the message
-            Toast.makeText(getApplicationContext(), R.string.need_to_connect_network, Toast.LENGTH_LONG).show();
+            // Blocked View & Show the message
+            mCustomDialog = new CustomDialog(this,
+                    getString(R.string.connect_network_dialog),
+                    mNetworkConnectionListener);
+            mCustomDialog.show();
+        } else {
+            if(mCustomDialog != null && mCustomDialog.isShowing()) {
+                mCustomDialog.dismiss();
+            }
         }
     }
+
+    private View.OnClickListener mNetworkConnectionListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            // Open SettingsActivity of Android
+            startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), REQ_ACTION_WIRELESS_SETTINGS);
+        }
+    };
 
     private void checkGooglePlayService() {
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
