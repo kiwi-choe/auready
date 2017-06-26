@@ -79,7 +79,7 @@ public class ServiceGenerator {
     public static <S> S createService(Class<S> serviceClass, @NonNull final String accessToken) {
 //        checkNotNull(accessToken, "accessToken is null");
         httpClient.interceptors().clear();
-        httpClient.interceptors().add(new Interceptor() {
+        httpClient.addInterceptor(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
 
