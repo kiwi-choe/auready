@@ -128,12 +128,16 @@ public class TaskHeadsActivity extends AppCompatActivity {
 
     private void initView() {
 
+        String userName = AccessTokenStore.getInstance(getApplicationContext())
+                .getStringValue(AccessTokenStore.USER_NAME, getString(R.string.app_name));
+
         // Set Toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setDisplayHomeAsUpEnabled(false);
+            ab.setTitle(userName);
         }
     }
 
