@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.kiwi.auready_ver2.login.LoginFragment">
+    tools:context="com.kiwi.auready.login.LoginFragment">
 
 
     <LinearLayout

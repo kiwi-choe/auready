@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.kiwi.auready_ver2.util.view.DragSortListView
+    <com.kiwi.auready.util.view.DragSortListView
         android:id="@+id/tasks_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.kiwi.auready_ver2.util.view.DragSortListView>
+    </com.kiwi.auready.util.view.DragSortListView>
 </LinearLayout>

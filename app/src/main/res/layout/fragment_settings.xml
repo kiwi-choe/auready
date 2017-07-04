@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:layout_marginBottom="10dp"
     android:orientation="vertical"
-    tools:context="com.kiwi.auready_ver2.settings.SettingsFragment">
+    tools:context="com.kiwi.auready.settings.SettingsFragment">
 
     <!-- Account -->
     <LinearLayout

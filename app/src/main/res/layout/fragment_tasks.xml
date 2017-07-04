@@ -41,7 +41,7 @@
                 android:text="AU Ready?" />
         </RelativeLayout>
 
-        <com.kiwi.auready_ver2.util.view.SplitView
+        <com.kiwi.auready.util.view.SplitView
             android:id="@+id/split_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             splitview:primarycontent="@+id/tasks_listview"
             splitview:secondarycontent="@+id/complete_tasks_listview">
 
-            <com.kiwi.auready_ver2.util.view.DragSortListView
+            <com.kiwi.auready.util.view.DragSortListView
                 android:id="@+id/tasks_listview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,12 +120,12 @@
                     android:src="@drawable/re_order_icon" />
             </RelativeLayout>
 
-            <com.kiwi.auready_ver2.util.view.DragSortListView
+            <com.kiwi.auready.util.view.DragSortListView
                 android:id="@+id/complete_tasks_listview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@null" />
 
-        </com.kiwi.auready_ver2.util.view.SplitView>
+        </com.kiwi.auready.util.view.SplitView>
     </LinearLayout>
 </LinearLayout>

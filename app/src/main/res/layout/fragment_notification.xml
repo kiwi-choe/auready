@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.kiwi.auready_ver2.notification.NotificationFragment">
+    tools:context="com.kiwi.auready.notification.NotificationFragment">
 
     <ListView
         android:id="@+id/notification_list"

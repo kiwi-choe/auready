@@ -32,7 +32,7 @@
             android:layout_gravity="center"
             android:gravity="center" />
 
-        <com.kiwi.auready_ver2.util.view.ColorPickerPalette
+        <com.kiwi.auready.util.view.ColorPickerPalette
             android:id="@+id/color_picker"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

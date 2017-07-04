@@ -7,7 +7,7 @@
     tools:context=".taskheads.TaskHeadsFragment"
     android:id="@+id/swipe_refresh_layout">
 
-    <com.kiwi.auready_ver2.util.view.DragSortListView
+    <com.kiwi.auready.util.view.DragSortListView
         android:id="@+id/taskheads"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

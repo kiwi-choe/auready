@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:weightSum="10"
     android:orientation="vertical"
-    tools:context="com.kiwi.auready_ver2.login.LoginActivity">
+    tools:context="com.kiwi.auready.login.LoginActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

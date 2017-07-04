@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.kiwi.auready_ver2.util.view.CircleProgressBar
+    <com.kiwi.auready.util.view.CircleProgressBar
         android:id="@+id/circle_progress_bar"
         android:layout_width="60dp"
         android:layout_height="60dp"

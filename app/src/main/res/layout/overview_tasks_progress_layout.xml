@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.kiwi.auready_ver2.util.view.CircleProgressBar
+    <com.kiwi.auready.util.view.CircleProgressBar
         android:layout_width="@dimen/task_head_circle_progress"
         android:layout_height="@dimen/task_head_circle_progress"
         android:layout_alignParentStart="true"

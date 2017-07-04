@@ -9,7 +9,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.kiwi.auready_ver2.taskheaddetail.TaskHeadDetailFragment">
+    tools:context="com.kiwi.auready.taskheaddetail.TaskHeadDetailFragment">
 
     <TextView
         android:id="@+id/title"
