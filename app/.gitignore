@@ -3,3 +3,6 @@
 /google-services.json
 /src/mock/google-services.json
 /app-prod-release.apk
+/projectFilesBackup*
+/fabric.properties
+.idea
