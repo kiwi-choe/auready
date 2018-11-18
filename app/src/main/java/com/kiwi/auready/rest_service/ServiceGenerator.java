@@ -2,8 +2,6 @@ package com.kiwi.auready.rest_service;
 
 import android.support.annotation.NonNull;
 
-import com.kiwi.auready.login.IBaseUrl;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
